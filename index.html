@@ -45,7 +45,7 @@
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 20px 0; transition: background var(--transition), padding var(--transition); }
     nav.scrolled { background: rgba(14,14,14,0.95); backdrop-filter: blur(12px); padding: 14px 0; border-bottom: 1px solid rgba(212,175,55,0.15); }
     nav .container { display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 11px; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 14px; }
     .nav-logo span { color: var(--gold); }
     .logo-mark { flex-shrink: 0; transition: filter 0.3s ease; }
     .nav-logo:hover .logo-mark { filter: brightness(1.2); }
@@ -87,17 +87,22 @@
     #hero .container { max-width: none; padding: 0 24px; }
 
     /* ─── Hero Background Video ───────────────────────────── */
-    .hero-video-bg { position:absolute; top:0; right:0; width:65%; height:100%; z-index:1; pointer-events:none; overflow:visible; }
-    /* mix-blend-mode:screen — dark pixels become transparent; only the bright statue stays visible.
-       This eliminates the video's black background entirely without any gradient hack. */
-    .hero-video-bg video { width:100%; height:100%; object-fit:cover; object-position:center 15%; mix-blend-mode:screen; opacity:1; filter:brightness(1.05) contrast(1.05) saturate(1.1); }
-    /* Subtle left-edge and bottom fade to soften the statue into the text area */
-    .hero-video-bg::before { content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
-      background:
-        linear-gradient(to right, rgba(14,14,14,1) 0%, rgba(14,14,14,.7) 18%, rgba(14,14,14,.2) 38%, transparent 58%),
-        linear-gradient(to bottom, transparent 70%, rgba(14,14,14,.6) 90%, #0e0e0e 100%); }
-    .hero-video-bg::after { content:''; position:absolute; inset:0; z-index:3; pointer-events:none;
-      background: radial-gradient(ellipse 60% 65% at 62% 42%, rgba(212,175,55,.06) 0%, transparent 70%); }
+    /*
+       mix-blend-mode:screen on the CONTAINER — critical: z-index creates a stacking context
+       that isolates blend-mode if applied to a child. Putting it on the container blends
+       the entire video panel (dark bg → transparent, bright statue → visible) against the
+       hero section background (#0e0e0e). No pseudo-element gradients needed.
+    */
+    .hero-video-bg {
+      position: absolute; top: 0; right: 0; width: 62%; height: 100%;
+      z-index: 1; pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .hero-video-bg video {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 15%;
+      filter: brightness(1.2) contrast(1.15) saturate(1.1);
+    }
 
     /* ─── Hero Stats Bar ──────────────────────────────────── */
     .hero-stats-bar { position:relative; z-index:2; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:56px; padding-top:40px; border-top:1px solid rgba(212,175,55,0.08); }
@@ -289,40 +294,35 @@
           right arm raised holding fountain pen with nib tip · short toga ·
           running legs · winged sandal
         -->
-        <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 78" width="27" height="30" aria-hidden="true">
-          <!-- ─── Wings (dominant upper-left shape) ─── -->
-          <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#D4AF37"/>
-          <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#D4AF37"/>
-          <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#D4AF37"/>
-          <!-- Wing inner feathers (secondary upper arc) -->
-          <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#D4AF37"/>
-          <!-- ─── Head ─── -->
-          <ellipse cx="48" cy="22" rx="7" ry="8" fill="#D4AF37"/>
-          <!-- ─── Winged helmet (small wing on left) ─── -->
-          <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#D4AF37"/>
-          <!-- ─── Neck ─── -->
-          <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#D4AF37"/>
-          <!-- ─── Torso (leaning forward) ─── -->
-          <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#D4AF37"/>
-          <!-- ─── Right arm → pen ─── -->
-          <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#D4AF37"/>
-          <!-- Pen barrel (thick, diagonal) -->
-          <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#D4AF37"/>
-          <!-- Pen nib (filled triangle at tip) -->
-          <polygon points="68,7 70,1 65,8" fill="#D4AF37"/>
-          <!-- Pen cap band -->
-          <path d="M62 19 L64 15 L66 16 L64 20Z" fill="#0e0e0e" opacity="0.5"/>
-          <!-- ─── Toga / short skirt ─── -->
-          <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#D4AF37"/>
-          <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#D4AF37"/>
-          <!-- ─── Back leg (left, extended behind) ─── -->
-          <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#D4AF37"/>
-          <!-- ─── Front leg (right, bent/forward running) ─── -->
-          <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#D4AF37"/>
-          <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#D4AF37"/>
-          <!-- ─── Ankle wing (winged sandal, front foot) ─── -->
-          <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#D4AF37"/>
-          <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#D4AF37" opacity="0.8"/>
+        <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 78" width="34" height="38" aria-hidden="true">
+          <!-- Wings (dominant upper-left, multi-feather) -->
+          <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#fff"/>
+          <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#fff"/>
+          <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#fff"/>
+          <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#fff"/>
+          <!-- Head -->
+          <ellipse cx="48" cy="22" rx="7" ry="8" fill="#fff"/>
+          <!-- Winged helmet -->
+          <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#fff"/>
+          <!-- Neck -->
+          <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#fff"/>
+          <!-- Torso -->
+          <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#fff"/>
+          <!-- Right arm + pen -->
+          <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#fff"/>
+          <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#fff"/>
+          <polygon points="68,7 70,1 65,8" fill="#fff"/>
+          <!-- Toga -->
+          <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#fff"/>
+          <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#fff"/>
+          <!-- Back leg -->
+          <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#fff"/>
+          <!-- Front leg -->
+          <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#fff"/>
+          <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#fff"/>
+          <!-- Ankle wing -->
+          <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#fff"/>
+          <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#fff" opacity="0.8"/>
         </svg>
         Hermes Writing<span>.</span>
       </a>
@@ -738,24 +738,24 @@
         <div class="footer-brand">
           <div class="nav-logo" style="font-size:1.4rem">
             <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 78" width="24" height="27" aria-hidden="true">
-              <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#D4AF37"/>
-              <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#D4AF37"/>
-              <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#D4AF37"/>
-              <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#D4AF37"/>
-              <ellipse cx="48" cy="22" rx="7" ry="8" fill="#D4AF37"/>
-              <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#D4AF37"/>
-              <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#D4AF37"/>
-              <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#D4AF37"/>
-              <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#D4AF37"/>
-              <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#D4AF37"/>
-              <polygon points="68,7 70,1 65,8" fill="#D4AF37"/>
-              <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#D4AF37"/>
-              <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#D4AF37"/>
-              <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#D4AF37"/>
-              <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#D4AF37"/>
-              <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#D4AF37"/>
-              <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#D4AF37"/>
-              <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#D4AF37" opacity="0.8"/>
+              <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#fff"/>
+              <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#fff"/>
+              <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#fff"/>
+              <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#fff"/>
+              <ellipse cx="48" cy="22" rx="7" ry="8" fill="#fff"/>
+              <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#fff"/>
+              <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#fff"/>
+              <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#fff"/>
+              <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#fff"/>
+              <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#fff"/>
+              <polygon points="68,7 70,1 65,8" fill="#fff"/>
+              <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#fff"/>
+              <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#fff"/>
+              <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#fff"/>
+              <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#fff"/>
+              <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#fff"/>
+              <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#fff"/>
+              <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#fff" opacity="0.8"/>
             </svg>
             Hermes Writing<span style="color:var(--gold)">.</span>
           </div>
