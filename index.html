@@ -45,8 +45,10 @@
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 20px 0; transition: background var(--transition), padding var(--transition); }
     nav.scrolled { background: rgba(14,14,14,0.95); backdrop-filter: blur(12px); padding: 14px 0; border-bottom: 1px solid rgba(212,175,55,0.15); }
     nav .container { display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 12px; }
     .nav-logo span { color: var(--gold); }
+    .logo-mark { flex-shrink: 0; opacity: 0.92; transition: opacity 0.3s ease; }
+    .nav-logo:hover .logo-mark { opacity: 1; }
     .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
     .nav-links a { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); transition: color var(--transition); }
     .nav-links a:hover { color: var(--gold); }
@@ -73,7 +75,8 @@
     .hero-shimmer-line { position:absolute;top:35%;left:0;width:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.5),transparent);pointer-events:none;z-index:3;animation:shimmer 7s ease-in-out infinite; }
     #heroCanvas { position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2; }
 
-    .hero-inner { position: relative; z-index: 2; max-width: 620px; }
+    .hero-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 52fr 48fr; align-items: center; min-height: 55vh; }
+    .hero-content { max-width: 560px; }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25); border-radius: 100px; padding: 6px 16px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
     .hero-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); }
     .hero-title { font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; margin-bottom: 24px; letter-spacing: -0.01em; }
@@ -226,7 +229,8 @@
 
     /* ─── Responsive ─────────────────────────────────────── */
     @media (max-width: 1024px) {
-      .hero-inner { gap:48px; }
+      .hero-inner { grid-template-columns: 58fr 42fr; }
+      .hero-content { max-width: 520px; }
       .hero-stats-bar { grid-template-columns:repeat(2,1fr); }
       .services-grid { grid-template-columns:repeat(2,1fr); }
       .process-grid { grid-template-columns:repeat(2,1fr); }
@@ -242,8 +246,9 @@
       .nav-toggle.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
       .nav-toggle.open span:nth-child(2) { opacity:0; }
       .nav-toggle.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-      .hero-inner { gap:40px; }
-      .hero-video-bg { width:100%; opacity:.35; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-content { max-width: 100%; }
+      .hero-video-bg { width:100%; opacity:.3; }
       .hero-video-bg::before { background: linear-gradient(to bottom, #0e0e0e 0%, rgba(14,14,14,.5) 30%, rgba(14,14,14,.5) 60%, #0e0e0e 100%), linear-gradient(to right, #0e0e0e 0%, rgba(14,14,14,.6) 50%, #0e0e0e 100%); }
       .hero-stats-bar { grid-template-columns:repeat(2,1fr); gap:12px; margin-top:40px; padding-top:32px; }
       .services-grid { grid-template-columns:1fr; }
@@ -272,7 +277,7 @@
   <!-- ─── Navigation ─────────────────────────────────── -->
   <nav id="navbar">
     <div class="container">
-      <a href="#" class="nav-logo">Hermes Writing<span>.</span></a>
+      <a href="#" class="nav-logo">Hermes Writing<span>.</span><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" width="22" height="30" viewBox="0 0 22 30" fill="none" aria-hidden="true"><circle cx="11" cy="4.5" r="2.3" stroke="#D4AF37" stroke-width="0.9"/><line x1="11" y1="6.8" x2="11" y2="27.5" stroke="#D4AF37" stroke-width="0.9"/><path d="M11 10.5 C8 5.5 2.5 4.5 0.5 7.5 C4.5 7 8 9 11 13.5Z" fill="rgba(212,175,55,0.22)" stroke="#D4AF37" stroke-width="0.9" stroke-linejoin="round"/><path d="M11 10.5 C14 5.5 19.5 4.5 21.5 7.5 C17.5 7 14 9 11 13.5Z" fill="rgba(212,175,55,0.13)" stroke="#D4AF37" stroke-width="0.9" stroke-linejoin="round"/></svg></a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#leistungen">Leistungen</a></li>
         <li><a href="#fachbereiche">Fachbereiche</a></li>
@@ -299,7 +304,7 @@
     <div class="hero-shimmer-line"></div>
     <div class="hero-shimmer-line" style="top:62%;animation-delay:3.5s;width:18%"></div>
     <div class="hero-video-bg">
-      <video autoplay muted loop playsinline>
+      <video autoplay muted loop playsinline preload="auto" id="heroBgVideo">
         <source src="https://github.com/user-attachments/assets/60c0af93-6679-489e-8da3-ba6c0784aba2" type="video/mp4">
       </video>
     </div>
@@ -319,7 +324,6 @@
           </p>
           <div class="hero-actions">
             <a href="#kontakt" class="btn btn-primary">Kostenlos anfragen</a>
-            <a href="#leistungen" class="btn btn-outline">Leistungen ansehen</a>
           </div>
         </div>
       </div>
@@ -883,6 +887,18 @@
       const particles = Array.from({ length: 80 }, () => new Particle());
       function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
       loop();
+    })();
+
+    // Seamless hero video loop — resets 100ms before end to eliminate the native loop gap
+    (function () {
+      const vid = document.getElementById('heroBgVideo');
+      if (!vid) return;
+      vid.addEventListener('timeupdate', function () {
+        if (this.duration > 0 && this.currentTime >= this.duration - 0.1) {
+          this.currentTime = 0;
+          this.play();
+        }
+      });
     })();
 
     // Navbar scroll
