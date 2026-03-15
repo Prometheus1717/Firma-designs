@@ -84,18 +84,20 @@
     .hero-desc { font-size: 1.1rem; color: var(--text); max-width: 480px; margin-bottom: 40px; line-height: 1.8; }
     .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
 
-    #hero .container { max-width: none; padding: 0 5.5vw; }
+    #hero .container { max-width: none; padding: 0 24px; }
 
     /* ─── Hero Background Video ───────────────────────────── */
-    .hero-video-bg { position:absolute; top:0; right:-1%; width:62%; height:100%; z-index:1; pointer-events:none; overflow:hidden; }
-    .hero-video-bg video { width:100%; height:100%; object-fit:cover; object-position:center 15%; opacity:.48; filter:brightness(.82) saturate(0.8) grayscale(0.15); }
-    .hero-video-bg::before { content:''; position:absolute; inset:0; z-index:2;
+    .hero-video-bg { position:absolute; top:0; right:0; width:65%; height:100%; z-index:1; pointer-events:none; overflow:visible; }
+    /* mix-blend-mode:screen — dark pixels become transparent; only the bright statue stays visible.
+       This eliminates the video's black background entirely without any gradient hack. */
+    .hero-video-bg video { width:100%; height:100%; object-fit:cover; object-position:center 15%; mix-blend-mode:screen; opacity:1; filter:brightness(1.05) contrast(1.05) saturate(1.1); }
+    /* Subtle left-edge and bottom fade to soften the statue into the text area */
+    .hero-video-bg::before { content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
       background:
-        linear-gradient(to right,  #0e0e0e 0%, #0e0e0e 4%, rgba(14,14,14,.92) 18%, rgba(14,14,14,.55) 38%, rgba(14,14,14,.12) 62%, transparent 80%),
-        linear-gradient(to bottom, #0e0e0e 0%, rgba(14,14,14,.7) 10%, transparent 22%, transparent 74%, rgba(14,14,14,.85) 92%, #0e0e0e 100%),
-        linear-gradient(to left,   rgba(14,14,14,.6) 0%, transparent 22%); }
-    .hero-video-bg::after { content:''; position:absolute; inset:0; z-index:3;
-      background: radial-gradient(ellipse 55% 70% at 65% 45%, rgba(212,175,55,.06) 0%, transparent 70%); }
+        linear-gradient(to right, rgba(14,14,14,1) 0%, rgba(14,14,14,.7) 18%, rgba(14,14,14,.2) 38%, transparent 58%),
+        linear-gradient(to bottom, transparent 70%, rgba(14,14,14,.6) 90%, #0e0e0e 100%); }
+    .hero-video-bg::after { content:''; position:absolute; inset:0; z-index:3; pointer-events:none;
+      background: radial-gradient(ellipse 60% 65% at 62% 42%, rgba(212,175,55,.06) 0%, transparent 70%); }
 
     /* ─── Hero Stats Bar ──────────────────────────────────── */
     .hero-stats-bar { position:relative; z-index:2; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:56px; padding-top:40px; border-top:1px solid rgba(212,175,55,0.08); }
@@ -281,33 +283,46 @@
   <nav id="navbar">
     <div class="container">
       <a href="#" class="nav-logo">
-        <!-- Hermes statue: plinth → robe → shoulders → head with wing → arm holding pen -->
-        <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 44" width="21" height="30" fill="none" aria-hidden="true">
-          <!-- Plinth / pedestal -->
-          <rect x="3.5" y="37.5" width="23" height="5.5" rx="0.7" fill="rgba(212,175,55,0.13)" stroke="#D4AF37" stroke-width="0.9"/>
-          <!-- Robe body -->
-          <path d="M9 20 L7.5 37.5 L22.5 37.5 L21 20 Z" fill="rgba(212,175,55,0.08)" stroke="#D4AF37" stroke-width="0.85" stroke-linejoin="round"/>
-          <!-- Toga folds -->
-          <line x1="11" y1="22" x2="10" y2="37" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-          <line x1="14" y1="21" x2="14" y2="37.5" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-          <line x1="17.5" y1="21" x2="18" y2="37" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-          <!-- Shoulders -->
-          <path d="M9 20 C7.5 17.5 8 15 10 13.5 L12.5 12.5 L17.5 12.5 L20 13.5 C22 15 22.5 17.5 21 20 Z" fill="rgba(212,175,55,0.1)" stroke="#D4AF37" stroke-width="0.85"/>
-          <!-- Neck -->
-          <path d="M12.5 12.5 L12.5 9.5 L17.5 9.5 L17.5 12.5" stroke="#D4AF37" stroke-width="0.82" fill="rgba(212,175,55,0.07)"/>
-          <!-- Head -->
-          <ellipse cx="15" cy="6" rx="4.5" ry="5" fill="rgba(212,175,55,0.07)" stroke="#D4AF37" stroke-width="0.9"/>
-          <!-- Winged helmet — wing sweeps left, key Hermes identifier -->
-          <path d="M10.5 4 C8.5 2 5 1.2 3 2.5 C5 3.2 7.5 4.5 10 6.2 Z" fill="rgba(212,175,55,0.55)" stroke="#D4AF37" stroke-width="0.75" stroke-linejoin="round"/>
-          <line x1="10.5" y1="4.2" x2="5.5" y2="5.5" stroke="#D4AF37" stroke-width="0.32" opacity="0.6" stroke-linecap="round"/>
-          <!-- Right arm extended toward pen -->
-          <line x1="20.5" y1="16" x2="24" y2="21.5" stroke="#D4AF37" stroke-width="0.85" stroke-linecap="round"/>
-          <!-- Pen / quill shaft (pointing up-right) -->
-          <line x1="23.5" y1="21" x2="28" y2="12" stroke="#D4AF37" stroke-width="0.92" stroke-linecap="round"/>
-          <!-- Pen nib tip -->
-          <path d="M28 12 L29.5 9.5 L26.5 11 Z" fill="#D4AF37"/>
-          <!-- Pen vane detail -->
-          <line x1="25" y1="19" x2="27.5" y2="14.5" stroke="#D4AF37" stroke-width="0.3" opacity="0.5" stroke-linecap="round"/>
+        <!--
+          Hermes flying with fountain pen — gold silhouette recreation of user's logo:
+          Large wings upper-left · winged helmet · body leaning forward ·
+          right arm raised holding fountain pen with nib tip · short toga ·
+          running legs · winged sandal
+        -->
+        <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 78" width="27" height="30" aria-hidden="true">
+          <!-- ─── Wings (dominant upper-left shape) ─── -->
+          <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#D4AF37"/>
+          <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#D4AF37"/>
+          <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#D4AF37"/>
+          <!-- Wing inner feathers (secondary upper arc) -->
+          <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#D4AF37"/>
+          <!-- ─── Head ─── -->
+          <ellipse cx="48" cy="22" rx="7" ry="8" fill="#D4AF37"/>
+          <!-- ─── Winged helmet (small wing on left) ─── -->
+          <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#D4AF37"/>
+          <!-- ─── Neck ─── -->
+          <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#D4AF37"/>
+          <!-- ─── Torso (leaning forward) ─── -->
+          <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#D4AF37"/>
+          <!-- ─── Right arm → pen ─── -->
+          <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#D4AF37"/>
+          <!-- Pen barrel (thick, diagonal) -->
+          <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#D4AF37"/>
+          <!-- Pen nib (filled triangle at tip) -->
+          <polygon points="68,7 70,1 65,8" fill="#D4AF37"/>
+          <!-- Pen cap band -->
+          <path d="M62 19 L64 15 L66 16 L64 20Z" fill="#0e0e0e" opacity="0.5"/>
+          <!-- ─── Toga / short skirt ─── -->
+          <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#D4AF37"/>
+          <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#D4AF37"/>
+          <!-- ─── Back leg (left, extended behind) ─── -->
+          <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#D4AF37"/>
+          <!-- ─── Front leg (right, bent/forward running) ─── -->
+          <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#D4AF37"/>
+          <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#D4AF37"/>
+          <!-- ─── Ankle wing (winged sandal, front foot) ─── -->
+          <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#D4AF37"/>
+          <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#D4AF37" opacity="0.8"/>
         </svg>
         Hermes Writing<span>.</span>
       </a>
@@ -722,21 +737,25 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <div class="nav-logo" style="font-size:1.4rem">
-            <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 44" width="19" height="27" fill="none" aria-hidden="true">
-              <rect x="3.5" y="37.5" width="23" height="5.5" rx="0.7" fill="rgba(212,175,55,0.13)" stroke="#D4AF37" stroke-width="0.9"/>
-              <path d="M9 20 L7.5 37.5 L22.5 37.5 L21 20 Z" fill="rgba(212,175,55,0.08)" stroke="#D4AF37" stroke-width="0.85" stroke-linejoin="round"/>
-              <line x1="11" y1="22" x2="10" y2="37" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-              <line x1="14" y1="21" x2="14" y2="37.5" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-              <line x1="17.5" y1="21" x2="18" y2="37" stroke="#D4AF37" stroke-width="0.28" stroke-linecap="round" opacity="0.45"/>
-              <path d="M9 20 C7.5 17.5 8 15 10 13.5 L12.5 12.5 L17.5 12.5 L20 13.5 C22 15 22.5 17.5 21 20 Z" fill="rgba(212,175,55,0.1)" stroke="#D4AF37" stroke-width="0.85"/>
-              <path d="M12.5 12.5 L12.5 9.5 L17.5 9.5 L17.5 12.5" stroke="#D4AF37" stroke-width="0.82" fill="rgba(212,175,55,0.07)"/>
-              <ellipse cx="15" cy="6" rx="4.5" ry="5" fill="rgba(212,175,55,0.07)" stroke="#D4AF37" stroke-width="0.9"/>
-              <path d="M10.5 4 C8.5 2 5 1.2 3 2.5 C5 3.2 7.5 4.5 10 6.2 Z" fill="rgba(212,175,55,0.55)" stroke="#D4AF37" stroke-width="0.75" stroke-linejoin="round"/>
-              <line x1="10.5" y1="4.2" x2="5.5" y2="5.5" stroke="#D4AF37" stroke-width="0.32" opacity="0.6" stroke-linecap="round"/>
-              <line x1="20.5" y1="16" x2="24" y2="21.5" stroke="#D4AF37" stroke-width="0.85" stroke-linecap="round"/>
-              <line x1="23.5" y1="21" x2="28" y2="12" stroke="#D4AF37" stroke-width="0.92" stroke-linecap="round"/>
-              <path d="M28 12 L29.5 9.5 L26.5 11 Z" fill="#D4AF37"/>
-              <line x1="25" y1="19" x2="27.5" y2="14.5" stroke="#D4AF37" stroke-width="0.3" opacity="0.5" stroke-linecap="round"/>
+            <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 78" width="24" height="27" aria-hidden="true">
+              <path d="M36 30 C28 22 16 14 6 12 C2 11 0 14 2 18 C10 17 22 21 33 27Z" fill="#D4AF37"/>
+              <path d="M36 30 C26 20 13 11 4 9 C1 8 0 12 1 15 C9 15 21 18 34 25Z" fill="#D4AF37"/>
+              <path d="M36 28 C28 18 16 10 7 7 C3 6 1 9 3 12 C10 12 22 16 35 24Z" fill="#D4AF37"/>
+              <path d="M36 26 C32 18 26 13 20 13 C16 13 13 16 13 20 C18 18 26 19 34 24Z" fill="#D4AF37"/>
+              <ellipse cx="48" cy="22" rx="7" ry="8" fill="#D4AF37"/>
+              <path d="M43 17 C40 12 34 10 32 14 C35 14 39 16 42 19Z" fill="#D4AF37"/>
+              <path d="M44 29 L43 36 L50 36 L50 29Z" fill="#D4AF37"/>
+              <path d="M42 35 C39 40 37 47 37 54 L44 56 C46 48 48 41 49 35Z" fill="#D4AF37"/>
+              <path d="M49 35 C53 30 57 25 62 20 L60 17 C55 22 51 27 46 32Z" fill="#D4AF37"/>
+              <path d="M60 20 L68 7 L70 9 L62 22Z" fill="#D4AF37"/>
+              <polygon points="68,7 70,1 65,8" fill="#D4AF37"/>
+              <path d="M37 52 C34 57 33 63 35 69 L42 69 C41 63 40 57 40 52Z" fill="#D4AF37"/>
+              <path d="M42 52 L47 60 L44 69 L40 68 L40 56Z" fill="#D4AF37"/>
+              <path d="M37 67 C35 72 33 76 31 77 L30 78 L34 78 C36 75 38 72 40 68Z" fill="#D4AF37"/>
+              <path d="M42 67 C44 72 46 76 46 76 L42 76 C41 72 40 69 40 67Z" fill="#D4AF37"/>
+              <path d="M42 74 C40 76 40 78 42 78 L46 78 C44 78 44 76 44 74Z" fill="#D4AF37"/>
+              <path d="M40 76 C36 73 30 72 28 74 C32 75 37 77 40 78Z" fill="#D4AF37"/>
+              <path d="M40 76 C37 71 31 69 28 71 C32 73 37 74 40 77Z" fill="#D4AF37" opacity="0.8"/>
             </svg>
             Hermes Writing<span style="color:var(--gold)">.</span>
           </div>
