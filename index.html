@@ -73,18 +73,32 @@
     .hero-shimmer-line { position:absolute;top:35%;left:0;width:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.5),transparent);pointer-events:none;animation:shimmer 7s ease-in-out infinite; }
     #heroCanvas { position:absolute;inset:0;width:100%;height:100%;pointer-events:none; }
 
-    .hero-inner { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .hero-inner { position: relative; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 72px; align-items: center; }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25); border-radius: 100px; padding: 6px 16px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
     .hero-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); }
     .hero-title { font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; margin-bottom: 24px; letter-spacing: -0.01em; }
     .hero-title em { font-style: italic; color: var(--gold); text-shadow: 0 0 15px rgba(212,175,55,0.3); }
     .hero-desc { font-size: 1.1rem; color: var(--text); max-width: 480px; margin-bottom: 40px; line-height: 1.8; }
     .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
-    .hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-self: center; }
-    .stat-card { background: var(--dark2); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; padding: 28px 24px; transition: var(--transition); }
+
+    /* ─── Hero Video ──────────────────────────────────────── */
+    .hero-video-wrap { position: relative; align-self: center; }
+    .hero-video-frame { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(212,175,55,0.35); box-shadow: 0 0 80px rgba(212,175,55,0.12), 0 32px 80px rgba(0,0,0,0.55); background: #080808; }
+    .hero-video-frame::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(212,175,55,0.06) 0%,transparent 55%); pointer-events:none; z-index:1; border-radius:16px; }
+    .hero-video-frame::after { content:''; position:absolute; top:0;left:0;right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(212,175,55,0.6),transparent); z-index:2; }
+    .hero-video-frame video { display:block; width:100%; height:auto; border-radius:16px; }
+    .hero-video-meta { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding:0 2px; }
+    .hero-video-tag { display:flex; align-items:center; gap:7px; font-size:0.78rem; color:var(--text-sm); letter-spacing:0.06em; }
+    .hero-video-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; animation:videoDotPulse 2s ease-in-out infinite; }
+    .hero-video-hint { font-size:0.75rem; color:rgba(212,175,55,0.45); letter-spacing:0.04em; }
+    @keyframes videoDotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.75)} }
+
+    /* ─── Hero Stats Bar ──────────────────────────────────── */
+    .hero-stats-bar { position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:56px; padding-top:40px; border-top:1px solid rgba(212,175,55,0.08); }
+    .stat-card { background: var(--dark2); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; padding: 22px 20px; transition: var(--transition); }
     .stat-card:hover { border-color: rgba(212,175,55,0.4); transform: translateY(-4px); }
-    .stat-number { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem,2vw,2rem); font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 8px; }
-    .stat-label { font-size: 0.85rem; color: var(--text-sm); }
+    .stat-number { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem,1.8vw,1.7rem); font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 0.82rem; color: var(--text-sm); }
 
     /* ─── Section Common ─────────────────────────────────── */
     .section { padding: 100px 0; }
@@ -215,6 +229,7 @@
     /* ─── Responsive ─────────────────────────────────────── */
     @media (max-width: 1024px) {
       .hero-inner { gap:48px; }
+      .hero-stats-bar { grid-template-columns:repeat(2,1fr); }
       .services-grid { grid-template-columns:repeat(2,1fr); }
       .process-grid { grid-template-columns:repeat(2,1fr); }
       .pricing-grid { grid-template-columns:1fr; max-width:420px; margin:0 auto; }
@@ -229,7 +244,8 @@
       .nav-toggle.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
       .nav-toggle.open span:nth-child(2) { opacity:0; }
       .nav-toggle.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-      .hero-inner { grid-template-columns:1fr; gap:48px; }
+      .hero-inner { grid-template-columns:1fr; gap:40px; }
+      .hero-stats-bar { grid-template-columns:repeat(2,1fr); gap:12px; margin-top:40px; padding-top:32px; }
       .services-grid { grid-template-columns:1fr; }
       .process-grid { grid-template-columns:1fr; }
       .contact-inner { grid-template-columns:1fr; gap:48px; }
@@ -301,23 +317,37 @@
             <a href="#leistungen" class="btn btn-outline">Leistungen ansehen</a>
           </div>
         </div>
-        <div class="hero-stats">
-          <div class="stat-card">
-            <div class="stat-number">800+</div>
-            <div class="stat-label">Arbeiten verfasst</div>
+        <div class="hero-video-wrap">
+          <div class="hero-video-frame">
+            <video autoplay muted loop playsinline>
+              <source src="https://github.com/user-attachments/assets/60c0af93-6679-489e-8da3-ba6c0784aba2" type="video/mp4">
+            </video>
           </div>
-          <div class="stat-card">
-            <div class="stat-number">14 Mio.+</div>
-            <div class="stat-label">Wörter geschrieben</div>
+          <div class="hero-video-meta">
+            <div class="hero-video-tag">
+              <span class="hero-video-dot"></span>
+              Einblick in unsere Arbeit
+            </div>
+            <span class="hero-video-hint">Wissenschaftliches Ghostwriting</span>
           </div>
-          <div class="stat-card">
-            <div class="stat-number">46.000+</div>
-            <div class="stat-label">Seiten produziert</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">50+</div>
-            <div class="stat-label">Fachbereiche</div>
-          </div>
+        </div>
+      </div>
+      <div class="hero-stats-bar">
+        <div class="stat-card">
+          <div class="stat-number">800+</div>
+          <div class="stat-label">Arbeiten verfasst</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">14 Mio.+</div>
+          <div class="stat-label">Wörter geschrieben</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">46.000+</div>
+          <div class="stat-label">Seiten produziert</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Fachbereiche</div>
         </div>
       </div>
     </div>
