@@ -45,10 +45,10 @@
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; padding: 20px 0; transition: background var(--transition), padding var(--transition); }
     nav.scrolled { background: rgba(14,14,14,0.95); backdrop-filter: blur(12px); padding: 14px 0; border-bottom: 1px solid rgba(212,175,55,0.15); }
     nav .container { display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 12px; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 11px; }
     .nav-logo span { color: var(--gold); }
-    .logo-mark { flex-shrink: 0; opacity: 0.92; transition: opacity 0.3s ease; }
-    .nav-logo:hover .logo-mark { opacity: 1; }
+    .logo-mark { flex-shrink: 0; transition: filter 0.3s ease; }
+    .nav-logo:hover .logo-mark { filter: brightness(1.2); }
     .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
     .nav-links a { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); transition: color var(--transition); }
     .nav-links a:hover { color: var(--gold); }
@@ -79,10 +79,12 @@
     .hero-content { max-width: 560px; }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25); border-radius: 100px; padding: 6px 16px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 28px; }
     .hero-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); }
-    .hero-title { font-size: clamp(2.8rem, 5vw, 4.2rem); font-weight: 700; margin-bottom: 24px; letter-spacing: -0.01em; }
+    .hero-title { font-size: clamp(3rem, 4.6vw, 5rem); font-weight: 700; margin-bottom: 28px; letter-spacing: -0.02em; line-height: 1.1; }
     .hero-title em { font-style: italic; color: var(--gold); text-shadow: 0 0 15px rgba(212,175,55,0.3); }
     .hero-desc { font-size: 1.1rem; color: var(--text); max-width: 480px; margin-bottom: 40px; line-height: 1.8; }
     .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    #hero .container { max-width: none; padding: 0 5.5vw; }
 
     /* ─── Hero Background Video ───────────────────────────── */
     .hero-video-bg { position:absolute; top:0; right:-1%; width:62%; height:100%; z-index:1; pointer-events:none; overflow:hidden; }
@@ -277,7 +279,25 @@
   <!-- ─── Navigation ─────────────────────────────────── -->
   <nav id="navbar">
     <div class="container">
-      <a href="#" class="nav-logo">Hermes Writing<span>.</span><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" width="22" height="30" viewBox="0 0 22 30" fill="none" aria-hidden="true"><circle cx="11" cy="4.5" r="2.3" stroke="#D4AF37" stroke-width="0.9"/><line x1="11" y1="6.8" x2="11" y2="27.5" stroke="#D4AF37" stroke-width="0.9"/><path d="M11 10.5 C8 5.5 2.5 4.5 0.5 7.5 C4.5 7 8 9 11 13.5Z" fill="rgba(212,175,55,0.22)" stroke="#D4AF37" stroke-width="0.9" stroke-linejoin="round"/><path d="M11 10.5 C14 5.5 19.5 4.5 21.5 7.5 C17.5 7 14 9 11 13.5Z" fill="rgba(212,175,55,0.13)" stroke="#D4AF37" stroke-width="0.9" stroke-linejoin="round"/></svg></a>
+      <a href="#" class="nav-logo">
+        <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" width="36" height="28" viewBox="0 0 36 28" fill="none" aria-hidden="true">
+          <!-- Left page -->
+          <path d="M18 3.5 C15 3.5 8.5 5 5.5 9 C3.5 11.5 4 16 5.5 19 C8.5 22.5 15 24 18 24" fill="rgba(212,175,55,0.1)" stroke="#D4AF37" stroke-width="1" stroke-linecap="round"/>
+          <!-- Right page -->
+          <path d="M18 3.5 C21 3.5 27.5 5 30.5 9 C32.5 11.5 32 16 30.5 19 C27.5 22.5 21 24 18 24" fill="rgba(212,175,55,0.065)" stroke="#D4AF37" stroke-width="1" stroke-linecap="round"/>
+          <!-- Spine -->
+          <line x1="18" y1="3.5" x2="18" y2="24" stroke="#D4AF37" stroke-width="0.9"/>
+          <!-- Left page text lines -->
+          <line x1="8.5" y1="11.5" x2="16" y2="11" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+          <line x1="8" y1="14.5" x2="16" y2="14" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+          <line x1="8.5" y1="17.5" x2="15.5" y2="17" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+          <!-- Right page text lines -->
+          <line x1="20" y1="11" x2="27.5" y2="11.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+          <line x1="20" y1="14" x2="28" y2="14.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+          <line x1="20.5" y1="17" x2="27.5" y2="17.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+        </svg>
+        Hermes Writing<span>.</span>
+      </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#leistungen">Leistungen</a></li>
         <li><a href="#fachbereiche">Fachbereiche</a></li>
@@ -313,9 +333,8 @@
         <div class="hero-content">
           <div class="hero-badge">Wissenschaftliches Ghostwriting</div>
           <h1 class="hero-title">
-            Wissen, das<br>
-            <em>überzeugt.</em><br>
-            Texte, die<br>bestehen.
+            Wissen, das <em>überzeugt.</em><br>
+            Texte, die bestehen.
           </h1>
           <p class="hero-desc">
             Hermes Writing ist Ihr Experte für wissenschaftliches Ghostwriting –
@@ -688,7 +707,20 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="nav-logo" style="font-size:1.4rem">Hermes Writing<span style="color:var(--gold)">.</span></div>
+          <div class="nav-logo" style="font-size:1.4rem">
+            <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" width="32" height="25" viewBox="0 0 36 28" fill="none" aria-hidden="true">
+              <path d="M18 3.5 C15 3.5 8.5 5 5.5 9 C3.5 11.5 4 16 5.5 19 C8.5 22.5 15 24 18 24" fill="rgba(212,175,55,0.1)" stroke="#D4AF37" stroke-width="1" stroke-linecap="round"/>
+              <path d="M18 3.5 C21 3.5 27.5 5 30.5 9 C32.5 11.5 32 16 30.5 19 C27.5 22.5 21 24 18 24" fill="rgba(212,175,55,0.065)" stroke="#D4AF37" stroke-width="1" stroke-linecap="round"/>
+              <line x1="18" y1="3.5" x2="18" y2="24" stroke="#D4AF37" stroke-width="0.9"/>
+              <line x1="8.5" y1="11.5" x2="16" y2="11" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+              <line x1="8" y1="14.5" x2="16" y2="14" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+              <line x1="8.5" y1="17.5" x2="15.5" y2="17" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+              <line x1="20" y1="11" x2="27.5" y2="11.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+              <line x1="20" y1="14" x2="28" y2="14.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+              <line x1="20.5" y1="17" x2="27.5" y2="17.5" stroke="#D4AF37" stroke-width="0.45" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+            Hermes Writing<span style="color:var(--gold)">.</span>
+          </div>
           <p>Wissenschaftliches Ghostwriting auf höchstem Niveau – diskret, präzise und termingerecht. Ihr Erfolg ist unser Anspruch.</p>
           <div class="footer-social">
             <a class="social-btn" href="#" aria-label="LinkedIn">in</a>
@@ -889,15 +921,25 @@
       loop();
     })();
 
-    // Seamless hero video loop — resets 100ms before end to eliminate the native loop gap
+    // Seamless hero video loop
+    // Strategy: timeupdate skips the last ~0.9s (blank/encoded tail frames that cause the freeze);
+    // 'ended' fires immediately if somehow the video still reaches the end — instant replay.
     (function () {
       const vid = document.getElementById('heroBgVideo');
       if (!vid) return;
+      vid.removeAttribute('loop'); // let JS own the loop entirely
       vid.addEventListener('timeupdate', function () {
-        if (this.duration > 0 && this.currentTime >= this.duration - 0.1) {
+        if (this.duration > 0 && this.currentTime >= this.duration - 0.9) {
           this.currentTime = 0;
-          this.play();
         }
+      });
+      vid.addEventListener('ended', function () {
+        this.currentTime = 0;
+        this.play();
+      });
+      vid.addEventListener('pause', function () {
+        // Re-trigger if browser auto-paused (e.g. tab visibility change)
+        if (!vid.seeking) this.play();
       });
     })();
 
