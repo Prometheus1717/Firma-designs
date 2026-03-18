@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -12,7 +11,6 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
-  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -23,16 +21,14 @@ export default function AuthPage() {
     try {
       if (mode === 'login') {
         await signIn(email, password);
-        navigate('/');
+        // AuthRoute detects user and redirects automatically
       } else if (mode === 'signup') {
         const data = await signUp(email, password);
         // If email confirmation is required, user won't have a session yet
         if (data?.user && !data?.session) {
           setMessage('Account created! Check your email and click the confirmation link, then come back and sign in.');
-        } else if (data?.session) {
-          // Auto-confirmed (e.g. if email confirm is disabled in Supabase)
-          navigate('/');
         }
+        // If auto-confirmed, AuthRoute will redirect automatically
       } else {
         await resetPassword(email);
         setMessage('Password reset link sent to your email.');
