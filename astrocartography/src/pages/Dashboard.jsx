@@ -7,30 +7,11 @@ import { calculateChart } from '../lib/calculateChart';
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
 const PCOL = { Sun: '#E8A838', Moon: '#C0C0C0', Mercury: '#5BA8D4', Venus: '#D4729A', Mars: '#D45050', Jupiter: '#8068C0', Saturn: '#887058', Uranus: '#40B0A0', Neptune: '#4868B8', Pluto: '#7048A0' };
-const SIGN_SYMBOLS = { Aries: 'ARI', Taurus: 'TAU', Gemini: 'GEM', Cancer: 'CAN', Leo: 'LEO', Virgo: 'VIR', Libra: 'LIB', Scorpio: 'SCO', Sagittarius: 'SAG', Capricorn: 'CAP', Aquarius: 'AQU', Pisces: 'PIS' };
+const SIGN_SYMBOLS = { Aries: '♈', Taurus: '♉', Gemini: '♊', Cancer: '♋', Leo: '♌', Virgo: '♍', Libra: '♎', Scorpio: '♏', Sagittarius: '♐', Capricorn: '♑', Aquarius: '♒', Pisces: '♓' };
 const SIGN_ELEMENTS = { Aries: 'Fire', Taurus: 'Earth', Gemini: 'Air', Cancer: 'Water', Leo: 'Fire', Virgo: 'Earth', Libra: 'Air', Scorpio: 'Water', Sagittarius: 'Fire', Capricorn: 'Earth', Aquarius: 'Air', Pisces: 'Water' };
 const SIGN_MODES = { Aries: 'Cardinal', Taurus: 'Fixed', Gemini: 'Mutable', Cancer: 'Cardinal', Leo: 'Fixed', Virgo: 'Mutable', Libra: 'Cardinal', Scorpio: 'Fixed', Sagittarius: 'Mutable', Capricorn: 'Cardinal', Aquarius: 'Fixed', Pisces: 'Mutable' };
 const ELEM_COL = { Fire: '#F04060', Earth: '#00D88A', Air: '#5BA8D4', Water: '#4868B8' };
 
-// SVG planet glyphs — terminal style, no emoji
-function PlanetGlyph({ id, color, size = 16 }) {
-  const s = size, h = s / 2, r = s * 0.3, sw = s * 0.09;
-  const c = color || '#8098B0';
-  const props = { width: s, height: s, viewBox: `0 0 ${s} ${s}`, style: { flexShrink: 0 } };
-  switch (id) {
-    case 'Sun': return <svg {...props}><circle cx={h} cy={h} r={r} fill="none" stroke={c} strokeWidth={sw * 1.3}/><circle cx={h} cy={h} r={s * 0.08} fill={c}/></svg>;
-    case 'Moon': return <svg {...props}><path d={`M${h + r * 0.3} ${h - r} A${r} ${r} 0 1 0 ${h + r * 0.3} ${h + r} A${r * 0.7} ${r * 0.7} 0 1 1 ${h + r * 0.3} ${h - r}`} fill="none" stroke={c} strokeWidth={sw * 1.3}/></svg>;
-    case 'Mercury': return <svg {...props}><circle cx={h} cy={h + s * 0.05} r={r * 0.65} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={h} y1={h + r * 0.65 + s * 0.05} x2={h} y2={s * 0.92} stroke={c} strokeWidth={sw * 1.2}/><line x1={h - r * 0.5} y1={s * 0.78} x2={h + r * 0.5} y2={s * 0.78} stroke={c} strokeWidth={sw * 1.2}/><path d={`M${h - r * 0.45} ${h - r * 0.65 + s * 0.05 - s * 0.02} A${r * 0.45} ${r * 0.35} 0 0 1 ${h + r * 0.45} ${h - r * 0.65 + s * 0.05 - s * 0.02}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Venus': return <svg {...props}><circle cx={h} cy={h - s * 0.08} r={r * 0.6} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={h} y1={h - s * 0.08 + r * 0.6} x2={h} y2={s * 0.9} stroke={c} strokeWidth={sw * 1.2}/><line x1={h - r * 0.5} y1={h + s * 0.18} x2={h + r * 0.5} y2={h + s * 0.18} stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Mars': return <svg {...props}><circle cx={h - s * 0.05} cy={h + s * 0.05} r={r * 0.6} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={h + r * 0.35 - s * 0.05} y1={h - r * 0.35 + s * 0.05} x2={s * 0.85} y2={s * 0.15} stroke={c} strokeWidth={sw * 1.2}/><polyline points={`${s * 0.6},${s * 0.15} ${s * 0.85},${s * 0.15} ${s * 0.85},${s * 0.4}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Jupiter': return <svg {...props}><path d={`M${s * 0.2} ${s * 0.3} Q${s * 0.5} ${s * 0.15} ${s * 0.55} ${s * 0.35} Q${s * 0.6} ${s * 0.55} ${s * 0.2} ${s * 0.55}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={s * 0.55} y1={s * 0.25} x2={s * 0.55} y2={s * 0.85} stroke={c} strokeWidth={sw * 1.2}/><line x1={s * 0.35} y1={s * 0.7} x2={s * 0.75} y2={s * 0.7} stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Saturn': return <svg {...props}><path d={`M${s * 0.45} ${s * 0.15} L${s * 0.45} ${s * 0.85}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={s * 0.3} y1={s * 0.15} x2={s * 0.6} y2={s * 0.15} stroke={c} strokeWidth={sw * 1.2}/><path d={`M${s * 0.45} ${s * 0.5} Q${s * 0.75} ${s * 0.5} ${s * 0.7} ${s * 0.7} Q${s * 0.65} ${s * 0.85} ${s * 0.4} ${s * 0.85}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Uranus': return <svg {...props}><circle cx={h} cy={s * 0.65} r={r * 0.45} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={h} y1={s * 0.2} x2={h} y2={s * 0.65 - r * 0.45} stroke={c} strokeWidth={sw * 1.2}/><line x1={h - r * 0.5} y1={s * 0.2} x2={h + r * 0.5} y2={s * 0.2} stroke={c} strokeWidth={sw * 1.2}/><circle cx={h} cy={s * 0.15} r={s * 0.04} fill={c}/></svg>;
-    case 'Neptune': return <svg {...props}><line x1={h} y1={s * 0.15} x2={h} y2={s * 0.85} stroke={c} strokeWidth={sw * 1.2}/><line x1={h - r * 0.6} y1={s * 0.75} x2={h + r * 0.6} y2={s * 0.75} stroke={c} strokeWidth={sw * 1.2}/><path d={`M${h - r * 0.7} ${s * 0.35} Q${h - r * 0.35} ${s * 0.15} ${h} ${s * 0.35} Q${h + r * 0.35} ${s * 0.15} ${h + r * 0.7} ${s * 0.35}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    case 'Pluto': return <svg {...props}><circle cx={h} cy={s * 0.35} r={r * 0.4} fill="none" stroke={c} strokeWidth={sw * 1.2}/><line x1={h} y1={s * 0.35 + r * 0.4} x2={h} y2={s * 0.85} stroke={c} strokeWidth={sw * 1.2}/><line x1={h - r * 0.5} y1={s * 0.65} x2={h + r * 0.5} y2={s * 0.65} stroke={c} strokeWidth={sw * 1.2}/><path d={`M${h - r * 0.15} ${s * 0.35 - r * 0.4} A${r * 0.4} ${r * 0.4} 0 0 1 ${h - r * 0.15} ${s * 0.35 + r * 0.4}`} fill="none" stroke={c} strokeWidth={sw * 1.2}/></svg>;
-    default: return <svg {...props}><circle cx={h} cy={h} r={r * 0.4} fill={c}/></svg>;
-  }
-}
 
 const ANGLE_INFO = {
   MC: { label: 'MC', full: 'Medium Coeli (Midheaven)', dash: 'solid', desc: 'The highest point in the sky at your birth. Represents career, public reputation, and how the world sees your achievements. On your MC line, you feel professionally empowered and publicly recognized.' },
@@ -465,20 +446,17 @@ export default function Dashboard() {
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden', width: 160 }}>
-            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? '#00D88A' : '#5A7088', background: !flatMap ? '#00D88A15' : 'transparent', borderRight: '1px solid #1A2840', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-              <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="none" stroke={!flatMap ? '#00D88A' : '#5A7088'} strokeWidth="1.2"/><circle cx="4" cy="4" r="1" fill={!flatMap ? '#00D88A' : '#5A7088'}/></svg>
-              Globe
+            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? '#00D88A' : '#5A7088', background: !flatMap ? '#00D88A15' : 'transparent', borderRight: '1px solid #1A2840', flex: 1 }}>
+              ◉ Globe
             </button>
-            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? '#00D88A' : '#5A7088', background: flatMap ? '#00D88A15' : 'transparent', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-              <svg width="10" height="7" viewBox="0 0 10 7"><rect x="0.5" y="0.5" width="9" height="6" rx="1" fill="none" stroke={flatMap ? '#00D88A' : '#5A7088'} strokeWidth="1"/></svg>
-              Map
+            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? '#00D88A' : '#5A7088', background: flatMap ? '#00D88A15' : 'transparent', flex: 1 }}>
+              ▭ Map
             </button>
           </div>
 
           {/* Natal chart button — below map toggle */}
           <div onClick={() => setShowNatal(!showNatal)} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke={showNatal ? '#00D88A' : '#5A7088'} strokeWidth="1"/><circle cx="5" cy="5" r="1.5" fill={showNatal ? '#00D88A' : '#5A7088'}/><line x1="5" y1="1" x2="5" y2="3" stroke={showNatal ? '#00D88A' : '#5A7088'} strokeWidth="0.8"/></svg>
-            Natal Chart
+            ☉ Natal Chart
           </div>
 
           {/* Natal chart popup */}
@@ -513,7 +491,7 @@ export default function Dashboard() {
                     <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       {/* Planet */}
                       <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <PlanetGlyph id={p.id} color={pc} size={18} />
+                        <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1 }}>{p.symbol}</span>
                         <div>
                           <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
                           {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
@@ -521,7 +499,7 @@ export default function Dashboard() {
                       </div>
                       {/* Sign */}
                       <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 8, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '20', padding: '2px 4px', borderRadius: 2, letterSpacing: 0.5 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
+                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
                         <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
                       </div>
                       {/* Degree */}
@@ -551,19 +529,14 @@ export default function Dashboard() {
                   ].map((a, i) => a.data && (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
                       <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <svg width="18" height="18" viewBox="0 0 18 18" style={{ flexShrink: 0 }}>
-                          <line x1="9" y1="2" x2="9" y2="16" stroke="#E8A838" strokeWidth="1.3"/>
-                          <line x1="2" y1="9" x2="16" y2="9" stroke="#E8A838" strokeWidth="1.3"/>
-                          {a.short === 'ASC' && <polyline points="5,5 9,2 13,5" fill="none" stroke="#E8A838" strokeWidth="1.3"/>}
-                          {a.short === 'MC' && <circle cx="9" cy="9" r="3" fill="none" stroke="#E8A838" strokeWidth="1"/>}
-                        </svg>
+                        <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '△' : '▽'}</span>
                         <div>
                           <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
                           <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
                         </div>
                       </div>
                       <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 8, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '20', padding: '2px 4px', borderRadius: 2, letterSpacing: 0.5 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
+                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
                         <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
                       </div>
                       <div style={{ width: 60, textAlign: 'right' }}>
