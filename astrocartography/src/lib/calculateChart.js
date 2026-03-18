@@ -161,8 +161,10 @@ function getLineDescription(planetId, angle, zodiacInfo) {
 }
 
 export function calculateChart({ date, time, lat, lng }) {
-  const birthDate = new Date(`${date}T${time}:00Z`);
-  if (isNaN(birthDate.getTime())) throw new Error('Invalid date/time format');
+  // Normalize time — Supabase may return HH:MM:SS, we need HH:MM:SS for ISO
+  const normalizedTime = time.length === 5 ? `${time}:00` : time; // HH:MM → HH:MM:00
+  const birthDate = new Date(`${date}T${normalizedTime}Z`);
+  if (isNaN(birthDate.getTime())) throw new Error(`Invalid date/time: ${date} ${time}`);
 
   const parsedLat = parseFloat(lat);
   const parsedLng = parseFloat(lng);
