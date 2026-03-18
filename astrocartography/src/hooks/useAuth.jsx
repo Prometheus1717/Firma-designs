@@ -11,11 +11,12 @@ export function AuthProvider({ children }) {
 
   async function fetchProfile(userId) {
     setProfileLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
+    if (error) console.error('[fetchProfile] RLS or query error:', error.message);
     setProfile(data);
     setProfileLoading(false);
     return data;
