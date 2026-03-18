@@ -77,15 +77,17 @@ function findASCLine(planetLon, date, obliquity, latitudes) {
   for (const lat of latitudes) {
     let bestLon = null;
     let bestErr = 999;
-    for (let testLon = -180; testLon <= 180; testLon += 2) {
+    // Finer initial sweep (1° steps) to catch steep curves at high latitudes
+    for (let testLon = -180; testLon <= 180; testLon += 1) {
       const lst = gast + testLon / 15;
       const asc = ascLongitude(lst, lat, obliquity);
       let err = Math.abs(asc - planetLon);
       if (err > 180) err = 360 - err;
       if (err < bestErr) { bestErr = err; bestLon = testLon; }
     }
+    // Refine within ±1.5° with 0.05° precision
     if (bestLon !== null && bestErr < 10) {
-      for (let testLon = bestLon - 2; testLon <= bestLon + 2; testLon += 0.1) {
+      for (let testLon = bestLon - 1.5; testLon <= bestLon + 1.5; testLon += 0.05) {
         const lst = gast + testLon / 15;
         const asc = ascLongitude(lst, lat, obliquity);
         let err = Math.abs(asc - planetLon);
@@ -96,6 +98,25 @@ function findASCLine(planetLon, date, obliquity, latitudes) {
     if (bestLon !== null && bestErr < 2) points.push([bestLon, lat]);
   }
   return points;
+}
+
+// Split a curve into segments at large longitude jumps (antimeridian crossing)
+function splitCurveSegments(points) {
+  if (points.length < 2) return [points];
+  const segments = [];
+  let seg = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    const lonDiff = Math.abs(points[i][0] - points[i - 1][0]);
+    if (lonDiff > 90) {
+      // Big jump — start a new segment
+      if (seg.length > 1) segments.push(seg);
+      seg = [points[i]];
+    } else {
+      seg.push(points[i]);
+    }
+  }
+  if (seg.length > 1) segments.push(seg);
+  return segments;
 }
 
 function findDSCLine(planetLon, date, obliquity, latitudes) {
@@ -178,7 +199,7 @@ export function calculateChart({ date, time, lat, lng }) {
   const natalASC = ascLongitude(lst, parsedLat, obliquity);
 
   const latSamples = [];
-  for (let l = -65; l <= 65; l += 1) latSamples.push(l);
+  for (let l = -80; l <= 80; l += 0.5) latSamples.push(l);
 
   const planetPositions = [];
   const lines = [];
@@ -216,12 +237,14 @@ export function calculateChart({ date, time, lat, lng }) {
 
     const ascPoints = findASCLine(eclLon, astroDate, obliquity, latSamples);
     if (ascPoints.length > 2) {
-      lines.push({ n: `${planet.id} ASC`, planet: planet.id, symbol: planet.symbol, angle: 'ASC', points: ascPoints, c: LINE_COLORS[planet.id], quality: getQuality(planet.id, 'ASC'), desc: getLineDescription(planet.id, 'ASC', zodiac), type: 'curve' });
+      const ascSegments = splitCurveSegments(ascPoints);
+      lines.push({ n: `${planet.id} ASC`, planet: planet.id, symbol: planet.symbol, angle: 'ASC', points: ascPoints, segments: ascSegments, c: LINE_COLORS[planet.id], quality: getQuality(planet.id, 'ASC'), desc: getLineDescription(planet.id, 'ASC', zodiac), type: 'curve' });
     }
 
     const dscPoints = findDSCLine(eclLon, astroDate, obliquity, latSamples);
     if (dscPoints.length > 2) {
-      lines.push({ n: `${planet.id} DC`, planet: planet.id, symbol: planet.symbol, angle: 'DC', points: dscPoints, c: LINE_COLORS[planet.id], quality: getQuality(planet.id, 'DC'), desc: getLineDescription(planet.id, 'DC', zodiac), type: 'curve' });
+      const dscSegments = splitCurveSegments(dscPoints);
+      lines.push({ n: `${planet.id} DC`, planet: planet.id, symbol: planet.symbol, angle: 'DC', points: dscPoints, segments: dscSegments, c: LINE_COLORS[planet.id], quality: getQuality(planet.id, 'DC'), desc: getLineDescription(planet.id, 'DC', zodiac), type: 'curve' });
     }
   }
 

@@ -89,22 +89,34 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
     ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
 
-    // Astro lines
+    // Astro lines with dash patterns per angle type
     if (lines) {
+      const lw = s.scale > 400 ? 2.2 : 1.5;
       lines.forEach(l => {
         ctx.strokeStyle = l.c;
-        ctx.lineWidth = s.scale > 400 ? 2.5 : 1.8;
-        ctx.globalAlpha = .6;
+        ctx.lineWidth = lw;
+        ctx.globalAlpha = .65;
 
-        if (l.type === 'curve' && l.points) {
-          // ASC/DSC lines are curves
-          const geo = { type: 'LineString', coordinates: l.points };
-          ctx.beginPath(); path(geo); ctx.stroke();
+        // Dash pattern by angle: MC=solid, IC=dashed, ASC=long-dash, DC=dotted
+        if (l.angle === 'IC') ctx.setLineDash([6, 4]);
+        else if (l.angle === 'ASC') ctx.setLineDash([10, 4]);
+        else if (l.angle === 'DC') ctx.setLineDash([2, 3]);
+        else ctx.setLineDash([]);
+
+        if (l.type === 'curve') {
+          // Use pre-split segments to avoid antimeridian artifacts
+          const segs = l.segments || [l.points];
+          segs.forEach(seg => {
+            if (!seg || seg.length < 2) return;
+            const geo = { type: 'LineString', coordinates: seg };
+            ctx.beginPath(); path(geo); ctx.stroke();
+          });
         } else {
           // MC/IC lines are meridians (straight vertical lines)
           const geo = { type: 'LineString', coordinates: Array.from({ length: 181 }, (_, i) => [l.lo, -90 + i]) };
           ctx.beginPath(); path(geo); ctx.stroke();
         }
+        ctx.setLineDash([]);
         ctx.globalAlpha = 1;
       });
     }
