@@ -52,8 +52,8 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
   const S = useRef({
     rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
     lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
-    // Flat map state
-    flatTx: 0, flatTy: 0, flatScale: 1,
+    // Flat map state — panX/panY in pixels, zoom multiplier
+    panX: 0, panY: 0, zoom: 1,
   });
   const [, forceUpdate] = useState(0);
   const flatRef = useRef(flat);
@@ -76,31 +76,36 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
     let proj, path, center;
 
     if (isFlat) {
-      // Flat map — Natural Earth projection
-      const baseScale = Math.min(W, H) * 0.28;
-      proj = d3.geoNaturalEarth1()
-        .scale(baseScale * s.flatScale)
-        .translate([cx + s.flatTx, cy + s.flatTy])
-        .rotate([s.rot[0], 0]);
+      // Flat map — Equirectangular projection, edge-to-edge
+      // Scale to fill the entire canvas: width maps 360° of longitude
+      const baseScaleW = W / (2 * Math.PI);
+      const baseScaleH = H / Math.PI;
+      // Use the larger scale so the map covers the whole canvas
+      const baseScale = Math.max(baseScaleW, baseScaleH) * s.zoom;
+      proj = d3.geoEquirectangular()
+        .scale(baseScale)
+        .translate([cx + s.panX, cy + s.panY])
+        .rotate([0, 0]);
       path = d3.geoPath(proj, ctx);
-      center = null; // no backside culling
+      center = null;
 
-      // Background
+      // Ocean background — fill entire canvas
       ctx.fillStyle = '#0B1420';
-      ctx.beginPath(); path({ type: 'Sphere' }); ctx.fill();
+      ctx.fillRect(0, 0, W, H);
 
       // Graticule
-      ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
-      ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
+      ctx.strokeStyle = '#182838'; ctx.lineWidth = .4;
+      ctx.beginPath(); path(d3.geoGraticule().step([30, 30])()); ctx.stroke();
+      // Finer graticule at higher zoom
+      if (s.zoom > 1.5) {
+        ctx.strokeStyle = '#141E2C'; ctx.lineWidth = .2;
+        ctx.beginPath(); path(d3.geoGraticule().step([10, 10])()); ctx.stroke();
+      }
 
       // Countries
       ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .5;
       CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
-
-      // Map border
-      ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
-      ctx.beginPath(); path({ type: 'Sphere' }); ctx.stroke();
     } else {
       // Globe — Orthographic projection
       proj = d3.geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
@@ -131,7 +136,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
 
     // Astro lines
     if (lines) {
-      const lw = isFlat ? 1.3 : (s.scale > 400 ? 2.2 : 1.5);
+      const lw = isFlat ? (s.zoom > 2 ? 1.8 : 1.2) : (s.scale > 400 ? 2.2 : 1.5);
       lines.forEach(l => {
         ctx.strokeStyle = l.c;
         ctx.lineWidth = lw;
@@ -163,14 +168,14 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
         if (!isFlat && center && d3.geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
         const p = proj([c.lo, c.la]);
         if (!p) return;
-        const r = isFlat ? (s.flatScale > 2 ? 4 : 2.5) : (s.scale > 400 ? 4 : 2.5);
+        const r = isFlat ? (s.zoom > 3 ? 4 : s.zoom > 1.5 ? 3 : 2) : (s.scale > 400 ? 4 : 2.5);
         ctx.fillStyle = c.lc; ctx.globalAlpha = .9;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
-        const showLabels = isFlat ? s.flatScale > 0.8 : s.scale > 250;
+        const showLabels = isFlat ? s.zoom > 0.9 : s.scale > 250;
         if (showLabels) {
           const fs = isFlat
-            ? (s.flatScale > 3 ? 10 : s.flatScale > 1.5 ? 8 : 7)
+            ? (s.zoom > 4 ? 11 : s.zoom > 2 ? 9 : s.zoom > 1.2 ? 8 : 7)
             : (s.scale > 500 ? 10 : s.scale > 350 ? 8 : 7);
           ctx.font = `600 ${fs}px JetBrains Mono`;
           ctx.fillStyle = '#D0DDE8';
@@ -230,8 +235,8 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
       if (flatRef.current) {
-        s.flatTx += dx;
-        s.flatTy += dy;
+        s.panX += dx;
+        s.panY += dy;
       } else {
         s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
       }
@@ -245,8 +250,15 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
     const wh = e => {
       e.preventDefault();
       if (flatRef.current) {
-        const factor = e.deltaY < 0 ? 1.08 : 0.93;
-        s.flatScale = Math.max(0.5, Math.min(12, s.flatScale * factor));
+        const rect = c.getBoundingClientRect();
+        const mx = e.clientX - rect.left - rect.width / 2 - s.panX;
+        const my = e.clientY - rect.top - rect.height / 2 - s.panY;
+        const factor = e.deltaY < 0 ? 1.1 : 0.91;
+        const newZoom = Math.max(0.8, Math.min(15, s.zoom * factor));
+        // Zoom toward mouse position
+        s.panX -= mx * (newZoom / s.zoom - 1);
+        s.panY -= my * (newZoom / s.zoom - 1);
+        s.zoom = newZoom;
       } else {
         s.scale = Math.max(180, Math.min(1800, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
         s.auto = false;
@@ -259,12 +271,12 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       e.preventDefault();
       const r = c.getBoundingClientRect();
       if (flatRef.current) {
-        // Zoom in on double-click point
-        const mx = e.clientX - r.left - r.width / 2 - s.flatTx;
-        const my = e.clientY - r.top - r.height / 2 - s.flatTy;
-        s.flatScale = Math.min(12, s.flatScale * 1.8);
-        s.flatTx -= mx * 0.8;
-        s.flatTy -= my * 0.8;
+        const mx = e.clientX - r.left - r.width / 2 - s.panX;
+        const my = e.clientY - r.top - r.height / 2 - s.panY;
+        const newZoom = Math.min(15, s.zoom * 2);
+        s.panX -= mx * (newZoom / s.zoom - 1);
+        s.panY -= my * (newZoom / s.zoom - 1);
+        s.zoom = newZoom;
       } else {
         const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
@@ -278,11 +290,11 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       const W = r.width, H = r.height;
       let proj;
       if (flatRef.current) {
-        const baseScale = Math.min(W, H) * 0.28;
-        proj = d3.geoNaturalEarth1()
-          .scale(baseScale * s.flatScale)
-          .translate([W / 2 + s.flatTx, H / 2 + s.flatTy])
-          .rotate([s.rot[0], 0]);
+        const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
+        proj = d3.geoEquirectangular()
+          .scale(Math.max(bsW, bsH) * s.zoom)
+          .translate([W / 2 + s.panX, H / 2 + s.panY])
+          .rotate([0, 0]);
       } else {
         proj = d3.geoOrthographic().scale(s.scale).translate([W / 2, H / 2]).rotate(s.rot);
       }
@@ -311,19 +323,34 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
     };
   }, [draw, citiesOnLines, onCityClick]);
 
-  // Mark dirty on mode change
+  // Reset flat state and mark dirty on mode change
   useEffect(() => {
-    S.current.dirty = true;
+    const s = S.current;
+    if (flat) {
+      s.panX = 0; s.panY = 0; s.zoom = 1;
+    }
+    s.dirty = true;
   }, [flat]);
 
   // Expose flyTo
   Globe.flyTo = (la, lo) => {
     const s = S.current;
     if (flatRef.current) {
-      s.rot = [-lo, 0];
-      s.flatTx = 0;
-      s.flatTy = 0;
-      s.flatScale = Math.max(s.flatScale, 2.5);
+      // Center on the city by computing its pixel offset and panning there
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const par = canvas.parentElement;
+        const W = par.clientWidth, H = par.clientHeight;
+        const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
+        const baseScale = Math.max(bsW, bsH);
+        const targetZoom = Math.max(s.zoom, 3);
+        // Project city coords to find pixel offset, then pan so it's centered
+        const lonRad = lo * Math.PI / 180;
+        const latRad = la * Math.PI / 180;
+        s.panX = -lonRad * baseScale * targetZoom;
+        s.panY = latRad * baseScale * targetZoom;
+        s.zoom = targetZoom;
+      }
     } else {
       s.auto = false;
       s.rot = [-lo, -la];
