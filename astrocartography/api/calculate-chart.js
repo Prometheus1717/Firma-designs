@@ -222,8 +222,10 @@ export default function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { date, time, lat, lng } = req.body;
-    if (!date || !time || lat === undefined || lng === undefined) {
+    const { date, time } = req.body;
+    const lat = parseFloat(req.body.lat);
+    const lng = parseFloat(req.body.lng);
+    if (!date || !time || isNaN(lat) || isNaN(lng)) {
       return res.status(400).json({ error: 'Missing required fields: date, time, lat, lng' });
     }
 

@@ -133,8 +133,8 @@ export default function Dashboard() {
           body: JSON.stringify({
             date: profile.birth_date,
             time: profile.birth_time,
-            lat: profile.birth_lat,
-            lng: profile.birth_lng,
+            lat: parseFloat(profile.birth_lat),
+            lng: parseFloat(profile.birth_lng),
           }),
         });
         if (!res.ok) {

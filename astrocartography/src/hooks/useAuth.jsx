@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const hasBirthData = !!(profile?.birth_date && profile?.birth_time);
+  const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
 
   async function signUp(email, password) {
     const { data, error } = await supabase.auth.signUp({ email, password });

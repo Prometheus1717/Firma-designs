@@ -153,7 +153,7 @@ export default function BirthDataPage() {
               value={citySearch}
               onChange={e => { setCitySearch(e.target.value); setSelectedCity(null); }}
               style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
-              placeholder="e.g. Lisboa, Bergisch Gladbach, Tokyo..."
+              placeholder="London, New York, Sydney..."
             />
             {searching && (
               <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: '#5A7088' }}>
