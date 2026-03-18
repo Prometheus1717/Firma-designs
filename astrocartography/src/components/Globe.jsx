@@ -224,22 +224,33 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
     const c = canvasRef.current;
     if (!c) return;
 
+    // Clamp pan so map edges never leave the viewport
+    const clampPan = () => {
+      const rect = c.getBoundingClientRect();
+      const W = rect.width, H = rect.height;
+      const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
+      const sc = Math.max(bsW, bsH) * s.zoom;
+      // Map pixel extents from center: width = 2*PI*sc, height = PI*sc
+      const halfMapW = Math.PI * sc;
+      const halfMapH = Math.PI * sc / 2;
+      const maxPanX = Math.max(0, halfMapW - W / 2);
+      const maxPanY = Math.max(0, halfMapH - H / 2);
+      s.panX = Math.max(-maxPanX, Math.min(maxPanX, s.panX));
+      s.panY = Math.max(-maxPanY, Math.min(maxPanY, s.panY));
+    };
+
     const dn = e => {
+      if (flatRef.current) return; // No drag in flat mode
       s.drag = true;
       s.auto = false;
       const t = e.touches ? e.touches[0] : e;
       s.lx = t.clientX; s.ly = t.clientY;
     };
     const mv = e => {
-      if (!s.drag) return;
+      if (!s.drag || flatRef.current) return;
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
-      if (flatRef.current) {
-        s.panX += dx;
-        s.panY += dy;
-      } else {
-        s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
-      }
+      s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
       s.lx = t.clientX; s.ly = t.clientY;
       s.dirty = true;
     };
@@ -254,11 +265,12 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
         const mx = e.clientX - rect.left - rect.width / 2 - s.panX;
         const my = e.clientY - rect.top - rect.height / 2 - s.panY;
         const factor = e.deltaY < 0 ? 1.1 : 0.91;
-        const newZoom = Math.max(0.8, Math.min(15, s.zoom * factor));
+        const newZoom = Math.max(1, Math.min(15, s.zoom * factor));
         // Zoom toward mouse position
         s.panX -= mx * (newZoom / s.zoom - 1);
         s.panY -= my * (newZoom / s.zoom - 1);
         s.zoom = newZoom;
+        clampPan();
       } else {
         s.scale = Math.max(180, Math.min(1800, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
         s.auto = false;
@@ -277,6 +289,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
         s.panX -= mx * (newZoom / s.zoom - 1);
         s.panY -= my * (newZoom / s.zoom - 1);
         s.zoom = newZoom;
+        clampPan();
       } else {
         const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
@@ -336,7 +349,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
   Globe.flyTo = (la, lo) => {
     const s = S.current;
     if (flatRef.current) {
-      // Center on the city by computing its pixel offset and panning there
+      // Center on the city by computing pixel offset, clamped to edges
       const canvas = canvasRef.current;
       if (canvas) {
         const par = canvas.parentElement;
@@ -344,12 +357,19 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
         const baseScale = Math.max(bsW, bsH);
         const targetZoom = Math.max(s.zoom, 3);
-        // Project city coords to find pixel offset, then pan so it's centered
         const lonRad = lo * Math.PI / 180;
         const latRad = la * Math.PI / 180;
         s.panX = -lonRad * baseScale * targetZoom;
         s.panY = latRad * baseScale * targetZoom;
         s.zoom = targetZoom;
+        // Clamp so map stays in viewport
+        const sc = baseScale * targetZoom;
+        const halfMapW = Math.PI * sc;
+        const halfMapH = Math.PI * sc / 2;
+        const maxPanX = Math.max(0, halfMapW - W / 2);
+        const maxPanY = Math.max(0, halfMapH - H / 2);
+        s.panX = Math.max(-maxPanX, Math.min(maxPanX, s.panX));
+        s.panY = Math.max(-maxPanY, Math.min(maxPanY, s.panY));
       }
     } else {
       s.auto = false;
