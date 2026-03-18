@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
+import { calculateChart } from '../lib/calculateChart';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
@@ -119,37 +120,25 @@ export default function Dashboard() {
     }
   }, [hasBirthData, profile, navigate]);
 
-  // Fetch chart data only when we have birth data
+  // Calculate chart client-side when we have birth data
   useEffect(() => {
     if (!hasBirthData || !profile?.birth_date) return;
 
-    async function fetchChart() {
-      setLoading(true);
-      setError('');
-      try {
-        const res = await fetch('/api/calculate-chart', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            date: profile.birth_date,
-            time: profile.birth_time,
-            lat: parseFloat(profile.birth_lat),
-            lng: parseFloat(profile.birth_lng),
-          }),
-        });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || 'Calculation failed');
-        }
-        const data = await res.json();
-        setChartData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    setError('');
+    try {
+      const data = calculateChart({
+        date: profile.birth_date,
+        time: profile.birth_time,
+        lat: profile.birth_lat,
+        lng: profile.birth_lng,
+      });
+      setChartData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    fetchChart();
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
