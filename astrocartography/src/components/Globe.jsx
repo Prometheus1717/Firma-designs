@@ -162,12 +162,22 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       });
     }
 
-    // Cities on lines
+    // ── City rendering with collision detection ──
+    const labelBoxes = []; // occupied label rectangles
+    function canPlace(x, y, w, h) {
+      for (let i = 0; i < labelBoxes.length; i++) {
+        const b = labelBoxes[i];
+        if (x < b[0] + b[2] && x + w > b[0] && y < b[1] + b[3] && y + h > b[1]) return false;
+      }
+      return true;
+    }
+
+    // Cities on lines (priority — always draw dot, label with collision check)
     if (citiesOnLines) {
       citiesOnLines.forEach(c => {
         if (!isFlat && center && d3.geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
         const p = proj([c.lo, c.la]);
-        if (!p) return;
+        if (!p || p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
         const r = isFlat ? (s.zoom > 3 ? 4 : s.zoom > 1.5 ? 3 : 2) : (s.scale > 400 ? 4 : 2.5);
         ctx.fillStyle = c.lc; ctx.globalAlpha = .9;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
@@ -177,46 +187,56 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const fs = isFlat
             ? (s.zoom > 4 ? 11 : s.zoom > 2 ? 9 : s.zoom > 1.2 ? 8 : 7)
             : (s.scale > 500 ? 10 : s.scale > 350 ? 8 : 7);
-          ctx.font = `600 ${fs}px JetBrains Mono`;
-          ctx.fillStyle = '#D0DDE8';
-          ctx.textAlign = 'left';
-          ctx.fillText(c.name, p[0] + r + 4, p[1] + 3);
+          const lx = p[0] + r + 4, ly = p[1] + 3;
+          const lw = c.name.length * fs * 0.6, lh = fs + 2;
+          if (canPlace(lx, ly - lh, lw, lh)) {
+            ctx.font = `600 ${fs}px JetBrains Mono`;
+            ctx.fillStyle = '#D0DDE8'; ctx.textAlign = 'left';
+            ctx.fillText(c.name, lx, ly);
+            labelBoxes.push([lx, ly - lh, lw, lh]);
+          }
         }
+        // Reserve dot space
+        labelBoxes.push([p[0] - r, p[1] - r, r * 2, r * 2]);
       });
     }
 
-    // Additional cities on zoom (tiered)
+    // Additional cities on zoom (tiered, with collision)
     const zoomLevel = isFlat ? s.zoom : s.scale / 280;
-    if (citiesTiers && zoomLevel > 1.3) {
-      // Select tier based on zoom: T1 at low zoom, T2 at medium, T3 at high
+    if (citiesTiers && zoomLevel > 1.8) {
       const tierIdx = isFlat
-        ? (s.zoom > 4 ? 2 : s.zoom > 2 ? 1 : 0)
-        : (s.scale > 700 ? 2 : s.scale > 450 ? 1 : 0);
+        ? (s.zoom > 5 ? 2 : s.zoom > 2.5 ? 1 : 0)
+        : (s.scale > 800 ? 2 : s.scale > 500 ? 1 : 0);
       const tierCities = citiesTiers[tierIdx] || citiesTiers[0];
       const onLineNames = new Set(citiesOnLines ? citiesOnLines.map(c => c.name) : []);
       tierCities.forEach(([la, lo, name]) => {
         if (onLineNames.has(name)) return;
         if (!isFlat && center && d3.geoDistance([lo, la], center) > Math.PI / 2) return;
         const p = proj([lo, la]);
-        if (!p) return;
-        if (p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
-        const r = isFlat
-          ? (s.zoom > 6 ? 3 : s.zoom > 3 ? 2.5 : s.zoom > 1.5 ? 2 : 1.5)
-          : (s.scale > 700 ? 3 : s.scale > 400 ? 2 : 1.5);
+        if (!p || p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
+        const r = isFlat ? (s.zoom > 5 ? 2.5 : 2) : (s.scale > 600 ? 2.5 : 1.5);
+        // Check dot doesn't overlap existing labels
+        if (!canPlace(p[0] - r - 2, p[1] - r - 2, r * 2 + 4, r * 2 + 4)) return;
         ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .45;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
-        const showLabel = isFlat ? s.zoom > 2 : s.scale > 400;
+        const showLabel = isFlat ? s.zoom > 2.5 : s.scale > 500;
         if (showLabel) {
           const fs = isFlat
-            ? (s.zoom > 6 ? 10 : s.zoom > 4 ? 9 : s.zoom > 2.5 ? 8 : 7)
-            : (s.scale > 700 ? 10 : s.scale > 500 ? 8 : 7);
-          ctx.font = `500 ${fs}px JetBrains Mono`;
-          ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .55;
-          ctx.textAlign = 'left';
-          ctx.fillText(name, p[0] + r + 3, p[1] + 3);
-          ctx.globalAlpha = 1;
+            ? (s.zoom > 6 ? 9 : s.zoom > 4 ? 8 : 7)
+            : (s.scale > 800 ? 9 : 7);
+          const lx = p[0] + r + 3, ly = p[1] + 3;
+          const lw = name.length * fs * 0.6, lh = fs + 2;
+          if (canPlace(lx, ly - lh, lw, lh)) {
+            ctx.font = `500 ${fs}px JetBrains Mono`;
+            ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .55;
+            ctx.textAlign = 'left';
+            ctx.fillText(name, lx, ly);
+            ctx.globalAlpha = 1;
+            labelBoxes.push([lx, ly - lh, lw, lh]);
+          }
         }
+        labelBoxes.push([p[0] - r, p[1] - r, r * 2, r * 2]);
       });
     }
 
