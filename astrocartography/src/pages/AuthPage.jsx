@@ -23,7 +23,7 @@ export default function AuthPage() {
     try {
       if (mode === 'login') {
         await signIn(email, password);
-        navigate('/birth-data');
+        navigate('/');
       } else if (mode === 'signup') {
         const data = await signUp(email, password);
         // If email confirmation is required, user won't have a session yet
@@ -31,7 +31,7 @@ export default function AuthPage() {
           setMessage('Account created! Check your email and click the confirmation link, then come back and sign in.');
         } else if (data?.session) {
           // Auto-confirmed (e.g. if email confirm is disabled in Supabase)
-          navigate('/birth-data');
+          navigate('/');
         }
       } else {
         await resetPassword(email);
