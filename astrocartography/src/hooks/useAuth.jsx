@@ -35,9 +35,15 @@ export function AuthProvider({ children }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const u = session?.user ?? null;
-      setUser(u);
-      if (u) fetchProfile(u.id);
-      else { setProfile(null); setProfileLoading(false); }
+      if (u) {
+        setProfileLoading(true);   // set BEFORE setUser to avoid race
+        setUser(u);
+        fetchProfile(u.id);
+      } else {
+        setUser(null);
+        setProfile(null);
+        setProfileLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
