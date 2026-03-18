@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import AuthPage from './pages/AuthPage';
 import BirthDataPage from './pages/BirthDataPage';
 import Dashboard from './pages/Dashboard';
+import AdminPage from './pages/AdminPage';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const SITE_PASSWORD = 'ThriveMap';
@@ -75,6 +76,14 @@ function AuthRoute({ children }) {
   return children;
 }
 
+function AdminRoute({ children }) {
+  const { user, profile, loading, profileLoading } = useAuth();
+  if (loading || profileLoading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/auth" replace />;
+  if (!profile?.is_admin) return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
 // Smart redirect: if user has birth data → dashboard, else → birth-data form
 function SmartRedirect() {
   const { user, loading, hasBirthData, profileLoading } = useAuth();
@@ -96,6 +105,7 @@ export default function App() {
           <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
           <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           <Route path="*" element={<SmartRedirect />} />
         </Routes>
       </AuthProvider>

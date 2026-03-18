@@ -43,10 +43,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
+  const isAdmin = profile?.is_admin === true;
 
   async function signUp(email, password) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
+    if (data?.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email: data.user.email,
+        updated_at: new Date().toISOString(),
+      });
+    }
     return data;
   }
 
@@ -74,6 +82,7 @@ export function AuthProvider({ children }) {
       .from('profiles')
       .upsert({
         id: user.id,
+        email: user.email,
         birth_date: birthData.date,
         birth_time: birthData.time,
         birth_city: birthData.city,
@@ -90,7 +99,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, profileLoading, hasBirthData, signUp, signIn, signOut, resetPassword, saveBirthData, fetchProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, profileLoading, hasBirthData, isAdmin, signUp, signIn, signOut, resetPassword, saveBirthData, fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );
