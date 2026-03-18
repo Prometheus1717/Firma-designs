@@ -47,10 +47,17 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick }) {
+export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
-  const S = useRef({ rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0, lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0 });
+  const S = useRef({
+    rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
+    lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
+    // Flat map state
+    flatTx: 0, flatTy: 0, flatScale: 1,
+  });
   const [, forceUpdate] = useState(0);
+  const flatRef = useRef(flat);
+  flatRef.current = flat;
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -64,55 +71,84 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const s = S.current, cx = W / 2, cy = H / 2;
-    const proj = d3.geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
-    const path = d3.geoPath(proj, ctx);
-    const center = [-s.rot[0], -s.rot[1]];
+    const isFlat = flatRef.current;
 
-    // Atmosphere
-    const ag = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
-    ag.addColorStop(0, 'transparent'); ag.addColorStop(1, 'rgba(0,216,138,.03)');
-    ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
+    let proj, path, center;
 
-    // Ocean
-    ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
+    if (isFlat) {
+      // Flat map — Natural Earth projection
+      const baseScale = Math.min(W, H) * 0.28;
+      proj = d3.geoNaturalEarth1()
+        .scale(baseScale * s.flatScale)
+        .translate([cx + s.flatTx, cy + s.flatTy])
+        .rotate([s.rot[0], 0]);
+      path = d3.geoPath(proj, ctx);
+      center = null; // no backside culling
 
-    // Graticule
-    ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
-    ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
+      // Background
+      ctx.fillStyle = '#0B1420';
+      ctx.beginPath(); path({ type: 'Sphere' }); ctx.fill();
 
-    // Countries
-    ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .6;
-    CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
-    if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
+      // Graticule
+      ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
+      ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
 
-    // Sphere border
-    ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
-    ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
+      // Countries
+      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .5;
+      CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
+      if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
-    // Astro lines with dash patterns per angle type
+      // Map border
+      ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
+      ctx.beginPath(); path({ type: 'Sphere' }); ctx.stroke();
+    } else {
+      // Globe — Orthographic projection
+      proj = d3.geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
+      path = d3.geoPath(proj, ctx);
+      center = [-s.rot[0], -s.rot[1]];
+
+      // Atmosphere
+      const ag = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
+      ag.addColorStop(0, 'transparent'); ag.addColorStop(1, 'rgba(0,216,138,.03)');
+      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
+
+      // Ocean
+      ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
+
+      // Graticule
+      ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
+      ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
+
+      // Countries
+      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .6;
+      CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
+      if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
+
+      // Sphere border
+      ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
+      ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    // Astro lines
     if (lines) {
-      const lw = s.scale > 400 ? 2.2 : 1.5;
+      const lw = isFlat ? 1.3 : (s.scale > 400 ? 2.2 : 1.5);
       lines.forEach(l => {
         ctx.strokeStyle = l.c;
         ctx.lineWidth = lw;
         ctx.globalAlpha = .65;
 
-        // Dash pattern by angle: MC=solid, IC=dashed, ASC=long-dash, DC=dotted
         if (l.angle === 'IC') ctx.setLineDash([6, 4]);
         else if (l.angle === 'ASC') ctx.setLineDash([10, 4]);
         else if (l.angle === 'DC') ctx.setLineDash([2, 3]);
         else ctx.setLineDash([]);
 
         if (l.type === 'curve') {
-          // Use pre-split segments to avoid antimeridian artifacts
           const segs = l.segments || [l.points];
           segs.forEach(seg => {
             if (!seg || seg.length < 2) return;
-            const geo = { type: 'LineString', coordinates: seg };
-            ctx.beginPath(); path(geo); ctx.stroke();
+            ctx.beginPath(); path({ type: 'LineString', coordinates: seg }); ctx.stroke();
           });
         } else {
-          // MC/IC lines are meridians (straight vertical lines)
           const geo = { type: 'LineString', coordinates: Array.from({ length: 181 }, (_, i) => [l.lo, -90 + i]) };
           ctx.beginPath(); path(geo); ctx.stroke();
         }
@@ -124,15 +160,18 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     // Cities on lines
     if (citiesOnLines) {
       citiesOnLines.forEach(c => {
-        if (d3.geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
+        if (!isFlat && center && d3.geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
         const p = proj([c.lo, c.la]);
         if (!p) return;
-        const r = s.scale > 400 ? 4 : 2.5;
+        const r = isFlat ? (s.flatScale > 2 ? 4 : 2.5) : (s.scale > 400 ? 4 : 2.5);
         ctx.fillStyle = c.lc; ctx.globalAlpha = .9;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
-        if (s.scale > 250) {
-          const fs = s.scale > 500 ? 10 : s.scale > 350 ? 8 : 7;
+        const showLabels = isFlat ? s.flatScale > 0.8 : s.scale > 250;
+        if (showLabels) {
+          const fs = isFlat
+            ? (s.flatScale > 3 ? 10 : s.flatScale > 1.5 ? 8 : 7)
+            : (s.scale > 500 ? 10 : s.scale > 350 ? 8 : 7);
           ctx.font = `600 ${fs}px JetBrains Mono`;
           ctx.fillStyle = '#D0DDE8';
           ctx.textAlign = 'left';
@@ -144,7 +183,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     // Home marker
     if (homeLocation) {
       const [hLng, hLat, hLabel] = homeLocation;
-      if (d3.geoDistance([hLng, hLat], center) < Math.PI / 2) {
+      if (isFlat || (center && d3.geoDistance([hLng, hLat], center) < Math.PI / 2)) {
         const p = proj([hLng, hLat]);
         if (p) {
           const t = (Date.now() % 2200) / 2200;
@@ -170,7 +209,8 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     }
 
     function loop(ts) {
-      if (s.auto && !s.drag) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
+      const isFlat = flatRef.current;
+      if (!isFlat && s.auto && !s.drag) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
       if (s.dirty || (ts - s.lastDraw) > 100) { draw(); s.dirty = false; s.lastDraw = ts; }
       s.raf = requestAnimationFrame(loop);
     }
@@ -178,21 +218,74 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
 
     const c = canvasRef.current;
     if (!c) return;
-    const dn = e => { s.drag = true; s.auto = false; const t = e.touches ? e.touches[0] : e; s.lx = t.clientX; s.ly = t.clientY; };
-    const mv = e => { if (!s.drag) return; const t = e.touches ? e.touches[0] : e; s.rot = [s.rot[0] + (t.clientX - s.lx) * .25, Math.max(-70, Math.min(70, s.rot[1] - (t.clientY - s.ly) * .25))]; s.lx = t.clientX; s.ly = t.clientY; s.dirty = true; };
-    const up = () => { s.drag = false; setTimeout(() => { s.auto = true; }, 4000); };
-    const wh = e => { e.preventDefault(); s.scale = Math.max(180, Math.min(1800, s.scale * (e.deltaY < 0 ? 1.08 : .93))); s.auto = false; s.dirty = true; clearTimeout(s._z); s._z = setTimeout(() => { s.auto = true; }, 4000); };
+
+    const dn = e => {
+      s.drag = true;
+      s.auto = false;
+      const t = e.touches ? e.touches[0] : e;
+      s.lx = t.clientX; s.ly = t.clientY;
+    };
+    const mv = e => {
+      if (!s.drag) return;
+      const t = e.touches ? e.touches[0] : e;
+      const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
+      if (flatRef.current) {
+        s.flatTx += dx;
+        s.flatTy += dy;
+      } else {
+        s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+      }
+      s.lx = t.clientX; s.ly = t.clientY;
+      s.dirty = true;
+    };
+    const up = () => {
+      s.drag = false;
+      if (!flatRef.current) setTimeout(() => { s.auto = true; }, 4000);
+    };
+    const wh = e => {
+      e.preventDefault();
+      if (flatRef.current) {
+        const factor = e.deltaY < 0 ? 1.08 : 0.93;
+        s.flatScale = Math.max(0.5, Math.min(12, s.flatScale * factor));
+      } else {
+        s.scale = Math.max(180, Math.min(1800, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
+        s.auto = false;
+        clearTimeout(s._z);
+        s._z = setTimeout(() => { s.auto = true; }, 4000);
+      }
+      s.dirty = true;
+    };
     const dbl = e => {
       e.preventDefault();
       const r = c.getBoundingClientRect();
-      const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
-      const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
-      if (co) { s.rot = [-co[0], -co[1]]; s.scale = Math.min(1800, s.scale * 1.5); s.auto = false; s.dirty = true; setTimeout(() => { s.auto = true; }, 6000); }
+      if (flatRef.current) {
+        // Zoom in on double-click point
+        const mx = e.clientX - r.left - r.width / 2 - s.flatTx;
+        const my = e.clientY - r.top - r.height / 2 - s.flatTy;
+        s.flatScale = Math.min(12, s.flatScale * 1.8);
+        s.flatTx -= mx * 0.8;
+        s.flatTy -= my * 0.8;
+      } else {
+        const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
+        const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
+        if (co) { s.rot = [-co[0], -co[1]]; s.scale = Math.min(1800, s.scale * 1.5); s.auto = false; setTimeout(() => { s.auto = true; }, 6000); }
+      }
+      s.dirty = true;
     };
     const click = e => {
       if (!citiesOnLines || !onCityClick) return;
       const r = c.getBoundingClientRect();
-      const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
+      const W = r.width, H = r.height;
+      let proj;
+      if (flatRef.current) {
+        const baseScale = Math.min(W, H) * 0.28;
+        proj = d3.geoNaturalEarth1()
+          .scale(baseScale * s.flatScale)
+          .translate([W / 2 + s.flatTx, H / 2 + s.flatTy])
+          .rotate([s.rot[0], 0]);
+      } else {
+        proj = d3.geoOrthographic().scale(s.scale).translate([W / 2, H / 2]).rotate(s.rot);
+      }
       const mx = e.clientX - r.left, my = e.clientY - r.top;
       let closest = null, minD = 20;
       citiesOnLines.forEach(ci => {
@@ -218,14 +311,26 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick 
     };
   }, [draw, citiesOnLines, onCityClick]);
 
+  // Mark dirty on mode change
+  useEffect(() => {
+    S.current.dirty = true;
+  }, [flat]);
+
   // Expose flyTo
   Globe.flyTo = (la, lo) => {
     const s = S.current;
-    s.auto = false;
-    s.rot = [-lo, -la];
-    s.scale = Math.max(s.scale, 450);
+    if (flatRef.current) {
+      s.rot = [-lo, 0];
+      s.flatTx = 0;
+      s.flatTy = 0;
+      s.flatScale = Math.max(s.flatScale, 2.5);
+    } else {
+      s.auto = false;
+      s.rot = [-lo, -la];
+      s.scale = Math.max(s.scale, 450);
+      setTimeout(() => { s.auto = true; }, 6000);
+    }
     s.dirty = true;
-    setTimeout(() => { s.auto = true; }, 6000);
   };
 
   return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />;

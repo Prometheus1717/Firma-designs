@@ -111,6 +111,7 @@ export default function Dashboard() {
   const [showProf, setShowProf] = useState(false);
   const [expandedPlanet, setExpandedPlanet] = useState(null);
   const [showAngleInfo, setShowAngleInfo] = useState(false);
+  const [flatMap, setFlatMap] = useState(false);
 
   const mob = w < 900;
 
@@ -383,7 +384,17 @@ export default function Dashboard() {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={lines} citiesOnLines={onLines} homeLocation={homeLocation} onCityClick={handleCityClick} />
+          <Globe lines={lines} citiesOnLines={onLines} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+
+          {/* Map mode toggle — top right */}
+          <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden' }}>
+            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '6px 12px', border: 'none', cursor: 'pointer', color: !flatMap ? '#00D88A' : '#5A7088', background: !flatMap ? '#00D88A15' : 'transparent', borderRight: '1px solid #1A2840' }}>
+              ◉ Globe
+            </button>
+            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '6px 12px', border: 'none', cursor: 'pointer', color: flatMap ? '#00D88A' : '#5A7088', background: flatMap ? '#00D88A15' : 'transparent' }}>
+              ▭ Map
+            </button>
+          </div>
 
           {/* Line info popup */}
           {typeof popup === 'number' && lines[popup] && (
