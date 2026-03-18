@@ -70,9 +70,9 @@ function ProtectedRoute({ children }) {
 }
 
 function AuthRoute({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
-  if (user) return <Navigate to="/birth-data" replace />;
+  const { user, loading, profileLoading, hasBirthData } = useAuth();
+  if (loading || profileLoading) return <LoadingScreen />;
+  if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/birth-data'} replace />;
   return children;
 }
 
