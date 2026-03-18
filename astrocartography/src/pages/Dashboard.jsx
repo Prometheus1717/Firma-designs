@@ -112,6 +112,7 @@ export default function Dashboard() {
   const [expandedPlanet, setExpandedPlanet] = useState(null);
   const [showAngleInfo, setShowAngleInfo] = useState(false);
   const [flatMap, setFlatMap] = useState(false);
+  const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
 
   const mob = w < 900;
 
@@ -167,7 +168,16 @@ export default function Dashboard() {
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
-  const onLines = useMemo(() => getCitiesOnLines(lines, ALL_CITIES, 3.5), [lines]);
+  const visibleLines = useMemo(() => lines.filter(l => !hiddenPlanets.has(l.planet)), [lines, hiddenPlanets]);
+  const onLines = useMemo(() => getCitiesOnLines(visibleLines, ALL_CITIES, 3.5), [visibleLines]);
+
+  const togglePlanet = useCallback((planet) => {
+    setHiddenPlanets(prev => {
+      const next = new Set(prev);
+      if (next.has(planet)) next.delete(planet); else next.add(planet);
+      return next;
+    });
+  }, []);
 
   // Group lines by planet for sidebar
   const planetGroups = useMemo(() => {
@@ -285,7 +295,10 @@ export default function Dashboard() {
           {/* Header with info button */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 12px 6px' }}>
             <span style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2 }}>PLANETS</span>
-            <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#3A5068', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? '#00D88A40' : '#1A2840'}`, background: showAngleInfo ? '#00D88A10' : 'transparent' }}>? Lines</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {hiddenPlanets.size > 0 && <span onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: '#00D88A', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: '1px solid #00D88A40', background: '#00D88A10' }}>All on</span>}
+              <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#3A5068', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? '#00D88A40' : '#1A2840'}`, background: showAngleInfo ? '#00D88A10' : 'transparent' }}>?</span>
+            </div>
           </div>
 
           {/* Angle info panel (collapsible) */}
@@ -319,19 +332,24 @@ export default function Dashboard() {
           {/* Planet groups */}
           {planetGroups.map(g => {
             const isOpen = expandedPlanet === g.planet;
+            const isHidden = hiddenPlanets.has(g.planet);
             const planetCities = onLines.filter(c => g.lines.some(l => l.n === c.line));
             return (
-              <div key={g.planet}>
-                <div onClick={() => setExpandedPlanet(isOpen ? null : g.planet)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', background: isOpen ? '#101C28' : 'transparent', transition: 'background .15s' }}>
-                  <div style={{ width: 4, height: 22, borderRadius: 2, background: g.color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
-                  <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
-                  <div style={{ display: 'flex', gap: 3 }}>
-                    {g.lines.map(l => (
-                      <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
-                    ))}
+              <div key={g.planet} style={{ opacity: isHidden ? 0.4 : 1, transition: 'opacity .15s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', background: isOpen ? '#101C28' : 'transparent', transition: 'background .15s' }}>
+                  <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 3, cursor: 'pointer', flexShrink: 0, background: isHidden ? '#1A2840' : g.color + '25', border: `1px solid ${isHidden ? '#1A2840' : g.color + '50'}` }} title={isHidden ? 'Show on map' : 'Hide from map'}>
+                    <span style={{ ...F, fontSize: 8, color: isHidden ? '#3A5068' : g.color }}>{isHidden ? '○' : '●'}</span>
                   </div>
-                  <span style={{ ...F, fontSize: 10, color: '#3A5068', transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
+                  <div onClick={() => setExpandedPlanet(isOpen ? null : g.planet)} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                    <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
+                    <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
+                    <div style={{ display: 'flex', gap: 3 }}>
+                      {g.lines.map(l => (
+                        <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
+                      ))}
+                    </div>
+                    <span style={{ ...F, fontSize: 10, color: '#3A5068', transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
+                  </div>
                 </div>
                 {/* Expanded detail */}
                 {isOpen && <div style={{ background: '#0A1420', borderBottom: '1px solid #14202C' }}>
@@ -384,7 +402,7 @@ export default function Dashboard() {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={lines} citiesOnLines={onLines} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden' }}>
@@ -433,13 +451,17 @@ export default function Dashboard() {
               <div onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#5A7088', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
             </div>
             {popup === 'leg' && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200, maxHeight: '60vh', overflowY: 'auto' }}>
-              {planetGroups.map(g => (
-                <div key={g.planet} style={{ marginBottom: 4 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0', cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
-                    <div style={{ width: 4, height: 16, borderRadius: 1, background: g.color }} />
-                    <span style={{ fontSize: 13 }}>{g.symbol}</span>
-                    <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
-                    <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
+              {planetGroups.map(g => {
+                const isHid = hiddenPlanets.has(g.planet);
+                return (
+                <div key={g.planet} style={{ marginBottom: 4, opacity: isHid ? 0.4 : 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0' }}>
+                    <span onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ ...F, fontSize: 10, cursor: 'pointer', color: isHid ? '#3A5068' : g.color }}>{isHid ? '○' : '●'}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
+                      <span style={{ fontSize: 13 }}>{g.symbol}</span>
+                      <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
+                      <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
+                    </div>
                   </div>
                   {expandedPlanet === g.planet && g.lines.map((l, li) => (
                     <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
@@ -456,7 +478,7 @@ export default function Dashboard() {
                     </div>
                   ))}
                 </div>
-              ))}
+              )})}
             </div>}
             {/* Mobile angle info */}
             {showAngleInfo && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
