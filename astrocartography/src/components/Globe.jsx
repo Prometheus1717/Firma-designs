@@ -270,7 +270,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     function loop(ts) {
       const isFlat = flatRef.current;
-      if (!isFlat && s.auto && !s.drag) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
+      // Stop rotation when globe fills the viewport
+      const cv = canvasRef.current;
+      const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) / 2;
+      if (!isFlat && s.auto && !s.drag && !globeFills) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
       if (s.dirty || (ts - s.lastDraw) > 100) { draw(); s.dirty = false; s.lastDraw = ts; }
       s.raf = requestAnimationFrame(loop);
     }
@@ -319,7 +322,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     };
     const up = () => {
       s.drag = false;
-      if (!flatRef.current) setTimeout(() => { s.auto = true; }, 4000);
+      if (!flatRef.current) {
+        const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) / 2;
+        if (!gf) setTimeout(() => { s.auto = true; }, 4000);
+      }
     };
     const wh = e => {
       e.preventDefault();
@@ -338,7 +344,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.scale = Math.max(180, Math.min(5000, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
         s.auto = false;
         clearTimeout(s._z);
-        s._z = setTimeout(() => { s.auto = true; }, 4000);
+        const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) / 2;
+        if (!gf) s._z = setTimeout(() => { s.auto = true; }, 4000);
       }
       s.dirty = true;
     };
@@ -356,7 +363,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       } else {
         const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
-        if (co) { s.rot = [-co[0], -co[1]]; s.scale = Math.min(5000, s.scale * 1.5); s.auto = false; setTimeout(() => { s.auto = true; }, 6000); }
+        if (co) {
+          s.rot = [-co[0], -co[1]]; s.scale = Math.min(5000, s.scale * 1.5); s.auto = false;
+          const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) / 2;
+          if (!gf) setTimeout(() => { s.auto = true; }, 6000);
+        }
       }
       s.dirty = true;
     };
