@@ -26,28 +26,39 @@ const ANGLE_ORDER = ['MC', 'IC', 'ASC', 'DC'];
 
 function getCitiesOnLines(lines, cities, threshold = 3.5) {
   const r = [], seen = new Set();
+  const toRad = Math.PI / 180;
+  // Great-circle distance in degrees between two points
+  function gcDist(la1, lo1, la2, lo2) {
+    const dLa = (la2 - la1) * toRad, dLo = (lo2 - lo1) * toRad;
+    const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * toRad) * Math.cos(la2 * toRad) * Math.sin(dLo / 2) ** 2;
+    return Math.asin(Math.min(1, Math.sqrt(a))) * 2 / toRad;
+  }
   lines.forEach(l => {
     if (l.type === 'curve') {
-      // For curved lines (ASC/DSC), check proximity to any point on the curve
+      // For curved lines (ASC/DC), find minimum great-circle distance to any curve point
+      const pts = [];
+      (l.segments || [l.points]).forEach(seg => { if (seg) pts.push(...seg); });
+      if (!pts.length) return;
       cities.forEach(([la, lo, name]) => {
         if (seen.has(name)) return;
-        const near = l.points?.some(([pLo, pLa]) => {
-          const dLo = Math.abs(lo - pLo);
-          const dLa = Math.abs(la - pLa);
-          return dLo < threshold && dLa < threshold;
-        });
-        if (near) {
+        let minD = Infinity;
+        for (let i = 0; i < pts.length; i++) {
+          const d = gcDist(la, lo, pts[i][1], pts[i][0]);
+          if (d < minD) minD = d;
+          if (minD < 0.5) break; // close enough, skip rest
+        }
+        if (minD <= threshold) {
           seen.add(name);
-          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: 1, desc: l.desc });
+          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: Math.round(minD * 10) / 10, desc: l.desc });
         }
       });
     } else {
-      // MC/IC lines — check longitude proximity
+      // MC/IC lines — longitude distance adjusted for latitude
       cities.forEach(([la, lo, name]) => {
         const d = Math.min(Math.abs(lo - l.lo), 360 - Math.abs(lo - l.lo));
         if (d <= threshold && !seen.has(name)) {
           seen.add(name);
-          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: d, desc: l.desc });
+          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: Math.round(d * 10) / 10, desc: l.desc });
         }
       });
     }
