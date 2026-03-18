@@ -335,7 +335,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.zoom = newZoom;
         clampPan();
       } else {
-        s.scale = Math.max(180, Math.min(1800, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
+        s.scale = Math.max(180, Math.min(5000, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
         s.auto = false;
         clearTimeout(s._z);
         s._z = setTimeout(() => { s.auto = true; }, 4000);
@@ -356,7 +356,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       } else {
         const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
-        if (co) { s.rot = [-co[0], -co[1]]; s.scale = Math.min(1800, s.scale * 1.5); s.auto = false; setTimeout(() => { s.auto = true; }, 6000); }
+        if (co) { s.rot = [-co[0], -co[1]]; s.scale = Math.min(5000, s.scale * 1.5); s.auto = false; setTimeout(() => { s.auto = true; }, 6000); }
       }
       s.dirty = true;
     };
