@@ -8,8 +8,10 @@ export default function BirthDataPage() {
   const { saveBirthData, signOut } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [date, setDate] = useState(''); // internal: YYYY-MM-DD
+  const [dateDisplay, setDateDisplay] = useState(''); // shown: dd.mm.yyyy
+  const [time, setTime] = useState(''); // internal: HH:MM
+  const [timeDisplay, setTimeDisplay] = useState(''); // shown: HH:MM (h:MM AM/PM)
   const [citySearch, setCitySearch] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
   const [results, setResults] = useState([]);
@@ -122,24 +124,61 @@ export default function BirthDataPage() {
           {/* Date + Time */}
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
             <div style={{ flex: 1 }}>
-              <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH DATE *</label>
+              <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH DATE * <span style={{ color: '#3A5068' }}>(dd.mm.yyyy)</span></label>
               <input
-                type="date"
+                type="text"
                 required
-                value={date}
-                onChange={e => setDate(e.target.value)}
+                value={dateDisplay}
+                placeholder="18.03.1995"
+                onChange={e => {
+                  let v = e.target.value.replace(/[^0-9.]/g, '');
+                  // Auto-insert dots after dd and mm
+                  const digits = v.replace(/\./g, '');
+                  if (digits.length >= 5) {
+                    v = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4, 8);
+                  } else if (digits.length >= 3) {
+                    v = digits.slice(0, 2) + '.' + digits.slice(2, 4);
+                  }
+                  setDateDisplay(v);
+                  // Parse dd.mm.yyyy → YYYY-MM-DD for internal use
+                  const m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+                  if (m) {
+                    setDate(`${m[3]}-${m[2]}-${m[1]}`);
+                  } else {
+                    setDate('');
+                  }
+                }}
                 style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: '#3A5068' }}>(exact)</span></label>
               <input
-                type="time"
+                type="text"
                 required
-                value={time}
-                onChange={e => setTime(e.target.value)}
+                value={timeDisplay}
+                placeholder="14:30"
+                onChange={e => {
+                  let v = e.target.value.replace(/[^0-9:]/g, '');
+                  const digits = v.replace(/:/g, '');
+                  if (digits.length >= 3) {
+                    v = digits.slice(0, 2) + ':' + digits.slice(2, 4);
+                  }
+                  setTimeDisplay(v);
+                  const m = v.match(/^(\d{2}):(\d{2})$/);
+                  if (m && +m[1] < 24 && +m[2] < 60) {
+                    setTime(`${m[1]}:${m[2]}`);
+                  } else {
+                    setTime('');
+                  }
+                }}
                 style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
               />
+              {time && (
+                <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 4 }}>
+                  {(() => { const [h, mi] = time.split(':').map(Number); const h12 = h % 12 || 12; return `${h12}:${String(mi).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; })()}
+                </div>
+              )}
             </div>
           </div>
 
