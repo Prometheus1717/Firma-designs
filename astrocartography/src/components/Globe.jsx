@@ -240,17 +240,25 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
     };
 
     const dn = e => {
-      if (flatRef.current) return; // No drag in flat mode
       s.drag = true;
       s.auto = false;
       const t = e.touches ? e.touches[0] : e;
       s.lx = t.clientX; s.ly = t.clientY;
     };
     const mv = e => {
-      if (!s.drag || flatRef.current) return;
+      if (!s.drag) return;
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
-      s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+      if (flatRef.current) {
+        // Only allow pan when zoomed in, clamped to edges
+        if (s.zoom > 1) {
+          s.panX += dx;
+          s.panY += dy;
+          clampPan();
+        }
+      } else {
+        s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+      }
       s.lx = t.clientX; s.ly = t.clientY;
       s.dirty = true;
     };
