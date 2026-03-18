@@ -7,6 +7,15 @@ import { calculateChart } from '../lib/calculateChart';
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
 
+const ANGLE_INFO = {
+  MC: { label: 'MC', full: 'Medium Coeli (Midheaven)', dash: 'solid', desc: 'The highest point in the sky at your birth. Represents career, public reputation, and how the world sees your achievements. On your MC line, you feel professionally empowered and publicly recognized.' },
+  IC: { label: 'IC', full: 'Imum Coeli (Nadir)', dash: 'dashed', desc: 'The deepest point below the horizon. Represents home, roots, family, and inner emotional life. On your IC line, you feel a deep sense of belonging and emotional grounding.' },
+  ASC: { label: 'ASC', full: 'Ascendant (Rising)', dash: 'long dash', desc: 'The eastern horizon at your birth. Represents your identity, self-expression, and first impressions. On your ASC line, your personality shines and others see your authentic self.' },
+  DC: { label: 'DC', full: 'Descendant (Setting)', dash: 'dotted', desc: 'The western horizon, opposite the Ascendant. Represents partnerships, relationships, and how you connect with others. On your DC line, meaningful relationships and alliances form naturally.' },
+};
+
+const ANGLE_ORDER = ['MC', 'IC', 'ASC', 'DC'];
+
 const ALL_CITIES = [
   [51.51, -.13, 'London'], [48.86, 2.35, 'Paris'], [50.94, 6.96, 'Köln'], [52.52, 13.4, 'Berlin'],
   [48.14, 11.58, 'München'], [50.11, 8.68, 'Frankfurt'], [53.55, 9.99, 'Hamburg'], [51.23, 6.78, 'Düsseldorf'],
@@ -100,6 +109,8 @@ export default function Dashboard() {
   const [cityPop, setCityPop] = useState(null);
   const [w, setW] = useState(900);
   const [showProf, setShowProf] = useState(false);
+  const [expandedPlanet, setExpandedPlanet] = useState(null);
+  const [showAngleInfo, setShowAngleInfo] = useState(false);
 
   const mob = w < 900;
 
@@ -156,6 +167,25 @@ export default function Dashboard() {
 
   const lines = chartData?.lines || [];
   const onLines = useMemo(() => getCitiesOnLines(lines, ALL_CITIES, 3.5), [lines]);
+
+  // Group lines by planet for sidebar
+  const planetGroups = useMemo(() => {
+    const groups = [];
+    const seen = new Set();
+    lines.forEach(l => {
+      if (!seen.has(l.planet)) {
+        seen.add(l.planet);
+        groups.push({
+          planet: l.planet,
+          symbol: l.symbol,
+          color: l.c,
+          quality: l.quality,
+          lines: lines.filter(x => x.planet === l.planet),
+        });
+      }
+    });
+    return groups;
+  }, [lines]);
 
   const thriveC = onLines.filter(c => c.q === 'thrive');
   const avoidC = onLines.filter(c => c.q === 'avoid');
@@ -250,25 +280,95 @@ export default function Dashboard() {
       {/* MAIN */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         {/* LEFT SIDEBAR */}
-        {!mob && <div style={{ width: 200, minWidth: 200, background: '#0D1520', borderRight: '1px solid #1A2840', overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px' }}>PLANETARY LINES</div>
-          {lines.map((l, i) => (
-            <div key={i} onClick={() => setPopup(popup === i ? null : i)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', background: popup === i ? '#101C28' : 'transparent' }}>
-              <div style={{ width: 14, height: 3, borderRadius: 2, background: l.c, flexShrink: 0 }} />
-              <span style={{ ...F, fontSize: 9, color: '#B0C0D0', flex: 1 }}>{l.n}</span>
-              <span style={{ ...F, fontSize: 8, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>{l.angle}</span>
+        {!mob && <div style={{ width: 220, minWidth: 220, background: '#0D1520', borderRight: '1px solid #1A2840', overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* Header with info button */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 12px 6px' }}>
+            <span style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2 }}>PLANETS</span>
+            <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#3A5068', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? '#00D88A40' : '#1A2840'}`, background: showAngleInfo ? '#00D88A10' : 'transparent' }}>? Lines</span>
+          </div>
+
+          {/* Angle info panel (collapsible) */}
+          {showAngleInfo && <div style={{ margin: '0 8px 8px', background: '#0A1420', border: '1px solid #1A2840', borderRadius: 6, padding: 10 }}>
+            <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8098B0', marginBottom: 8 }}>LINE TYPES</div>
+            {ANGLE_ORDER.map(a => {
+              const info = ANGLE_INFO[a];
+              return (
+                <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #14202C' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    {/* Visual dash preview */}
+                    <svg width="22" height="6" style={{ flexShrink: 0 }}>
+                      {a === 'MC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" />}
+                      {a === 'IC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray="4,3" />}
+                      {a === 'ASC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray="8,3" />}
+                      {a === 'DC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray="2,2" />}
+                    </svg>
+                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D0DDE8' }}>{info.label}</span>
+                    <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{info.full}</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: '#6A8098', lineHeight: 1.5, marginLeft: 30 }}>{info.desc}</div>
+                </div>
+              );
+            })}
+            <div style={{ ...F, fontSize: 8, color: '#3A5068', lineHeight: 1.5, borderTop: '1px solid #14202C', paddingTop: 6, marginTop: 2 }}>
+              MC & IC are vertical meridian lines (pole to pole).<br />
+              ASC & DC are curved lines that follow the horizon.
             </div>
-          ))}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>ZONES</div>
-          {[['thrive', 'Thrive Zone', 'Cities that amplify your strengths'], ['avoid', 'Caution Zone', 'Cities that challenge or drain'], ['neutral', 'Neutral', 'No major line influence']].map(([t, l, d]) => (
-            <div key={t} style={{ padding: '5px 12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, ...F, fontSize: 9, color: '#8098B0' }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: COL[t] }} />{l}
+          </div>}
+
+          {/* Planet groups */}
+          {planetGroups.map(g => {
+            const isOpen = expandedPlanet === g.planet;
+            const planetCities = onLines.filter(c => g.lines.some(l => l.n === c.line));
+            return (
+              <div key={g.planet}>
+                <div onClick={() => setExpandedPlanet(isOpen ? null : g.planet)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', background: isOpen ? '#101C28' : 'transparent', transition: 'background .15s' }}>
+                  <div style={{ width: 4, height: 22, borderRadius: 2, background: g.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
+                  <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
+                  <div style={{ display: 'flex', gap: 3 }}>
+                    {g.lines.map(l => (
+                      <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
+                    ))}
+                  </div>
+                  <span style={{ ...F, fontSize: 10, color: '#3A5068', transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
+                </div>
+                {/* Expanded detail */}
+                {isOpen && <div style={{ background: '#0A1420', borderBottom: '1px solid #14202C' }}>
+                  {g.lines.map((l, li) => (
+                    <div key={li} onClick={() => setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l))} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
+                      {/* Dash preview */}
+                      <svg width="18" height="4" style={{ flexShrink: 0 }}>
+                        {l.angle === 'MC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" />}
+                        {l.angle === 'IC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="4,3" />}
+                        {l.angle === 'ASC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="8,3" />}
+                        {l.angle === 'DC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="2,2" />}
+                      </svg>
+                      <span style={{ ...F, fontSize: 9, color: '#8098B0', flex: 1 }}>{l.angle}</span>
+                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>
+                        {l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'}
+                      </span>
+                    </div>
+                  ))}
+                  {planetCities.length > 0 && <div style={{ padding: '4px 12px 6px 28px', ...F, fontSize: 8, color: '#3A5068', lineHeight: 1.5 }}>
+                    {planetCities.slice(0, 5).map(c => c.name).join(' · ')}{planetCities.length > 5 ? ` +${planetCities.length - 5}` : ''}
+                  </div>}
+                </div>}
               </div>
-              <div style={{ ...F, fontSize: 7, color: '#3A5068', marginLeft: 15, marginTop: 1 }}>{d}</div>
+            );
+          })}
+
+          {/* Zones */}
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>ZONES</div>
+          {[['thrive', 'Thrive Zone', 'Strengths amplified'], ['avoid', 'Caution Zone', 'Challenges likely'], ['neutral', 'Neutral', 'Subtle influence']].map(([t, l, d]) => (
+            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 12px', ...F, fontSize: 9, color: '#8098B0' }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: COL[t], flexShrink: 0 }} />
+              <span>{l}</span>
+              <span style={{ fontSize: 7, color: '#3A5068', marginLeft: 'auto' }}>{d}</span>
             </div>
           ))}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>TOP CITIES FOR YOU</div>
+
+          {/* Top Cities */}
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>TOP CITIES</div>
           {bestCities.map((c, i) => (
             <div key={i} onClick={() => flyTo(c.la, c.lo)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: '#00D88A', fontWeight: 700, width: 14 }}>{i + 1}.</span>
@@ -317,11 +417,60 @@ export default function Dashboard() {
 
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
-            <div onClick={() => setPopup(popup === 'leg' ? null : 'leg')} style={{ ...F, fontSize: 9, color: '#00D88A', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ LINES</div>
-            {popup === 'leg' && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 180 }}>
-              {lines.map((l, i) => (<div key={i} onClick={e => { e.stopPropagation(); setPopup(i); }} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 0', cursor: 'pointer' }}>
-                <div style={{ width: 12, height: 2.5, background: l.c, borderRadius: 1 }} /><span style={{ ...F, fontSize: 9, color: '#B0C0D0' }}>{l.n}</span>
-              </div>))}
+            <div style={{ display: 'flex', gap: 4 }}>
+              <div onClick={() => setPopup(popup === 'leg' ? null : 'leg')} style={{ ...F, fontSize: 9, color: '#00D88A', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
+              <div onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#5A7088', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
+            </div>
+            {popup === 'leg' && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200, maxHeight: '60vh', overflowY: 'auto' }}>
+              {planetGroups.map(g => (
+                <div key={g.planet} style={{ marginBottom: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0', cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
+                    <div style={{ width: 4, height: 16, borderRadius: 1, background: g.color }} />
+                    <span style={{ fontSize: 13 }}>{g.symbol}</span>
+                    <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
+                    <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
+                  </div>
+                  {expandedPlanet === g.planet && g.lines.map((l, li) => (
+                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
+                      <svg width="14" height="3" style={{ flexShrink: 0 }}>
+                        {l.angle === 'MC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" />}
+                        {l.angle === 'IC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
+                        {l.angle === 'ASC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="6,2" />}
+                        {l.angle === 'DC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="1.5,1.5" />}
+                      </svg>
+                      <span style={{ ...F, fontSize: 9, color: '#8098B0' }}>{l.angle}</span>
+                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>
+                        {l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>}
+            {/* Mobile angle info */}
+            {showAngleInfo && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8098B0' }}>LINE TYPES</span>
+                <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer' }}>✕</span>
+              </div>
+              {ANGLE_ORDER.map(a => {
+                const info = ANGLE_INFO[a];
+                return (
+                  <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #14202C' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                      <svg width="16" height="4">
+                        {a === 'MC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" />}
+                        {a === 'IC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" strokeDasharray="4,3" />}
+                        {a === 'ASC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" strokeDasharray="8,3" />}
+                        {a === 'DC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" strokeDasharray="2,2" />}
+                      </svg>
+                      <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8' }}>{info.label}</span>
+                      <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{info.full}</span>
+                    </div>
+                    <div style={{ fontSize: 10, color: '#6A8098', lineHeight: 1.5, marginLeft: 22 }}>{info.desc}</div>
+                  </div>
+                );
+              })}
             </div>}
           </div>}
         </div>
