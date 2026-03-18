@@ -97,6 +97,38 @@ function cityReading(c) {
   return `${c.name} is near your ${c.line} line (${c.dist.toFixed(1)}° off). This is a neutral zone — neither strongly positive nor negative. You may experience subtle shifts in energy here.`;
 }
 
+const PLANET_DOMAINS = {
+  Sun: { domain: 'Identity · Career · Vitality', icon: '☉' },
+  Moon: { domain: 'Emotions · Home · Intuition', icon: '☽' },
+  Mercury: { domain: 'Communication · Intellect · Trade', icon: '☿' },
+  Venus: { domain: 'Love · Beauty · Finance', icon: '♀' },
+  Mars: { domain: 'Drive · Ambition · Conflict', icon: '♂' },
+  Jupiter: { domain: 'Growth · Luck · Expansion', icon: '♃' },
+  Saturn: { domain: 'Discipline · Limits · Karma', icon: '♄' },
+  Uranus: { domain: 'Innovation · Disruption · Freedom', icon: '♅' },
+  Neptune: { domain: 'Spirituality · Illusion · Art', icon: '♆' },
+  Pluto: { domain: 'Transformation · Power · Depth', icon: '♇' },
+};
+
+const ANGLE_EFFECTS = {
+  MC: { area: 'Career & Public Life', short: 'public sphere' },
+  IC: { area: 'Home & Roots', short: 'private life' },
+  ASC: { area: 'Self & Identity', short: 'self-expression' },
+  DC: { area: 'Partnerships', short: 'relationships' },
+};
+
+function cityImpact(c) {
+  const parts = c.line.split(' ');
+  const planet = parts[0];
+  const angle = parts[1];
+  const pd = PLANET_DOMAINS[planet];
+  const ae = ANGLE_EFFECTS[angle];
+  if (!pd || !ae) return { planet, angle, domain: '', area: '', summary: c.desc || '' };
+  const strength = c.dist < 1 ? 'EXACT' : c.dist < 2 ? 'STRONG' : 'MODERATE';
+  const strengthPct = Math.max(0, Math.round((1 - c.dist / 3.5) * 100));
+  return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
+}
+
 export default function Dashboard() {
   const { user, profile, hasBirthData, signOut } = useAuth();
   const navigate = useNavigate();
@@ -200,7 +232,8 @@ export default function Dashboard() {
 
   const thriveC = onLines.filter(c => c.q === 'thrive');
   const avoidC = onLines.filter(c => c.q === 'avoid');
-  const filteredTab = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : onLines;
+  const neutralC = onLines.filter(c => c.q === 'neutral');
+  const filteredTab = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : tab === 'neutral' ? neutralC : onLines;
   const bestCities = onLines.filter(c => c.q === 'thrive').slice(0, 5);
 
   const homeLocation = profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
@@ -509,57 +542,91 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* BOTTOM PANEL */}
-      <div style={{ minHeight: mob ? 165 : 190, maxHeight: mob ? 165 : 190, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexShrink: 0, zIndex: 200 }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderRight: '1px solid #1A2840', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #14202C', flexShrink: 0 }}>
-            {['thrive', 'avoid', 'all'].map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{
-                flex: 1, background: tab === t ? '#101C28' : 'transparent', border: 'none',
-                borderBottom: tab === t ? `2px solid ${t === 'thrive' ? COL.thrive : t === 'avoid' ? COL.avoid : '#5A7088'}` : '2px solid transparent',
-                color: tab === t ? (t === 'thrive' ? COL.thrive : t === 'avoid' ? COL.avoid : '#B0C0D0') : '#3A5068',
-                cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
-              }}>
-                {t === 'thrive' ? `▲ THRIVE (${thriveC.length})` : t === 'avoid' ? `▼ AVOID (${avoidC.length})` : `ALL (${onLines.length})`}
-              </button>
-            ))}
-          </div>
-          <div style={{ flex: 1, overflowY: 'auto' }}>
-            {filteredTab.map((c, i) => (
-              <div key={i} onClick={() => flyTo(c.la, c.lo)} style={{ display: 'flex', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', gap: 7, alignItems: 'center' }}>
-                <div style={{ width: 3, height: 20, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
-                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2 }}>{c.line}</span>
-                    <span style={{ ...F, fontSize: 8, color: '#3A5068', marginLeft: 'auto' }}>{c.dist.toFixed(1)}°</span>
+      {/* BOTTOM PANEL — Bloomberg-style */}
+      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexDirection: 'column', flexShrink: 0, zIndex: 200 }}>
+        {/* Tabs */}
+        <div style={{ display: 'flex', borderBottom: '1px solid #14202C', flexShrink: 0 }}>
+          {[
+            { id: 'thrive', label: '▲ THRIVE', count: thriveC.length, col: COL.thrive },
+            { id: 'neutral', label: '◆ NEUTRAL', count: neutralC.length, col: COL.neutral },
+            { id: 'avoid', label: '▼ AVOID', count: avoidC.length, col: COL.avoid },
+            { id: 'all', label: 'ALL', count: onLines.length, col: '#B0C0D0' },
+          ].map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              flex: 1, background: tab === t.id ? '#101C28' : 'transparent', border: 'none',
+              borderBottom: tab === t.id ? `2px solid ${t.col}` : '2px solid transparent',
+              color: tab === t.id ? t.col : '#3A5068',
+              cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
+            }}>
+              {t.label} ({t.count})
+            </button>
+          ))}
+        </div>
+
+        {/* Column headers */}
+        {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: '1px solid #14202C', flexShrink: 0, background: '#0A1018' }}>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
+          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
+        </div>}
+
+        {/* City rows */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {filteredTab.map((c, i) => {
+            const imp = cityImpact(c);
+            const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
+            return mob ? (
+              <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                  <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
+                  <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2 }}>{c.line}</span>
+                  <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700 }}>{imp.strength} {imp.strengthPct}%</span>
+                </div>
+                <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
+              </div>
+            ) : (
+              <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                {/* City */}
+                <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', lineHeight: 1.2 }}>{c.name}</div>
+                    <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
                   </div>
+                </div>
+                {/* Line */}
+                <div style={{ width: 100, flexShrink: 0 }}>
+                  <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {c.line}</span>
+                  <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.dist.toFixed(1)}° orb</div>
+                </div>
+                {/* Signal strength */}
+                <div style={{ width: 60, display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                  <span style={{ ...F, fontSize: 8, fontWeight: 700, color: qCol }}>{imp.strengthPct}%</span>
+                  <div style={{ width: 36, height: 3, background: '#14202C', borderRadius: 2, marginTop: 2 }}>
+                    <div style={{ width: `${imp.strengthPct}%`, height: '100%', background: qCol, borderRadius: 2 }} />
+                  </div>
+                  <span style={{ ...F, fontSize: 6, color: '#3A5068', marginTop: 1 }}>{imp.strength}</span>
+                </div>
+                {/* Domain */}
+                <div style={{ width: 130, flexShrink: 0 }}>
+                  <div style={{ ...F, fontSize: 8, color: '#8098B0' }}>{imp.domain}</div>
+                </div>
+                {/* Life area */}
+                <div style={{ width: 110, flexShrink: 0 }}>
+                  <span style={{ ...F, fontSize: 8, color: qCol, fontWeight: 600 }}>{imp.area}</span>
+                </div>
+                {/* Reading */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ ...F, fontSize: 8, color: '#6A8098', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{imp.summary}</div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-        {!mob && <div style={{ width: 280, minWidth: 280, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, padding: '8px 12px', borderBottom: '1px solid #14202C' }}>
-            ON YOUR LINES — {onLines.length} CITIES
-          </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-            {lines.map((l, i) => {
-              const cities = onLines.filter(c => c.line === l.n);
-              if (!cities.length) return null;
-              return (
-                <div key={i} style={{ padding: '4px 12px', borderBottom: '1px solid #0F1820' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                    <div style={{ width: 10, height: 2, background: l.c, borderRadius: 1 }} />
-                    <span style={{ ...F, fontSize: 8, color: '#8098B0', fontWeight: 600 }}>{l.n}</span>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', marginLeft: 'auto' }}>{cities.length} cities</span>
-                  </div>
-                  <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.5 }}>{cities.map(c => c.name).join(' · ')}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>}
       </div>
 
       {/* BOTTOM TICKER */}
@@ -567,8 +634,9 @@ export default function Dashboard() {
         <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite' }}>
           {[...Array(2)].flatMap(() => [
             bestCities[0] ? `★ Best city: ${bestCities[0].name} (${bestCities[0].line})` : '★ Your personalized chart',
-            `▲ ${thriveC.length} cities on thrive lines`,
-            `▼ ${avoidC.length} cities on caution lines`,
+            `▲ ${thriveC.length} thrive`,
+            `◆ ${neutralC.length} neutral`,
+            `▼ ${avoidC.length} caution`,
             `◉ ${onLines.length} total cities on your natal lines`,
           ]).map((t, i) => (
             <span key={i} style={{ color: t.startsWith('▼') ? '#F04060' : t.startsWith('▲') ? '#00D88A' : '#5A7088', padding: '0 4px' }}>{t}</span>
