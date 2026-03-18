@@ -103,7 +103,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       }
 
       // Countries
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .5;
+      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#2A4458'; ctx.lineWidth = .5;
       CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -125,7 +125,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
 
       // Countries
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .6;
+      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#2A4458'; ctx.lineWidth = .6;
       CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
