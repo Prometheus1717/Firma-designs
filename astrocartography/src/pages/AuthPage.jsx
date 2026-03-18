@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 export default function AuthPage() {
-  const [mode, setMode] = useState('login'); // login | signup | reset
+  const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,11 +23,16 @@ export default function AuthPage() {
     try {
       if (mode === 'login') {
         await signIn(email, password);
-        navigate('/dashboard');
+        navigate('/birth-data');
       } else if (mode === 'signup') {
-        await signUp(email, password);
-        setMessage('Check your email to confirm your account.');
-        setMode('login');
+        const data = await signUp(email, password);
+        // If email confirmation is required, user won't have a session yet
+        if (data?.user && !data?.session) {
+          setMessage('Account created! Check your email and click the confirmation link, then come back and sign in.');
+        } else if (data?.session) {
+          // Auto-confirmed (e.g. if email confirm is disabled in Supabase)
+          navigate('/birth-data');
+        }
       } else {
         await resetPassword(email);
         setMessage('Password reset link sent to your email.');
@@ -43,15 +48,21 @@ export default function AuthPage() {
     <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       {/* Logo */}
       <div style={{ marginBottom: 40, textAlign: 'center' }}>
-        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>ASTROCARTOGRAPHY · PERSONALIZED</div>
+        <div style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
+        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
       </div>
 
       {/* Card */}
       <div style={{ width: '100%', maxWidth: 400, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32 }}>
-        <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 24, textAlign: 'center' }}>
-          {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Reset Password'}
+        <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 20, textAlign: 'center' }}>
+          {mode === 'login' ? 'Welcome Back' : mode === 'signup' ? 'Create Your Account' : 'Reset Password'}
         </div>
+
+        {mode === 'signup' && !message && (
+          <div style={{ ...F, fontSize: 10, color: '#5A7088', marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
+            Discover which cities on Earth align with your stars.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>EMAIL</label>
@@ -82,28 +93,58 @@ export default function AuthPage() {
                   borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 13, marginBottom: 20, outline: 'none',
                   boxSizing: 'border-box',
                 }}
-                placeholder="••••••••"
+                placeholder="Min. 6 characters"
               />
             </>
           )}
 
-          {error && <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12, padding: '8px 10px', background: '#F0406010', borderRadius: 4 }}>{error}</div>}
-          {message && <div style={{ ...F, fontSize: 10, color: '#00D88A', marginBottom: 12, padding: '8px 10px', background: '#00D88A10', borderRadius: 4 }}>{message}</div>}
+          {error && (
+            <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12, padding: '10px 12px', background: 'rgba(240,64,96,0.08)', borderRadius: 6, border: '1px solid rgba(240,64,96,0.2)', lineHeight: 1.5 }}>
+              {error}
+            </div>
+          )}
+          {message && (
+            <div style={{ ...F, fontSize: 10, color: '#00D88A', marginBottom: 12, padding: '10px 12px', background: 'rgba(0,216,138,0.08)', borderRadius: 6, border: '1px solid rgba(0,216,138,0.2)', lineHeight: 1.5 }}>
+              {message}
+            </div>
+          )}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              width: '100%', padding: '12px 0', background: submitting ? '#1A2840' : '#00D88A',
-              border: 'none', borderRadius: 6, color: '#0A1018', ...F, fontSize: 12, fontWeight: 700,
-              letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer', transition: 'background .2s',
-            }}
-          >
-            {submitting ? '...' : mode === 'login' ? 'SIGN IN' : mode === 'signup' ? 'CREATE ACCOUNT' : 'SEND RESET LINK'}
-          </button>
+          {!message && (
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                width: '100%', padding: '12px 0', background: submitting ? '#1A2840' : '#00D88A',
+                border: 'none', borderRadius: 6, color: '#0A1018', ...F, fontSize: 12, fontWeight: 700,
+                letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer', transition: 'background .2s',
+              }}
+            >
+              {submitting ? (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <span style={{ display: 'inline-block', width: 12, height: 12, border: '2px solid #0A1018', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin .6s linear infinite' }} />
+                  {mode === 'login' ? 'SIGNING IN...' : 'CREATING ACCOUNT...'}
+                </span>
+              ) : (
+                mode === 'login' ? 'SIGN IN' : mode === 'signup' ? 'CREATE ACCOUNT' : 'SEND RESET LINK'
+              )}
+            </button>
+          )}
+
+          {message && mode === 'signup' && (
+            <button
+              type="button"
+              onClick={() => { setMode('login'); setMessage(''); setError(''); }}
+              style={{
+                width: '100%', padding: '12px 0', background: '#00D88A',
+                border: 'none', borderRadius: 6, color: '#0A1018', ...F, fontSize: 12, fontWeight: 700,
+                letterSpacing: 1, cursor: 'pointer',
+              }}
+            >
+              GO TO SIGN IN
+            </button>
+          )}
         </form>
 
-        {/* Toggle links */}
         <div style={{ marginTop: 20, textAlign: 'center', ...F, fontSize: 10 }}>
           {mode === 'login' && (
             <>
@@ -113,7 +154,7 @@ export default function AuthPage() {
               <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: '#5A7088', cursor: 'pointer' }}>Forgot password?</span>
             </>
           )}
-          {mode === 'signup' && (
+          {mode === 'signup' && !message && (
             <>
               <span style={{ color: '#5A7088' }}>Already have an account? </span>
               <span onClick={() => { setMode('login'); setError(''); setMessage(''); }} style={{ color: '#00D88A', cursor: 'pointer' }}>Sign in</span>
@@ -126,6 +167,7 @@ export default function AuthPage() {
       </div>
 
       <div style={{ ...F, fontSize: 8, color: '#1A2840', marginTop: 32 }}>NATAL NAVIGATOR © 2026</div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

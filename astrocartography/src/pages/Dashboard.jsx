@@ -88,10 +88,10 @@ function cityReading(c) {
 }
 
 export default function Dashboard() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, hasBirthData, signOut } = useAuth();
   const navigate = useNavigate();
   const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('thrive');
   const [clock, setClock] = useState('');
@@ -114,14 +114,14 @@ export default function Dashboard() {
 
   // Redirect if no birth data
   useEffect(() => {
-    if (profile && !profile.birth_date) {
-      navigate('/birth-data');
+    if (!hasBirthData && profile !== null) {
+      navigate('/birth-data', { replace: true });
     }
-  }, [profile, navigate]);
+  }, [hasBirthData, profile, navigate]);
 
-  // Fetch chart data
+  // Fetch chart data only when we have birth data
   useEffect(() => {
-    if (!profile?.birth_date) return;
+    if (!hasBirthData || !profile?.birth_date) return;
 
     async function fetchChart() {
       setLoading(true);
@@ -150,7 +150,7 @@ export default function Dashboard() {
       }
     }
     fetchChart();
-  }, [profile]);
+  }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
   const onLines = useMemo(() => getCitiesOnLines(lines, ALL_CITIES, 3.5), [lines]);
@@ -172,15 +172,17 @@ export default function Dashboard() {
     setCityPop(city);
   }, []);
 
-  // Loading state
+  // Loading state — only shown when actively fetching chart after birth data is saved
   if (loading && !chartData) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#5A7088', marginBottom: 16 }}>Calculating your natal chart...</div>
-        <div style={{ width: 200, height: 2, background: '#1A2840', borderRadius: 1, overflow: 'hidden' }}>
-          <div style={{ width: '60%', height: '100%', background: '#00D88A', animation: 'ts 2s linear infinite' }} />
+        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>Calculating your planetary lines...</div>
+        <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
+        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 16 }}>Analyzing 10 planets × 4 angles = 40 lines</div>
+        <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } }`}</style>
       </div>
     );
   }
