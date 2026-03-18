@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
+import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
@@ -22,49 +23,6 @@ const ANGLE_INFO = {
 
 const ANGLE_ORDER = ['MC', 'IC', 'ASC', 'DC'];
 
-const ALL_CITIES = [
-  [51.51, -.13, 'London'], [48.86, 2.35, 'Paris'], [50.94, 6.96, 'Köln'], [52.52, 13.4, 'Berlin'],
-  [48.14, 11.58, 'München'], [50.11, 8.68, 'Frankfurt'], [53.55, 9.99, 'Hamburg'], [51.23, 6.78, 'Düsseldorf'],
-  [48.78, 9.18, 'Stuttgart'], [47.37, 8.54, 'Zürich'], [46.2, 6.14, 'Genève'], [48.21, 16.37, 'Wien'],
-  [50.08, 14.44, 'Praha'], [52.23, 21.01, 'Warszawa'], [47.5, 19.04, 'Budapest'], [44.43, 26.1, 'Bucureşti'],
-  [42.7, 23.32, 'Sofia'], [37.98, 23.73, 'Athina'], [41.01, 28.98, 'İstanbul'], [40.42, -3.7, 'Madrid'],
-  [41.39, 2.17, 'Barcelona'], [39.47, -.38, 'Valencia'], [38.72, -9.14, 'Lisboa'], [41.16, -8.63, 'Porto'],
-  [45.46, 9.19, 'Milano'], [41.9, 12.5, 'Roma'], [43.77, 11.25, 'Firenze'], [40.85, 14.27, 'Napoli'],
-  [50.85, 4.35, 'Bruxelles'], [52.37, 4.9, 'Amsterdam'], [51.92, 4.48, 'Rotterdam'],
-  [53.35, -6.26, 'Dublin'], [55.95, -3.19, 'Edinburgh'], [53.48, -2.24, 'Manchester'],
-  [59.33, 18.07, 'Stockholm'], [59.91, 10.75, 'Oslo'], [55.68, 12.57, 'København'], [60.17, 24.94, 'Helsinki'],
-  [56.95, 24.11, 'Riga'], [54.69, 25.28, 'Vilnius'], [59.44, 24.75, 'Tallinn'],
-  [55.75, 37.62, 'Moscow'], [50.45, 30.52, 'Kyiv'], [53.9, 27.57, 'Minsk'],
-  [40.71, -74.01, 'New York'], [34.05, -118.24, 'Los Angeles'], [41.88, -87.63, 'Chicago'],
-  [29.76, -95.37, 'Houston'], [33.45, -112.07, 'Phoenix'], [39.74, -104.99, 'Denver'],
-  [37.77, -122.42, 'San Francisco'], [47.61, -122.33, 'Seattle'], [25.76, -80.19, 'Miami'],
-  [38.91, -77.04, 'Washington DC'], [42.36, -71.06, 'Boston'], [36.17, -115.14, 'Las Vegas'],
-  [32.72, -117.16, 'San Diego'], [30.27, -97.74, 'Austin'], [45.5, -73.57, 'Montréal'],
-  [43.65, -79.38, 'Toronto'], [49.28, -123.12, 'Vancouver'], [51.05, -114.07, 'Calgary'],
-  [19.43, -99.13, 'México City'], [14.63, -90.51, 'Guatemala'], [9.93, -84.08, 'San José CR'],
-  [4.71, -74.07, 'Bogotá'], [-.18, -78.47, 'Quito'], [-12.05, -77.04, 'Lima'],
-  [-33.45, -70.67, 'Santiago'], [-34.6, -58.38, 'Buenos Aires'], [-22.91, -43.17, 'Rio de Janeiro'],
-  [-23.55, -46.63, 'São Paulo'], [-15.79, -47.88, 'Brasília'],
-  [35.69, 51.39, 'Tehran'], [33.31, 44.37, 'Baghdad'], [24.71, 46.68, 'Riyadh'],
-  [25.2, 55.27, 'Dubai'], [21.42, 39.83, 'Mecca'], [31.95, 35.93, 'Amman'],
-  [33.89, 35.5, 'Beirut'], [32.08, 34.78, 'Tel Aviv'], [40.18, 44.51, 'Yerevan'],
-  [39.92, 32.85, 'Ankara'], [38.42, 27.14, 'İzmir'],
-  [30.04, 31.24, 'Cairo'], [36.75, 3.04, 'Algiers'], [33.97, -6.85, 'Rabat'],
-  [6.52, 3.38, 'Lagos'], [-1.29, 36.82, 'Nairobi'], [-33.92, 18.42, 'Cape Town'],
-  [-26.2, 28.04, 'Johannesburg'], [9.02, 38.75, 'Addis Ababa'], [5.56, -.19, 'Accra'],
-  [39.91, 116.39, 'Beijing'], [31.23, 121.47, 'Shanghai'], [22.32, 114.17, 'Hong Kong'],
-  [23.13, 113.26, 'Guangzhou'], [30.57, 104.07, 'Chengdu'],
-  [35.68, 139.69, 'Tokyo'], [34.69, 135.5, 'Osaka'], [35.01, 135.77, 'Kyoto'],
-  [37.57, 126.98, 'Seoul'], [35.18, 129.08, 'Busan'], [25.03, 121.57, 'Taipei'],
-  [1.35, 103.82, 'Singapore'], [13.76, 100.5, 'Bangkok'], [21.03, 105.85, 'Hanoi'],
-  [10.82, 106.63, 'Ho Chi Minh'], [14.6, 120.98, 'Manila'], [-6.21, 106.85, 'Jakarta'],
-  [3.14, 101.69, 'Kuala Lumpur'],
-  [28.61, 77.21, 'Delhi'], [19.08, 72.88, 'Mumbai'], [12.97, 77.59, 'Bengaluru'],
-  [22.57, 88.36, 'Kolkata'], [27.18, 84.99, 'Kathmandu'], [33.69, 73.04, 'Islamabad'],
-  [-33.87, 151.21, 'Sydney'], [-37.81, 144.96, 'Melbourne'], [-27.47, 153.03, 'Brisbane'],
-  [-31.95, 115.86, 'Perth'], [-36.85, 174.76, 'Auckland'],
-  [64.15, -21.94, 'Reykjavík'], [34.53, 69.17, 'Kabul'], [41.3, 69.28, 'Tashkent'],
-];
 
 function getCitiesOnLines(lines, cities, threshold = 3.5) {
   const r = [], seen = new Set();
@@ -442,7 +400,7 @@ export default function Dashboard() {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden', width: 160 }}>

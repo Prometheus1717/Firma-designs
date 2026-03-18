@@ -47,7 +47,7 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, allCities, homeLocation, onCityClick, flat }) {
+export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
   const S = useRef({
     rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
@@ -185,26 +185,34 @@ export default function Globe({ lines, citiesOnLines, allCities, homeLocation, o
       });
     }
 
-    // Additional cities on zoom
+    // Additional cities on zoom (tiered)
     const zoomLevel = isFlat ? s.zoom : s.scale / 280;
-    if (allCities && zoomLevel > 1.8) {
+    if (citiesTiers && zoomLevel > 1.3) {
+      // Select tier based on zoom: T1 at low zoom, T2 at medium, T3 at high
+      const tierIdx = isFlat
+        ? (s.zoom > 4 ? 2 : s.zoom > 2 ? 1 : 0)
+        : (s.scale > 700 ? 2 : s.scale > 450 ? 1 : 0);
+      const tierCities = citiesTiers[tierIdx] || citiesTiers[0];
       const onLineNames = new Set(citiesOnLines ? citiesOnLines.map(c => c.name) : []);
-      allCities.forEach(([la, lo, name]) => {
+      tierCities.forEach(([la, lo, name]) => {
         if (onLineNames.has(name)) return;
         if (!isFlat && center && d3.geoDistance([lo, la], center) > Math.PI / 2) return;
         const p = proj([lo, la]);
         if (!p) return;
-        // Check if projected point is within canvas bounds
         if (p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
-        const r = isFlat ? (s.zoom > 5 ? 2.5 : s.zoom > 3 ? 2 : 1.5) : (s.scale > 600 ? 2.5 : 1.5);
-        ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .5;
+        const r = isFlat
+          ? (s.zoom > 6 ? 3 : s.zoom > 3 ? 2.5 : s.zoom > 1.5 ? 2 : 1.5)
+          : (s.scale > 700 ? 3 : s.scale > 400 ? 2 : 1.5);
+        ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .45;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
-        const showLabel = isFlat ? s.zoom > 2.5 : s.scale > 500;
+        const showLabel = isFlat ? s.zoom > 2 : s.scale > 400;
         if (showLabel) {
-          const fs = isFlat ? (s.zoom > 5 ? 9 : s.zoom > 3 ? 8 : 7) : (s.scale > 700 ? 9 : 7);
+          const fs = isFlat
+            ? (s.zoom > 6 ? 10 : s.zoom > 4 ? 9 : s.zoom > 2.5 ? 8 : 7)
+            : (s.scale > 700 ? 10 : s.scale > 500 ? 8 : 7);
           ctx.font = `500 ${fs}px JetBrains Mono`;
-          ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .6;
+          ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .55;
           ctx.textAlign = 'left';
           ctx.fillText(name, p[0] + r + 3, p[1] + 3);
           ctx.globalAlpha = 1;
