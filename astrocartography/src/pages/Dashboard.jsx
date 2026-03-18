@@ -442,7 +442,7 @@ export default function Dashboard() {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden', width: 160 }}>

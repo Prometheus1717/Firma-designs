@@ -47,7 +47,7 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick, flat }) {
+export default function Globe({ lines, citiesOnLines, allCities, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
   const S = useRef({
     rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
@@ -185,6 +185,33 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
       });
     }
 
+    // Additional cities on zoom
+    const zoomLevel = isFlat ? s.zoom : s.scale / 280;
+    if (allCities && zoomLevel > 1.8) {
+      const onLineNames = new Set(citiesOnLines ? citiesOnLines.map(c => c.name) : []);
+      allCities.forEach(([la, lo, name]) => {
+        if (onLineNames.has(name)) return;
+        if (!isFlat && center && d3.geoDistance([lo, la], center) > Math.PI / 2) return;
+        const p = proj([lo, la]);
+        if (!p) return;
+        // Check if projected point is within canvas bounds
+        if (p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
+        const r = isFlat ? (s.zoom > 5 ? 2.5 : s.zoom > 3 ? 2 : 1.5) : (s.scale > 600 ? 2.5 : 1.5);
+        ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .5;
+        ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+        const showLabel = isFlat ? s.zoom > 2.5 : s.scale > 500;
+        if (showLabel) {
+          const fs = isFlat ? (s.zoom > 5 ? 9 : s.zoom > 3 ? 8 : 7) : (s.scale > 700 ? 9 : 7);
+          ctx.font = `500 ${fs}px JetBrains Mono`;
+          ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .6;
+          ctx.textAlign = 'left';
+          ctx.fillText(name, p[0] + r + 3, p[1] + 3);
+          ctx.globalAlpha = 1;
+        }
+      });
+    }
+
     // Home marker
     if (homeLocation) {
       const [hLng, hLat, hLabel] = homeLocation;
@@ -201,7 +228,7 @@ export default function Globe({ lines, citiesOnLines, homeLocation, onCityClick,
         }
       }
     }
-  }, [lines, citiesOnLines, homeLocation]);
+  }, [lines, citiesOnLines, allCities, homeLocation]);
 
   useEffect(() => {
     const s = S.current;
