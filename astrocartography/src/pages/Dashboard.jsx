@@ -6,6 +6,11 @@ import { calculateChart } from '../lib/calculateChart';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
+const PCOL = { Sun: '#E8A838', Moon: '#C0C0C0', Mercury: '#5BA8D4', Venus: '#D4729A', Mars: '#D45050', Jupiter: '#8068C0', Saturn: '#887058', Uranus: '#40B0A0', Neptune: '#4868B8', Pluto: '#7048A0' };
+const SIGN_SYMBOLS = { Aries: '♈', Taurus: '♉', Gemini: '♊', Cancer: '♋', Leo: '♌', Virgo: '♍', Libra: '♎', Scorpio: '♏', Sagittarius: '♐', Capricorn: '♑', Aquarius: '♒', Pisces: '♓' };
+const SIGN_ELEMENTS = { Aries: 'Fire', Taurus: 'Earth', Gemini: 'Air', Cancer: 'Water', Leo: 'Fire', Virgo: 'Earth', Libra: 'Air', Scorpio: 'Water', Sagittarius: 'Fire', Capricorn: 'Earth', Aquarius: 'Air', Pisces: 'Water' };
+const SIGN_MODES = { Aries: 'Cardinal', Taurus: 'Fixed', Gemini: 'Mutable', Cancer: 'Cardinal', Leo: 'Fixed', Virgo: 'Mutable', Libra: 'Cardinal', Scorpio: 'Fixed', Sagittarius: 'Mutable', Capricorn: 'Cardinal', Aquarius: 'Fixed', Pisces: 'Mutable' };
+const ELEM_COL = { Fire: '#F04060', Earth: '#00D88A', Air: '#5BA8D4', Water: '#4868B8' };
 
 const ANGLE_INFO = {
   MC: { label: 'MC', full: 'Medium Coeli (Midheaven)', dash: 'solid', desc: 'The highest point in the sky at your birth. Represents career, public reputation, and how the world sees your achievements. On your MC line, you feel professionally empowered and publicly recognized.' },
@@ -145,6 +150,7 @@ export default function Dashboard() {
   const [showAngleInfo, setShowAngleInfo] = useState(false);
   const [flatMap, setFlatMap] = useState(false);
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
+  const [showNatal, setShowNatal] = useState(false);
 
   const mob = w < 900;
 
@@ -446,6 +452,119 @@ export default function Dashboard() {
               ▭ Map
             </button>
           </div>
+
+          {/* Natal chart button — below map toggle */}
+          <div onClick={() => setShowNatal(!showNatal)} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '6px 12px', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 12 }}>☉</span> Natal Chart
+          </div>
+
+          {/* Natal chart popup */}
+          {showNatal && chartData?.planets && (
+            <div style={{ position: 'absolute', top: 72, right: 8, zIndex: 110, width: mob ? 'calc(100% - 16px)' : 380, background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>NATAL CHART</span>
+                  {chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
+                </div>
+                <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+              </div>
+
+              {/* Column headers */}
+              <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
+                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
+                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
+                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
+                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
+                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
+              </div>
+
+              {/* Planet rows */}
+              <div style={{ maxHeight: mob ? '50vh' : 340, overflowY: 'auto' }}>
+                {chartData.planets.map((p, i) => {
+                  const elem = SIGN_ELEMENTS[p.sign] || '';
+                  const mode = SIGN_MODES[p.sign] || '';
+                  const pc = PCOL[p.id] || '#8098B0';
+                  const pd = PLANET_DOMAINS[p.id];
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '6px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      {/* Planet */}
+                      <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 14, lineHeight: 1 }}>{p.symbol}</span>
+                        <div>
+                          <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
+                          {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700 }}>℞ RETRO</div>}
+                        </div>
+                      </div>
+                      {/* Sign */}
+                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span style={{ fontSize: 12 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
+                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
+                      </div>
+                      {/* Degree */}
+                      <div style={{ width: 60, textAlign: 'right' }}>
+                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}°</span>
+                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
+                      </div>
+                      {/* Element */}
+                      <div style={{ width: 50, textAlign: 'center' }}>
+                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
+                      </div>
+                      {/* Domain */}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{pd?.domain || ''}</div>
+                        <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{mode}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Angles section */}
+                {chartData.natal && <>
+                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
+                  {[
+                    { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
+                    { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
+                  ].map((a, i) => a.data && (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '6px 14px', borderBottom: '1px solid #14202C' }}>
+                      <div style={{ width: 90 }}>
+                        <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
+                        <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
+                      </div>
+                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span style={{ fontSize: 12 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
+                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
+                      </div>
+                      <div style={{ width: 60, textAlign: 'right' }}>
+                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}°</span>
+                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
+                      </div>
+                      <div style={{ width: 50, textAlign: 'center' }}>
+                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{a.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </>}
+
+                {/* Element summary footer */}
+                <div style={{ padding: '8px 14px', borderTop: '1px solid #1A2840', background: '#0D1520', display: 'flex', gap: 12 }}>
+                  {['Fire', 'Earth', 'Air', 'Water'].map(el => {
+                    const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
+                    return (
+                      <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: ELEM_COL[el] }} />
+                        <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
+                        <span style={{ ...F, fontSize: 9, color: '#D0DDE8', fontWeight: 700 }}>{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Line info popup */}
           {typeof popup === 'number' && lines[popup] && (
