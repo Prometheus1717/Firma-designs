@@ -104,7 +104,20 @@ export default function Dashboard() {
   const mob = w < 900;
 
   useEffect(() => {
-    const t = setInterval(() => setClock(new Date().toUTCString().replace(/.*,\s/, '').replace(' GMT', '') + ' UTC'), 1000);
+    const fmt = () => {
+      const now = new Date();
+      const dd = String(now.getUTCDate()).padStart(2, '0');
+      const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+      const yy = String(now.getUTCFullYear()).slice(-2);
+      const h24 = now.getUTCHours();
+      const min = String(now.getUTCMinutes()).padStart(2, '0');
+      const sec = String(now.getUTCSeconds()).padStart(2, '0');
+      const h12 = h24 % 12 || 12;
+      const ampm = h24 < 12 ? 'AM' : 'PM';
+      setClock(`${dd}.${mm}.${yy}  ${String(h24).padStart(2, '0')}:${min}:${sec} (${h12}:${min} ${ampm}) UTC`);
+    };
+    fmt();
+    const t = setInterval(fmt, 1000);
     return () => clearInterval(t);
   }, []);
   useEffect(() => {
@@ -204,7 +217,16 @@ export default function Dashboard() {
             ◉ {displayName}
             {showProf && <div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 6 }}>{displayName}</div>
-              <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {profile?.birth_date} · {profile?.birth_time}</div>
+              <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {(() => {
+                const [y, m, d] = (profile?.birth_date || '').split('-');
+                const dateFmt = y ? `${d}.${m}.${y.slice(-2)}` : '';
+                const t = profile?.birth_time || '';
+                const [hh, mi] = t.split(':').map(Number);
+                const h12 = hh % 12 || 12;
+                const ampm = hh < 12 ? 'AM' : 'PM';
+                const timeFmt = t ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '';
+                return `${dateFmt} · ${timeFmt}`;
+              })()}</div>
               <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 6 }}>Location: {profile?.birth_city}</div>
               {chartData?.natal && <div style={{ ...F, fontSize: 9, color: '#5A7088' }}>
                 ☉ {chartData.natal.sun?.sign} · ☽ {chartData.natal.moon?.sign} · ASC {chartData.natal.asc?.sign}
