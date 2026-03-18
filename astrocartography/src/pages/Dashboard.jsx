@@ -543,90 +543,117 @@ export default function Dashboard() {
       </div>
 
       {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexDirection: 'column', flexShrink: 0, zIndex: 200 }}>
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #14202C', flexShrink: 0 }}>
-          {[
-            { id: 'thrive', label: '▲ THRIVE', count: thriveC.length, col: COL.thrive },
-            { id: 'neutral', label: '◆ NEUTRAL', count: neutralC.length, col: COL.neutral },
-            { id: 'avoid', label: '▼ AVOID', count: avoidC.length, col: COL.avoid },
-            { id: 'all', label: 'ALL', count: onLines.length, col: '#B0C0D0' },
-          ].map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{
-              flex: 1, background: tab === t.id ? '#101C28' : 'transparent', border: 'none',
-              borderBottom: tab === t.id ? `2px solid ${t.col}` : '2px solid transparent',
-              color: tab === t.id ? t.col : '#3A5068',
-              cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
-            }}>
-              {t.label} ({t.count})
-            </button>
-          ))}
+      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexShrink: 0, zIndex: 200 }}>
+        {/* Left: City table */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Tabs */}
+          <div style={{ display: 'flex', borderBottom: '1px solid #14202C', flexShrink: 0 }}>
+            {[
+              { id: 'thrive', label: '▲ THRIVE', count: thriveC.length, col: COL.thrive },
+              { id: 'neutral', label: '◆ NEUTRAL', count: neutralC.length, col: COL.neutral },
+              { id: 'avoid', label: '▼ AVOID', count: avoidC.length, col: COL.avoid },
+              { id: 'all', label: 'ALL', count: onLines.length, col: '#B0C0D0' },
+            ].map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)} style={{
+                flex: 1, background: tab === t.id ? '#101C28' : 'transparent', border: 'none',
+                borderBottom: tab === t.id ? `2px solid ${t.col}` : '2px solid transparent',
+                color: tab === t.id ? t.col : '#3A5068',
+                cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
+              }}>
+                {t.label} ({t.count})
+              </button>
+            ))}
+          </div>
+
+          {/* Column headers */}
+          {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: '1px solid #14202C', flexShrink: 0, background: '#0A1018' }}>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
+            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
+          </div>}
+
+          {/* City rows */}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {filteredTab.map((c, i) => {
+              const imp = cityImpact(c);
+              const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
+              return mob ? (
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                    <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
+                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2 }}>{c.line}</span>
+                    <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700 }}>{imp.strength} {imp.strengthPct}%</span>
+                  </div>
+                  <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
+                </div>
+              ) : (
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  {/* City */}
+                  <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', lineHeight: 1.2 }}>{c.name}</div>
+                      <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
+                    </div>
+                  </div>
+                  {/* Line */}
+                  <div style={{ width: 100, flexShrink: 0 }}>
+                    <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {c.line}</span>
+                    <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.dist.toFixed(1)}° orb</div>
+                  </div>
+                  {/* Signal strength */}
+                  <div style={{ width: 60, display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                    <span style={{ ...F, fontSize: 8, fontWeight: 700, color: qCol }}>{imp.strengthPct}%</span>
+                    <div style={{ width: 36, height: 3, background: '#14202C', borderRadius: 2, marginTop: 2 }}>
+                      <div style={{ width: `${imp.strengthPct}%`, height: '100%', background: qCol, borderRadius: 2 }} />
+                    </div>
+                    <span style={{ ...F, fontSize: 6, color: '#3A5068', marginTop: 1 }}>{imp.strength}</span>
+                  </div>
+                  {/* Domain */}
+                  <div style={{ width: 130, flexShrink: 0 }}>
+                    <div style={{ ...F, fontSize: 8, color: '#8098B0' }}>{imp.domain}</div>
+                  </div>
+                  {/* Life area */}
+                  <div style={{ width: 110, flexShrink: 0 }}>
+                    <span style={{ ...F, fontSize: 8, color: qCol, fontWeight: 600 }}>{imp.area}</span>
+                  </div>
+                  {/* Reading */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ ...F, fontSize: 8, color: '#6A8098', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{imp.summary}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Column headers */}
-        {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: '1px solid #14202C', flexShrink: 0, background: '#0A1018' }}>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
-          <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
+        {/* Right: Lines summary — desktop only */}
+        {!mob && <div style={{ width: 260, minWidth: 260, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderLeft: '1px solid #1A2840' }}>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, padding: '8px 12px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
+            ON YOUR LINES — {onLines.length} CITIES
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '2px 0' }}>
+            {visibleLines.map((l, i) => {
+              const cities = onLines.filter(c => c.line === l.n);
+              if (!cities.length) return null;
+              const qCol = l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral;
+              return (
+                <div key={i} style={{ padding: '3px 12px', borderBottom: '1px solid #0F1820' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    <div style={{ width: 10, height: 2, background: l.c, borderRadius: 1, flexShrink: 0 }} />
+                    <span style={{ ...F, fontSize: 8, color: '#8098B0', fontWeight: 600 }}>{l.n}</span>
+                    <span style={{ ...F, fontSize: 6, color: qCol, fontWeight: 700, marginLeft: 'auto' }}>{l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'} {cities.length}</span>
+                  </div>
+                  <div style={{ ...F, fontSize: 7, color: '#5A7088', lineHeight: 1.4 }}>{cities.map(c => c.name).join(' · ')}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>}
-
-        {/* City rows */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {filteredTab.map((c, i) => {
-            const imp = cityImpact(c);
-            const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
-            return mob ? (
-              <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-                  <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
-                  <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2 }}>{c.line}</span>
-                  <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700 }}>{imp.strength} {imp.strengthPct}%</span>
-                </div>
-                <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
-              </div>
-            ) : (
-              <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                {/* City */}
-                <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                  <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', lineHeight: 1.2 }}>{c.name}</div>
-                    <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
-                  </div>
-                </div>
-                {/* Line */}
-                <div style={{ width: 100, flexShrink: 0 }}>
-                  <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {c.line}</span>
-                  <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.dist.toFixed(1)}° orb</div>
-                </div>
-                {/* Signal strength */}
-                <div style={{ width: 60, display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-                  <span style={{ ...F, fontSize: 8, fontWeight: 700, color: qCol }}>{imp.strengthPct}%</span>
-                  <div style={{ width: 36, height: 3, background: '#14202C', borderRadius: 2, marginTop: 2 }}>
-                    <div style={{ width: `${imp.strengthPct}%`, height: '100%', background: qCol, borderRadius: 2 }} />
-                  </div>
-                  <span style={{ ...F, fontSize: 6, color: '#3A5068', marginTop: 1 }}>{imp.strength}</span>
-                </div>
-                {/* Domain */}
-                <div style={{ width: 130, flexShrink: 0 }}>
-                  <div style={{ ...F, fontSize: 8, color: '#8098B0' }}>{imp.domain}</div>
-                </div>
-                {/* Life area */}
-                <div style={{ width: 110, flexShrink: 0 }}>
-                  <span style={{ ...F, fontSize: 8, color: qCol, fontWeight: 600 }}>{imp.area}</span>
-                </div>
-                {/* Reading */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ ...F, fontSize: 8, color: '#6A8098', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{imp.summary}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* BOTTOM TICKER */}
