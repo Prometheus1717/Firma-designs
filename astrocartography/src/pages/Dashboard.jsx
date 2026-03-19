@@ -136,6 +136,7 @@ export default function Dashboard({ demo = false }) {
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
   const [showNatal, setShowNatal] = useState(false);
   const [showDemoGate, setShowDemoGate] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   // Demo: show sign-up prompt after 25 seconds
   useEffect(() => {
@@ -295,6 +296,8 @@ export default function Dashboard({ demo = false }) {
           <span style={{ ...F, fontSize: 9, color: '#00D88A', display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D88A', boxShadow: '0 0 8px #00D88A' }} />LIVE
           </span>
+          <div style={{ width: 1, height: 16, background: '#1A2840' }} />
+          <span onClick={() => setShowGuide(true)} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {!mob && <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{clock}</span>}
@@ -607,6 +610,165 @@ export default function Dashboard({ demo = false }) {
               </div>
               <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° from line</div>
               <div style={{ fontSize: 12, color: '#8098B0', lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
+            </div>
+          )}
+
+          {/* HOW IT WORKS guide */}
+          {showGuide && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,16,24,.75)', backdropFilter: 'blur(6px)' }} onClick={() => setShowGuide(false)}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, width: mob ? 'calc(100% - 24px)' : 680, maxWidth: 720, maxHeight: mob ? 'calc(100% - 24px)' : 'calc(100% - 48px)', boxShadow: '0 24px 64px rgba(0,0,0,.7)', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid #1A2840', background: '#0A1018', flexShrink: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: '#00D88A', letterSpacing: 2 }}>SYSTEM GUIDE</span>
+                    <span style={{ ...F, fontSize: 8, color: '#3A5068', background: '#0D1520', padding: '2px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>v1.0</span>
+                  </div>
+                  <span onClick={() => setShowGuide(false)} style={{ cursor: 'pointer', ...F, fontSize: 16, color: '#5A7088', lineHeight: 1 }}>✕</span>
+                </div>
+
+                {/* Scrollable content */}
+                <div style={{ flex: 1, overflowY: 'auto', padding: mob ? 16 : 24 }}>
+
+                  {/* SECTION: What is Natal Navigator */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#00D88A' }} />WHAT IS NATAL NAVIGATOR
+                    </div>
+                    <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8 }}>
+                      Natal Navigator is an <strong style={{ color: '#D0DDE8' }}>astrocartography tool</strong> that maps your birth chart onto the globe. It reveals which cities and regions of the world are energetically aligned with your planetary positions — showing you where your strengths are amplified and where challenges may arise.
+                    </div>
+                  </div>
+
+                  {/* SECTION: What is Astrocartography */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#E8A838', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#E8A838' }} />WHAT IS ASTROCARTOGRAPHY
+                    </div>
+                    <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8, marginBottom: 12 }}>
+                      Astrocartography (or locational astrology) calculates where each planet in your birth chart was rising, setting, culminating, or at its lowest point — and projects those positions as <strong style={{ color: '#D0DDE8' }}>lines across the globe</strong>. Living near or traveling to these lines activates the planet's energy in your life.
+                    </div>
+                    <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8 }}>
+                      Your birth chart is a snapshot of the sky at the exact moment you were born. The positions of the Sun, Moon, and planets at that time define your personality traits, strengths, and life themes. Astrocartography extends this by asking: <em style={{ color: '#8098B0' }}>where on Earth were these planetary energies strongest?</em>
+                    </div>
+                  </div>
+
+                  {/* SECTION: The Four Lines */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#5BA8D4', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#5BA8D4' }} />THE FOUR LINE TYPES
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 10 }}>
+                      {[
+                        { angle: 'MC', label: 'Midheaven', dash: '', color: '#D0DDE8', desc: 'Where a planet culminates — its highest point. Activates career, public reputation, and ambition. The most visible and outward-facing energy.' },
+                        { angle: 'IC', label: 'Nadir', dash: '4,3', color: '#D0DDE8', desc: 'Where a planet is at its lowest point below the horizon. Activates home life, emotional roots, and inner security. Deep, private energy.' },
+                        { angle: 'ASC', label: 'Ascendant', dash: '8,3', color: '#D0DDE8', desc: 'Where a planet was rising on the eastern horizon. Activates identity, self-expression, and first impressions. Personal and physical energy.' },
+                        { angle: 'DC', label: 'Descendant', dash: '2,2', color: '#D0DDE8', desc: 'Where a planet was setting on the western horizon. Activates partnerships, relationships, and collaboration. Interpersonal energy.' },
+                      ].map(a => (
+                        <div key={a.angle} style={{ background: '#0A1420', border: '1px solid #14202C', borderRadius: 6, padding: 12 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                            <svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray={a.dash || undefined} /></svg>
+                            <span style={{ ...F, fontSize: 11, fontWeight: 700, color: a.color }}>{a.angle}</span>
+                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{a.label}</span>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#6A8098', lineHeight: 1.7 }}>{a.desc}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION: The Planets */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D4729A', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#D4729A' }} />PLANETARY ENERGIES
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                      {Object.entries(PLANET_DOMAINS).map(([planet, { domain, icon }]) => (
+                        <div key={planet} style={{ background: '#0D1520', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: 16, color: PCOL[planet], lineHeight: 1, width: 22, textAlign: 'center' }}>{icon}</span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ ...F, fontSize: 10, fontWeight: 700, color: PCOL[planet] }}>{planet}</div>
+                            <div style={{ ...F, fontSize: 8, color: '#5A7088' }}>{domain}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION: Zone Types */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#00D88A' }} />ZONE CLASSIFICATION
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {[
+                        { zone: 'THRIVE', color: '#00D88A', sym: '▲', desc: 'Benefic planetary lines (Jupiter, Venus, Sun) where your strengths are amplified. Ideal for long-term living, career moves, or creative pursuits.' },
+                        { zone: 'NEUTRAL', color: '#D8A030', sym: '◆', desc: 'Lines with mixed energy (Mercury, Moon). Subtle influences — neither strongly positive nor challenging. Good for short stays and exploration.' },
+                        { zone: 'CAUTION', color: '#F04060', sym: '▼', desc: 'Malefic planetary lines (Saturn, Mars, Pluto) where challenges may surface. Short visits are fine, but prolonged stays can feel draining.' },
+                      ].map(z => (
+                        <div key={z.zone} style={{ background: '#0A1420', border: `1px solid ${z.color}20`, borderRadius: 6, padding: 12, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                          <div style={{ ...F, fontSize: 14, color: z.color, lineHeight: 1, flexShrink: 0, marginTop: 2 }}>{z.sym}</div>
+                          <div>
+                            <div style={{ ...F, fontSize: 10, fontWeight: 700, color: z.color, letterSpacing: 1, marginBottom: 4 }}>{z.zone}</div>
+                            <div style={{ fontSize: 11, color: '#6A8098', lineHeight: 1.7 }}>{z.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION: How to Use */}
+                  <div style={{ marginBottom: 28 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8068C0', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#8068C0' }} />HOW TO USE
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                      {[
+                        { step: '01', title: 'Create your chart', desc: 'Sign up and enter your exact birth date, time, and location. Accuracy matters — even 15 minutes can shift your lines.' },
+                        { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
+                        { step: '03', title: 'Click on cities', desc: 'Cities near your lines appear in the bottom panel. Click any city to get a detailed reading of what that planetary energy means for you there.' },
+                        { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
+                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your full planetary positions — signs, degrees, elements, and domains.' },
+                      ].map(s => (
+                        <div key={s.step} style={{ background: '#0D1520', padding: '12px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                          <span style={{ ...F, fontSize: 18, fontWeight: 700, color: '#1A2840', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
+                          <div>
+                            <div style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', marginBottom: 3 }}>{s.title}</div>
+                            <div style={{ fontSize: 11, color: '#6A8098', lineHeight: 1.6 }}>{s.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* SECTION: FAQ */}
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#40B0A0', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 16, height: 1, background: '#40B0A0' }} />FAQ
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                      {[
+                        { q: 'Do I need to know my exact birth time?', a: 'Yes. Your birth time determines the Ascendant and house cusps, which shift your lines significantly. If you don\'t know your exact time, check your birth certificate or contact the hospital of birth.' },
+                        { q: 'How close to a line do I need to be?', a: 'The influence is strongest within 1-2° of a line (roughly 100-200 km). We show cities up to 3.5° away, with signal strength decreasing with distance.' },
+                        { q: 'Can I live on a "caution" line?', a: 'Caution lines aren\'t inherently bad — they indicate areas of growth through challenge. Saturn lines build discipline, Mars lines drive ambition. They require more conscious effort.' },
+                        { q: 'What\'s the difference between globe and map view?', a: 'Globe view shows Earth in 3D for spatial context. Map view unfolds the projection flat, making it easier to trace lines across continents and compare regions.' },
+                        { q: 'Is this based on real astronomy?', a: 'Yes. Planetary positions are calculated using the Swiss Ephemeris, the same high-precision astronomical data used by research institutions. Astrocartography then applies astrological interpretation to these positions.' },
+                      ].map((faq, i) => (
+                        <div key={i} style={{ background: '#0D1520', padding: '12px 16px' }}>
+                          <div style={{ ...F, fontSize: 10, fontWeight: 700, color: '#B0C0D0', marginBottom: 5, display: 'flex', gap: 8 }}>
+                            <span style={{ color: '#40B0A0', flexShrink: 0 }}>Q</span>{faq.q}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#5A7088', lineHeight: 1.7, paddingLeft: 18 }}>{faq.a}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div style={{ ...F, fontSize: 8, color: '#1A2840', textAlign: 'center', paddingTop: 12, borderTop: '1px solid #14202C', lineHeight: 1.6 }}>
+                    NATAL NAVIGATOR · ASTROCARTOGRAPHY SYSTEM · BUILT WITH SWISS EPHEMERIS
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
