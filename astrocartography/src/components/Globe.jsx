@@ -50,11 +50,15 @@ function topoF(t, n) {
 export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 900);
+  // Compute initial globe scale so it fits nicely — ~85% of viewport's smaller dimension / 2
+  const initScale = typeof window !== 'undefined' ? Math.min(window.innerWidth, window.innerHeight) * 0.38 : 220;
   const S = useRef({
-    rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
+    rot: [-7, -25], scale: initScale, drag: false, auto: true, raf: 0,
     lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
     // Flat map state — panX/panY in pixels, zoom multiplier
     panX: 0, panY: 0, zoom: 1,
+    // Pinch-to-zoom tracking
+    pinchDist: 0,
     // Mobile: throttle redraws to ~30fps (33ms) instead of 60fps
     frameInterval: isMobile ? 33 : 16,
   });
@@ -79,12 +83,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     let proj, path, center;
 
     if (isFlat) {
-      // Flat map — Equirectangular projection, edge-to-edge
-      // Scale to fill the entire canvas: width maps 360° of longitude
+      // Flat map — Equirectangular projection
+      // Use the smaller scale so the entire world fits within the viewport
       const baseScaleW = W / (2 * Math.PI);
       const baseScaleH = H / Math.PI;
-      // Use the larger scale so the map covers the whole canvas
-      const baseScale = Math.max(baseScaleW, baseScaleH) * s.zoom;
+      const baseScale = Math.min(baseScaleW, baseScaleH) * s.zoom;
       proj = geoEquirectangular()
         .scale(baseScale)
         .translate([cx + s.panX, cy + s.panY])
@@ -292,7 +295,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const rect = c.getBoundingClientRect();
       const W = rect.width, H = rect.height;
       const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-      const sc = Math.max(bsW, bsH) * s.zoom;
+      const sc = Math.min(bsW, bsH) * s.zoom;
       // Map pixel extents from center: width = 2*PI*sc, height = PI*sc
       const halfMapW = Math.PI * sc;
       const halfMapH = Math.PI * sc / 2;
@@ -302,18 +305,66 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       s.panY = Math.max(-maxPanY, Math.min(maxPanY, s.panY));
     };
 
+    // Helper: distance between two touch points
+    const touchDist = (t) => {
+      if (t.length < 2) return 0;
+      const dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
     const dn = e => {
       s.drag = true;
       s.auto = false;
-      const t = e.touches ? e.touches[0] : e;
-      s.lx = t.clientX; s.ly = t.clientY;
+      if (e.touches && e.touches.length >= 2) {
+        s.pinchDist = touchDist(e.touches);
+        const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        s.lx = mx; s.ly = my;
+      } else {
+        const t = e.touches ? e.touches[0] : e;
+        s.lx = t.clientX; s.ly = t.clientY;
+        s.pinchDist = 0;
+      }
     };
     const mv = e => {
       if (!s.drag) return;
+      // Pinch-to-zoom with two fingers
+      if (e.touches && e.touches.length >= 2) {
+        e.preventDefault();
+        const newDist = touchDist(e.touches);
+        const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        if (s.pinchDist > 0 && newDist > 0) {
+          const ratio = newDist / s.pinchDist;
+          if (flatRef.current) {
+            const rect = c.getBoundingClientRect();
+            const cx = mx - rect.left - rect.width / 2 - s.panX;
+            const cy2 = my - rect.top - rect.height / 2 - s.panY;
+            const newZoom = Math.max(1, Math.min(15, s.zoom * ratio));
+            s.panX -= cx * (newZoom / s.zoom - 1);
+            s.panY -= cy2 * (newZoom / s.zoom - 1);
+            s.zoom = newZoom;
+            clampPan();
+          } else {
+            s.scale = Math.max(120, Math.min(5000, s.scale * ratio));
+          }
+        }
+        // Also pan with two-finger drag
+        const dx = mx - s.lx, dy = my - s.ly;
+        if (flatRef.current && s.zoom > 1) {
+          s.panX += dx; s.panY += dy; clampPan();
+        } else if (!flatRef.current) {
+          s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+        }
+        s.lx = mx; s.ly = my;
+        s.pinchDist = newDist;
+        s.dirty = true;
+        return;
+      }
+      // Single finger: drag/rotate
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
       if (flatRef.current) {
-        // Only allow pan when zoomed in, clamped to edges
         if (s.zoom > 1) {
           s.panX += dx;
           s.panY += dy;
@@ -327,6 +378,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     };
     const up = () => {
       s.drag = false;
+      s.pinchDist = 0;
       if (!flatRef.current) {
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
         if (!gf) setTimeout(() => { s.auto = true; }, 4000);
@@ -346,7 +398,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.zoom = newZoom;
         clampPan();
       } else {
-        s.scale = Math.max(180, Math.min(5000, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
+        s.scale = Math.max(100, Math.min(5000, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
         s.auto = false;
         clearTimeout(s._z);
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
@@ -384,7 +436,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       if (flatRef.current) {
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
         proj = geoEquirectangular()
-          .scale(Math.max(bsW, bsH) * s.zoom)
+          .scale(Math.min(bsW, bsH) * s.zoom)
           .translate([W / 2 + s.panX, H / 2 + s.panY])
           .rotate([0, 0]);
       } else {
@@ -402,7 +454,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     };
 
     c.addEventListener('mousedown', dn); window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
-    c.addEventListener('touchstart', dn, { passive: true }); c.addEventListener('touchmove', mv, { passive: true }); c.addEventListener('touchend', up, { passive: true });
+    c.addEventListener('touchstart', dn, { passive: false }); c.addEventListener('touchmove', mv, { passive: false }); c.addEventListener('touchend', up, { passive: true });
     c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl); c.addEventListener('click', click);
     const rs = () => { s.dirty = true; }; window.addEventListener('resize', rs);
 
@@ -434,7 +486,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const par = canvas.parentElement;
         const W = par.clientWidth, H = par.clientHeight;
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-        const baseScale = Math.max(bsW, bsH);
+        const baseScale = Math.min(bsW, bsH);
         const targetZoom = Math.max(s.zoom, 3);
         const lonRad = lo * Math.PI / 180;
         const latRad = la * Math.PI / 180;
