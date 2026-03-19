@@ -71,32 +71,51 @@ function findICLine(planetLon, date, obliquity) {
   return icLon;
 }
 
+// Analytical ASC line solver — replaces brute-force search.
+// Solves: ascLongitude(LST, lat, obliquity) = planetLon
+// This is equivalent to: cos(λp)·cos(θ) + sin(λp)·cos(ε)·sin(θ) = -sin(λp)·sin(ε)·tan(φ)
+// which has the form A·cos(θ) + B·sin(θ) = C, solvable as θ = atan2(B,A) ± acos(C/R)
 function findASCLine(planetLon, date, obliquity, latitudes) {
   const gast = Astronomy.SiderealTime(date);
+  const D2R = Math.PI / 180;
+  const R2D = 180 / Math.PI;
+  const lp = planetLon * D2R;
+  const ep = obliquity * D2R;
+  const sinL = Math.sin(lp), cosL = Math.cos(lp);
+  const sinE = Math.sin(ep), cosE = Math.cos(ep);
+
+  const A = cosL;
+  const B = sinL * cosE;
+  const R = Math.sqrt(A * A + B * B);
+  const delta = Math.atan2(B, A);
+
   const points = [];
+
   for (const lat of latitudes) {
-    let bestLon = null;
-    let bestErr = 999;
-    // Initial sweep (2° steps)
-    for (let testLon = -180; testLon <= 180; testLon += 2) {
-      const lst = gast + testLon / 15;
-      const asc = ascLongitude(lst, lat, obliquity);
+    if (Math.abs(lat) >= 89) continue;
+    const tanPhi = Math.tan(lat * D2R);
+    const C = -sinL * sinE * tanPhi;
+    const ratio = C / R;
+    if (ratio < -1 || ratio > 1) continue;
+
+    const alpha = Math.acos(Math.max(-1, Math.min(1, ratio)));
+
+    for (const s of [1, -1]) {
+      const theta = delta + s * alpha;
+      const lstH = (theta * R2D) / 15;
+      let lon = (lstH - gast) * 15;
+      while (lon > 180) lon -= 360;
+      while (lon < -180) lon += 360;
+
+      // Verify solution (atan2 quadrant check)
+      const asc = ascLongitude(gast + lon / 15, lat, obliquity);
       let err = Math.abs(asc - planetLon);
       if (err > 180) err = 360 - err;
-      if (err < bestErr) { bestErr = err; bestLon = testLon; }
+      if (err < 1.5) points.push([lon, lat]);
     }
-    // Refine within ±2° with 0.1° precision
-    if (bestLon !== null && bestErr < 10) {
-      for (let testLon = bestLon - 2; testLon <= bestLon + 2; testLon += 0.1) {
-        const lst = gast + testLon / 15;
-        const asc = ascLongitude(lst, lat, obliquity);
-        let err = Math.abs(asc - planetLon);
-        if (err > 180) err = 360 - err;
-        if (err < bestErr) { bestErr = err; bestLon = testLon; }
-      }
-    }
-    if (bestLon !== null && bestErr < 2) points.push([bestLon, lat]);
   }
+
+  points.sort((a, b) => a[1] - b[1]);
   return points;
 }
 

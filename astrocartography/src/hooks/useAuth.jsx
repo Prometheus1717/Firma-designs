@@ -25,29 +25,30 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Timeout: if auth check takes too long (slow mobile network), force ready
+    // Safety net: if auth + profile fetch takes too long (slow mobile network),
+    // force ready so the app doesn't hang forever. Do NOT clear this timeout
+    // when onAuthStateChange fires — loadProfile() can still hang after that.
+    const readyRef = { done: false };
     const authTimeout = setTimeout(() => {
-      if (!ready) {
+      if (!readyRef.done) {
+        readyRef.done = true;
         console.warn('[useAuth] Auth timeout — forcing ready state');
         setReady(true);
       }
-    }, 8000);
+    }, 6000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      clearTimeout(authTimeout);
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        // Skip profile fetch AND ready flag if signIn() is handling it
-        // signIn() will set ready=true after loading the profile
         if (!signingInRef.current) {
           await loadProfile(u.id);
-          setReady(true);
+          if (!readyRef.done) { readyRef.done = true; clearTimeout(authTimeout); setReady(true); }
         }
       } else {
         fetchIdRef.current++;
         setProfile(null);
-        setReady(true);
+        if (!readyRef.done) { readyRef.done = true; clearTimeout(authTimeout); setReady(true); }
       }
     });
 

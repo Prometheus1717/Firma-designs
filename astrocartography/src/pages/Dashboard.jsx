@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
@@ -154,92 +154,24 @@ export default function Dashboard() {
     }
   }, [hasBirthData, profile, navigate]);
 
-  // Calculate chart — try Web Worker first, fall back to main thread with setTimeout
-  const workerRef = useRef(null);
+  // Calculate chart — analytical solution, runs in <50ms even on slow phones
   useEffect(() => {
     if (!hasBirthData || !profile?.birth_date) return;
-
     setLoading(true);
     setError('');
-
-    const params = {
-      date: profile.birth_date,
-      time: profile.birth_time,
-      lat: profile.birth_lat,
-      lng: profile.birth_lng,
-    };
-
-    // Fallback: run on main thread deferred via setTimeout so loading screen renders
-    const runFallback = () => {
-      setTimeout(() => {
-        try {
-          const data = calculateChart(params);
-          setChartData(data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      }, 50);
-    };
-
-    // Try Web Worker
-    let cleaned = false;
     try {
-      if (workerRef.current) workerRef.current.terminate();
-
-      const worker = new Worker(
-        new URL('../lib/chartWorker.js', import.meta.url),
-        { type: 'module' }
-      );
-      workerRef.current = worker;
-
-      // Timeout: if worker doesn't respond in 20s, kill it and use fallback
-      const timeout = setTimeout(() => {
-        if (!cleaned) {
-          cleaned = true;
-          worker.terminate();
-          console.warn('[Dashboard] Worker timeout — falling back to main thread');
-          runFallback();
-        }
-      }, 20000);
-
-      worker.onmessage = (e) => {
-        if (cleaned) return;
-        cleaned = true;
-        clearTimeout(timeout);
-        if (e.data.type === 'success') {
-          setChartData(e.data.data);
-        } else {
-          setError(e.data.message);
-        }
-        setLoading(false);
-        worker.terminate();
-      };
-
-      worker.onerror = () => {
-        if (cleaned) return;
-        cleaned = true;
-        clearTimeout(timeout);
-        worker.terminate();
-        console.warn('[Dashboard] Worker failed — falling back to main thread');
-        runFallback();
-      };
-
-      worker.postMessage(params);
-    } catch {
-      // Worker creation failed (e.g. module workers not supported)
-      if (!cleaned) {
-        cleaned = true;
-        console.warn('[Dashboard] Worker not supported — using main thread');
-        runFallback();
-      }
+      const data = calculateChart({
+        date: profile.birth_date,
+        time: profile.birth_time,
+        lat: profile.birth_lat,
+        lng: profile.birth_lng,
+      });
+      setChartData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    return () => {
-      cleaned = true;
-      if (workerRef.current) workerRef.current.terminate();
-    };
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
