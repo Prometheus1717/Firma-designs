@@ -77,17 +77,17 @@ function findASCLine(planetLon, date, obliquity, latitudes) {
   for (const lat of latitudes) {
     let bestLon = null;
     let bestErr = 999;
-    // Finer initial sweep (1° steps) to catch steep curves at high latitudes
-    for (let testLon = -180; testLon <= 180; testLon += 1) {
+    // Initial sweep (2° steps)
+    for (let testLon = -180; testLon <= 180; testLon += 2) {
       const lst = gast + testLon / 15;
       const asc = ascLongitude(lst, lat, obliquity);
       let err = Math.abs(asc - planetLon);
       if (err > 180) err = 360 - err;
       if (err < bestErr) { bestErr = err; bestLon = testLon; }
     }
-    // Refine within ±1.5° with 0.05° precision
+    // Refine within ±2° with 0.1° precision
     if (bestLon !== null && bestErr < 10) {
-      for (let testLon = bestLon - 1.5; testLon <= bestLon + 1.5; testLon += 0.05) {
+      for (let testLon = bestLon - 2; testLon <= bestLon + 2; testLon += 0.1) {
         const lst = gast + testLon / 15;
         const asc = ascLongitude(lst, lat, obliquity);
         let err = Math.abs(asc - planetLon);
@@ -199,7 +199,7 @@ export function calculateChart({ date, time, lat, lng }) {
   const natalASC = ascLongitude(lst, parsedLat, obliquity);
 
   const latSamples = [];
-  for (let l = -80; l <= 80; l += 0.5) latSamples.push(l);
+  for (let l = -80; l <= 80; l += 1) latSamples.push(l);
 
   const planetPositions = [];
   const lines = [];

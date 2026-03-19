@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
-import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
@@ -154,25 +153,47 @@ export default function Dashboard() {
     }
   }, [hasBirthData, profile, navigate]);
 
-  // Calculate chart client-side when we have birth data
+  // Calculate chart in a Web Worker so the UI stays responsive on mobile
+  const workerRef = useRef(null);
   useEffect(() => {
     if (!hasBirthData || !profile?.birth_date) return;
 
     setLoading(true);
     setError('');
-    try {
-      const data = calculateChart({
-        date: profile.birth_date,
-        time: profile.birth_time,
-        lat: profile.birth_lat,
-        lng: profile.birth_lng,
-      });
-      setChartData(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
+
+    // Terminate any previous worker
+    if (workerRef.current) workerRef.current.terminate();
+
+    const worker = new Worker(
+      new URL('../lib/chartWorker.js', import.meta.url),
+      { type: 'module' }
+    );
+    workerRef.current = worker;
+
+    worker.onmessage = (e) => {
+      if (e.data.type === 'success') {
+        setChartData(e.data.data);
+      } else {
+        setError(e.data.message);
+      }
       setLoading(false);
-    }
+      worker.terminate();
+    };
+
+    worker.onerror = (err) => {
+      setError(err.message || 'Chart calculation failed');
+      setLoading(false);
+      worker.terminate();
+    };
+
+    worker.postMessage({
+      date: profile.birth_date,
+      time: profile.birth_time,
+      lat: profile.birth_lat,
+      lng: profile.birth_lng,
+    });
+
+    return () => { worker.terminate(); };
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
