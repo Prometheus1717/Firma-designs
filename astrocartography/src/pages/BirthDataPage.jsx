@@ -105,24 +105,7 @@ export default function BirthDataPage() {
     }
   }
 
-  // Show loading screen while profile is still loading or redirect is pending
-  if (hasBirthData || (user && profile === null)) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 2, marginBottom: 24 }}>LOADING CHART DATA</div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {[0, 1, 2].map(i => (
-            <div key={i} style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#00D88A',
-              animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite`,
-            }} />
-          ))}
-        </div>
-        <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
-      </div>
-    );
-  }
+  // If birth data exists, redirect fires via useEffect above — no blocking screen needed
 
   return (
     <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>

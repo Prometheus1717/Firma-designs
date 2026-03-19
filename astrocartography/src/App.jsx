@@ -87,10 +87,12 @@ function AdminRoute({ children }) {
 }
 
 function SmartRedirect() {
-  const { user, loading, hasBirthData } = useAuth();
+  const { user, loading, hasBirthData, profile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
-  if (hasBirthData) return <Navigate to="/dashboard" replace />;
+  // If profile hasn't loaded yet, go to dashboard (it handles its own loading state).
+  // Only send to /birth-data when we KNOW the profile has no birth data.
+  if (hasBirthData || !profile) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/birth-data" replace />;
 }
 
