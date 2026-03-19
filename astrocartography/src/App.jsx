@@ -1,11 +1,18 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 
-const AuthPage = lazy(() => import('./pages/AuthPage'));
-const BirthDataPage = lazy(() => import('./pages/BirthDataPage'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const AdminPage = lazy(() => import('./pages/AdminPage'));
+// Lazy imports with retry — if chunk fails to load (mobile network), retry once
+function lazyRetry(fn) {
+  return lazy(() => fn().catch(() => new Promise(resolve => {
+    setTimeout(() => resolve(fn()), 1500);
+  })));
+}
+
+const AuthPage = lazyRetry(() => import('./pages/AuthPage'));
+const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
+const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
+const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -24,6 +31,37 @@ function LoadingScreen() {
       <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
     </div>
   );
+}
+
+// Error boundary — catches JS errors and shows a recovery screen instead of blank page
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
+          <div style={{ ...F, fontSize: 12, color: '#F04060', marginBottom: 12 }}>Something went wrong</div>
+          <div style={{ ...F, fontSize: 10, color: '#5A7088', marginBottom: 20, maxWidth: 400, textAlign: 'center', lineHeight: 1.6 }}>
+            {this.state.error?.message || 'Unknown error'}
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
+          >
+            Reload
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function ProtectedRoute({ children }) {
@@ -48,7 +86,6 @@ function AdminRoute({ children }) {
   return children;
 }
 
-// Smart redirect: if user has birth data → dashboard, else → birth-data form
 function SmartRedirect() {
   const { user, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
@@ -59,18 +96,20 @@ function SmartRedirect() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Suspense fallback={<LoadingScreen />}>
-          <Routes>
-            <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-            <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-            <Route path="*" element={<SmartRedirect />} />
-          </Routes>
-        </Suspense>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+              <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+              <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+              <Route path="*" element={<SmartRedirect />} />
+            </Routes>
+          </Suspense>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
