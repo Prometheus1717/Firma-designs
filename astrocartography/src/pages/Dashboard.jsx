@@ -137,11 +137,11 @@ export default function Dashboard({ demo = false }) {
   const [showNatal, setShowNatal] = useState(false);
   const [showDemoGate, setShowDemoGate] = useState(false);
 
-  // Demo gate: intercept interactions for unauthenticated users
-  const gate = useCallback(() => {
-    if (!demo) return false;
-    setShowDemoGate(true);
-    return true; // blocked
+  // Demo: show sign-up prompt after 25 seconds
+  useEffect(() => {
+    if (!demo) return;
+    const t = setTimeout(() => setShowDemoGate(true), 25000);
+    return () => clearTimeout(t);
   }, [demo]);
 
   const mob = w < 900;
@@ -257,9 +257,8 @@ export default function Dashboard({ demo = false }) {
   }, []);
 
   const handleCityClick = useCallback((city) => {
-    if (gate()) return;
     setCityPop(city);
-  }, [gate]);
+  }, []);
 
   // Loading state
   if (!chartData && (demo ? loading : (loading || hasBirthData || !profile))) {
@@ -391,7 +390,7 @@ export default function Dashboard({ demo = false }) {
                   <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 3, cursor: 'pointer', flexShrink: 0, background: isHidden ? '#1A2840' : g.color + '25', border: `1px solid ${isHidden ? '#1A2840' : g.color + '50'}` }} title={isHidden ? 'Show on map' : 'Hide from map'}>
                     <span style={{ ...F, fontSize: 8, color: isHidden ? '#3A5068' : g.color }}>{isHidden ? '○' : '●'}</span>
                   </div>
-                  <div onClick={() => { if (gate()) return; setExpandedPlanet(isOpen ? null : g.planet); }} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                  <div onClick={() => { setExpandedPlanet(isOpen ? null : g.planet); }} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
                     <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
                     <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
                     <div style={{ display: 'flex', gap: 3 }}>
@@ -405,7 +404,7 @@ export default function Dashboard({ demo = false }) {
                 {/* Expanded detail */}
                 {isOpen && <div style={{ background: '#0A1420', borderBottom: '1px solid #14202C' }}>
                   {g.lines.map((l, li) => (
-                    <div key={li} onClick={() => { if (gate()) return; setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
+                    <div key={li} onClick={() => { setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
                       {/* Dash preview */}
                       <svg width="18" height="4" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" />}
@@ -440,7 +439,7 @@ export default function Dashboard({ demo = false }) {
           {/* Top Cities */}
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>TOP CITIES</div>
           {bestCities.map((c, i) => (
-            <div key={i} onClick={() => { if (gate()) return; flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
+            <div key={i} onClick={() => { flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: '#00D88A', fontWeight: 700, width: 14 }}>{i + 1}.</span>
               <span style={{ color: '#B0C0D0' }}>{c.name}</span>
               <span style={{ color: '#3A5068', marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
@@ -466,7 +465,7 @@ export default function Dashboard({ demo = false }) {
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div onClick={() => { if (gate()) return; setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div onClick={() => { setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
             ☉ Natal Chart
           </div>
 
@@ -614,7 +613,8 @@ export default function Dashboard({ demo = false }) {
           {/* Demo gate popup */}
           {showDemoGate && (
             <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,16,24,.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowDemoGate(false)}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: '0 24px 64px rgba(0,0,0,.6)', textAlign: 'center' }}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: '0 24px 64px rgba(0,0,0,.6)', textAlign: 'center', position: 'relative' }}>
+                <span onClick={() => setShowDemoGate(false)} style={{ position: 'absolute', top: 12, right: 14, cursor: 'pointer', ...F, fontSize: 16, color: '#5A7088', lineHeight: 1, zIndex: 1 }}>✕</span>
                 <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 12 }}>DISCOVER YOUR CHART</div>
                 <div style={{ fontSize: 13, color: '#8098B0', lineHeight: 1.7, marginBottom: 24 }}>
                   You're viewing <strong style={{ color: '#D0DDE8' }}>{DEMO.name}'s</strong> chart as a demo.<br />
@@ -627,9 +627,6 @@ export default function Dashboard({ demo = false }) {
                   <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: '#8098B0', background: 'transparent', border: '1px solid #1A2840', borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
                     I already have an account
                   </button>
-                </div>
-                <div onClick={() => setShowDemoGate(false)} style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 14, cursor: 'pointer' }}>
-                  Continue exploring demo
                 </div>
               </div>
             </div>
@@ -648,14 +645,14 @@ export default function Dashboard({ demo = false }) {
                 <div key={g.planet} style={{ marginBottom: 4, opacity: isHid ? 0.4 : 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0' }}>
                     <span onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ ...F, fontSize: 10, cursor: 'pointer', color: isHid ? '#3A5068' : g.color }}>{isHid ? '○' : '●'}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); if (gate()) return; setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
                       <span style={{ fontSize: 13 }}>{g.symbol}</span>
                       <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
                       <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
                     </div>
                   </div>
                   {expandedPlanet === g.planet && g.lines.map((l, li) => (
-                    <div key={li} onClick={e => { e.stopPropagation(); if (gate()) return; setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
+                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
                       <svg width="14" height="3" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" />}
                         {l.angle === 'IC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
@@ -739,7 +736,7 @@ export default function Dashboard({ demo = false }) {
               const imp = cityImpact(c);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
-                <div key={i} onClick={() => { if (gate()) return; handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
@@ -749,7 +746,7 @@ export default function Dashboard({ demo = false }) {
                   <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
-                <div key={i} onClick={() => { if (gate()) return; handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   {/* City */}
                   <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
