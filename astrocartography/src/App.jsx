@@ -1,6 +1,7 @@
 import { lazy, Suspense, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { Analytics } from '@vercel/analytics/react';
 
 // Lazy imports with retry — if chunk fails to load (mobile network), retry once
 function lazyRetry(fn) {
@@ -121,6 +122,7 @@ export default function App() {
           </Suspense>
         </AuthProvider>
       </BrowserRouter>
+      <Analytics />
     </ErrorBoundary>
   );
 }
