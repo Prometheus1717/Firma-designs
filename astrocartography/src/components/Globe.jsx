@@ -55,12 +55,14 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     ? (isMobile ? window.innerWidth * 0.48 : Math.min(window.innerWidth, window.innerHeight) * 0.38)
     : 220;
   const S = useRef({
-    rot: [-7, -25], scale: initScale, drag: false, auto: true, raf: 0,
+    rot: [-7, -25], scale: initScale, baseScale: initScale, drag: false, auto: true, raf: 0,
     lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
     // Flat map state — panX/panY in pixels, zoom multiplier
     panX: 0, panY: 0, zoom: 1,
     // Pinch-to-zoom tracking
     pinchDist: 0,
+    // Double-tap tracking
+    lastTap: 0, lastTapX: 0, lastTapY: 0,
     // Mobile: throttle redraws to ~30fps (33ms) instead of 60fps
     frameInterval: isMobile ? 33 : 16,
   });
@@ -86,12 +88,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     if (isFlat) {
       // Flat map — Equirectangular projection
-      // On tall screens (mobile), use width-based scale so map fills horizontally
-      // On wide screens (desktop), fit entire map within viewport
+      // Use max scale so the map always fills the canvas (no empty bars)
+      // Users can pan to see clipped areas
       const baseScaleW = W / (2 * Math.PI);
       const baseScaleH = H / Math.PI;
-      const aspectRatio = W / H;
-      const baseScale = (aspectRatio < 1.2 ? baseScaleW : Math.min(baseScaleW, baseScaleH)) * s.zoom;
+      const baseScale = Math.max(baseScaleW, baseScaleH) * s.zoom;
       proj = geoEquirectangular()
         .scale(baseScale)
         .translate([cx + s.panX, cy + s.panY])
@@ -299,8 +300,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const rect = c.getBoundingClientRect();
       const W = rect.width, H = rect.height;
       const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-      const ar = W / H;
-      const sc = (ar < 1.2 ? bsW : Math.min(bsW, bsH)) * s.zoom;
+      const sc = Math.max(bsW, bsH) * s.zoom;
       // Map pixel extents from center: width = 2*PI*sc, height = PI*sc
       const halfMapW = Math.PI * sc;
       const halfMapH = Math.PI * sc / 2;
@@ -358,10 +358,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         }
         // Also pan with two-finger drag
         const dx = mx - s.lx, dy = my - s.ly;
-        if (flatRef.current && s.zoom > 1) {
+        if (flatRef.current) {
           s.panX += dx; s.panY += dy; clampPan();
-        } else if (!flatRef.current) {
-          s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+        } else {
+          // Scale rotation sensitivity inversely with zoom level
+          const sens = 0.25 * (s.baseScale / Math.max(s.scale, 1));
+          s.rot = [s.rot[0] + dx * sens, Math.max(-70, Math.min(70, s.rot[1] - dy * sens))];
         }
         s.lx = mx; s.ly = my;
         s.pinchDist = newDist;
@@ -372,23 +374,59 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - s.lx, dy = t.clientY - s.ly;
       if (flatRef.current) {
-        if (s.zoom > 1) {
-          s.panX += dx;
-          s.panY += dy;
-          clampPan();
-        }
+        s.panX += dx;
+        s.panY += dy;
+        clampPan();
       } else {
-        s.rot = [s.rot[0] + dx * .25, Math.max(-70, Math.min(70, s.rot[1] - dy * .25))];
+        // Scale rotation sensitivity inversely with zoom — prevents wild jumps when zoomed in
+        const sens = 0.25 * (s.baseScale / Math.max(s.scale, 1));
+        s.rot = [s.rot[0] + dx * sens, Math.max(-70, Math.min(70, s.rot[1] - dy * sens))];
       }
       s.lx = t.clientX; s.ly = t.clientY;
       s.dirty = true;
     };
-    const up = () => {
+    const up = e => {
       s.drag = false;
       s.pinchDist = 0;
       if (!flatRef.current) {
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
         if (!gf) setTimeout(() => { s.auto = true; }, 4000);
+      }
+      // Double-tap detection for mobile zoom
+      if (e.changedTouches && e.changedTouches.length === 1) {
+        const now = Date.now();
+        const tx = e.changedTouches[0].clientX, ty = e.changedTouches[0].clientY;
+        const dt = now - s.lastTap;
+        const dd = Math.hypot(tx - s.lastTapX, ty - s.lastTapY);
+        if (dt < 300 && dd < 30) {
+          // Double tap detected — zoom in at tap point
+          s.lastTap = 0;
+          const r = c.getBoundingClientRect();
+          if (flatRef.current) {
+            const mx = tx - r.left - r.width / 2 - s.panX;
+            const my = ty - r.top - r.height / 2 - s.panY;
+            const newZoom = Math.min(25, s.zoom * 2);
+            s.panX -= mx * (newZoom / s.zoom - 1);
+            s.panY -= my * (newZoom / s.zoom - 1);
+            s.zoom = newZoom;
+            clampPan();
+          } else {
+            const proj = geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
+            const co = proj.invert([tx - r.left, ty - r.top]);
+            if (co) {
+              s.rot = [-co[0], -co[1]];
+              s.scale = Math.min(8000, s.scale * 2);
+              s.auto = false;
+              const gf2 = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
+              if (!gf2) setTimeout(() => { s.auto = true; }, 6000);
+            }
+          }
+          s.dirty = true;
+        } else {
+          s.lastTap = now;
+          s.lastTapX = tx;
+          s.lastTapY = ty;
+        }
       }
     };
     const wh = e => {
@@ -442,9 +480,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       let proj;
       if (flatRef.current) {
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-        const ar = W / H;
         proj = geoEquirectangular()
-          .scale((ar < 1.2 ? bsW : Math.min(bsW, bsH)) * s.zoom)
+          .scale(Math.max(bsW, bsH) * s.zoom)
           .translate([W / 2 + s.panX, H / 2 + s.panY])
           .rotate([0, 0]);
       } else {
@@ -494,8 +531,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const par = canvas.parentElement;
         const W = par.clientWidth, H = par.clientHeight;
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-        const ar = W / H;
-        const baseScale = ar < 1.2 ? bsW : Math.min(bsW, bsH);
+        const baseScale = Math.max(bsW, bsH);
         const targetZoom = Math.max(s.zoom, 3);
         const lonRad = lo * Math.PI / 180;
         const latRad = la * Math.PI / 180;
