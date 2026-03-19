@@ -29,15 +29,17 @@ export function AuthProvider({ children }) {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        // Skip profile fetch if signIn() is handling it (prevents race condition)
+        // Skip profile fetch AND ready flag if signIn() is handling it
+        // signIn() will set ready=true after loading the profile
         if (!signingInRef.current) {
           await loadProfile(u.id);
+          setReady(true);
         }
       } else {
         fetchIdRef.current++;
         setProfile(null);
+        setReady(true);
       }
-      setReady(true);
     });
 
     return () => subscription.unsubscribe();
@@ -72,6 +74,7 @@ export function AuthProvider({ children }) {
         setUser(data.user);
         await loadProfile(data.user.id);
       }
+      setReady(true);
       return data;
     } finally {
       signingInRef.current = false;

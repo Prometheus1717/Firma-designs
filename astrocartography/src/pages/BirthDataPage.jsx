@@ -5,8 +5,16 @@ import { useNavigate } from 'react-router-dom';
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 export default function BirthDataPage() {
-  const { saveBirthData, signOut } = useAuth();
+  const { saveBirthData, signOut, hasBirthData } = useAuth();
   const navigate = useNavigate();
+
+  // If birth data already exists (e.g. returning user), skip straight to dashboard
+  useEffect(() => {
+    if (hasBirthData) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [hasBirthData, navigate]);
+
   const [name, setName] = useState('');
   const [date, setDate] = useState(''); // internal: YYYY-MM-DD
   const [dateDisplay, setDateDisplay] = useState(''); // shown: dd.mm.yyyy
