@@ -218,7 +218,7 @@ export function calculateChart({ date, time, lat, lng }) {
   const natalASC = ascLongitude(lst, parsedLat, obliquity);
 
   const latSamples = [];
-  for (let l = -80; l <= 80; l += 1) latSamples.push(l);
+  for (let l = -80; l <= 80; l += 2) latSamples.push(l);
 
   const planetPositions = [];
   const lines = [];

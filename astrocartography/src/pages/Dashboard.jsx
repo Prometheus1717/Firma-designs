@@ -27,7 +27,6 @@ const ANGLE_ORDER = ['MC', 'IC', 'ASC', 'DC'];
 function getCitiesOnLines(lines, cities, threshold = 3.5) {
   const r = [], seen = new Set();
   const toRad = Math.PI / 180;
-  // Great-circle distance in degrees between two points
   function gcDist(la1, lo1, la2, lo2) {
     const dLa = (la2 - la1) * toRad, dLo = (lo2 - lo1) * toRad;
     const a = Math.sin(dLa / 2) ** 2 + Math.cos(la1 * toRad) * Math.cos(la2 * toRad) * Math.sin(dLo / 2) ** 2;
@@ -35,17 +34,25 @@ function getCitiesOnLines(lines, cities, threshold = 3.5) {
   }
   lines.forEach(l => {
     if (l.type === 'curve') {
-      // For curved lines (ASC/DC), find minimum great-circle distance to any curve point
       const pts = [];
       (l.segments || [l.points]).forEach(seg => { if (seg) pts.push(...seg); });
       if (!pts.length) return;
       cities.forEach(([la, lo, name]) => {
         if (seen.has(name)) return;
-        let minD = Infinity;
-        for (let i = 0; i < pts.length; i++) {
+        // Coarse scan: check every 8th point
+        let minD = Infinity, bestI = 0;
+        for (let i = 0; i < pts.length; i += 8) {
           const d = gcDist(la, lo, pts[i][1], pts[i][0]);
-          if (d < minD) minD = d;
-          if (minD < 0.5) break; // close enough, skip rest
+          if (d < minD) { minD = d; bestI = i; }
+          if (minD < 0.5) break;
+        }
+        // Refine only if coarse scan is near threshold
+        if (minD < threshold * 2) {
+          const s = Math.max(0, bestI - 8), e = Math.min(pts.length, bestI + 9);
+          for (let i = s; i < e; i++) {
+            const d = gcDist(la, lo, pts[i][1], pts[i][0]);
+            if (d < minD) minD = d;
+          }
         }
         if (minD <= threshold) {
           seen.add(name);
@@ -53,7 +60,6 @@ function getCitiesOnLines(lines, cities, threshold = 3.5) {
         }
       });
     } else {
-      // MC/IC lines — longitude distance adjusted for latitude
       cities.forEach(([la, lo, name]) => {
         const d = Math.min(Math.abs(lo - l.lo), 360 - Math.abs(lo - l.lo));
         if (d <= threshold && !seen.has(name)) {
@@ -154,24 +160,28 @@ export default function Dashboard() {
     }
   }, [hasBirthData, profile, navigate]);
 
-  // Calculate chart — analytical solution, runs in <50ms even on slow phones
+  // Calculate chart — deferred via setTimeout so loading screen renders first
   useEffect(() => {
     if (!hasBirthData || !profile?.birth_date) return;
     setLoading(true);
     setError('');
-    try {
-      const data = calculateChart({
-        date: profile.birth_date,
-        time: profile.birth_time,
-        lat: profile.birth_lat,
-        lng: profile.birth_lng,
-      });
-      setChartData(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    // setTimeout(0) yields to browser → loading screen paints → then calculate
+    const id = setTimeout(() => {
+      try {
+        const data = calculateChart({
+          date: profile.birth_date,
+          time: profile.birth_time,
+          lat: profile.birth_lat,
+          lng: profile.birth_lng,
+        });
+        setChartData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }, 0);
+    return () => clearTimeout(id);
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
@@ -223,7 +233,23 @@ export default function Dashboard() {
     setCityPop(city);
   }, []);
 
-  // Loading state — only shown when actively fetching chart after birth data is saved
+  // Show loading while waiting for profile from Supabase
+  if (!profile) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
+        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>Loading your profile...</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D88A', animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+          ))}
+        </div>
+        <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
+      </div>
+    );
+  }
+
+  // Loading state — shown while calculating chart
   if (loading && !chartData) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>

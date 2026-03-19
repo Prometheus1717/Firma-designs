@@ -12,30 +12,26 @@ export function AuthProvider({ children }) {
 
   const loadProfile = useCallback(async (userId) => {
     const id = ++fetchIdRef.current;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    // Race the Supabase query against a 4-second timeout
+    const result = await Promise.race([
+      supabase.from('profiles').select('*').eq('id', userId).single(),
+      new Promise(resolve => setTimeout(() => resolve({ data: null, error: { message: 'Profile fetch timeout' } }), 4000)),
+    ]);
+    const { data, error } = result;
     if (error) console.error('[loadProfile]', error.message);
-    if (id === fetchIdRef.current) {
+    if (id === fetchIdRef.current && data) {
       setProfile(data);
     }
     return data;
   }, []);
 
   useEffect(() => {
-    // Safety net: if auth + profile fetch takes too long (slow mobile network),
-    // force ready so the app doesn't hang forever. Do NOT clear this timeout
-    // when onAuthStateChange fires — loadProfile() can still hang after that.
+    // Safety net: force ready after 3 seconds no matter what
     const readyRef = { done: false };
-    const authTimeout = setTimeout(() => {
-      if (!readyRef.done) {
-        readyRef.done = true;
-        console.warn('[useAuth] Auth timeout — forcing ready state');
-        setReady(true);
-      }
-    }, 6000);
+    const markReady = () => {
+      if (!readyRef.done) { readyRef.done = true; setReady(true); }
+    };
+    const authTimeout = setTimeout(markReady, 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
@@ -43,12 +39,14 @@ export function AuthProvider({ children }) {
       if (u) {
         if (!signingInRef.current) {
           await loadProfile(u.id);
-          if (!readyRef.done) { readyRef.done = true; clearTimeout(authTimeout); setReady(true); }
+          clearTimeout(authTimeout);
+          markReady();
         }
       } else {
         fetchIdRef.current++;
         setProfile(null);
-        if (!readyRef.done) { readyRef.done = true; clearTimeout(authTimeout); setReady(true); }
+        clearTimeout(authTimeout);
+        markReady();
       }
     });
 
