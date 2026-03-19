@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 export default function BirthDataPage() {
-  const { saveBirthData, signOut, hasBirthData } = useAuth();
+  const { saveBirthData, signOut, hasBirthData, profile, user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [date, setDate] = useState(''); // internal: YYYY-MM-DD
@@ -105,8 +105,8 @@ export default function BirthDataPage() {
     }
   }
 
-  // Show loading screen while redirect is pending — prevents form flash
-  if (hasBirthData) {
+  // Show loading screen while profile is still loading or redirect is pending
+  if (hasBirthData || (user && profile === null)) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
