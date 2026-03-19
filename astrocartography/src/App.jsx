@@ -67,7 +67,7 @@ class ErrorBoundary extends Component {
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -89,11 +89,19 @@ function AdminRoute({ children }) {
 function SmartRedirect() {
   const { user, loading, hasBirthData, profile } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (!user) return <Navigate to="/auth" replace />;
-  // If profile hasn't loaded yet, go to dashboard (it handles its own loading state).
-  // Only send to /birth-data when we KNOW the profile has no birth data.
+  if (!user) return <Navigate to="/" replace />;
   if (hasBirthData || !profile) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/birth-data" replace />;
+}
+
+// Landing page: demo for guests, redirect for logged-in users
+function DemoOrDashboard() {
+  const { user, loading, hasBirthData, profile } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (user && hasBirthData) return <Navigate to="/dashboard" replace />;
+  if (user && profile && !hasBirthData) return <Navigate to="/birth-data" replace />;
+  if (user && !profile) return <Navigate to="/dashboard" replace />;
+  return <Dashboard demo />;
 }
 
 export default function App() {
@@ -103,6 +111,7 @@ export default function App() {
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
+              <Route path="/" element={<DemoOrDashboard />} />
               <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
               <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

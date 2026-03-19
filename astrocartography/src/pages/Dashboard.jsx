@@ -5,6 +5,14 @@ import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 
+// Demo chart: Elon Musk — public birth data
+const DEMO = {
+  date: '1971-06-28', time: '07:00',
+  lat: -25.7479, lng: 28.2293,
+  city: 'Pretoria, South Africa',
+  name: 'Elon Musk',
+};
+
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
 const PCOL = { Sun: '#E8A838', Moon: '#C0C0C0', Mercury: '#5BA8D4', Venus: '#D4729A', Mars: '#D45050', Jupiter: '#8068C0', Saturn: '#887058', Uranus: '#40B0A0', Neptune: '#4868B8', Pluto: '#7048A0' };
@@ -110,7 +118,7 @@ function cityImpact(c) {
   return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
 }
 
-export default function Dashboard() {
+export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, signOut } = useAuth();
   const navigate = useNavigate();
   const [chartData, setChartData] = useState(null);
@@ -127,6 +135,14 @@ export default function Dashboard() {
   const [flatMap, setFlatMap] = useState(false);
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
   const [showNatal, setShowNatal] = useState(false);
+  const [showDemoGate, setShowDemoGate] = useState(false);
+
+  // Demo gate: intercept interactions for unauthenticated users
+  const gate = useCallback(() => {
+    if (!demo) return false;
+    setShowDemoGate(true);
+    return true; // blocked
+  }, [demo]);
 
   const mob = w < 900;
 
@@ -153,19 +169,30 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', h);
   }, []);
 
-  // Redirect if no birth data
+  // Redirect if no birth data (skip in demo mode)
   useEffect(() => {
+    if (demo) return;
     if (!hasBirthData && profile !== null) {
       navigate('/birth-data', { replace: true });
     }
-  }, [hasBirthData, profile, navigate]);
+  }, [demo, hasBirthData, profile, navigate]);
 
   // Calculate chart — deferred via setTimeout so loading screen renders first
   useEffect(() => {
+    if (demo) {
+      // Demo mode: calculate immediately with hardcoded data
+      setLoading(true);
+      const id = setTimeout(() => {
+        try {
+          setChartData(calculateChart({ date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }));
+        } catch (err) { setError(err.message); }
+        finally { setLoading(false); }
+      }, 0);
+      return () => clearTimeout(id);
+    }
     if (!hasBirthData || !profile?.birth_date) return;
     setLoading(true);
     setError('');
-    // setTimeout(0) yields to browser → loading screen paints → then calculate
     const id = setTimeout(() => {
       try {
         const data = calculateChart({
@@ -182,7 +209,7 @@ export default function Dashboard() {
       }
     }, 0);
     return () => clearTimeout(id);
-  }, [hasBirthData, profile]);
+  }, [demo, hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
   const visibleLines = useMemo(() => lines.filter(l => !hiddenPlanets.has(l.planet)), [lines, hiddenPlanets]);
@@ -221,8 +248,8 @@ export default function Dashboard() {
   const filteredTab = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : tab === 'neutral' ? neutralC : onLines;
   const bestCities = onLines.filter(c => c.q === 'thrive').slice(0, 5);
 
-  const homeLocation = profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
-  const displayName = profile?.display_name || user?.email?.split('@')[0] || 'User';
+  const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
+  const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
   const planetString = chartData?.planetString || '';
 
   const flyTo = useCallback((la, lo) => {
@@ -230,17 +257,16 @@ export default function Dashboard() {
   }, []);
 
   const handleCityClick = useCallback((city) => {
+    if (gate()) return;
     setCityPop(city);
-  }, []);
+  }, [gate]);
 
-  // Loading state — shown while:
-  // 1. Profile still loading from Supabase (!profile)
-  // 2. Chart calculating after birth data is available (loading || hasBirthData but no chartData)
-  if (!chartData && (loading || hasBirthData || !profile)) {
+  // Loading state
+  if (!chartData && (demo ? loading : (loading || hasBirthData || !profile))) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>{!profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
+        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
         <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
           <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
@@ -273,31 +299,36 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {!mob && <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{clock}</span>}
-          {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
-          <div onClick={() => setShowProf(!showProf)} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', position: 'relative' }}>
-            ◉ {displayName}
-            {showProf && <div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 6 }}>{displayName}</div>
-              <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {(() => {
-                const [y, m, d] = (profile?.birth_date || '').split('-');
-                const dateFmt = y ? `${d}.${m}.${y.slice(-2)}` : '';
-                const t = profile?.birth_time || '';
-                const [hh, mi] = t.split(':').map(Number);
-                const h12 = hh % 12 || 12;
-                const ampm = hh < 12 ? 'AM' : 'PM';
-                const timeFmt = t ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '';
-                return `${dateFmt} · ${timeFmt}`;
-              })()}</div>
-              <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 6 }}>Location: {profile?.birth_city}</div>
-              {chartData?.natal && <div style={{ ...F, fontSize: 9, color: '#5A7088' }}>
-                ☉ {chartData.natal.sun?.sign} · ☽ {chartData.natal.moon?.sign} · ASC {chartData.natal.asc?.sign}
+          {demo ? <>
+            {!mob && <span style={{ ...F, fontSize: 8, color: '#5A7088', background: '#101C28', padding: '3px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>DEMO: {DEMO.name}</span>}
+            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: 9, fontWeight: 700, color: '#0A1018', background: '#00D88A', padding: '5px 14px', borderRadius: 5, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
+          </> : <>
+            {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
+            <div onClick={() => setShowProf(!showProf)} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', position: 'relative' }}>
+              ◉ {displayName}
+              {showProf && <div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 6 }}>{displayName}</div>
+                <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {(() => {
+                  const [y, m, d] = (profile?.birth_date || '').split('-');
+                  const dateFmt = y ? `${d}.${m}.${y.slice(-2)}` : '';
+                  const t = profile?.birth_time || '';
+                  const [hh, mi] = t.split(':').map(Number);
+                  const h12 = hh % 12 || 12;
+                  const ampm = hh < 12 ? 'AM' : 'PM';
+                  const timeFmt = t ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '';
+                  return `${dateFmt} · ${timeFmt}`;
+                })()}</div>
+                <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 6 }}>Location: {profile?.birth_city}</div>
+                {chartData?.natal && <div style={{ ...F, fontSize: 9, color: '#5A7088' }}>
+                  ☉ {chartData.natal.sun?.sign} · ☽ {chartData.natal.moon?.sign} · ASC {chartData.natal.asc?.sign}
+                </div>}
+                <div style={{ borderTop: '1px solid #1A2840', marginTop: 10, paddingTop: 10, display: 'flex', gap: 12 }}>
+                  <span onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer' }}>Edit birth data</span>
+                  <span onClick={signOut} style={{ ...F, fontSize: 9, color: '#F04060', cursor: 'pointer' }}>Sign out</span>
+                </div>
               </div>}
-              <div style={{ borderTop: '1px solid #1A2840', marginTop: 10, paddingTop: 10, display: 'flex', gap: 12 }}>
-                <span onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer' }}>Edit birth data</span>
-                <span onClick={signOut} style={{ ...F, fontSize: 9, color: '#F04060', cursor: 'pointer' }}>Sign out</span>
-              </div>
-            </div>}
-          </div>
+            </div>
+          </>}
         </div>
       </div>
 
@@ -360,7 +391,7 @@ export default function Dashboard() {
                   <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 3, cursor: 'pointer', flexShrink: 0, background: isHidden ? '#1A2840' : g.color + '25', border: `1px solid ${isHidden ? '#1A2840' : g.color + '50'}` }} title={isHidden ? 'Show on map' : 'Hide from map'}>
                     <span style={{ ...F, fontSize: 8, color: isHidden ? '#3A5068' : g.color }}>{isHidden ? '○' : '●'}</span>
                   </div>
-                  <div onClick={() => setExpandedPlanet(isOpen ? null : g.planet)} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                  <div onClick={() => { if (gate()) return; setExpandedPlanet(isOpen ? null : g.planet); }} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
                     <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
                     <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
                     <div style={{ display: 'flex', gap: 3 }}>
@@ -374,7 +405,7 @@ export default function Dashboard() {
                 {/* Expanded detail */}
                 {isOpen && <div style={{ background: '#0A1420', borderBottom: '1px solid #14202C' }}>
                   {g.lines.map((l, li) => (
-                    <div key={li} onClick={() => setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l))} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
+                    <div key={li} onClick={() => { if (gate()) return; setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
                       {/* Dash preview */}
                       <svg width="18" height="4" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" />}
@@ -409,7 +440,7 @@ export default function Dashboard() {
           {/* Top Cities */}
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>TOP CITIES</div>
           {bestCities.map((c, i) => (
-            <div key={i} onClick={() => flyTo(c.la, c.lo)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
+            <div key={i} onClick={() => { if (gate()) return; flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: '#00D88A', fontWeight: 700, width: 14 }}>{i + 1}.</span>
               <span style={{ color: '#B0C0D0' }}>{c.name}</span>
               <span style={{ color: '#3A5068', marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
@@ -435,7 +466,7 @@ export default function Dashboard() {
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div onClick={() => setShowNatal(!showNatal)} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div onClick={() => { if (gate()) return; setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
             ☉ Natal Chart
           </div>
 
@@ -580,6 +611,30 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* Demo gate popup */}
+          {showDemoGate && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,16,24,.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowDemoGate(false)}>
+              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: '0 24px 64px rgba(0,0,0,.6)', textAlign: 'center' }}>
+                <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 12 }}>DISCOVER YOUR CHART</div>
+                <div style={{ fontSize: 13, color: '#8098B0', lineHeight: 1.7, marginBottom: 24 }}>
+                  You're viewing <strong style={{ color: '#D0DDE8' }}>{DEMO.name}'s</strong> chart as a demo.<br />
+                  Sign up to see <strong style={{ color: '#00D88A' }}>your own</strong> planetary lines, city readings, and natal chart.
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 12, fontWeight: 700, color: '#0A1018', background: '#00D88A', border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
+                    CREATE MY CHART
+                  </button>
+                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: '#8098B0', background: 'transparent', border: '1px solid #1A2840', borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
+                    I already have an account
+                  </button>
+                </div>
+                <div onClick={() => setShowDemoGate(false)} style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 14, cursor: 'pointer' }}>
+                  Continue exploring demo
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
             <div style={{ display: 'flex', gap: 4 }}>
@@ -593,14 +648,14 @@ export default function Dashboard() {
                 <div key={g.planet} style={{ marginBottom: 4, opacity: isHid ? 0.4 : 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0' }}>
                     <span onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ ...F, fontSize: 10, cursor: 'pointer', color: isHid ? '#3A5068' : g.color }}>{isHid ? '○' : '●'}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); if (gate()) return; setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
                       <span style={{ fontSize: 13 }}>{g.symbol}</span>
                       <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
                       <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
                     </div>
                   </div>
                   {expandedPlanet === g.planet && g.lines.map((l, li) => (
-                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
+                    <div key={li} onClick={e => { e.stopPropagation(); if (gate()) return; setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
                       <svg width="14" height="3" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" />}
                         {l.angle === 'IC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
@@ -684,7 +739,7 @@ export default function Dashboard() {
               const imp = cityImpact(c);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
+                <div key={i} onClick={() => { if (gate()) return; handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
@@ -694,7 +749,7 @@ export default function Dashboard() {
                   <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <div key={i} onClick={() => { if (gate()) return; handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   {/* City */}
                   <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
