@@ -70,15 +70,15 @@ function ProtectedRoute({ children }) {
 }
 
 function AuthRoute({ children }) {
-  const { user, loading, profileLoading, hasBirthData } = useAuth();
-  if (loading || profileLoading) return <LoadingScreen />;
+  const { user, loading, hasBirthData } = useAuth();
+  if (loading) return <LoadingScreen />;
   if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/birth-data'} replace />;
   return children;
 }
 
 function AdminRoute({ children }) {
-  const { user, profile, loading, profileLoading } = useAuth();
-  if (loading || profileLoading) return <LoadingScreen />;
+  const { user, profile, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
   if (!profile?.is_admin) return <Navigate to="/dashboard" replace />;
   return children;
@@ -86,8 +86,8 @@ function AdminRoute({ children }) {
 
 // Smart redirect: if user has birth data → dashboard, else → birth-data form
 function SmartRedirect() {
-  const { user, loading, hasBirthData, profileLoading } = useAuth();
-  if (loading || profileLoading) return <LoadingScreen />;
+  const { user, loading, hasBirthData } = useAuth();
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/birth-data" replace />;

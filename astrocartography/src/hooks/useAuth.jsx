@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
@@ -6,51 +6,46 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [profileLoading, setProfileLoading] = useState(false);
+  const [ready, setReady] = useState(false);
+  const fetchIdRef = useRef(0); // prevents stale profile fetches from overwriting
+  const signingInRef = useRef(false); // tracks if signIn is in progress (ref to avoid stale closures)
 
-  async function fetchProfile(userId) {
-    setProfileLoading(true);
+  const loadProfile = useCallback(async (userId) => {
+    const id = ++fetchIdRef.current;
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
-    if (error) console.error('[fetchProfile] RLS or query error:', error.message);
-    setProfile(data);
-    setProfileLoading(false);
+    if (error) console.error('[loadProfile]', error.message);
+    if (id === fetchIdRef.current) {
+      setProfile(data);
+    }
     return data;
-  }
+  }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
-        fetchProfile(u.id).finally(() => setLoading(false));
+        // Skip profile fetch if signIn() is handling it (prevents race condition)
+        if (!signingInRef.current) {
+          await loadProfile(u.id);
+        }
       } else {
-        setLoading(false);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      const u = session?.user ?? null;
-      if (u) {
-        setProfileLoading(true);   // set BEFORE setUser to avoid race
-        setUser(u);
-        fetchProfile(u.id);
-      } else {
-        setUser(null);
+        fetchIdRef.current++;
         setProfile(null);
-        setProfileLoading(false);
       }
+      setReady(true);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [loadProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
   const isAdmin = profile?.is_admin === true;
+  const loading = !ready;
 
   async function signUp(email, password) {
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -66,17 +61,25 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    // Eagerly load profile so AuthRoute can redirect correctly
-    if (data?.user) {
-      setUser(data.user);
-      await fetchProfile(data.user.id);
+    signingInRef.current = true;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      // signInWithPassword triggers onAuthStateChange, but signingInRef prevents
+      // the duplicate profile fetch. We load profile here so it's ready BEFORE
+      // signIn returns → AuthRoute can redirect correctly.
+      if (data?.user) {
+        setUser(data.user);
+        await loadProfile(data.user.id);
+      }
+      return data;
+    } finally {
+      signingInRef.current = false;
     }
-    return data;
   }
 
   async function signOut() {
+    fetchIdRef.current++; // invalidate any in-flight fetches
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
@@ -111,7 +114,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, profileLoading, hasBirthData, isAdmin, signUp, signIn, signOut, resetPassword, saveBirthData, fetchProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, signUp, signIn, signOut, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );
