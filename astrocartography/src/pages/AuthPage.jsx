@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 export default function AuthPage() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,7 +51,8 @@ export default function AuthPage() {
       </div>
 
       {/* Card */}
-      <div style={{ width: '100%', maxWidth: 400, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32 }}>
+      <div style={{ width: '100%', maxWidth: 400, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32, position: 'relative' }}>
+        <span onClick={() => navigate(-1)} style={{ position: 'absolute', top: 14, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: '#5A7088', lineHeight: 1, zIndex: 1 }}>✕</span>
         <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 20, textAlign: 'center' }}>
           {mode === 'login' ? 'Welcome Back' : mode === 'signup' ? 'Create Your Account' : 'Reset Password'}
         </div>

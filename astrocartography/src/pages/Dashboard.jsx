@@ -148,6 +148,17 @@ export default function Dashboard({ demo = false }) {
 
   const mob = w < 900;
 
+  // Close all popups/overlays — prevents window overlap
+  const closeAllPopups = useCallback((except) => {
+    if (except !== 'popup') setPopup(null);
+    if (except !== 'natal') setShowNatal(false);
+    if (except !== 'angle') setShowAngleInfo(false);
+    if (except !== 'city') setCityPop(null);
+    if (except !== 'guide') setShowGuide(false);
+    if (except !== 'demoGate') setShowDemoGate(false);
+    if (except !== 'prof') setShowProf(false);
+  }, []);
+
   useEffect(() => {
     const fmt = () => {
       const now = new Date();
@@ -297,7 +308,7 @@ export default function Dashboard({ demo = false }) {
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#00D88A', boxShadow: '0 0 6px #00D88A' }} />
             {!mob && 'LIVE'}
           </span>
-          <span onClick={() => { setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: '#5A7088', cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
+          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: '#5A7088', cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
           {!mob && <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{clock}</span>}
@@ -306,9 +317,9 @@ export default function Dashboard({ demo = false }) {
             <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: '#0A1018', background: '#00D88A', padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
-            <div onClick={() => setShowProf(!showProf)} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', position: 'relative' }}>
+            <div onClick={() => { if (!showProf) closeAllPopups('prof'); setShowProf(!showProf); }} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', position: 'relative' }}>
               ◉ {displayName}
-              {showProf && <div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
+              {showProf && <><div style={{ position: 'fixed', inset: 0, zIndex: 590 }} onClick={e => { e.stopPropagation(); setShowProf(false); }} /><div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 6 }}>{displayName}</div>
                 <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {(() => {
                   const [y, m, d] = (profile?.birth_date || '').split('-');
@@ -328,7 +339,7 @@ export default function Dashboard({ demo = false }) {
                   <span onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer' }}>Edit birth data</span>
                   <span onClick={signOut} style={{ ...F, fontSize: 9, color: '#F04060', cursor: 'pointer' }}>Sign out</span>
                 </div>
-              </div>}
+              </div></>}
             </div>
           </>}
         </div>
@@ -468,13 +479,14 @@ export default function Dashboard({ demo = false }) {
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div onClick={() => { setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
             ☉ Natal Chart
           </div>
 
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
-            <div style={{ position: 'absolute', top: 76, right: 8, zIndex: 110, width: mob ? 'calc(100% - 16px)' : 400, background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden' }}>
+            <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => setShowNatal(false)} />
+            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 400, background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -494,7 +506,7 @@ export default function Dashboard({ demo = false }) {
               </div>
 
               {/* Planet rows */}
-              <div style={{ maxHeight: mob ? '50vh' : 340, overflowY: 'auto' }}>
+              <div style={{ flex: 1, overflowY: 'auto' }}>
                 {chartData.planets.map((p, i) => {
                   const elem = SIGN_ELEMENTS[p.sign] || '';
                   const mode = SIGN_MODES[p.sign] || '';
@@ -581,10 +593,11 @@ export default function Dashboard({ demo = false }) {
                 </div>
               </div>
             </div>
-          )}
+            </>)}
 
           {/* Line info popup */}
-          {typeof popup === 'number' && lines[popup] && (
+          {typeof popup === 'number' && lines[popup] && (<>
+            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setPopup(null)} />
             <div style={{ position: 'absolute', top: mob ? 8 : 50, left: mob ? 8 : 8, right: mob ? 8 : 'auto', width: mob ? 'auto' : 320, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 8, padding: 16, zIndex: 100, boxShadow: '0 12px 40px rgba(0,0,0,.5)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <div style={{ width: 20, height: 3, borderRadius: 2, background: lines[popup].c }} />
@@ -595,10 +608,11 @@ export default function Dashboard({ demo = false }) {
               <div style={{ fontSize: 13, color: '#8098B0', lineHeight: 1.8 }}>{lines[popup].desc}</div>
               <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 10 }}>Cities: {onLines.filter(c => c.line === lines[popup].n).map(c => c.name).join(' · ')}</div>
             </div>
-          )}
+          </>)}
 
           {/* City reading popup */}
-          {cityPop && (
+          {cityPop && (<>
+            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setCityPop(null)} />
             <div style={{ position: 'absolute', bottom: mob ? 8 : 16, right: mob ? 8 : 16, left: mob ? 8 : 'auto', width: mob ? 'auto' : 340, background: 'rgba(13,21,32,.97)', border: `1px solid ${cityPop.lc}30`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: '0 12px 40px rgba(0,0,0,.5)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: cityPop.lc }} />
@@ -611,7 +625,7 @@ export default function Dashboard({ demo = false }) {
               <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° from line</div>
               <div style={{ fontSize: 12, color: '#8098B0', lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
             </div>
-          )}
+          </>)}
 
           {/* HOW IT WORKS guide */}
           {showGuide && (() => {
@@ -853,29 +867,37 @@ export default function Dashboard({ demo = false }) {
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
             <div style={{ display: 'flex', gap: 4 }}>
-              <div onClick={() => setPopup(popup === 'leg' ? null : 'leg')} style={{ ...F, fontSize: 9, color: '#00D88A', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
-              <div onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#5A7088', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
+              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? '#00D88A' : '#8098B0', background: 'rgba(13,21,32,.95)', border: `1px solid ${popup === 'leg' ? '#00D88A40' : '#1A2840'}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
+              <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#5A7088', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
             </div>
-            {popup === 'leg' && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200, maxHeight: '60vh', overflowY: 'auto' }}>
+            {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
+              {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: '#00D88A', cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: '1px solid #00D88A40', background: '#00D88A10', textAlign: 'center' }}>Show all planets</div>}
               {planetGroups.map(g => {
                 const isHid = hiddenPlanets.has(g.planet);
                 return (
-                <div key={g.planet} style={{ marginBottom: 4, opacity: isHid ? 0.4 : 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 0' }}>
-                    <span onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ ...F, fontSize: 10, cursor: 'pointer', color: isHid ? '#3A5068' : g.color }}>{isHid ? '○' : '●'}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
-                      <span style={{ fontSize: 13 }}>{g.symbol}</span>
-                      <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
-                      <span style={{ ...F, fontSize: 10, color: '#3A5068', marginLeft: 'auto' }}>›</span>
+                <div key={g.planet} style={{ marginBottom: 2 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px' }}>
+                    <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 28, height: 18, borderRadius: 9, background: isHid ? '#1A2840' : g.color + '35', border: `1px solid ${isHid ? '#2A3848' : g.color + '60'}`, cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'all .15s' }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: isHid ? '#3A5068' : g.color, position: 'absolute', top: 2, left: isHid ? 2 : 12, transition: 'all .15s' }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer', opacity: isHid ? 0.4 : 1, transition: 'opacity .15s' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
+                      <span style={{ fontSize: 14 }}>{g.symbol}</span>
+                      <span style={{ ...F, fontSize: 10, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
+                      <div style={{ display: 'flex', gap: 3, marginLeft: 'auto' }}>
+                        {g.lines.map(l => (
+                          <span key={l.angle} style={{ ...F, fontSize: 6, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 3px', borderRadius: 2 }}>{l.angle}</span>
+                        ))}
+                      </div>
+                      <span style={{ ...F, fontSize: 11, color: '#3A5068', transform: expandedPlanet === g.planet ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
                     </div>
                   </div>
                   {expandedPlanet === g.planet && g.lines.map((l, li) => (
-                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0 4px 20px', cursor: 'pointer' }}>
-                      <svg width="14" height="3" style={{ flexShrink: 0 }}>
-                        {l.angle === 'MC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" />}
-                        {l.angle === 'IC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
-                        {l.angle === 'ASC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="6,2" />}
-                        {l.angle === 'DC' && <line x1="0" y1="1.5" x2="14" y2="1.5" stroke={l.c} strokeWidth="2" strokeDasharray="1.5,1.5" />}
+                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 4px 5px 40px', cursor: 'pointer', borderBottom: '1px solid #14202C' }}>
+                      <svg width="16" height="4" style={{ flexShrink: 0 }}>
+                        {l.angle === 'MC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" />}
+                        {l.angle === 'IC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
+                        {l.angle === 'ASC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="6,2" />}
+                        {l.angle === 'DC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="1.5,1.5" />}
                       </svg>
                       <span style={{ ...F, fontSize: 9, color: '#8098B0' }}>{l.angle}</span>
                       <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>
@@ -885,9 +907,9 @@ export default function Dashboard({ demo = false }) {
                   ))}
                 </div>
               )})}
-            </div>}
+            </div></>}
             {/* Mobile angle info */}
-            {showAngleInfo && <div style={{ background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
+            {showAngleInfo && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8098B0' }}>LINE TYPES</span>
                 <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer' }}>✕</span>
@@ -910,7 +932,7 @@ export default function Dashboard({ demo = false }) {
                   </div>
                 );
               })}
-            </div>}
+            </div></>}
           </div>}
         </div>
       </div>

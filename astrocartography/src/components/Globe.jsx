@@ -50,8 +50,10 @@ function topoF(t, n) {
 export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 900);
-  // Compute initial globe scale so it fits nicely — ~85% of viewport's smaller dimension / 2
-  const initScale = typeof window !== 'undefined' ? Math.min(window.innerWidth, window.innerHeight) * 0.38 : 220;
+  // Compute initial globe scale: on mobile use width * 0.48 for a closer, fuller globe
+  const initScale = typeof window !== 'undefined'
+    ? (isMobile ? window.innerWidth * 0.48 : Math.min(window.innerWidth, window.innerHeight) * 0.38)
+    : 220;
   const S = useRef({
     rot: [-7, -25], scale: initScale, drag: false, auto: true, raf: 0,
     lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
@@ -84,10 +86,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     if (isFlat) {
       // Flat map — Equirectangular projection
-      // Use the smaller scale so the entire world fits within the viewport
+      // On tall screens (mobile), use width-based scale so map fills horizontally
+      // On wide screens (desktop), fit entire map within viewport
       const baseScaleW = W / (2 * Math.PI);
       const baseScaleH = H / Math.PI;
-      const baseScale = Math.min(baseScaleW, baseScaleH) * s.zoom;
+      const aspectRatio = W / H;
+      const baseScale = (aspectRatio < 1.2 ? baseScaleW : Math.min(baseScaleW, baseScaleH)) * s.zoom;
       proj = geoEquirectangular()
         .scale(baseScale)
         .translate([cx + s.panX, cy + s.panY])
@@ -295,7 +299,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const rect = c.getBoundingClientRect();
       const W = rect.width, H = rect.height;
       const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-      const sc = Math.min(bsW, bsH) * s.zoom;
+      const ar = W / H;
+      const sc = (ar < 1.2 ? bsW : Math.min(bsW, bsH)) * s.zoom;
       // Map pixel extents from center: width = 2*PI*sc, height = PI*sc
       const halfMapW = Math.PI * sc;
       const halfMapH = Math.PI * sc / 2;
@@ -340,13 +345,15 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             const rect = c.getBoundingClientRect();
             const cx = mx - rect.left - rect.width / 2 - s.panX;
             const cy2 = my - rect.top - rect.height / 2 - s.panY;
-            const newZoom = Math.max(1, Math.min(15, s.zoom * ratio));
+            const boosted = 1 + (ratio - 1) * 1.5;
+            const newZoom = Math.max(1, Math.min(25, s.zoom * boosted));
             s.panX -= cx * (newZoom / s.zoom - 1);
             s.panY -= cy2 * (newZoom / s.zoom - 1);
             s.zoom = newZoom;
             clampPan();
           } else {
-            s.scale = Math.max(120, Math.min(5000, s.scale * ratio));
+            const boosted = 1 + (ratio - 1) * 1.5;
+            s.scale = Math.max(80, Math.min(8000, s.scale * boosted));
           }
         }
         // Also pan with two-finger drag
@@ -391,14 +398,14 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const mx = e.clientX - rect.left - rect.width / 2 - s.panX;
         const my = e.clientY - rect.top - rect.height / 2 - s.panY;
         const factor = e.deltaY < 0 ? 1.1 : 0.91;
-        const newZoom = Math.max(1, Math.min(15, s.zoom * factor));
+        const newZoom = Math.max(1, Math.min(25, s.zoom * factor));
         // Zoom toward mouse position
         s.panX -= mx * (newZoom / s.zoom - 1);
         s.panY -= my * (newZoom / s.zoom - 1);
         s.zoom = newZoom;
         clampPan();
       } else {
-        s.scale = Math.max(100, Math.min(5000, s.scale * (e.deltaY < 0 ? 1.08 : .93)));
+        s.scale = Math.max(80, Math.min(8000, s.scale * (e.deltaY < 0 ? 1.1 : .91)));
         s.auto = false;
         clearTimeout(s._z);
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
@@ -412,7 +419,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       if (flatRef.current) {
         const mx = e.clientX - r.left - r.width / 2 - s.panX;
         const my = e.clientY - r.top - r.height / 2 - s.panY;
-        const newZoom = Math.min(15, s.zoom * 2);
+        const newZoom = Math.min(25, s.zoom * 2);
         s.panX -= mx * (newZoom / s.zoom - 1);
         s.panY -= my * (newZoom / s.zoom - 1);
         s.zoom = newZoom;
@@ -421,7 +428,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const proj = geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
         if (co) {
-          s.rot = [-co[0], -co[1]]; s.scale = Math.min(5000, s.scale * 1.5); s.auto = false;
+          s.rot = [-co[0], -co[1]]; s.scale = Math.min(8000, s.scale * 1.5); s.auto = false;
           const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
           if (!gf) setTimeout(() => { s.auto = true; }, 6000);
         }
@@ -435,8 +442,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       let proj;
       if (flatRef.current) {
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
+        const ar = W / H;
         proj = geoEquirectangular()
-          .scale(Math.min(bsW, bsH) * s.zoom)
+          .scale((ar < 1.2 ? bsW : Math.min(bsW, bsH)) * s.zoom)
           .translate([W / 2 + s.panX, H / 2 + s.panY])
           .rotate([0, 0]);
       } else {
@@ -486,7 +494,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const par = canvas.parentElement;
         const W = par.clientWidth, H = par.clientHeight;
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-        const baseScale = Math.min(bsW, bsH);
+        const ar = W / H;
+        const baseScale = ar < 1.2 ? bsW : Math.min(bsW, bsH);
         const targetZoom = Math.max(s.zoom, 3);
         const lonRad = lo * Math.PI / 180;
         const latRad = la * Math.PI / 180;
