@@ -25,7 +25,16 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    // Timeout: if auth check takes too long (slow mobile network), force ready
+    const authTimeout = setTimeout(() => {
+      if (!ready) {
+        console.warn('[useAuth] Auth timeout — forcing ready state');
+        setReady(true);
+      }
+    }, 8000);
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      clearTimeout(authTimeout);
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
@@ -42,7 +51,7 @@ export function AuthProvider({ children }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => { clearTimeout(authTimeout); subscription.unsubscribe(); };
   }, [loadProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);

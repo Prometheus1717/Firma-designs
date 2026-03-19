@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
+import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
@@ -153,7 +154,7 @@ export default function Dashboard() {
     }
   }, [hasBirthData, profile, navigate]);
 
-  // Calculate chart in a Web Worker so the UI stays responsive on mobile
+  // Calculate chart — try Web Worker first, fall back to main thread with setTimeout
   const workerRef = useRef(null);
   useEffect(() => {
     if (!hasBirthData || !profile?.birth_date) return;
@@ -161,39 +162,84 @@ export default function Dashboard() {
     setLoading(true);
     setError('');
 
-    // Terminate any previous worker
-    if (workerRef.current) workerRef.current.terminate();
-
-    const worker = new Worker(
-      new URL('../lib/chartWorker.js', import.meta.url),
-      { type: 'module' }
-    );
-    workerRef.current = worker;
-
-    worker.onmessage = (e) => {
-      if (e.data.type === 'success') {
-        setChartData(e.data.data);
-      } else {
-        setError(e.data.message);
-      }
-      setLoading(false);
-      worker.terminate();
-    };
-
-    worker.onerror = (err) => {
-      setError(err.message || 'Chart calculation failed');
-      setLoading(false);
-      worker.terminate();
-    };
-
-    worker.postMessage({
+    const params = {
       date: profile.birth_date,
       time: profile.birth_time,
       lat: profile.birth_lat,
       lng: profile.birth_lng,
-    });
+    };
 
-    return () => { worker.terminate(); };
+    // Fallback: run on main thread deferred via setTimeout so loading screen renders
+    const runFallback = () => {
+      setTimeout(() => {
+        try {
+          const data = calculateChart(params);
+          setChartData(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }, 50);
+    };
+
+    // Try Web Worker
+    let cleaned = false;
+    try {
+      if (workerRef.current) workerRef.current.terminate();
+
+      const worker = new Worker(
+        new URL('../lib/chartWorker.js', import.meta.url),
+        { type: 'module' }
+      );
+      workerRef.current = worker;
+
+      // Timeout: if worker doesn't respond in 20s, kill it and use fallback
+      const timeout = setTimeout(() => {
+        if (!cleaned) {
+          cleaned = true;
+          worker.terminate();
+          console.warn('[Dashboard] Worker timeout — falling back to main thread');
+          runFallback();
+        }
+      }, 20000);
+
+      worker.onmessage = (e) => {
+        if (cleaned) return;
+        cleaned = true;
+        clearTimeout(timeout);
+        if (e.data.type === 'success') {
+          setChartData(e.data.data);
+        } else {
+          setError(e.data.message);
+        }
+        setLoading(false);
+        worker.terminate();
+      };
+
+      worker.onerror = () => {
+        if (cleaned) return;
+        cleaned = true;
+        clearTimeout(timeout);
+        worker.terminate();
+        console.warn('[Dashboard] Worker failed — falling back to main thread');
+        runFallback();
+      };
+
+      worker.postMessage(params);
+    } catch {
+      // Worker creation failed (e.g. module workers not supported)
+      if (!cleaned) {
+        cleaned = true;
+        console.warn('[Dashboard] Worker not supported — using main thread');
+        runFallback();
+      }
+    }
+
+    return () => {
+      cleaned = true;
+      if (workerRef.current) workerRef.current.terminate();
+    };
   }, [hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
