@@ -1,9 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
-import AuthPage from './pages/AuthPage';
-import BirthDataPage from './pages/BirthDataPage';
-import Dashboard from './pages/Dashboard';
-import AdminPage from './pages/AdminPage';
+
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const BirthDataPage = lazy(() => import('./pages/BirthDataPage'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+
+const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 function LoadingScreen() {
   return (
@@ -57,13 +61,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-          <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-          <Route path="*" element={<SmartRedirect />} />
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+            <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+            <Route path="*" element={<SmartRedirect />} />
+          </Routes>
+        </Suspense>
       </AuthProvider>
     </BrowserRouter>
   );

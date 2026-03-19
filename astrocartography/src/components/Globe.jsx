@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
-import * as d3 from 'd3';
+import { geoOrthographic, geoEquirectangular, geoPath, geoGraticule, geoDistance } from 'd3-geo';
 
 const CP = [
   [[-9.5,37],[-5.5,36],[-2,36.7],[0,40.5],[3,43],[-9,43],[-9,41],[-9.5,37]],
@@ -49,11 +49,14 @@ function topoF(t, n) {
 
 export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
   const canvasRef = useRef(null);
+  const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 900);
   const S = useRef({
     rot: [-7, -25], scale: 280, drag: false, auto: true, raf: 0,
     lx: 0, ly: 0, wg: null, fd: false, dirty: true, lastDraw: 0,
     // Flat map state — panX/panY in pixels, zoom multiplier
     panX: 0, panY: 0, zoom: 1,
+    // Mobile: throttle redraws to ~30fps (33ms) instead of 60fps
+    frameInterval: isMobile ? 33 : 16,
   });
   const [, forceUpdate] = useState(0);
   const flatRef = useRef(flat);
@@ -65,7 +68,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const par = canvas.parentElement;
     const W = par.clientWidth, H = par.clientHeight;
     if (!W || !H) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
     if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; }
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -82,11 +85,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const baseScaleH = H / Math.PI;
       // Use the larger scale so the map covers the whole canvas
       const baseScale = Math.max(baseScaleW, baseScaleH) * s.zoom;
-      proj = d3.geoEquirectangular()
+      proj = geoEquirectangular()
         .scale(baseScale)
         .translate([cx + s.panX, cy + s.panY])
         .rotate([0, 0]);
-      path = d3.geoPath(proj, ctx);
+      path = geoPath(proj, ctx);
       center = null;
 
       // Ocean background — fill entire canvas
@@ -95,11 +98,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
       // Graticule
       ctx.strokeStyle = '#182838'; ctx.lineWidth = .4;
-      ctx.beginPath(); path(d3.geoGraticule().step([30, 30])()); ctx.stroke();
+      ctx.beginPath(); path(geoGraticule().step([30, 30])()); ctx.stroke();
       // Finer graticule at higher zoom
       if (s.zoom > 1.5) {
         ctx.strokeStyle = '#141E2C'; ctx.lineWidth = .2;
-        ctx.beginPath(); path(d3.geoGraticule().step([10, 10])()); ctx.stroke();
+        ctx.beginPath(); path(geoGraticule().step([10, 10])()); ctx.stroke();
       }
 
       // Countries
@@ -108,8 +111,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
       // Globe — Orthographic projection
-      proj = d3.geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
-      path = d3.geoPath(proj, ctx);
+      proj = geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
+      path = geoPath(proj, ctx);
       center = [-s.rot[0], -s.rot[1]];
 
       // Atmosphere
@@ -122,7 +125,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
       // Graticule
       ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
-      ctx.beginPath(); path(d3.geoGraticule().step([20, 20])()); ctx.stroke();
+      ctx.beginPath(); path(geoGraticule().step([20, 20])()); ctx.stroke();
 
       // Countries
       ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .6;
@@ -175,7 +178,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     // Cities on lines (priority — always draw dot, label with collision check)
     if (citiesOnLines) {
       citiesOnLines.forEach(c => {
-        if (!isFlat && center && d3.geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
+        if (!isFlat && center && geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
         const p = proj([c.lo, c.la]);
         if (!p || p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
         const r = isFlat ? (s.zoom > 3 ? 4 : s.zoom > 1.5 ? 3 : 2) : (s.scale > 400 ? 4 : 2.5);
@@ -211,7 +214,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const onLineNames = new Set(citiesOnLines ? citiesOnLines.map(c => c.name) : []);
       tierCities.forEach(([la, lo, name]) => {
         if (onLineNames.has(name)) return;
-        if (!isFlat && center && d3.geoDistance([lo, la], center) > Math.PI / 2) return;
+        if (!isFlat && center && geoDistance([lo, la], center) > Math.PI / 2) return;
         const p = proj([lo, la]);
         if (!p || p[0] < -10 || p[0] > W + 10 || p[1] < -10 || p[1] > H + 10) return;
         const r = isFlat ? (s.zoom > 5 ? 2.5 : 2) : (s.scale > 600 ? 2.5 : 1.5);
@@ -243,7 +246,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     // Home marker
     if (homeLocation) {
       const [hLng, hLat, hLabel] = homeLocation;
-      if (isFlat || (center && d3.geoDistance([hLng, hLat], center) < Math.PI / 2)) {
+      if (isFlat || (center && geoDistance([hLng, hLat], center) < Math.PI / 2)) {
         const p = proj([hLng, hLat]);
         if (p) {
           const t = (Date.now() % 2200) / 2200;
@@ -270,11 +273,13 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     function loop(ts) {
       const isFlat = flatRef.current;
+      const elapsed = ts - s.lastDraw;
       // Stop rotation when globe fills the viewport
       const cv = canvasRef.current;
       const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) * 1.5;
       if (!isFlat && s.auto && !s.drag && !globeFills) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
-      if (s.dirty || (ts - s.lastDraw) > 100) { draw(); s.dirty = false; s.lastDraw = ts; }
+      // Throttle: only redraw at target frame rate, or after 200ms idle
+      if ((s.dirty && elapsed >= s.frameInterval) || elapsed > 200) { draw(); s.dirty = false; s.lastDraw = ts; }
       s.raf = requestAnimationFrame(loop);
     }
     s.raf = requestAnimationFrame(loop);
@@ -361,7 +366,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.zoom = newZoom;
         clampPan();
       } else {
-        const proj = d3.geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
+        const proj = geoOrthographic().scale(s.scale).translate([r.width / 2, r.height / 2]).rotate(s.rot);
         const co = proj.invert([e.clientX - r.left, e.clientY - r.top]);
         if (co) {
           s.rot = [-co[0], -co[1]]; s.scale = Math.min(5000, s.scale * 1.5); s.auto = false;
@@ -378,12 +383,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       let proj;
       if (flatRef.current) {
         const bsW = W / (2 * Math.PI), bsH = H / Math.PI;
-        proj = d3.geoEquirectangular()
+        proj = geoEquirectangular()
           .scale(Math.max(bsW, bsH) * s.zoom)
           .translate([W / 2 + s.panX, H / 2 + s.panY])
           .rotate([0, 0]);
       } else {
-        proj = d3.geoOrthographic().scale(s.scale).translate([W / 2, H / 2]).rotate(s.rot);
+        proj = geoOrthographic().scale(s.scale).translate([W / 2, H / 2]).rotate(s.rot);
       }
       const mx = e.clientX - r.left, my = e.clientY - r.top;
       let closest = null, minD = 20;
