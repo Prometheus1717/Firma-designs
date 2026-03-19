@@ -233,32 +233,17 @@ export default function Dashboard() {
     setCityPop(city);
   }, []);
 
-  // Show loading while waiting for profile from Supabase
-  if (!profile) {
+  // Loading state — shown while:
+  // 1. Profile still loading from Supabase (!profile)
+  // 2. Chart calculating after birth data is available (loading || hasBirthData but no chartData)
+  if (!chartData && (loading || hasBirthData || !profile)) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>Loading your profile...</div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {[0, 1, 2].map(i => (
-            <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D88A', animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }} />
-          ))}
-        </div>
-        <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
-      </div>
-    );
-  }
-
-  // Loading state — shown while calculating chart
-  if (loading && !chartData) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>Calculating your planetary lines...</div>
+        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>{!profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
         <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
           <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
-        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 16 }}>Analyzing 10 planets × 4 angles = 40 lines</div>
         <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } }`}</style>
       </div>
     );

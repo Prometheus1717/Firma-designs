@@ -12,14 +12,13 @@ export function AuthProvider({ children }) {
 
   const loadProfile = useCallback(async (userId) => {
     const id = ++fetchIdRef.current;
-    // Race the Supabase query against a 4-second timeout
-    const result = await Promise.race([
-      supabase.from('profiles').select('*').eq('id', userId).single(),
-      new Promise(resolve => setTimeout(() => resolve({ data: null, error: { message: 'Profile fetch timeout' } }), 4000)),
-    ]);
-    const { data, error } = result;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
     if (error) console.error('[loadProfile]', error.message);
-    if (id === fetchIdRef.current && data) {
+    if (id === fetchIdRef.current) {
       setProfile(data);
     }
     return data;
