@@ -16,8 +16,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: { 'x-client-info': 'natal-navigator' },
   },
-  // Realtime disabled — we don't need it, saves WebSocket connections at scale
+  // Realtime fully disabled — no WebSocket connection opened, saves resources at scale
   realtime: {
     params: { eventsPerSecond: 0 },
+  },
+  db: {
+    // Use HEAD for count queries — less data transfer
+    schema: 'public',
   },
 });

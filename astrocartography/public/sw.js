@@ -22,8 +22,26 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET and cross-origin API calls (Supabase, Nominatim)
+  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
+
+  // Cache world-atlas JSON from CDN — used for globe country borders, ~30KB
+  if (url.hostname === 'cdn.jsdelivr.net' && url.pathname.includes('world-atlas')) {
+    event.respondWith(
+      caches.open(ASSET_CACHE).then(cache =>
+        cache.match(event.request).then(cached => {
+          if (cached) return cached;
+          return fetch(event.request).then(response => {
+            if (response.ok) cache.put(event.request, response.clone());
+            return response;
+          });
+        })
+      )
+    );
+    return;
+  }
+
+  // Skip other cross-origin requests (Supabase, Nominatim, Google Fonts)
   if (url.hostname !== self.location.hostname) return;
 
   // Hashed assets (JS/CSS chunks) — cache-first, immutable

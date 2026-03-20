@@ -26,6 +26,45 @@ const CP = [
   [[114,-22],[153,-28],[142,-11],[119,-20],[114,-22]],
 ];
 
+// Pre-built GeoJSON features for hardcoded country polygons — avoids creating objects every frame
+const CP_FEATURES = CP.map(p => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }));
+
+// Pre-built graticule geometries — avoids geoGraticule() constructor + step() + call on every draw
+const GRAT_20 = geoGraticule().step([20, 20])();
+const GRAT_30 = geoGraticule().step([30, 30])();
+const GRAT_10 = geoGraticule().step([10, 10])();
+
+// Cache meridian line geometries per longitude — avoid Array.from(181) allocation per frame per line
+const _meridianCache = new Map();
+function getMeridianGeo(lo) {
+  let geo = _meridianCache.get(lo);
+  if (!geo) {
+    geo = { type: 'LineString', coordinates: Array.from({ length: 181 }, (_, i) => [lo, -90 + i]) };
+    _meridianCache.set(lo, geo);
+  }
+  return geo;
+}
+
+// Global world-atlas cache — persists across component remounts, avoids refetch
+let _worldGeoCache = null;
+let _worldGeoFetching = false;
+const _worldGeoCallbacks = [];
+
+function fetchWorldGeo(callback) {
+  if (_worldGeoCache) { callback(_worldGeoCache); return; }
+  _worldGeoCallbacks.push(callback);
+  if (_worldGeoFetching) return;
+  _worldGeoFetching = true;
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(r => { if (r.ok) return r.json(); throw 0; })
+    .then(t => {
+      _worldGeoCache = topoF(t, 'countries');
+      _worldGeoCallbacks.forEach(cb => cb(_worldGeoCache));
+      _worldGeoCallbacks.length = 0;
+    })
+    .catch(() => { _worldGeoFetching = false; });
+}
+
 function topoF(t, n) {
   try {
     const o = t.objects[n];
@@ -104,18 +143,17 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       ctx.fillStyle = '#0B1420';
       ctx.fillRect(0, 0, W, H);
 
-      // Graticule
+      // Graticule (cached geometry)
       ctx.strokeStyle = '#182838'; ctx.lineWidth = .4;
-      ctx.beginPath(); path(geoGraticule().step([30, 30])()); ctx.stroke();
-      // Finer graticule at higher zoom
+      ctx.beginPath(); path(GRAT_30); ctx.stroke();
       if (s.zoom > 1.5) {
         ctx.strokeStyle = '#141E2C'; ctx.lineWidth = .2;
-        ctx.beginPath(); path(geoGraticule().step([10, 10])()); ctx.stroke();
+        ctx.beginPath(); path(GRAT_10); ctx.stroke();
       }
 
-      // Countries
+      // Countries (pre-built GeoJSON features)
       ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .5;
-      CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
+      CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
       // Globe — Orthographic projection
@@ -131,13 +169,13 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       // Ocean
       ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
 
-      // Graticule
+      // Graticule (cached geometry)
       ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
-      ctx.beginPath(); path(geoGraticule().step([20, 20])()); ctx.stroke();
+      ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
-      // Countries
+      // Countries (pre-built GeoJSON features)
       ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .6;
-      CP.forEach(p => { ctx.beginPath(); path({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }); ctx.fill(); ctx.stroke(); });
+      CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
       // Sphere border
@@ -165,8 +203,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             ctx.beginPath(); path({ type: 'LineString', coordinates: seg }); ctx.stroke();
           });
         } else {
-          const geo = { type: 'LineString', coordinates: Array.from({ length: 181 }, (_, i) => [l.lo, -90 + i]) };
-          ctx.beginPath(); path(geo); ctx.stroke();
+          ctx.beginPath(); path(getMeridianGeo(l.lo)); ctx.stroke();
         }
         ctx.setLineDash([]);
         ctx.globalAlpha = 1;
@@ -273,10 +310,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const s = S.current;
     if (!s.fd) {
       s.fd = true;
-      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-        .then(r => { if (r.ok) return r.json(); throw 0; })
-        .then(t => { s.wg = topoF(t, 'countries'); scheduleRedraw(); })
-        .catch(() => { });
+      fetchWorldGeo((features) => { s.wg = features; scheduleRedraw(); });
     }
 
     // Efficient rendering: only run RAF when needed, stop when idle

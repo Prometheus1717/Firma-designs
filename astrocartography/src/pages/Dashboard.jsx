@@ -211,10 +211,11 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'prof') setShowProf(false);
   }, []);
 
-  // Clock — update via ref + DOM to avoid re-rendering the entire component
+  // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
   const clockRef = useRef(null);
   useEffect(() => {
     const fmt = () => {
+      if (document.hidden) return; // skip work when not visible
       const now = new Date();
       const dd = String(now.getUTCDate()).padStart(2, '0');
       const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
@@ -230,10 +231,12 @@ export default function Dashboard({ demo = false }) {
     const t = setInterval(fmt, 30000);
     return () => clearInterval(t);
   }, []);
+  // Debounced resize — prevents re-render storm during window dragging
   useEffect(() => {
-    const h = () => setW(window.innerWidth);
+    let raf;
+    const h = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setW(window.innerWidth)); };
     h(); window.addEventListener('resize', h);
-    return () => window.removeEventListener('resize', h);
+    return () => { window.removeEventListener('resize', h); cancelAnimationFrame(raf); };
   }, []);
 
   // Redirect if no birth data (skip in demo mode)
@@ -325,30 +328,28 @@ export default function Dashboard({ demo = false }) {
     });
   }, []);
 
-  // Group lines by planet for sidebar
+  // Group lines by planet for sidebar — O(n) instead of O(n²)
   const planetGroups = useMemo(() => {
-    const groups = [];
-    const seen = new Set();
-    lines.forEach(l => {
-      if (!seen.has(l.planet)) {
-        seen.add(l.planet);
-        groups.push({
-          planet: l.planet,
-          symbol: l.symbol,
-          color: l.c,
-          quality: l.quality,
-          lines: lines.filter(x => x.planet === l.planet),
-        });
-      }
-    });
-    return groups;
+    const map = new Map();
+    for (const l of lines) {
+      let g = map.get(l.planet);
+      if (!g) { g = { planet: l.planet, symbol: l.symbol, color: l.c, quality: l.quality, lines: [] }; map.set(l.planet, g); }
+      g.lines.push(l);
+    }
+    return Array.from(map.values());
   }, [lines]);
 
-  const thriveC = onLines.filter(c => c.q === 'thrive');
-  const avoidC = onLines.filter(c => c.q === 'avoid');
-  const neutralC = onLines.filter(c => c.q === 'neutral');
+  // Single-pass city categorization — avoids 4 separate filter() calls over onLines
+  const { thriveC, avoidC, neutralC, bestCities } = useMemo(() => {
+    const t = [], a = [], n = [];
+    for (const c of onLines) {
+      if (c.q === 'thrive') t.push(c);
+      else if (c.q === 'avoid') a.push(c);
+      else n.push(c);
+    }
+    return { thriveC: t, avoidC: a, neutralC: n, bestCities: t.slice(0, 5) };
+  }, [onLines]);
   const filteredTab = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : tab === 'neutral' ? neutralC : onLines;
-  const bestCities = onLines.filter(c => c.q === 'thrive').slice(0, 5);
 
   const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
