@@ -8,3 +8,11 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+// Register Service Worker — caches JS/CSS chunks so repeat visitors load instantly
+// At 100k users, this massively reduces CDN bandwidth and improves perceived performance
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
