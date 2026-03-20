@@ -14,6 +14,11 @@ const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 
+// Eagerly preload Dashboard chunk — most users end up here, so start downloading
+// immediately instead of waiting for auth check + routing to complete.
+// This runs in parallel with the Supabase auth round-trip, saving 200-800ms on mobile.
+import('./pages/Dashboard').catch(() => {});
+
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 function LoadingScreen() {

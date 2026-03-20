@@ -162,10 +162,24 @@ function cityImpact(c) {
   return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
 }
 
+// Try to hydrate chart from cache synchronously — avoids flash of loading screen
+function getInitialChart(demo, profile) {
+  try {
+    const birthInput = demo
+      ? { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }
+      : (profile?.birth_date && profile?.birth_time && profile?.birth_lat != null)
+        ? { date: profile.birth_date, time: profile.birth_time, lat: profile.birth_lat, lng: profile.birth_lng }
+        : null;
+    if (!birthInput) return null;
+    return getCachedChart(birthInput);
+  } catch { return null; }
+}
+
 export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, signOut } = useAuth();
   const navigate = useNavigate();
-  const [chartData, setChartData] = useState(null);
+  // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
+  const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('thrive');

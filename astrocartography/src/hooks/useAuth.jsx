@@ -3,12 +3,40 @@ import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
+// ─── localStorage profile cache ───
+// Eliminates the Supabase profile round-trip for returning users.
+// On mobile networks this saves 300ms-2s of blocking wait time.
+const PROFILE_CACHE_KEY = 'nn_profile';
+
+function getCachedProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY);
+    if (!raw) return null;
+    const cached = JSON.parse(raw);
+    // Expire after 24h — forces a fresh fetch once a day
+    if (Date.now() - (cached.ts || 0) > 86400000) return null;
+    return cached.data;
+  } catch { return null; }
+}
+
+function setCachedProfile(data) {
+  try {
+    if (data) {
+      localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+    } else {
+      localStorage.removeItem(PROFILE_CACHE_KEY);
+    }
+  } catch { /* localStorage full or disabled */ }
+}
+
 export function AuthProvider({ children }) {
+  // Hydrate profile from localStorage immediately — no network wait
+  const cachedProfile = useRef(getCachedProfile()).current;
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(cachedProfile);
   const [ready, setReady] = useState(false);
-  const fetchIdRef = useRef(0); // prevents stale profile fetches from overwriting
-  const signingInRef = useRef(false); // tracks if signIn is in progress (ref to avoid stale closures)
+  const fetchIdRef = useRef(0);
+  const signingInRef = useRef(false);
 
   const loadProfile = useCallback(async (userId) => {
     const id = ++fetchIdRef.current;
@@ -20,37 +48,47 @@ export function AuthProvider({ children }) {
     if (error) console.error('[loadProfile]', error.message);
     if (id === fetchIdRef.current) {
       setProfile(data);
+      setCachedProfile(data);
     }
     return data;
   }, []);
 
   useEffect(() => {
-    // Safety net: force ready after 3 seconds no matter what
     const readyRef = { done: false };
     const markReady = () => {
       if (!readyRef.done) { readyRef.done = true; setReady(true); }
     };
-    const authTimeout = setTimeout(markReady, 3000);
+    // If we have a cached profile, mark ready immediately — no waiting for network
+    // The profile will be refreshed in the background
+    const hasCached = !!cachedProfile;
+    const authTimeout = setTimeout(markReady, hasCached ? 0 : 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
       setUser(u);
       if (u) {
         if (!signingInRef.current) {
-          await loadProfile(u.id);
-          clearTimeout(authTimeout);
-          markReady();
+          // If we had a cached profile, we're already "ready" — refresh in background
+          if (hasCached) {
+            markReady();
+            loadProfile(u.id); // fire-and-forget background refresh
+          } else {
+            await loadProfile(u.id);
+            clearTimeout(authTimeout);
+            markReady();
+          }
         }
       } else {
         fetchIdRef.current++;
         setProfile(null);
+        setCachedProfile(null);
         clearTimeout(authTimeout);
         markReady();
       }
     });
 
     return () => { clearTimeout(authTimeout); subscription.unsubscribe(); };
-  }, [loadProfile]);
+  }, [loadProfile, cachedProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
   const isAdmin = profile?.is_admin === true;
@@ -74,12 +112,10 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      // signInWithPassword triggers onAuthStateChange, but signingInRef prevents
-      // the duplicate profile fetch. We load profile here so it's ready BEFORE
-      // signIn returns → AuthRoute can redirect correctly.
       if (data?.user) {
         setUser(data.user);
-        await loadProfile(data.user.id);
+        const profileData = await loadProfile(data.user.id);
+        setCachedProfile(profileData);
       }
       setReady(true);
       return data;
@@ -89,7 +125,8 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    fetchIdRef.current++; // invalidate any in-flight fetches
+    fetchIdRef.current++;
+    setCachedProfile(null);
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
@@ -120,6 +157,7 @@ export function AuthProvider({ children }) {
       .single();
     if (error) throw error;
     setProfile(data);
+    setCachedProfile(data);
     return data;
   }
 
