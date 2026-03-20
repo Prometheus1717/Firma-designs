@@ -29,11 +29,13 @@ function setCachedProfile(data) {
   } catch { /* localStorage full or disabled */ }
 }
 
+// Read cached profile once at module level — avoids minifier TDZ issues
+// with useRef().current pattern inside component body
+const _initialCachedProfile = getCachedProfile();
+
 export function AuthProvider({ children }) {
-  // Hydrate profile from localStorage immediately — no network wait
-  const cachedProfile = useRef(getCachedProfile()).current;
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(cachedProfile);
+  const [profile, setProfile] = useState(() => _initialCachedProfile);
   const [ready, setReady] = useState(false);
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
@@ -60,7 +62,7 @@ export function AuthProvider({ children }) {
     };
     // If we have a cached profile, mark ready immediately — no waiting for network
     // The profile will be refreshed in the background
-    const hasCached = !!cachedProfile;
+    const hasCached = !!_initialCachedProfile;
     const authTimeout = setTimeout(markReady, hasCached ? 0 : 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -88,7 +90,7 @@ export function AuthProvider({ children }) {
     });
 
     return () => { clearTimeout(authTimeout); subscription.unsubscribe(); };
-  }, [loadProfile, cachedProfile]);
+  }, [loadProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
   const isAdmin = profile?.is_admin === true;

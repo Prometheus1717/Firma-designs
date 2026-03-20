@@ -14,10 +14,9 @@ const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 
-// Eagerly preload Dashboard chunk — most users end up here, so start downloading
-// immediately instead of waiting for auth check + routing to complete.
-// This runs in parallel with the Supabase auth round-trip, saving 200-800ms on mobile.
-import('./pages/Dashboard').catch(() => {});
+// Preload Dashboard chunk after a tick — most users end up here.
+// Deferred to avoid module initialization race conditions with the bundler.
+setTimeout(() => import('./pages/Dashboard').catch(() => {}), 1);
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -43,19 +42,25 @@ function LoadingScreen() {
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { error: null };
+    this.state = { error: null, retries: 0 };
   }
   static getDerivedStateFromError(error) {
     return { error };
   }
+  componentDidCatch(error) {
+    // Auto-retry once for transient initialization errors (TDZ, chunk race conditions)
+    if (this.state.retries < 2) {
+      setTimeout(() => this.setState({ error: null, retries: this.state.retries + 1 }), 100);
+    }
+  }
   componentDidUpdate(prevProps) {
     // Auto-reset error state when location changes (user navigated away)
     if (this.state.error && prevProps.locationKey !== this.props.locationKey) {
-      this.setState({ error: null });
+      this.setState({ error: null, retries: 0 });
     }
   }
   render() {
-    if (this.state.error) {
+    if (this.state.error && this.state.retries >= 2) {
       return (
         <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
@@ -65,7 +70,7 @@ class ErrorBoundary extends Component {
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <button
-              onClick={() => this.setState({ error: null })}
+              onClick={() => this.setState({ error: null, retries: 0 })}
               style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
             >
               Try Again
