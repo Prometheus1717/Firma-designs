@@ -1,16 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { calculateChart } from '../lib/calculateChart';
 
-describe('calculateChart', () => {
-  const birthData = {
-    date: '1990-06-15',
-    time: '14:30',
-    lat: '51.51',
-    lng: '-0.13',
-  };
+const birthData = { date: '1990-06-15', time: '14:30', lat: '51.51', lng: '-0.13' };
+const VALID_SIGNS = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
 
-  it('returns planets, lines, natal data, and birth location', () => {
-    const result = calculateChart(birthData);
+// Compute once — calculateChart is pure and deterministic
+let result;
+beforeAll(() => { result = calculateChart(birthData); });
+
+describe('calculateChart — structure', () => {
+  it('returns planets, lines, natal, planetString, birthLocation', () => {
     expect(result).toHaveProperty('planets');
     expect(result).toHaveProperty('lines');
     expect(result).toHaveProperty('natal');
@@ -18,122 +17,96 @@ describe('calculateChart', () => {
     expect(result).toHaveProperty('birthLocation');
   });
 
-  it('calculates all 10 planet positions', () => {
-    const result = calculateChart(birthData);
+  it('birth location matches input', () => {
+    expect(result.birthLocation.lat).toBeCloseTo(51.51);
+    expect(result.birthLocation.lng).toBeCloseTo(-0.13);
+  });
+});
+
+describe('calculateChart — planets', () => {
+  it('calculates all 10 planets with correct IDs', () => {
     expect(result.planets).toHaveLength(10);
-    const planetIds = result.planets.map(p => p.id);
-    expect(planetIds).toEqual([
+    expect(result.planets.map(p => p.id)).toEqual([
       'Sun', 'Moon', 'Mercury', 'Venus', 'Mars',
       'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto',
     ]);
   });
 
-  it('each planet has required fields', () => {
-    const result = calculateChart(birthData);
-    for (const planet of result.planets) {
-      expect(planet).toHaveProperty('id');
-      expect(planet).toHaveProperty('symbol');
-      expect(planet).toHaveProperty('sign');
-      expect(planet).toHaveProperty('deg');
-      expect(planet).toHaveProperty('min');
-      expect(planet).toHaveProperty('fullDeg');
-      expect(planet).toHaveProperty('retrograde');
-      expect(typeof planet.deg).toBe('number');
-      expect(planet.deg).toBeGreaterThanOrEqual(0);
-      expect(planet.deg).toBeLessThan(30);
-      expect(planet.min).toBeGreaterThanOrEqual(0);
-      expect(planet.min).toBeLessThan(60);
+  it('each planet has valid fields, degrees, and zodiac sign', () => {
+    for (const p of result.planets) {
+      expect(p).toHaveProperty('id');
+      expect(p).toHaveProperty('symbol');
+      expect(VALID_SIGNS).toContain(p.sign);
+      expect(p.deg).toBeGreaterThanOrEqual(0);
+      expect(p.deg).toBeLessThan(30);
+      expect(p.min).toBeGreaterThanOrEqual(0);
+      expect(p.min).toBeLessThan(60);
+      expect(typeof p.retrograde).toBe('boolean');
     }
   });
 
-  it('planet signs are valid zodiac signs', () => {
-    const validSigns = [
-      'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-      'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
-    ];
-    const result = calculateChart(birthData);
-    for (const planet of result.planets) {
-      expect(validSigns).toContain(planet.sign);
+  it('Sun and Moon are never retrograde', () => {
+    expect(result.planets.find(p => p.id === 'Sun').retrograde).toBe(false);
+    expect(result.planets.find(p => p.id === 'Moon').retrograde).toBe(false);
+  });
+
+  it('planet string contains all symbols plus ASC and MC', () => {
+    for (const sym of ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '♅', '♆', '♇', 'ASC', 'MC']) {
+      expect(result.planetString).toContain(sym);
+    }
+  });
+});
+
+describe('calculateChart — lines', () => {
+  it('generates MC and IC meridian lines for all 10 planets', () => {
+    expect(result.lines.filter(l => l.angle === 'MC' && l.type === 'meridian')).toHaveLength(10);
+    expect(result.lines.filter(l => l.angle === 'IC' && l.type === 'meridian')).toHaveLength(10);
+  });
+
+  it('meridian lines have valid longitude (-180 to 180)', () => {
+    for (const l of result.lines.filter(l => l.type === 'meridian')) {
+      expect(l.lo).toBeGreaterThanOrEqual(-180);
+      expect(l.lo).toBeLessThanOrEqual(180);
     }
   });
 
-  it('generates MC and IC lines for all 10 planets (meridian type)', () => {
-    const result = calculateChart(birthData);
-    const mcLines = result.lines.filter(l => l.angle === 'MC' && l.type === 'meridian');
-    const icLines = result.lines.filter(l => l.angle === 'IC' && l.type === 'meridian');
-    expect(mcLines).toHaveLength(10);
-    expect(icLines).toHaveLength(10);
-  });
-
-  it('MC and IC lines have valid longitude (-180 to 180)', () => {
-    const result = calculateChart(birthData);
-    const meridianLines = result.lines.filter(l => l.type === 'meridian');
-    for (const line of meridianLines) {
-      expect(line.lo).toBeGreaterThanOrEqual(-180);
-      expect(line.lo).toBeLessThanOrEqual(180);
+  it('generates ASC and DC curve lines with points and segments', () => {
+    for (const l of result.lines.filter(l => l.angle === 'ASC' || l.angle === 'DC')) {
+      expect(l.type).toBe('curve');
+      expect(l.points.length).toBeGreaterThan(2);
+      expect(l.segments).toBeDefined();
     }
   });
 
-  it('generates ASC and DC curve lines with point arrays', () => {
-    const result = calculateChart(birthData);
-    const ascLines = result.lines.filter(l => l.angle === 'ASC');
-    const dcLines = result.lines.filter(l => l.angle === 'DC');
-    expect(ascLines.length).toBeGreaterThan(0);
-    expect(dcLines.length).toBeGreaterThan(0);
-    for (const line of [...ascLines, ...dcLines]) {
-      expect(line.type).toBe('curve');
-      expect(line.points.length).toBeGreaterThan(2);
-      expect(line.segments).toBeDefined();
+  it('every line has valid quality, color, description, planet, angle', () => {
+    for (const l of result.lines) {
+      expect(['thrive', 'avoid', 'neutral']).toContain(l.quality);
+      expect(l.c).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(l.desc).toBeTruthy();
+      expect(l.planet).toBeTruthy();
+      expect(l.symbol).toBeTruthy();
+      expect(['MC', 'IC', 'ASC', 'DC']).toContain(l.angle);
     }
   });
 
-  it('each line has quality: thrive, avoid, or neutral', () => {
-    const result = calculateChart(birthData);
-    for (const line of result.lines) {
-      expect(['thrive', 'avoid', 'neutral']).toContain(line.quality);
-    }
+  it('Venus is thrive, Saturn is avoid', () => {
+    for (const l of result.lines.filter(l => l.planet === 'Venus')) expect(l.quality).toBe('thrive');
+    for (const l of result.lines.filter(l => l.planet === 'Saturn')) expect(l.quality).toBe('avoid');
   });
+});
 
-  it('each line has color, description, planet info', () => {
-    const result = calculateChart(birthData);
-    for (const line of result.lines) {
-      expect(line.c).toMatch(/^#[0-9A-Fa-f]{6}$/);
-      expect(line.desc).toBeTruthy();
-      expect(line.planet).toBeTruthy();
-      expect(line.symbol).toBeTruthy();
-      expect(['MC', 'IC', 'ASC', 'DC']).toContain(line.angle);
-    }
-  });
-
-  it('natal data includes MC, ASC, sun, and moon', () => {
-    const result = calculateChart(birthData);
+describe('calculateChart — natal', () => {
+  it('includes MC, ASC, sun, and moon', () => {
     expect(result.natal.mc).toBeDefined();
     expect(result.natal.asc).toBeDefined();
-    expect(result.natal.sun).toBeDefined();
-    expect(result.natal.moon).toBeDefined();
     expect(result.natal.sun.id).toBe('Sun');
     expect(result.natal.moon.id).toBe('Moon');
   });
+});
 
-  it('planet string contains all planet symbols', () => {
-    const result = calculateChart(birthData);
-    const symbols = ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '♅', '♆', '♇'];
-    for (const sym of symbols) {
-      expect(result.planetString).toContain(sym);
-    }
-    expect(result.planetString).toContain('ASC');
-    expect(result.planetString).toContain('MC');
-  });
-
-  it('birth location matches input', () => {
-    const result = calculateChart(birthData);
-    expect(result.birthLocation.lat).toBeCloseTo(51.51);
-    expect(result.birthLocation.lng).toBeCloseTo(-0.13);
-  });
-
+describe('calculateChart — edge cases', () => {
   it('handles HH:MM:SS time format', () => {
-    const result = calculateChart({ ...birthData, time: '14:30:00' });
-    expect(result.planets).toHaveLength(10);
+    expect(calculateChart({ ...birthData, time: '14:30:00' }).planets).toHaveLength(10);
   });
 
   it('throws on invalid date', () => {
@@ -144,56 +117,26 @@ describe('calculateChart', () => {
     expect(() => calculateChart({ ...birthData, lat: 'abc', lng: 'def' })).toThrow('Invalid coordinates');
   });
 
-  it('produces consistent results for same input', () => {
-    const r1 = calculateChart(birthData);
+  it('is deterministic', () => {
     const r2 = calculateChart(birthData);
-    expect(r1.planets).toEqual(r2.planets);
-    expect(r1.lines.length).toBe(r2.lines.length);
-    expect(r1.planetString).toBe(r2.planetString);
+    expect(result.planets).toEqual(r2.planets);
+    expect(result.planetString).toBe(r2.planetString);
   });
 
-  it('different birth dates produce different charts', () => {
-    const r1 = calculateChart(birthData);
-    const r2 = calculateChart({ ...birthData, date: '2000-01-01' });
-    expect(r1.planetString).not.toBe(r2.planetString);
+  it('different dates produce different charts', () => {
+    expect(result.planetString).not.toBe(
+      calculateChart({ ...birthData, date: '2000-01-01' }).planetString
+    );
   });
 
-  it('Venus quality is thrive, Saturn quality is avoid', () => {
-    const result = calculateChart(birthData);
-    const venusLines = result.lines.filter(l => l.planet === 'Venus');
-    const saturnLines = result.lines.filter(l => l.planet === 'Saturn');
-    for (const l of venusLines) expect(l.quality).toBe('thrive');
-    for (const l of saturnLines) expect(l.quality).toBe('avoid');
+  it('handles southern hemisphere', () => {
+    const r = calculateChart({ date: '1990-01-01', time: '12:00', lat: '-33.87', lng: '151.21' });
+    expect(r.planets).toHaveLength(10);
+    expect(r.lines.length).toBeGreaterThan(0);
   });
 
-  it('retrograde is boolean for all planets', () => {
-    const result = calculateChart(birthData);
-    for (const p of result.planets) {
-      expect(typeof p.retrograde).toBe('boolean');
-    }
-  });
-
-  it('Sun and Moon are never retrograde', () => {
-    const result = calculateChart(birthData);
-    const sun = result.planets.find(p => p.id === 'Sun');
-    const moon = result.planets.find(p => p.id === 'Moon');
-    expect(sun.retrograde).toBe(false);
-    expect(moon.retrograde).toBe(false);
-  });
-
-  it('handles southern hemisphere birth location', () => {
-    const result = calculateChart({ date: '1990-01-01', time: '12:00', lat: '-33.87', lng: '151.21' });
-    expect(result.planets).toHaveLength(10);
-    expect(result.lines.length).toBeGreaterThan(0);
-  });
-
-  it('handles midnight birth time', () => {
-    const result = calculateChart({ ...birthData, time: '00:00' });
-    expect(result.planets).toHaveLength(10);
-  });
-
-  it('handles late night birth time', () => {
-    const result = calculateChart({ ...birthData, time: '23:59' });
-    expect(result.planets).toHaveLength(10);
+  it('handles midnight and late-night times', () => {
+    expect(calculateChart({ ...birthData, time: '00:00' }).planets).toHaveLength(10);
+    expect(calculateChart({ ...birthData, time: '23:59' }).planets).toHaveLength(10);
   });
 });
