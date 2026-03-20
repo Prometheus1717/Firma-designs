@@ -63,8 +63,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     pinchDist: 0,
     // Double-tap tracking
     lastTap: 0, lastTapX: 0, lastTapY: 0,
-    // Mobile: throttle redraws to ~30fps (33ms) instead of 60fps
-    frameInterval: isMobile ? 33 : 16,
+    // Mobile: throttle redraws to ~15fps (66ms) for battery; desktop: 30fps
+    frameInterval: isMobile ? 66 : 33,
   });
   const [, forceUpdate] = useState(0);
   const flatRef = useRef(flat);
@@ -76,7 +76,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const par = canvas.parentElement;
     const W = par.clientWidth, H = par.clientHeight;
     if (!W || !H) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
     if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; }
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -251,15 +251,15 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       });
     }
 
-    // Home marker
+    // Home marker (static — no animation to save CPU)
     if (homeLocation) {
       const [hLng, hLat, hLabel] = homeLocation;
       if (isFlat || (center && geoDistance([hLng, hLat], center) < Math.PI / 2)) {
         const p = proj([hLng, hLat]);
         if (p) {
-          const t = (Date.now() % 2200) / 2200;
-          ctx.strokeStyle = '#00D88A'; ctx.lineWidth = 1.2; ctx.globalAlpha = .4 * (1 - t);
-          ctx.beginPath(); ctx.arc(p[0], p[1], 6 + t * 14, 0, Math.PI * 2); ctx.stroke();
+          // Static ring instead of animated pulse
+          ctx.strokeStyle = '#00D88A'; ctx.lineWidth = 1; ctx.globalAlpha = .25;
+          ctx.beginPath(); ctx.arc(p[0], p[1], 12, 0, Math.PI * 2); ctx.stroke();
           ctx.globalAlpha = 1; ctx.fillStyle = '#00D88A';
           ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI * 2); ctx.fill();
           ctx.font = 'bold 11px JetBrains Mono'; ctx.fillStyle = '#00D88A';
@@ -275,22 +275,42 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       s.fd = true;
       fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         .then(r => { if (r.ok) return r.json(); throw 0; })
-        .then(t => { s.wg = topoF(t, 'countries'); s.dirty = true; })
+        .then(t => { s.wg = topoF(t, 'countries'); scheduleRedraw(); })
         .catch(() => { });
     }
 
+    // Efficient rendering: only run RAF when needed, stop when idle
+    let loopRunning = false;
     function loop(ts) {
       const isFlat = flatRef.current;
-      const elapsed = ts - s.lastDraw;
-      // Stop rotation when globe fills the viewport
+      // Auto-rotation (only globe, only when idle)
       const cv = canvasRef.current;
       const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) * 1.5;
-      if (!isFlat && s.auto && !s.drag && !globeFills) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
-      // Throttle: only redraw at target frame rate, or after 200ms idle
-      if ((s.dirty && elapsed >= s.frameInterval) || elapsed > 200) { draw(); s.dirty = false; s.lastDraw = ts; }
-      s.raf = requestAnimationFrame(loop);
+      const shouldRotate = !isFlat && s.auto && !s.drag && !globeFills;
+      if (shouldRotate) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
+
+      if (s.dirty) {
+        const elapsed = ts - s.lastDraw;
+        if (elapsed >= s.frameInterval) { draw(); s.dirty = false; s.lastDraw = ts; }
+      }
+
+      // Keep loop alive only if auto-rotating or still dirty
+      if (shouldRotate || s.dirty || s.drag) {
+        s.raf = requestAnimationFrame(loop);
+      } else {
+        loopRunning = false;
+      }
     }
-    s.raf = requestAnimationFrame(loop);
+    function scheduleRedraw() {
+      s.dirty = true;
+      if (!loopRunning) {
+        loopRunning = true;
+        s.raf = requestAnimationFrame(loop);
+      }
+    }
+    // Store scheduleRedraw on ref so event handlers can call it
+    s.scheduleRedraw = scheduleRedraw;
+    scheduleRedraw();
 
     const c = canvasRef.current;
     if (!c) return;
@@ -330,6 +350,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.lx = t.clientX; s.ly = t.clientY;
         s.pinchDist = 0;
       }
+      scheduleRedraw();
     };
     const mv = e => {
       if (!s.drag) return;
@@ -343,11 +364,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const ratio = newDist / s.pinchDist;
           if (flatRef.current) {
             const rect = c.getBoundingClientRect();
-            const cx = mx - rect.left - rect.width / 2 - s.panX;
+            const cx2 = mx - rect.left - rect.width / 2 - s.panX;
             const cy2 = my - rect.top - rect.height / 2 - s.panY;
             const boosted = 1 + (ratio - 1) * 1.5;
             const newZoom = Math.max(1, Math.min(25, s.zoom * boosted));
-            s.panX -= cx * (newZoom / s.zoom - 1);
+            s.panX -= cx2 * (newZoom / s.zoom - 1);
             s.panY -= cy2 * (newZoom / s.zoom - 1);
             s.zoom = newZoom;
             clampPan();
@@ -361,13 +382,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         if (flatRef.current) {
           s.panX += dx; s.panY += dy; clampPan();
         } else {
-          // Scale rotation sensitivity inversely with zoom level
           const sens = 0.25 * (s.baseScale / Math.max(s.scale, 1));
           s.rot = [s.rot[0] + dx * sens, Math.max(-70, Math.min(70, s.rot[1] - dy * sens))];
         }
         s.lx = mx; s.ly = my;
         s.pinchDist = newDist;
-        s.dirty = true;
+        scheduleRedraw();
         return;
       }
       // Single finger: drag/rotate
@@ -378,19 +398,18 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.panY += dy;
         clampPan();
       } else {
-        // Scale rotation sensitivity inversely with zoom — prevents wild jumps when zoomed in
         const sens = 0.25 * (s.baseScale / Math.max(s.scale, 1));
         s.rot = [s.rot[0] + dx * sens, Math.max(-70, Math.min(70, s.rot[1] - dy * sens))];
       }
       s.lx = t.clientX; s.ly = t.clientY;
-      s.dirty = true;
+      scheduleRedraw();
     };
     const up = e => {
       s.drag = false;
       s.pinchDist = 0;
       if (!flatRef.current) {
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
-        if (!gf) setTimeout(() => { s.auto = true; }, 4000);
+        if (!gf) setTimeout(() => { s.auto = true; scheduleRedraw(); }, 4000);
       }
       // Double-tap detection for mobile zoom
       if (e.changedTouches && e.changedTouches.length === 1) {
@@ -399,7 +418,6 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const dt = now - s.lastTap;
         const dd = Math.hypot(tx - s.lastTapX, ty - s.lastTapY);
         if (dt < 300 && dd < 30) {
-          // Double tap detected — zoom in at tap point
           s.lastTap = 0;
           const r = c.getBoundingClientRect();
           if (flatRef.current) {
@@ -418,10 +436,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
               s.scale = Math.min(8000, s.scale * 2);
               s.auto = false;
               const gf2 = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
-              if (!gf2) setTimeout(() => { s.auto = true; }, 6000);
+              if (!gf2) setTimeout(() => { s.auto = true; scheduleRedraw(); }, 6000);
             }
           }
-          s.dirty = true;
+          scheduleRedraw();
         } else {
           s.lastTap = now;
           s.lastTapX = tx;
@@ -447,9 +465,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.auto = false;
         clearTimeout(s._z);
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
-        if (!gf) s._z = setTimeout(() => { s.auto = true; }, 4000);
+        if (!gf) s._z = setTimeout(() => { s.auto = true; scheduleRedraw(); }, 4000);
       }
-      s.dirty = true;
+      scheduleRedraw();
     };
     const dbl = e => {
       e.preventDefault();
@@ -468,10 +486,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         if (co) {
           s.rot = [-co[0], -co[1]]; s.scale = Math.min(8000, s.scale * 1.5); s.auto = false;
           const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
-          if (!gf) setTimeout(() => { s.auto = true; }, 6000);
+          if (!gf) setTimeout(() => { s.auto = true; scheduleRedraw(); }, 6000);
         }
       }
-      s.dirty = true;
+      scheduleRedraw();
     };
     const click = e => {
       if (!citiesOnLines || !onCityClick) return;
@@ -501,7 +519,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     c.addEventListener('mousedown', dn); window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
     c.addEventListener('touchstart', dn, { passive: false }); c.addEventListener('touchmove', mv, { passive: false }); c.addEventListener('touchend', up, { passive: true });
     c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl); c.addEventListener('click', click);
-    const rs = () => { s.dirty = true; }; window.addEventListener('resize', rs);
+    const rs = () => { scheduleRedraw(); }; window.addEventListener('resize', rs);
 
     return () => {
       cancelAnimationFrame(s.raf);
@@ -518,7 +536,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     if (flat) {
       s.panX = 0; s.panY = 0; s.zoom = 1;
     }
-    s.dirty = true;
+    if (s.scheduleRedraw) s.scheduleRedraw();
   }, [flat]);
 
   // Expose flyTo
@@ -551,9 +569,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       s.auto = false;
       s.rot = [-lo, -la];
       s.scale = Math.max(s.scale, 450);
-      setTimeout(() => { s.auto = true; }, 6000);
+      setTimeout(() => { s.auto = true; if (s.scheduleRedraw) s.scheduleRedraw(); }, 6000);
     }
-    s.dirty = true;
+    if (s.scheduleRedraw) s.scheduleRedraw();
   };
 
   return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />;

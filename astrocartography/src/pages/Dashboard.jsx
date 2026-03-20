@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
@@ -125,7 +125,7 @@ export default function Dashboard({ demo = false }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('thrive');
-  const [clock, setClock] = useState('');
+  // clock is rendered via ref to avoid re-renders
   const [popup, setPopup] = useState(null);
   const [cityPop, setCityPop] = useState(null);
   const [w, setW] = useState(900);
@@ -159,6 +159,8 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'prof') setShowProf(false);
   }, []);
 
+  // Clock — update via ref + DOM to avoid re-rendering the entire component
+  const clockRef = useRef(null);
   useEffect(() => {
     const fmt = () => {
       const now = new Date();
@@ -170,7 +172,7 @@ export default function Dashboard({ demo = false }) {
       const sec = String(now.getUTCSeconds()).padStart(2, '0');
       const h12 = h24 % 12 || 12;
       const ampm = h24 < 12 ? 'AM' : 'PM';
-      setClock(`${dd}.${mm}.${yy}  ${String(h24).padStart(2, '0')}:${min}:${sec} (${h12}:${min} ${ampm}) UTC`);
+      if (clockRef.current) clockRef.current.textContent = `${dd}.${mm}.${yy}  ${String(h24).padStart(2, '0')}:${min}:${sec} (${h12}:${min} ${ampm}) UTC`;
     };
     fmt();
     const t = setInterval(fmt, 1000);
@@ -311,7 +313,7 @@ export default function Dashboard({ demo = false }) {
           <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: '#5A7088', cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
-          {!mob && <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{clock}</span>}
+          {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: '#5A7088' }} />}
           {demo ? <>
             {!mob && <span style={{ ...F, fontSize: 8, color: '#5A7088', background: '#101C28', padding: '3px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>DEMO: {DEMO.name}</span>}
             <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: '#0A1018', background: '#00D88A', padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
