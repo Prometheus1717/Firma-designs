@@ -195,7 +195,9 @@ export default function Dashboard({ demo = false }) {
   const [showNatal, setShowNatal] = useState(false);
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
-  const [guideTab, setGuideTab] = useState(0);
+  const [guideTab, _setGuideTab] = useState(0);
+  const guideContentRef = useRef(null);
+  const setGuideTab = (i) => { _setGuideTab(i); if (guideContentRef.current) guideContentRef.current.scrollTop = 0; };
   const [pageVisible, setPageVisible] = useState(true);
 
   // Pause animations & timers when tab is hidden
@@ -772,7 +774,7 @@ export default function Dashboard({ demo = false }) {
                 </div>
 
                 {/* Content */}
-                <div style={{ flex: 1, overflowY: 'auto', padding: mob ? 16 : 24 }}>
+                <div ref={guideContentRef} style={{ flex: 1, overflowY: 'auto', padding: mob ? 16 : 24 }}>
 
                   {/* TAB 0: Overview */}
                   {gt === 0 && <>
