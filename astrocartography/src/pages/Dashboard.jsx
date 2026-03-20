@@ -138,6 +138,14 @@ export default function Dashboard({ demo = false }) {
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [guideTab, setGuideTab] = useState(0);
+  const [pageVisible, setPageVisible] = useState(true);
+
+  // Pause animations & timers when tab is hidden
+  useEffect(() => {
+    const handler = () => setPageVisible(!document.hidden);
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, []);
 
   // Demo: show sign-up prompt after 25 seconds
   useEffect(() => {
@@ -175,7 +183,7 @@ export default function Dashboard({ demo = false }) {
       if (clockRef.current) clockRef.current.textContent = `${dd}.${mm}.${yy}  ${String(h24).padStart(2, '0')}:${min}:${sec} (${h12}:${min} ${ampm}) UTC`;
     };
     fmt();
-    const t = setInterval(fmt, 1000);
+    const t = setInterval(fmt, 30000);
     return () => clearInterval(t);
   }, []);
   useEffect(() => {
@@ -349,7 +357,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: '#0B1218', borderBottom: '1px solid #14202C', display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite' }}>
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused' }}>
           {[planetString, planetString].map((t, i) => <span key={i} style={{ color: '#E8A838', padding: '0 20px' }}>{t}</span>)}
         </div>
       </div>
@@ -1055,7 +1063,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div style={{ height: 22, minHeight: 22, background: '#0A1018', borderTop: '1px solid #14202C', display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite' }}>
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused' }}>
           {[...Array(2)].flatMap(() => [
             bestCities[0] ? `★ Best city: ${bestCities[0].name} (${bestCities[0].line})` : '★ Your personalized chart',
             `▲ ${thriveC.length} thrive`,

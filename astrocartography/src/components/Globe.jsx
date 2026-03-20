@@ -521,8 +521,24 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl); c.addEventListener('click', click);
     const rs = () => { scheduleRedraw(); }; window.addEventListener('resize', rs);
 
+    // Pause RAF loop when tab is hidden, resume when visible
+    const onVis = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(s.raf);
+        loopRunning = false;
+      } else {
+        scheduleRedraw();
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+
+    // Stop auto-rotation after 10 seconds of initial presentation
+    const autoStopTimer = setTimeout(() => { s.auto = false; }, 10000);
+
     return () => {
       cancelAnimationFrame(s.raf);
+      clearTimeout(autoStopTimer);
+      document.removeEventListener('visibilitychange', onVis);
       c.removeEventListener('mousedown', dn); window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up);
       c.removeEventListener('touchstart', dn); c.removeEventListener('touchmove', mv); c.removeEventListener('touchend', up);
       c.removeEventListener('wheel', wh); c.removeEventListener('dblclick', dbl); c.removeEventListener('click', click);
