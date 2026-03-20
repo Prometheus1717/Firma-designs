@@ -1,5 +1,5 @@
 import { lazy, Suspense, Component } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 
 // Lazy imports with retry — if chunk fails to load (mobile network), retry once
@@ -38,7 +38,8 @@ function LoadingScreen() {
   );
 }
 
-// Error boundary — catches JS errors and shows a recovery screen instead of blank page
+// Error boundary — catches JS errors and shows a recovery screen instead of blank page.
+// Uses `key={pathname}` so it auto-resets when the route changes (no stuck error screens).
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -46,6 +47,12 @@ class ErrorBoundary extends Component {
   }
   static getDerivedStateFromError(error) {
     return { error };
+  }
+  componentDidUpdate(prevProps) {
+    // Auto-reset error state when location changes (user navigated away)
+    if (this.state.error && prevProps.locationKey !== this.props.locationKey) {
+      this.setState({ error: null });
+    }
   }
   render() {
     if (this.state.error) {
@@ -56,17 +63,31 @@ class ErrorBoundary extends Component {
           <div style={{ ...F, fontSize: 10, color: '#5A7088', marginBottom: 20, maxWidth: 400, textAlign: 'center', lineHeight: 1.6 }}>
             {this.state.error?.message || 'Unknown error'}
           </div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
-          >
-            Reload
-          </button>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button
+              onClick={() => this.setState({ error: null })}
+              style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => { window.location.href = '/'; }}
+              style={{ ...F, fontSize: 11, color: '#5A7088', background: 'transparent', border: '1px solid #1A2840', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
+            >
+              Go Home
+            </button>
+          </div>
         </div>
       );
     }
     return this.props.children;
   }
+}
+
+// Wrapper to pass location key into ErrorBoundary (class component can't use hooks)
+function ErrorBoundaryWithLocation({ children }) {
+  const location = useLocation();
+  return <ErrorBoundary locationKey={location.key}>{children}</ErrorBoundary>;
 }
 
 function ProtectedRoute({ children }) {
@@ -111,8 +132,8 @@ function DemoOrDashboard() {
 
 export default function App() {
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
+    <BrowserRouter>
+      <ErrorBoundaryWithLocation>
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
@@ -125,7 +146,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </AuthProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+      </ErrorBoundaryWithLocation>
+    </BrowserRouter>
   );
 }
