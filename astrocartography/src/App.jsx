@@ -70,7 +70,7 @@ class ErrorBoundary extends Component {
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <button
-              onClick={() => this.setState({ error: null, retries: 0 })}
+              onClick={() => { window.location.reload(); }}
               style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '10px 24px', cursor: 'pointer' }}
             >
               Try Again
