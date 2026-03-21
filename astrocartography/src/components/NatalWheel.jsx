@@ -1,50 +1,47 @@
 import { useMemo } from 'react';
 
+// Zodiac order & symbols
 const ZODIAC = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-const SIGN_SYM = { Aries:'♈', Taurus:'♉', Gemini:'♊', Cancer:'♋', Leo:'♌', Virgo:'♍', Libra:'♎', Scorpio:'♏', Sagittarius:'♐', Capricorn:'♑', Aquarius:'♒', Pisces:'♓' };
+const SYM = { Aries:'♈', Taurus:'♉', Gemini:'♊', Cancer:'♋', Leo:'♌', Virgo:'♍', Libra:'♎', Scorpio:'♏', Sagittarius:'♐', Capricorn:'♑', Aquarius:'♒', Pisces:'♓' };
 const ELEM = { Aries:'Fire', Taurus:'Earth', Gemini:'Air', Cancer:'Water', Leo:'Fire', Virgo:'Earth', Libra:'Air', Scorpio:'Water', Sagittarius:'Fire', Capricorn:'Earth', Aquarius:'Air', Pisces:'Water' };
-const ELEM_C = { Fire:'#F04060', Earth:'#00D88A', Air:'#5BA8D4', Water:'#4868B8' };
-const PCOL = { Sun:'#E8A838', Moon:'#C0C0C0', Mercury:'#5BA8D4', Venus:'#D4729A', Mars:'#D45050', Jupiter:'#8068C0', Saturn:'#887058', Uranus:'#40B0A0', Neptune:'#4868B8', Pluto:'#7048A0' };
 
+// Element arc colors — matching the reference image (outer ring)
+const ELEM_ARC = { Fire:'#D44040', Earth:'#8BA83A', Air:'#4A90D0', Water:'#D0A030' };
+
+// Planet colors — traditional astrology colors matching reference
+const PC = {
+  Sun:'#C08020', Moon:'#6A6A80', Mercury:'#2A8A8A', Venus:'#8AA030',
+  Mars:'#C83030', Jupiter:'#A03050', Saturn:'#8A7040',
+  Uranus:'#3070C0', Neptune:'#4060A8', Pluto:'#803050',
+};
+
+// Aspects
 const ASPECTS = [
-  { angle: 0, orb: 8, color: '#E8A838', dash: '' },
-  { angle: 60, orb: 5, color: '#5BA8D4', dash: '3,2' },
-  { angle: 90, orb: 7, color: '#F04060', dash: '' },
-  { angle: 120, orb: 8, color: '#00D88A', dash: '' },
-  { angle: 180, orb: 8, color: '#D45050', dash: '5,3' },
+  { angle: 0,   orb: 8, color: '#A09030', dash: '' },       // Conjunction — gold
+  { angle: 60,  orb: 5, color: '#4A70B0', dash: '4,3' },    // Sextile — blue dashed
+  { angle: 90,  orb: 7, color: '#C04040', dash: '' },        // Square — red
+  { angle: 120, orb: 8, color: '#40A040', dash: '' },        // Trine — green
+  { angle: 180, orb: 8, color: '#C04040', dash: '6,3' },     // Opposition — red dashed
 ];
 
 function norm(a) { return ((a % 360) + 360) % 360; }
 
-// Ecliptic longitude → chart angle. ASC fixed at 9-o'clock (180°).
-// Zodiac flows counter-clockwise (increasing ecliptic = decreasing chart angle).
-function ecl2chart(eclLon, ascLon) {
-  return norm(180 - (eclLon - ascLon));
-}
+// Ecliptic → chart angle. ASC at 9-o'clock (180°). Counter-clockwise = increasing ecliptic.
+function e2c(ecl, asc) { return norm(180 - (ecl - asc)); }
 
 function pol(cx, cy, r, deg) {
   const rad = deg * Math.PI / 180;
   return [cx + r * Math.cos(rad), cy - r * Math.sin(rad)];
 }
 
-// Porphyry house cusps from ASC & MC
-function porphyryHouses(ascLon, mcLon) {
-  const dsc = norm(ascLon + 180);
-  const ic = norm(mcLon + 180);
-  function trisect(from, to) {
-    let span = norm(to - from);
-    return [norm(from + span / 3), norm(from + 2 * span / 3)];
-  }
-  // Quadrant 1: IC → ASC (houses 1,2,3 — cusps 2,3)
-  const [c2, c3] = trisect(ic, ascLon);
-  // Quadrant 2: ASC → MC (houses 10,11,12 — cusps 11,12)
-  const [c11, c12] = trisect(ascLon, mcLon);
-  // Quadrant 3: MC → DSC (houses 7,8,9 — cusps 8,9)
-  const [c8, c9] = trisect(mcLon, dsc);
-  // Quadrant 4: DSC → IC (houses 4,5,6 — cusps 5,6)
-  const [c5, c6] = trisect(dsc, ic);
-
-  // cusps array indexed by house number (1-based)
+// Porphyry house cusps
+function porphyry(ascLon, mcLon) {
+  const dsc = norm(ascLon + 180), ic = norm(mcLon + 180);
+  function tri(a, b) { const s = norm(b - a); return [norm(a + s / 3), norm(a + 2 * s / 3)]; }
+  const [c2, c3] = tri(ic, ascLon);
+  const [c11, c12] = tri(ascLon, mcLon);
+  const [c8, c9] = tri(mcLon, dsc);
+  const [c5, c6] = tri(dsc, ic);
   return [null, ascLon, c2, c3, ic, c5, c6, dsc, c8, c9, mcLon, c11, c12];
 }
 
@@ -53,46 +50,45 @@ export default function NatalWheel({ planets, natal, size = 380 }) {
     if (!planets || !natal?.asc) return null;
     const ascLon = natal.asc.fullDeg;
     const mcLon = natal.mc.fullDeg;
+    const R = size / 2, cx = R, cy = R;
 
-    // Radii
-    const R = size / 2;
-    const cx = R, cy = R;
-    const r1 = R * 0.96;  // outermost edge
-    const r2 = R * 0.88;  // outer sign ring boundary
-    const r3 = R * 0.76;  // inner sign ring boundary (planet area starts)
-    const r4 = R * 0.42;  // inner circle (aspect area)
+    // Ring radii (from outside in)
+    const rOuter   = R * 0.97;  // outermost edge
+    const rElemIn  = R * 0.93;  // inner edge of element color ring
+    const rSignOut = R * 0.93;  // outer edge of zodiac sign band
+    const rSignIn  = R * 0.80;  // inner edge of zodiac sign band
+    const rInner   = R * 0.38;  // inner circle (aspect area)
 
     // Zodiac signs
-    const signs = ZODIAC.map((name, i) => {
-      const eclStart = i * 30;
-      return { name, sym: SIGN_SYM[name], elem: ELEM[name], eclStart };
-    });
-
-    // Planet positions
-    const pls = planets.map(p => ({
-      ...p,
-      chartAngle: ecl2chart(p.fullDeg, ascLon),
-      displayAngle: ecl2chart(p.fullDeg, ascLon), // will be adjusted for collision
-      color: PCOL[p.id] || '#8098B0',
+    const signs = ZODIAC.map((name, i) => ({
+      name, sym: SYM[name], elem: ELEM[name], eclStart: i * 30,
     }));
 
-    // Sort and spread overlapping planets (label collision avoidance)
-    pls.sort((a, b) => a.chartAngle - b.chartAngle);
-    const minGap = 14;
-    for (let pass = 0; pass < 5; pass++) {
+    // Planets with chart angles
+    const pls = planets.map(p => ({
+      ...p,
+      chartAngle: e2c(p.fullDeg, ascLon),
+      displayAngle: e2c(p.fullDeg, ascLon),
+      color: PC[p.id] || '#555',
+    }));
+
+    // Collision avoidance for planet labels
+    pls.sort((a, b) => a.displayAngle - b.displayAngle);
+    const gap = 16;
+    for (let pass = 0; pass < 6; pass++) {
       for (let i = 0; i < pls.length; i++) {
         const j = (i + 1) % pls.length;
-        let diff = norm(pls[j].displayAngle - pls[i].displayAngle);
-        if (diff < minGap && diff > 0) {
-          const shift = (minGap - diff) / 2;
-          pls[i].displayAngle = norm(pls[i].displayAngle - shift);
-          pls[j].displayAngle = norm(pls[j].displayAngle + shift);
+        let d = norm(pls[j].displayAngle - pls[i].displayAngle);
+        if (d < gap && d > 0) {
+          const s = (gap - d) / 2;
+          pls[i].displayAngle = norm(pls[i].displayAngle - s);
+          pls[j].displayAngle = norm(pls[j].displayAngle + s);
         }
       }
     }
 
-    // House cusps (Porphyry)
-    const cusps = porphyryHouses(ascLon, mcLon);
+    // House cusps
+    const cusps = porphyry(ascLon, mcLon);
 
     // Aspects
     const aspects = [];
@@ -109,202 +105,192 @@ export default function NatalWheel({ planets, natal, size = 380 }) {
       }
     }
 
-    return { cx, cy, r1, r2, r3, r4, signs, planets: pls, cusps, aspects, ascLon, mcLon };
+    return { cx, cy, rOuter, rElemIn, rSignOut, rSignIn, rInner, signs, planets: pls, cusps, aspects, ascLon, mcLon };
   }, [planets, natal, size]);
 
   if (!chart) return null;
-  const { cx, cy, r1, r2, r3, r4, signs, cusps, aspects, ascLon, mcLon } = chart;
+  const { cx, cy, rOuter, rElemIn, rSignOut, rSignIn, rInner, signs, cusps, aspects, ascLon, mcLon } = chart;
   const pls = chart.planets;
 
-  // Helper for arc segment path (sweep is always 30° for signs, counter-clockwise in chart = clockwise in SVG)
-  function signArc(rOuter, rInner, startEcl, spanDeg) {
-    const a1 = ecl2chart(startEcl, ascLon);
-    const a2 = ecl2chart(startEcl + spanDeg, ascLon);
-    const p1 = pol(cx, cy, rOuter, a1);
-    const p2 = pol(cx, cy, rOuter, a2);
-    const p3 = pol(cx, cy, rInner, a2);
-    const p4 = pol(cx, cy, rInner, a1);
-    return `M${p1[0]},${p1[1]} A${rOuter},${rOuter} 0 0,0 ${p2[0]},${p2[1]} L${p3[0]},${p3[1]} A${rInner},${rInner} 0 0,1 ${p4[0]},${p4[1]} Z`;
+  // Arc path for sign/element segments
+  function arcSeg(rO, rI, eclStart, span) {
+    const a1 = e2c(eclStart, ascLon);
+    const a2 = e2c(eclStart + span, ascLon);
+    const p1 = pol(cx, cy, rO, a1), p2 = pol(cx, cy, rO, a2);
+    const p3 = pol(cx, cy, rI, a2), p4 = pol(cx, cy, rI, a1);
+    return `M${p1[0]},${p1[1]} A${rO},${rO} 0 0,0 ${p2[0]},${p2[1]} L${p3[0]},${p3[1]} A${rI},${rI} 0 0,1 ${p4[0]},${p4[1]} Z`;
   }
+
+  const fs = size / 380; // font scale factor
 
   return (
     <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`}
-      style={{ display: 'block', fontFamily: 'JetBrains Mono, monospace', userSelect: 'none' }}>
+      style={{ display: 'block', fontFamily: 'serif', userSelect: 'none' }}>
 
-      {/* Background */}
-      <circle cx={cx} cy={cy} r={r1 + 2} fill="#0A1018" />
+      {/* Outer background */}
+      <circle cx={cx} cy={cy} r={rOuter + 6} fill="#1A1020" />
 
-      {/* ── Outer element color ring ── */}
+      {/* ── Element color ring (outermost) ── */}
+      {signs.map((s, i) => (
+        <path key={'e' + i} d={arcSeg(rOuter, rElemIn, s.eclStart, 30)}
+          fill={ELEM_ARC[s.elem]} fillOpacity="0.7" stroke={ELEM_ARC[s.elem]} strokeWidth="0.5" strokeOpacity="0.9" />
+      ))}
+
+      {/* ── Zodiac sign band (white/cream) ── */}
+      {signs.map((s, i) => (
+        <path key={'s' + i} d={arcSeg(rSignOut, rSignIn, s.eclStart, 30)}
+          fill="#F8F4EC" stroke="#C8C0B0" strokeWidth="0.5" />
+      ))}
+
+      {/* Sign divider lines through sign band */}
       {signs.map((s, i) => {
-        const ec = ELEM_C[s.elem];
-        return <path key={'er' + i} d={signArc(r1, r2, s.eclStart, 30)} fill={ec + '10'} stroke={ec} strokeWidth="1.5" strokeOpacity="0.3" />;
+        const angle = e2c(s.eclStart, ascLon);
+        const p1 = pol(cx, cy, rOuter, angle), p2 = pol(cx, cy, rSignIn, angle);
+        return <line key={'d' + i} x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]} stroke="#A09880" strokeWidth="0.8" />;
       })}
 
-      {/* Outer circle borders */}
-      <circle cx={cx} cy={cy} r={r1} fill="none" stroke="#2A3A50" strokeWidth="0.8" />
-      <circle cx={cx} cy={cy} r={r2} fill="none" stroke="#1A2840" strokeWidth="0.6" />
-
-      {/* ── Zodiac sign ring (between r2 and r3) ── */}
+      {/* Sign symbols centered in band */}
       {signs.map((s, i) => {
-        const ec = ELEM_C[s.elem];
-        return <path key={'sr' + i} d={signArc(r2, r3, s.eclStart, 30)} fill={ec + '06'} stroke="#1A2840" strokeWidth="0.4" />;
-      })}
-
-      {/* Sign divider lines (outer ring through sign ring) */}
-      {signs.map((s, i) => {
-        const angle = ecl2chart(s.eclStart, ascLon);
-        const p1 = pol(cx, cy, r1, angle);
-        const p2 = pol(cx, cy, r3, angle);
-        return <line key={'sd' + i} x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]} stroke="#1A2840" strokeWidth="0.6" />;
-      })}
-
-      {/* Sign symbols in sign ring */}
-      {signs.map((s, i) => {
-        const midEcl = s.eclStart + 15;
-        const angle = ecl2chart(midEcl, ascLon);
-        const p = pol(cx, cy, (r2 + r3) / 2, angle);
-        const ec = ELEM_C[s.elem];
+        const mid = e2c(s.eclStart + 15, ascLon);
+        const p = pol(cx, cy, (rSignOut + rSignIn) / 2, mid);
         return (
-          <text key={'ss' + i} x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="central"
-            fill={ec} fontSize={size * 0.038} fontWeight="600" opacity="0.85">{s.sym}</text>
+          <text key={'sym' + i} x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="central"
+            fill="#2A2020" fontSize={18 * fs} fontWeight="400">{s.sym}</text>
         );
       })}
 
-      {/* Degree numbers at sign boundaries (on outer ring) */}
+      {/* Degree numbers at sign boundaries — degree of cusp in outer ring area */}
       {signs.map((s, i) => {
-        const angle = ecl2chart(s.eclStart, ascLon);
-        const p = pol(cx, cy, (r1 + r2) / 2, angle + 2.5);
-        // Degree at this boundary in the previous sign = ends at 30° of prev sign
-        // Show the cusp degree for context
+        const angle = e2c(s.eclStart, ascLon);
+        const p = pol(cx, cy, (rOuter + rElemIn) / 2 + 1, angle + 3);
         return (
-          <text key={'dn' + i} x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="central"
-            fill="#3A5068" fontSize={size * 0.018} fontWeight="600">{i * 30 % 30 || ''}</text>
+          <text key={'deg' + i} x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="central"
+            fill="#F8F4EC" fontSize={7 * fs} fontWeight="600" fontFamily="JetBrains Mono, monospace">{i * 30 % 360}</text>
         );
       })}
 
-      {/* Degree ticks every 5° on sign ring */}
-      {Array.from({ length: 72 }, (_, i) => {
-        const deg = i * 5;
-        const angle = ecl2chart(deg, ascLon);
-        const isMajor = deg % 10 === 0;
-        const from = pol(cx, cy, r3, angle);
-        const to = pol(cx, cy, r3 + (r2 - r3) * (isMajor ? 0.18 : 0.10), angle);
-        return <line key={'tk' + i} x1={from[0]} y1={from[1]} x2={to[0]} y2={to[1]} stroke="#1A284060" strokeWidth="0.3" />;
-      })}
+      {/* ── House / planet area (white background) ── */}
+      <circle cx={cx} cy={cy} r={rSignIn} fill="#F8F4EC" stroke="#C8C0B0" strokeWidth="0.5" />
 
-      {/* Inner sign ring border */}
-      <circle cx={cx} cy={cy} r={r3} fill="none" stroke="#1A2840" strokeWidth="0.6" />
+      {/* ── Inner circle (dark, for aspects) ── */}
+      <circle cx={cx} cy={cy} r={rInner} fill="#1A1020" stroke="#3A3050" strokeWidth="1.2" />
 
       {/* ── House cusp lines ── */}
       {cusps.slice(1).map((eclCusp, i) => {
-        const houseNum = i + 1;
-        const angle = ecl2chart(eclCusp, ascLon);
-        const isAxis = houseNum === 1 || houseNum === 4 || houseNum === 7 || houseNum === 10;
-        const outerP = pol(cx, cy, r3, angle);
-        const innerP = pol(cx, cy, r4, angle);
-        // House number label
-        const nextCusp = cusps[houseNum === 12 ? 1 : houseNum + 1];
-        const midHouseEcl = norm(eclCusp + norm(nextCusp - eclCusp) / 2);
-        const midAngle = ecl2chart(midHouseEcl, ascLon);
-        const labelP = pol(cx, cy, r4 + (r3 - r4) * 0.18, midAngle);
+        const hNum = i + 1;
+        const angle = e2c(eclCusp, ascLon);
+        const isAxis = hNum === 1 || hNum === 4 || hNum === 7 || hNum === 10;
+        const pO = pol(cx, cy, rSignIn, angle);
+        const pI = pol(cx, cy, rInner, angle);
+        // House number at midpoint of house
+        const nextCusp = cusps[hNum === 12 ? 1 : hNum + 1];
+        const midEcl = norm(eclCusp + norm(nextCusp - eclCusp) / 2);
+        const midA = e2c(midEcl, ascLon);
+        const hP = pol(cx, cy, rInner + (rSignIn - rInner) * 0.15, midA);
+        // Degree info at cusp
+        const cuspZodiac = Math.floor(eclCusp / 30);
+        const cuspDeg = Math.floor(eclCusp - cuspZodiac * 30);
+        const cuspMin = Math.floor((eclCusp - cuspZodiac * 30 - cuspDeg) * 60);
+        const degP = pol(cx, cy, rSignIn - 6 * fs, angle + (isAxis ? 4 : 3));
         return (
-          <g key={'hc' + i}>
-            <line x1={outerP[0]} y1={outerP[1]} x2={innerP[0]} y2={innerP[1]}
-              stroke={isAxis ? '#00D88A' : '#1A2840'} strokeWidth={isAxis ? 1.2 : 0.5}
-              opacity={isAxis ? 0.5 : 0.6} />
-            <text x={labelP[0]} y={labelP[1]} textAnchor="middle" dominantBaseline="central"
-              fill="#2A3A50" fontSize={size * 0.024} fontWeight="700">{houseNum}</text>
-          </g>
-        );
-      })}
-
-      {/* Inner circle */}
-      <circle cx={cx} cy={cy} r={r4} fill="#0A1018" stroke="#1A2840" strokeWidth="0.8" />
-
-      {/* ── Aspect lines inside inner circle ── */}
-      {aspects.map((a, i) => {
-        const p1 = pol(cx, cy, r4 - 1, pls[a.i].chartAngle);
-        const p2 = pol(cx, cy, r4 - 1, pls[a.j].chartAngle);
-        return (
-          <line key={'asp' + i} x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]}
-            stroke={a.color} strokeWidth="0.7" opacity="0.4"
-            strokeDasharray={a.dash || 'none'} />
-        );
-      })}
-
-      {/* ── Axis labels (ASC, MC, DC, IC) ── */}
-      {[
-        { label: 'ASC', ecl: natal.asc.fullDeg, color: '#00D88A', deg: natal.asc.deg, min: natal.asc.min, sign: natal.asc.sign },
-        { label: 'DC', ecl: norm(natal.asc.fullDeg + 180), color: '#5A7088' },
-        { label: 'MC', ecl: mcLon, color: '#E8A838', deg: natal.mc.deg, min: natal.mc.min, sign: natal.mc.sign },
-        { label: 'IC', ecl: norm(mcLon + 180), color: '#5A7088' },
-      ].map((a, i) => {
-        const angle = ecl2chart(a.ecl, natal.asc.fullDeg);
-        const labelP = pol(cx, cy, r1 + size * 0.001, angle);
-        // Axis line extending outside the wheel
-        const lineO = pol(cx, cy, r1 + size * 0.02, angle);
-        const lineI = pol(cx, cy, r4, angle);
-        return (
-          <g key={'ax' + i}>
-            {(i === 0 || i === 2) && <line x1={lineO[0]} y1={lineO[1]} x2={lineI[0]} y2={lineI[1]}
-              stroke={a.color} strokeWidth="1" opacity="0.3" />}
-            {/* Label with degree info */}
-            {a.deg !== undefined ? (
-              <g>
-                {/* Background for readability */}
-                <text x={labelP[0]} y={labelP[1] - size * 0.015} textAnchor="middle" dominantBaseline="central"
-                  fill={a.color} fontSize={size * 0.024} fontWeight="800" letterSpacing="1">{a.label}</text>
-                <text x={labelP[0]} y={labelP[1] + size * 0.015} textAnchor="middle" dominantBaseline="central"
-                  fill={a.color} fontSize={size * 0.018} fontWeight="600" opacity="0.7">
-                  {SIGN_SYM[a.sign]} {a.deg}°{String(a.min).padStart(2, '0')}'
-                </text>
-              </g>
-            ) : (
-              <text x={labelP[0]} y={labelP[1]} textAnchor="middle" dominantBaseline="central"
-                fill={a.color} fontSize={size * 0.02} fontWeight="700" opacity="0.5">{a.label}</text>
+          <g key={'h' + i}>
+            <line x1={pO[0]} y1={pO[1]} x2={pI[0]} y2={pI[1]}
+              stroke={isAxis ? '#4A4060' : '#B0A890'} strokeWidth={isAxis ? 1.5 : 0.6} />
+            {/* House number */}
+            <text x={hP[0]} y={hP[1]} textAnchor="middle" dominantBaseline="central"
+              fill="#8A8070" fontSize={10 * fs} fontWeight="400" fontFamily="JetBrains Mono, monospace">{hNum}</text>
+            {/* Cusp degree */}
+            {!isAxis && (
+              <text x={degP[0]} y={degP[1]} textAnchor="middle" dominantBaseline="central"
+                fill="#A09880" fontSize={6 * fs} fontFamily="JetBrains Mono, monospace">{cuspDeg}</text>
             )}
           </g>
         );
       })}
 
+      {/* ── Axis labels (ASC, MC, DC, IC) ── */}
+      {[
+        { label: 'ASC', ecl: natal.asc.fullDeg, deg: natal.asc.deg, min: natal.asc.min, sign: natal.asc.sign, color: '#2A2020', bold: true },
+        { label: 'DC', ecl: norm(natal.asc.fullDeg + 180), color: '#8A8070' },
+        { label: 'MC', ecl: mcLon, deg: natal.mc.deg, min: natal.mc.min, sign: natal.mc.sign, color: '#2A2020', bold: true },
+        { label: 'IC', ecl: norm(mcLon + 180), color: '#8A8070' },
+      ].map((a, i) => {
+        const angle = e2c(a.ecl, ascLon);
+        // Extended axis line
+        const axO = pol(cx, cy, rSignIn + 2, angle);
+        const axI = pol(cx, cy, rInner, angle);
+        // Label position outside zodiac ring
+        const lP = pol(cx, cy, rSignIn + 14 * fs, angle);
+        const dP = pol(cx, cy, rSignIn + 6 * fs, angle);
+        return (
+          <g key={'ax' + i}>
+            <line x1={axO[0]} y1={axO[1]} x2={axI[0]} y2={axI[1]}
+              stroke={a.bold ? '#4A4060' : '#B0A890'} strokeWidth={a.bold ? 1.5 : 0.6} />
+            {/* Label */}
+            <text x={lP[0]} y={lP[1]} textAnchor="middle" dominantBaseline="central"
+              fill={a.color} fontSize={a.bold ? 11 * fs : 8 * fs} fontWeight={a.bold ? '700' : '400'}
+              fontFamily="JetBrains Mono, monospace">{a.label}</text>
+            {/* Degree info for ASC/MC */}
+            {a.deg !== undefined && (
+              <text x={dP[0]} y={dP[1]} textAnchor="middle" dominantBaseline="central"
+                fill="#5A5040" fontSize={7 * fs} fontFamily="JetBrains Mono, monospace">
+                {a.deg}°{String(a.min).padStart(2, '0')}'
+              </text>
+            )}
+          </g>
+        );
+      })}
+
+      {/* ── Aspect lines ── */}
+      {aspects.map((a, i) => {
+        const p1 = pol(cx, cy, rInner - 2, pls[a.i].chartAngle);
+        const p2 = pol(cx, cy, rInner - 2, pls[a.j].chartAngle);
+        return (
+          <line key={'a' + i} x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]}
+            stroke={a.color} strokeWidth={1.2} opacity="0.7"
+            strokeDasharray={a.dash || 'none'} />
+        );
+      })}
+
       {/* ── Planets ── */}
       {pls.map((p, i) => {
-        // Tick mark at exact ecliptic position on sign ring inner edge
-        const exactAngle = p.chartAngle;
-        const tickO = pol(cx, cy, r3, exactAngle);
-        const tickI = pol(cx, cy, r3 - (r3 - r4) * 0.08, exactAngle);
+        // Tick at exact position on inner edge of sign band
+        const exactA = p.chartAngle;
+        const dispA = p.displayAngle;
+        const tickO = pol(cx, cy, rSignIn, exactA);
+        const tickI = pol(cx, cy, rSignIn - 4 * fs, exactA);
 
-        // Planet info positioned using displayAngle (collision-avoided)
-        const dispAngle = p.displayAngle;
-        const symbolR = r3 - (r3 - r4) * 0.25;
-        const infoR = r3 - (r3 - r4) * 0.48;
-        const symP = pol(cx, cy, symbolR, dispAngle);
-        const infoP = pol(cx, cy, infoR, dispAngle);
+        // Planet symbol placement (in house area)
+        const symR = rSignIn - (rSignIn - rInner) * 0.30;
+        const symP = pol(cx, cy, symR, dispA);
 
-        // Connecting line from tick to symbol if displaced
-        const connO = pol(cx, cy, r3 - 1, exactAngle);
-        const connI = pol(cx, cy, symbolR + size * 0.015, dispAngle);
+        // Degree + sign info below/beside planet symbol
+        const infoR = rSignIn - (rSignIn - rInner) * 0.50;
+        const infoP = pol(cx, cy, infoR, dispA);
+
+        // Connector from tick to planet
+        const connEnd = pol(cx, cy, symR + 8 * fs, dispA);
 
         return (
-          <g key={'pl' + i}>
-            {/* Tick on sign ring */}
+          <g key={'p' + i}>
+            {/* Tick mark on sign ring */}
             <line x1={tickO[0]} y1={tickO[1]} x2={tickI[0]} y2={tickI[1]}
-              stroke={p.color} strokeWidth="1" opacity="0.6" />
-            {/* Connector line */}
-            <line x1={connO[0]} y1={connO[1]} x2={connI[0]} y2={connI[1]}
-              stroke={p.color} strokeWidth="0.4" opacity="0.3" />
+              stroke={p.color} strokeWidth="1.5" />
+            {/* Thin connector */}
+            <line x1={tickI[0]} y1={tickI[1]} x2={connEnd[0]} y2={connEnd[1]}
+              stroke={p.color} strokeWidth="0.5" opacity="0.4" />
             {/* Planet symbol */}
             <text x={symP[0]} y={symP[1]} textAnchor="middle" dominantBaseline="central"
-              fill={p.color} fontSize={size * 0.042} fontWeight="700">{p.symbol}</text>
-            {/* Degree + sign + minute info */}
+              fill={p.color} fontSize={16 * fs} fontWeight="700">{p.symbol}</text>
+            {/* Degree info: "deg° min' sign" */}
             <text x={infoP[0]} y={infoP[1]} textAnchor="middle" dominantBaseline="central"
-              fill="#8098B0" fontSize={size * 0.02} fontWeight="600">
-              {p.deg}°{String(p.min).padStart(2, '0')}' {SIGN_SYM[p.sign]}
+              fill="#4A4030" fontSize={7.5 * fs} fontFamily="JetBrains Mono, monospace" fontWeight="600">
+              {p.deg} {SYM[p.sign]} {String(p.min).padStart(2, '0')}
             </text>
-            {/* Retrograde marker */}
+            {/* Retrograde */}
             {p.retrograde && (
-              <text x={symP[0] + size * 0.025} y={symP[1] - size * 0.015} textAnchor="middle"
-                fill="#F04060" fontSize={size * 0.016} fontWeight="800">Rx</text>
+              <text x={symP[0] + 10 * fs} y={symP[1] - 6 * fs} textAnchor="start" dominantBaseline="central"
+                fill="#C83030" fontSize={6 * fs} fontFamily="JetBrains Mono, monospace" fontWeight="700">Rx</text>
             )}
           </g>
         );
