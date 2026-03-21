@@ -624,13 +624,8 @@ export default function Dashboard({ demo = false }) {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span onClick={() => setNatalView(natalView === 'table' ? 'wheel' : 'table')}
-                    title={natalView === 'table' ? 'Show chart wheel' : 'Show table'}
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: 5, border: '1px solid #1A2840', background: natalView === 'wheel' ? 'rgba(0,216,138,.12)' : 'transparent', color: natalView === 'wheel' ? '#00D88A' : '#5A7088', transition: 'all .15s' }}>
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
-                      <circle cx="8" cy="8" r="6.5" /><circle cx="8" cy="8" r="3.5" />
-                      <line x1="1.5" y1="8" x2="4.5" y2="8" /><line x1="11.5" y1="8" x2="14.5" y2="8" />
-                      <line x1="8" y1="1.5" x2="8" y2="4.5" /><line x1="8" y1="11.5" x2="8" y2="14.5" />
-                    </svg>
+                    style={{ cursor: 'pointer', ...F, fontSize: 8, fontWeight: 700, letterSpacing: 0.5, padding: '4px 8px', borderRadius: 4, border: '1px solid #1A2840', background: natalView === 'wheel' ? 'rgba(0,216,138,.12)' : 'transparent', color: natalView === 'wheel' ? '#00D88A' : '#5A7088', transition: 'all .15s' }}>
+                    {natalView === 'table' ? 'WHEEL' : 'TABLE'}
                   </span>
                   <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
                 </div>
