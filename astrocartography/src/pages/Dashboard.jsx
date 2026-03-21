@@ -401,9 +401,9 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
       {/* TOPBAR */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12 }}>
           <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: '#00D88A', letterSpacing: mob ? 1.5 : 3 }}>NATAL NAVIGATOR</span>
           <span style={{ ...F, fontSize: 9, color: '#00D88A', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -1040,7 +1040,7 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexShrink: 0, zIndex: 200 }}>
+      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', width: '100%' }}>
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
@@ -1078,14 +1078,14 @@ export default function Dashboard({ demo = false }) {
               const imp = cityImpact(c);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, minWidth: 0 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{c.name}</span>
-                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2 }}>{c.line}</span>
-                    <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700 }}>{imp.strength} {imp.strengthPct}%</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}</span>
+                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2, flexShrink: 0, whiteSpace: 'nowrap' }}>{c.line}</span>
+                    <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>{imp.strengthPct}%</span>
                   </div>
-                  <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9 }}>{imp.domain} → {imp.area}</div>
+                  <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
                 <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
