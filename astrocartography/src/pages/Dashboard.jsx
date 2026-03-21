@@ -440,7 +440,7 @@ export default function Dashboard({ demo = false }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: '#5A7088' }} />}
           {demo ? <>
-            {!mob && <span style={{ ...F, fontSize: 8, color: '#5A7088', background: '#101C28', padding: '3px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>DEMO: {DEMO.name}</span>}
+            <span style={{ ...F, fontSize: mob ? 7 : 8, color: '#5A7088', background: '#101C28', padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>DEMO: {DEMO.name}</span>
             <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: '#0A1018', background: '#00D88A', padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
