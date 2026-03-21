@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { calculateChart } from '../lib/calculateChart';
+import { setCachedChart } from '../lib/chartCache';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -89,14 +91,35 @@ export default function BirthDataPage() {
 
     setSubmitting(true);
     try {
-      await saveBirthData({
-        name: name.trim(),
-        date,
-        time,
-        city: selectedCity.name,
-        lat: selectedCity.lat,
-        lng: selectedCity.lng,
-      });
+      // 1. Save to Supabase and pre-calculate chart in parallel
+      const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
+      const [, chartData] = await Promise.all([
+        saveBirthData({
+          name: name.trim(),
+          date,
+          time,
+          city: selectedCity.name,
+          lat: selectedCity.lat,
+          lng: selectedCity.lng,
+        }),
+        // Calculate chart on main thread while Supabase write is in flight.
+        // ~200ms calculation runs concurrently with ~500ms network call = free.
+        new Promise((resolve) => {
+          try {
+            const data = calculateChart(birthInput);
+            resolve(data);
+          } catch {
+            resolve(null); // Dashboard will recalculate if this fails
+          }
+        }),
+      ]);
+
+      // 2. Cache the result so Dashboard loads instantly from localStorage
+      if (chartData) {
+        setCachedChart(birthInput, chartData);
+      }
+
+      // 3. Navigate — Dashboard will read from cache, zero loading
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);

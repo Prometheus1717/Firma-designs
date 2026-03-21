@@ -263,7 +263,8 @@ export default function Dashboard({ demo = false }) {
     }
   }, [demo, hasBirthData, profile, navigate]);
 
-  // Calculate chart — tries localStorage cache first, then Web Worker, then main thread fallback
+  // Calculate chart — reads from localStorage cache first (pre-calculated by BirthDataPage),
+  // falls back to direct main-thread calculation (~200ms, faster than Worker spawn on mobile).
   useEffect(() => {
     const birthInput = demo
       ? { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }
@@ -272,64 +273,26 @@ export default function Dashboard({ demo = false }) {
         : null;
     if (!birthInput) return;
 
-    // 1. Check localStorage cache — instant return for repeat visits
+    // 1. Check localStorage cache — instant for returning users and users coming from BirthDataPage
     const cached = getCachedChart(birthInput);
     if (cached) {
       setChartData(cached);
       return;
     }
 
+    // 2. No cache — calculate directly on main thread.
+    // This is faster than spawning a Web Worker on mobile (~200ms calc vs 500ms+ worker startup).
     setLoading(true);
     setError('');
-
-    // 2. Try Web Worker — keeps main thread free for UI (100k users = 100k devices computing)
-    let worker;
-    try {
-      worker = new Worker(new URL('../lib/chartWorker.js', import.meta.url), { type: 'module' });
-      const timeout = setTimeout(() => {
-        worker.terminate();
-        // 3. Fallback: main thread if Worker times out
-        try {
-          const data = calculateChart(birthInput);
-          setCachedChart(birthInput, data);
-          setChartData(data);
-        } catch (err) { setError(err.message); }
-        finally { setLoading(false); }
-      }, 3000);
-
-      worker.onmessage = (e) => {
-        clearTimeout(timeout);
-        if (e.data.type === 'success') {
-          setCachedChart(birthInput, e.data.data);
-          setChartData(e.data.data);
-        } else {
-          setError(e.data.message || 'Calculation failed');
-        }
-        setLoading(false);
-        worker.terminate();
-      };
-      worker.onerror = () => {
-        clearTimeout(timeout);
-        // Fallback: main thread
-        try {
-          const data = calculateChart(birthInput);
-          setCachedChart(birthInput, data);
-          setChartData(data);
-        } catch (err) { setError(err.message); }
-        finally { setLoading(false); }
-      };
-      worker.postMessage(birthInput);
-    } catch {
-      // Workers not supported — main thread
+    // Use requestAnimationFrame so the loading UI renders before blocking calculation
+    requestAnimationFrame(() => {
       try {
         const data = calculateChart(birthInput);
         setCachedChart(birthInput, data);
         setChartData(data);
       } catch (err) { setError(err.message); }
       finally { setLoading(false); }
-    }
-
-    return () => { if (worker) worker.terminate(); };
+    });
   }, [demo, hasBirthData, profile]);
 
   const lines = chartData?.lines || [];
