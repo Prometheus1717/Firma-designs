@@ -36,7 +36,13 @@ export default function AuthPage() {
         setMessage('Password reset link sent to your email.');
       }
     } catch (err) {
-      setError(err.message);
+      // Supabase returns generic "Invalid login credentials" for wrong email OR password.
+      // Make it actionable so users know they may need to sign up first.
+      if (mode === 'login' && /invalid.*credentials/i.test(err.message)) {
+        setError('No account found with these credentials. Check your email and password, or sign up to create a new account.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -147,10 +153,15 @@ export default function AuthPage() {
         <div style={{ marginTop: 20, textAlign: 'center', ...F, fontSize: 10 }}>
           {mode === 'login' && (
             <>
-              <span style={{ color: '#5A7088' }}>No account? </span>
-              <span onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ color: '#00D88A', cursor: 'pointer' }}>Sign up</span>
-              <span style={{ color: '#1A2840', margin: '0 8px' }}>|</span>
-              <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: '#5A7088', cursor: 'pointer' }}>Forgot password?</span>
+              <div
+                onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
+                style={{ display: 'inline-block', padding: '10px 24px', border: '1px solid #00D88A', borderRadius: 6, color: '#00D88A', cursor: 'pointer', marginBottom: 12, fontWeight: 600, letterSpacing: 1 }}
+              >
+                NEW HERE? CREATE ACCOUNT
+              </div>
+              <div>
+                <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: '#5A7088', cursor: 'pointer' }}>Forgot password?</span>
+              </div>
             </>
           )}
           {mode === 'signup' && !message && (

@@ -68,12 +68,22 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
       setUser(u);
+
+      // PASSWORD_RECOVERY: Supabase logged the user in via reset link.
+      // Redirect to /reset-password so they can actually change their password
+      // instead of being sent to the dashboard.
+      if (event === 'PASSWORD_RECOVERY' && u) {
+        markReady();
+        // Use setTimeout to ensure React Router has mounted
+        setTimeout(() => { window.location.replace('/reset-password'); }, 0);
+        return;
+      }
+
       if (u) {
         if (!signingInRef.current) {
-          // If we had a cached profile, we're already "ready" — refresh in background
           if (hasCached) {
             markReady();
-            loadProfile(u.id); // fire-and-forget background refresh
+            loadProfile(u.id);
           } else {
             await loadProfile(u.id);
             clearTimeout(authTimeout);

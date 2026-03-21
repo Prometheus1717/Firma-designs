@@ -13,6 +13,7 @@ const AuthPage = lazyRetry(() => import('./pages/AuthPage'));
 const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
+const ResetPasswordPage = lazyRetry(() => import('./pages/ResetPasswordPage'));
 
 // Preload Dashboard chunk after a tick — most users end up here.
 // Deferred to avoid module initialization race conditions with the bundler.
@@ -37,30 +38,39 @@ function LoadingScreen() {
   );
 }
 
-// Error boundary — catches JS errors and shows a recovery screen instead of blank page.
-// Uses `key={pathname}` so it auto-resets when the route changes (no stuck error screens).
+// Error boundary — catches JS errors and recovers silently.
+// For transient TDZ / chunk-load errors it auto-reloads the page (up to 2 times)
+// so the user never sees the "Something went wrong" screen on first visit.
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { error: null, retries: 0 };
+    this.state = { error: null };
   }
   static getDerivedStateFromError(error) {
     return { error };
   }
-  componentDidCatch(error) {
-    // Auto-retry once for transient initialization errors (TDZ, chunk race conditions)
-    if (this.state.retries < 2) {
-      setTimeout(() => this.setState({ error: null, retries: this.state.retries + 1 }), 100);
-    }
+  componentDidCatch() {
+    // Auto-reload for transient initialization errors (TDZ, chunk race conditions).
+    // sessionStorage counter prevents infinite reload loops.
+    try {
+      const key = 'nn_err_reloads';
+      const count = parseInt(sessionStorage.getItem(key) || '0', 10);
+      if (count < 2) {
+        sessionStorage.setItem(key, String(count + 1));
+        window.location.reload();
+        return;
+      }
+      // Clear counter so next visit starts fresh
+      sessionStorage.removeItem(key);
+    } catch { /* sessionStorage disabled */ }
   }
   componentDidUpdate(prevProps) {
-    // Auto-reset error state when location changes (user navigated away)
     if (this.state.error && prevProps.locationKey !== this.props.locationKey) {
-      this.setState({ error: null, retries: 0 });
+      this.setState({ error: null });
     }
   }
   render() {
-    if (this.state.error && this.state.retries >= 2) {
+    if (this.state.error) {
       return (
         <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
@@ -130,10 +140,13 @@ function DemoOrDashboard() {
   const { user, loading, hasBirthData, profile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (user && hasBirthData) return <Navigate to="/dashboard" replace />;
-  if (user && profile && !hasBirthData) return <Navigate to="/birth-data" replace />;
-  if (user && !profile) return <Navigate to="/dashboard" replace />;
+  // New user (no profile yet or no birth data) → send to birth-data entry
+  if (user) return <Navigate to={profile && !hasBirthData ? '/birth-data' : hasBirthData ? '/dashboard' : '/birth-data'} replace />;
   return <Dashboard demo />;
 }
+
+// Clear error-reload counter on successful app mount
+try { sessionStorage.removeItem('nn_err_reloads'); } catch {}
 
 export default function App() {
   return (
@@ -147,6 +160,7 @@ export default function App() {
               <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+              <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
               <Route path="*" element={<SmartRedirect />} />
             </Routes>
           </Suspense>

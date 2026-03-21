@@ -295,7 +295,7 @@ export default function Dashboard({ demo = false }) {
           setChartData(data);
         } catch (err) { setError(err.message); }
         finally { setLoading(false); }
-      }, 8000);
+      }, 3000);
 
       worker.onmessage = (e) => {
         clearTimeout(timeout);
@@ -379,8 +379,41 @@ export default function Dashboard({ demo = false }) {
     setCityPop(city);
   }, []);
 
+  // Safety timeout: if stuck loading for too long (e.g. profile never arrives),
+  // reload the page once rather than showing "Connecting..." forever.
+  const [loadingTooLong, setLoadingTooLong] = useState(false);
+  const isLoading = !chartData && (demo ? loading : (loading || hasBirthData || !profile));
+  useEffect(() => {
+    if (!isLoading) return;
+    const t = setTimeout(() => setLoadingTooLong(true), 8000);
+    return () => clearTimeout(t);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (loadingTooLong && isLoading) {
+      // One auto-reload attempt, then stop
+      try {
+        const key = 'nn_dash_reload';
+        const count = parseInt(sessionStorage.getItem(key) || '0', 10);
+        if (count < 1) {
+          sessionStorage.setItem(key, String(count + 1));
+          window.location.reload();
+        } else {
+          sessionStorage.removeItem(key);
+        }
+      } catch {}
+    }
+  }, [loadingTooLong, isLoading]);
+
+  // Clear dashboard reload counter on successful render
+  useEffect(() => {
+    if (chartData) {
+      try { sessionStorage.removeItem('nn_dash_reload'); } catch {}
+    }
+  }, [chartData]);
+
   // Loading state
-  if (!chartData && (demo ? loading : (loading || hasBirthData || !profile))) {
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
