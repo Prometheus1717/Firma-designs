@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
+import NatalWheel from '../components/NatalWheel';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
@@ -193,6 +194,7 @@ export default function Dashboard({ demo = false }) {
   const [flatMap, setFlatMap] = useState(false);
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
   const [showNatal, setShowNatal] = useState(false);
+  const [natalView, setNatalView] = useState('table'); // 'table' | 'wheel'
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [guideTab, _setGuideTab] = useState(0);
@@ -620,8 +622,40 @@ export default function Dashboard({ demo = false }) {
                   <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>NATAL CHART</span>
                   {chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
                 </div>
-                <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span onClick={() => setNatalView(natalView === 'table' ? 'wheel' : 'table')}
+                    title={natalView === 'table' ? 'Show chart wheel' : 'Show table'}
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 26, height: 26, borderRadius: 5, border: '1px solid #1A2840', background: natalView === 'wheel' ? 'rgba(0,216,138,.12)' : 'transparent', color: natalView === 'wheel' ? '#00D88A' : '#5A7088', transition: 'all .15s' }}>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
+                      <circle cx="8" cy="8" r="6.5" /><circle cx="8" cy="8" r="3.5" />
+                      <line x1="1.5" y1="8" x2="4.5" y2="8" /><line x1="11.5" y1="8" x2="14.5" y2="8" />
+                      <line x1="8" y1="1.5" x2="8" y2="4.5" /><line x1="8" y1="11.5" x2="8" y2="14.5" />
+                    </svg>
+                  </span>
+                  <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+                </div>
               </div>
+
+              {natalView === 'wheel' ? (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: mob ? 12 : 16, overflowY: 'auto', background: '#0A1018' }}>
+                  <NatalWheel planets={chartData.planets} natal={chartData.natal} size={mob ? Math.min(window.innerWidth - 40, 340) : 360} />
+                  {/* Aspect legend */}
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, padding: '8px 0' }}>
+                    {[
+                      { name: 'Conjunction', color: '#E8A838', dash: false },
+                      { name: 'Sextile', color: '#5BA8D4', dash: true },
+                      { name: 'Square', color: '#F04060', dash: false },
+                      { name: 'Trine', color: '#00D88A', dash: false },
+                      { name: 'Opposition', color: '#D45050', dash: true },
+                    ].map(a => (
+                      <div key={a.name} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <div style={{ width: 12, height: 0, borderTop: `1.5px ${a.dash ? 'dashed' : 'solid'} ${a.color}`, opacity: 0.6 }} />
+                        <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (<>
 
               {/* Column headers */}
               <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
@@ -719,6 +753,7 @@ export default function Dashboard({ demo = false }) {
                   })}
                 </div>
               </div>
+              </>)}
             </div>
             </>)}
 

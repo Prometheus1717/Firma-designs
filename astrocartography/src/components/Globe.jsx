@@ -641,9 +641,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     if (S.current.scheduleRedraw) S.current.scheduleRedraw();
   }, []);
 
+  const btnSize = isMobile ? 26 : 32;
+  const btnIconSize = isMobile ? 13 : 16;
   const btnBase = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    width: 32, height: 32, borderRadius: 6, border: '1px solid #1A2840',
+    width: btnSize, height: btnSize, borderRadius: isMobile ? 5 : 6, border: '1px solid #1A2840',
     cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
     fontSize: 11, fontWeight: 600, padding: 0, transition: 'background .15s, color .15s',
   };
@@ -652,7 +654,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />
       {/* Layer toggle buttons — bottom left */}
-      <div style={{ position: 'absolute', bottom: 12, left: 12, zIndex: 50, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ position: 'absolute', bottom: isMobile ? 8 : 12, left: isMobile ? 8 : 12, zIndex: 50, display: 'flex', flexDirection: 'column', gap: isMobile ? 4 : 6 }}>
         <button
           onClick={toggleLines}
           title={showLines ? 'Hide natal lines' : 'Show natal lines'}
@@ -662,7 +664,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             color: showLines ? '#00D88A' : '#5A7088',
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <line x1="2" y1="14" x2="7" y2="2" /><line x1="9" y1="14" x2="14" y2="3" /><line x1="1" y1="8" x2="15" y2="8" strokeDasharray="2 2" />
           </svg>
         </button>
@@ -675,7 +677,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             color: showCities ? '#00D88A' : '#5A7088',
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <circle cx="8" cy="6" r="3" /><path d="M8 9v4" /><circle cx="4" cy="11" r="1.5" /><circle cx="12" cy="10" r="1.5" />
           </svg>
         </button>
