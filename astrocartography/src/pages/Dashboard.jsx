@@ -375,6 +375,31 @@ export default function Dashboard({ demo = false }) {
     }
   }, [chartData]);
 
+  // Prevent pinch-zoom on everything except the globe/map canvas
+  useEffect(() => {
+    const preventZoom = (e) => {
+      if (e.touches && e.touches.length > 1) {
+        // Allow multi-touch on the canvas (globe/map handles its own zoom)
+        if (e.target.tagName === 'CANVAS') return;
+        e.preventDefault();
+      }
+    };
+    const preventGesture = (e) => {
+      if (e.target.tagName === 'CANVAS') return;
+      e.preventDefault();
+    };
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+    document.addEventListener('gesturestart', preventGesture, { passive: false });
+    document.addEventListener('gesturechange', preventGesture, { passive: false });
+    document.addEventListener('gestureend', preventGesture, { passive: false });
+    return () => {
+      document.removeEventListener('touchmove', preventZoom);
+      document.removeEventListener('gesturestart', preventGesture);
+      document.removeEventListener('gesturechange', preventGesture);
+      document.removeEventListener('gestureend', preventGesture);
+    };
+  }, []);
+
   // Loading state
   if (isLoading) {
     return (
