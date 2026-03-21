@@ -106,6 +106,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     frameInterval: isMobile ? 66 : 33,
   });
   const [, forceUpdate] = useState(0);
+  const [showLines, setShowLines] = useState(true);
+  const [showCities, setShowCities] = useState(true);
+  const showLinesRef = useRef(true);
+  const showCitiesRef = useRef(true);
+  showLinesRef.current = showLines;
+  showCitiesRef.current = showCities;
   const flatRef = useRef(flat);
   flatRef.current = flat;
 
@@ -184,7 +190,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     }
 
     // Astro lines
-    if (lines) {
+    if (lines && showLinesRef.current) {
       const lw = isFlat ? (s.zoom > 2 ? 1.8 : 1.2) : (s.scale > 400 ? 2.2 : 1.5);
       lines.forEach(l => {
         ctx.strokeStyle = l.c;
@@ -221,7 +227,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     }
 
     // Cities on lines (priority — always draw dot, label with collision check)
-    if (citiesOnLines) {
+    if (citiesOnLines && showCitiesRef.current) {
       citiesOnLines.forEach(c => {
         if (!isFlat && center && geoDistance([c.lo, c.la], center) > Math.PI / 2) return;
         const p = proj([c.lo, c.la]);
@@ -251,7 +257,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     // Additional cities on zoom (tiered, with collision)
     const zoomLevel = isFlat ? s.zoom : s.scale / 280;
-    if (citiesTiers && zoomLevel > 1.8) {
+    if (citiesTiers && zoomLevel > 1.8 && showCitiesRef.current) {
       const tierIdx = isFlat
         ? (s.zoom > 5 ? 2 : s.zoom > 2.5 ? 1 : 0)
         : (s.scale > 800 ? 2 : s.scale > 500 ? 1 : 0);
@@ -624,5 +630,56 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     if (s.scheduleRedraw) s.scheduleRedraw();
   };
 
-  return <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />;
+  const toggleLines = useCallback(() => {
+    setShowLines(v => !v);
+    S.current.dirty = true;
+    if (S.current.scheduleRedraw) S.current.scheduleRedraw();
+  }, []);
+  const toggleCities = useCallback(() => {
+    setShowCities(v => !v);
+    S.current.dirty = true;
+    if (S.current.scheduleRedraw) S.current.scheduleRedraw();
+  }, []);
+
+  const btnBase = {
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    width: 32, height: 32, borderRadius: 6, border: '1px solid #1A2840',
+    cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
+    fontSize: 11, fontWeight: 600, padding: 0, transition: 'background .15s, color .15s',
+  };
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />
+      {/* Layer toggle buttons — bottom left */}
+      <div style={{ position: 'absolute', bottom: 12, left: 12, zIndex: 50, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <button
+          onClick={toggleLines}
+          title={showLines ? 'Hide natal lines' : 'Show natal lines'}
+          style={{
+            ...btnBase,
+            background: showLines ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
+            color: showLines ? '#00D88A' : '#5A7088',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <line x1="2" y1="14" x2="7" y2="2" /><line x1="9" y1="14" x2="14" y2="3" /><line x1="1" y1="8" x2="15" y2="8" strokeDasharray="2 2" />
+          </svg>
+        </button>
+        <button
+          onClick={toggleCities}
+          title={showCities ? 'Hide cities' : 'Show cities'}
+          style={{
+            ...btnBase,
+            background: showCities ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
+            color: showCities ? '#00D88A' : '#5A7088',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <circle cx="8" cy="6" r="3" /><path d="M8 9v4" /><circle cx="4" cy="11" r="1.5" /><circle cx="12" cy="10" r="1.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
 }
