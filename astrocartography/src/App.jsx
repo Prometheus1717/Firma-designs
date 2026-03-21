@@ -139,10 +139,12 @@ function SmartRedirect() {
 function DemoOrDashboard() {
   const { user, loading, hasBirthData, profile } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (user && hasBirthData) return <Navigate to="/dashboard" replace />;
-  // New user (no profile yet or no birth data) → send to birth-data entry
-  if (user) return <Navigate to={profile && !hasBirthData ? '/birth-data' : hasBirthData ? '/dashboard' : '/birth-data'} replace />;
-  return <Dashboard demo />;
+  if (!user) return <Dashboard demo />;
+  // User is logged in — wait for profile to load before deciding where to go.
+  // Without profile we don't know if they have birth data, so show loading.
+  if (!profile) return <LoadingScreen />;
+  if (hasBirthData) return <Navigate to="/dashboard" replace />;
+  return <Navigate to="/birth-data" replace />;
 }
 
 // Clear error-reload counter on successful app mount

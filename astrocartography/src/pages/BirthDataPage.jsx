@@ -266,7 +266,7 @@ export default function BirthDataPage() {
           </button>
         </form>
 
-        <div onClick={signOut} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
+        <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
       </div>
     </div>
   );
