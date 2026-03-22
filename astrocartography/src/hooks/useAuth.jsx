@@ -144,6 +144,34 @@ export function AuthProvider({ children }) {
     setProfile(null);
   }
 
+  async function deleteAccount() {
+    // Delete profile row first, then sign out
+    // (Supabase user deletion requires admin/service role,
+    //  so we mark the profile as deleted and sign out)
+    if (user) {
+      await supabase.from('profiles').delete().eq('id', user.id);
+    }
+    fetchIdRef.current++;
+    setCachedProfile(null);
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+  }
+
+  async function updateDisplayName(newName) {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ display_name: newName, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
+      .select()
+      .single();
+    if (error) throw error;
+    setProfile(data);
+    setCachedProfile(data);
+    return data;
+  }
+
   async function resetPassword(email) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/reset-password',
@@ -174,7 +202,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, signUp, signIn, signOut, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -178,7 +178,7 @@ function getInitialChart(demo, profile) {
 }
 
 export default function Dashboard({ demo = false }) {
-  const { user, profile, hasBirthData, signOut } = useAuth();
+  const { user, profile, hasBirthData, signOut, deleteAccount, updateDisplayName } = useAuth();
   const navigate = useNavigate();
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
@@ -189,7 +189,12 @@ export default function Dashboard({ demo = false }) {
   const [popup, setPopup] = useState(null);
   const [cityPop, setCityPop] = useState(null);
   const [w, setW] = useState(900);
-  const [showProf, setShowProf] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settingsTab, setSettingsTab] = useState('profile');
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const [savingName, setSavingName] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [expandedPlanet, setExpandedPlanet] = useState(null);
   const [showAngleInfo, setShowAngleInfo] = useState(false);
   const [flatMap, setFlatMap] = useState(false);
@@ -224,7 +229,7 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'city') setCityPop(null);
     if (except !== 'guide') setShowGuide(false);
     if (except !== 'demoGate') setShowDemoGate(false);
-    if (except !== 'prof') setShowProf(false);
+    if (except !== 'settings') setShowSettings(false);
   }, []);
 
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
@@ -409,7 +414,7 @@ export default function Dashboard({ demo = false }) {
         <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
           <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
-        <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } }`}</style>
+        <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
       </div>
     );
   }
@@ -444,26 +449,8 @@ export default function Dashboard({ demo = false }) {
             <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: '#0A1018', background: '#00D88A', padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
-            <div onClick={() => { if (!showProf) closeAllPopups('prof'); setShowProf(!showProf); }} style={{ ...F, fontSize: 9, color: '#8098B0', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840', position: 'relative' }}>
+            <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? '#00D88A' : '#8098B0', cursor: 'pointer', background: showSettings ? '#00D88A10' : '#101C28', padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? '#00D88A40' : '#1A2840'}`, transition: 'all .2s' }}>
               ◉ {displayName}
-              {showProf && <><div style={{ position: 'fixed', inset: 0, zIndex: 590 }} onClick={e => { e.stopPropagation(); setShowProf(false); }} /><div style={{ position: 'absolute', top: 32, right: 0, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 8, padding: 14, minWidth: 220, zIndex: 600, boxShadow: '0 8px 32px rgba(0,0,0,.5)' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#D0DDE8', marginBottom: 6 }}>{displayName}</div>
-                <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 3 }}>Born: {(() => {
-                  const [y, m, d] = (profile?.birth_date || '').split('-');
-                  const dateFmt = y ? `${d}.${m}.${y.slice(-2)}` : '';
-                  const t = profile?.birth_time || '';
-                  const [hh, mi] = t.split(':').map(Number);
-                  const h12 = hh % 12 || 12;
-                  const ampm = hh < 12 ? 'AM' : 'PM';
-                  const timeFmt = t ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '';
-                  return `${dateFmt} · ${timeFmt}`;
-                })()}</div>
-                <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 6 }}>Location: {profile?.birth_city}</div>
-                <div style={{ borderTop: '1px solid #1A2840', marginTop: 10, paddingTop: 10, display: 'flex', gap: 12 }}>
-                  <span onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer' }}>Edit birth data</span>
-                  <span onClick={signOut} style={{ ...F, fontSize: 9, color: '#F04060', cursor: 'pointer' }}>Sign out</span>
-                </div>
-              </div></>}
             </div>
           </>}
         </div>
@@ -634,6 +621,200 @@ export default function Dashboard({ demo = false }) {
               <div style={{ fontSize: 12, color: '#8098B0', lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
             </div>
           </>)}
+
+          {/* SETTINGS PANEL */}
+          {showSettings && !demo && (() => {
+            const tabs = [
+              { id: 'profile', label: 'PROFILE', icon: '◉' },
+              { id: 'birth', label: 'BIRTH DATA', icon: '☿' },
+              { id: 'settings', label: 'SETTINGS', icon: '⚙' },
+              { id: 'account', label: 'ACCOUNT', icon: '⛓' },
+            ];
+            const [y, m, d] = (profile?.birth_date || '').split('-');
+            const dateFmt = y ? `${d}.${m}.${y}` : '—';
+            const bt = profile?.birth_time || '';
+            const [hh, mi] = bt.split(':').map(Number);
+            const h12 = hh % 12 || 12;
+            const ampm = hh < 12 ? 'AM' : 'PM';
+            const timeFmt = bt ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '—';
+
+            return (<>
+              <div onClick={() => setShowSettings(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(5,10,16,.85)', backdropFilter: 'blur(8px)', zIndex: 700, animation: 'fadeIn .2s ease-out' }} />
+              <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: mob ? 'calc(100% - 24px)' : 520, maxHeight: mob ? 'calc(100% - 48px)' : '80vh', background: '#0D1520', border: '1px solid #1A2840', borderRadius: 16, zIndex: 710, display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,216,138,.05)', animation: 'fadeIn .25s ease-out' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '14px 16px' : '18px 24px', borderBottom: '1px solid #1A2840', flexShrink: 0 }}>
+                  <div>
+                    <div style={{ ...F, fontSize: 11, fontWeight: 700, color: '#D0DDE8', letterSpacing: 2 }}>SETTINGS</div>
+                    <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
+                  </div>
+                  <div onClick={() => setShowSettings(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #1A2840', transition: 'all .15s' }}>×</div>
+                </div>
+
+                {/* Tab navigation */}
+                <div style={{ display: 'flex', padding: mob ? '0 12px' : '0 20px', gap: mob ? 0 : 4, borderBottom: '1px solid #1A2840', flexShrink: 0, overflowX: 'auto' }}>
+                  {tabs.map(t => (
+                    <div key={t.id} onClick={() => { setSettingsTab(t.id); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: settingsTab === t.id ? '#00D88A' : '#5A7088', padding: mob ? '10px 8px' : '12px 14px', cursor: 'pointer', borderBottom: settingsTab === t.id ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
+                      <span style={{ marginRight: 5, fontSize: mob ? 9 : 10 }}>{t.icon}</span>{t.label}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Content */}
+                <div style={{ flex: 1, overflowY: 'auto', padding: mob ? 16 : 24 }}>
+
+                  {/* ── PROFILE TAB ── */}
+                  {settingsTab === 'profile' && (<div>
+                    {/* Avatar / initials */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #00D88A30, #00D88A10)', border: '2px solid #00D88A40', display: 'flex', alignItems: 'center', justifyContent: 'center', ...F, fontSize: 20, fontWeight: 700, color: '#00D88A' }}>
+                        {(displayName || '?')[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>{displayName}</div>
+                        <div style={{ ...F, fontSize: 10, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
+                      </div>
+                    </div>
+
+                    {/* Display name */}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>DISPLAY NAME</div>
+                      {editingName ? (
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                          <input value={nameInput} onChange={e => setNameInput(e.target.value)} maxLength={40} autoFocus style={{ ...F, fontSize: 13, color: '#D0DDE8', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, padding: '8px 12px', flex: 1, outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && nameInput.trim()) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); } if (e.key === 'Escape') setEditingName(false); }} />
+                          <div onClick={() => { if (nameInput.trim() && !savingName) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); }}} style={{ ...F, fontSize: 9, color: savingName ? '#3A5068' : '#00D88A', cursor: savingName ? 'default' : 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #00D88A40', background: '#00D88A10' }}>{savingName ? 'SAVING...' : 'SAVE'}</div>
+                          <div onClick={() => setEditingName(false)} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 10px' }}>CANCEL</div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ ...F, fontSize: 13, color: '#D0DDE8', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px', flex: 1 }}>{displayName || '—'}</div>
+                          <div onClick={() => { setNameInput(displayName || ''); setEditingName(true); }} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #1A2840' }}>EDIT</div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Email (read-only) */}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>EMAIL</div>
+                      <div style={{ ...F, fontSize: 13, color: '#8098B0', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px' }}>{user?.email}</div>
+                    </div>
+
+                    {/* Member since */}
+                    <div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>MEMBER SINCE</div>
+                      <div style={{ ...F, fontSize: 13, color: '#8098B0', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px' }}>{user?.created_at ? new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}</div>
+                    </div>
+                  </div>)}
+
+                  {/* ── BIRTH DATA TAB ── */}
+                  {settingsTab === 'birth' && (<div>
+                    <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 20, lineHeight: 1.6 }}>
+                      Your birth data is the foundation of your astrocartography chart. All planetary line calculations depend on these values.
+                    </div>
+
+                    <div style={{ display: 'grid', gap: 16 }}>
+                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>DATE OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{dateFmt}</div>
+                      </div>
+
+                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>TIME OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{timeFmt}</div>
+                        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>Precision matters — even 4 minutes shifts your ASC lines by ~1°</div>
+                      </div>
+
+                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>BIRTH LOCATION</div>
+                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{profile?.birth_city || '—'}</div>
+                        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>
+                          {profile?.birth_lat != null ? `${Math.abs(profile.birth_lat).toFixed(4)}°${profile.birth_lat >= 0 ? 'N' : 'S'} · ${Math.abs(profile.birth_lng).toFixed(4)}°${profile.birth_lng >= 0 ? 'E' : 'W'}` : '—'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div onClick={() => { setShowSettings(false); navigate('/birth-data'); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: '#00D88A08', letterSpacing: 1 }}>
+                      EDIT BIRTH DATA
+                    </div>
+                  </div>)}
+
+                  {/* ── SETTINGS TAB ── */}
+                  {settingsTab === 'settings' && (<div>
+                    <div style={{ ...F, fontSize: 10, color: '#5A7088', marginBottom: 20, lineHeight: 1.6 }}>
+                      Customize your Natal Navigator experience.
+                    </div>
+
+                    {/* Map style toggle */}
+                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Map View</div>
+                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>Switch between globe and flat map projection</div>
+                        </div>
+                        <div onClick={() => setFlatMap(!flatMap)} style={{ ...F, fontSize: 9, fontWeight: 600, color: flatMap ? '#5BA8D4' : '#00D88A', cursor: 'pointer', padding: '6px 14px', borderRadius: 6, border: `1px solid ${flatMap ? '#5BA8D440' : '#00D88A40'}`, background: flatMap ? '#5BA8D410' : '#00D88A10' }}>
+                          {flatMap ? 'FLAT MAP' : 'GLOBE'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hidden planets indicator */}
+                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Planet Visibility</div>
+                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>
+                            {hiddenPlanets.size === 0 ? 'All 10 planets visible' : `${10 - hiddenPlanets.size} of 10 planets visible`}
+                          </div>
+                        </div>
+                        {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '6px 14px', borderRadius: 6, border: '1px solid #00D88A40', background: '#00D88A10' }}>SHOW ALL</div>}
+                      </div>
+                    </div>
+
+                    {/* Future settings placeholder */}
+                    <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 20, textAlign: 'center', lineHeight: 1.6 }}>
+                      More settings coming soon — language, themes, and notification preferences.
+                    </div>
+                  </div>)}
+
+                  {/* ── ACCOUNT TAB ── */}
+                  {settingsTab === 'account' && (<div>
+                    {/* Sign out */}
+                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Sign Out</div>
+                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>Sign out of your account on this device</div>
+                        </div>
+                        <div onClick={signOut} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: '#F0406010', letterSpacing: 0.5 }}>SIGN OUT</div>
+                      </div>
+                    </div>
+
+                    {/* Danger zone */}
+                    <div style={{ borderTop: '1px solid #F0406020', paddingTop: 20, marginTop: 8 }}>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', letterSpacing: 1.5, marginBottom: 12 }}>DANGER ZONE</div>
+                      <div style={{ background: '#F0406008', border: '1px solid #F0406020', borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8', marginBottom: 4 }}>Delete Account</div>
+                        <div style={{ ...F, fontSize: 9, color: '#8098B0', lineHeight: 1.6, marginBottom: 14 }}>
+                          Permanently delete your profile and all associated data. This action cannot be undone.
+                        </div>
+                        {!confirmDelete ? (
+                          <div onClick={() => setConfirmDelete(true)} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: 'transparent', display: 'inline-block', letterSpacing: 0.5 }}>DELETE ACCOUNT</div>
+                        ) : (
+                          <div style={{ background: '#F0406010', border: '1px solid #F0406030', borderRadius: 8, padding: 14 }}>
+                            <div style={{ ...F, fontSize: 10, color: '#F04060', fontWeight: 600, marginBottom: 10 }}>Are you sure? This cannot be undone.</div>
+                            <div style={{ display: 'flex', gap: 10 }}>
+                              <div onClick={() => { deleteAccount(); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, background: '#F04060', letterSpacing: 0.5 }}>YES, DELETE</div>
+                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #1A2840' }}>CANCEL</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>)}
+
+                </div>
+              </div>
+            </>);
+          })()}
 
           {/* HOW IT WORKS guide */}
           {showGuide && (() => {
