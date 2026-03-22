@@ -89,12 +89,12 @@ describe('calculateChart — lines', () => {
     }
   });
 
-  it('Venus is always thrive, Saturn varies by angle', () => {
+  it('Venus is always thrive, Saturn MC is neutral, rest avoid', () => {
     for (const l of result.lines.filter(l => l.planet === 'Venus')) expect(l.quality).toBe('thrive');
     const saturnLines = result.lines.filter(l => l.planet === 'Saturn');
     for (const l of saturnLines) {
-      if (l.angle === 'IC' || l.angle === 'ASC') expect(l.quality).toBe('avoid');
-      else expect(l.quality).toBe('neutral');
+      if (l.angle === 'MC') expect(l.quality).toBe('neutral');
+      else expect(l.quality).toBe('avoid');
     }
   });
 });

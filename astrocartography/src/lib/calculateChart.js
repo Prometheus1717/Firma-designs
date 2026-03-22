@@ -161,14 +161,14 @@ function getQuality(planetId, angle) {
     'Mars-MC': 'neutral', 'Mars-IC': 'avoid', 'Mars-ASC': 'avoid', 'Mars-DC': 'avoid',
     // Jupiter — great benefic, positive on all angles
     'Jupiter-MC': 'thrive', 'Jupiter-IC': 'thrive', 'Jupiter-ASC': 'thrive', 'Jupiter-DC': 'thrive',
-    // Saturn — malefic; MC = discipline (mixed), IC/ASC = heavy burden, DC = restrictive partnerships
-    'Saturn-MC': 'neutral', 'Saturn-IC': 'avoid', 'Saturn-ASC': 'avoid', 'Saturn-DC': 'neutral',
-    // Uranus — unpredictable; MC = innovation (mixed), IC = disrupted home, ASC/DC = instability
-    'Uranus-MC': 'neutral', 'Uranus-IC': 'avoid', 'Uranus-ASC': 'neutral', 'Uranus-DC': 'neutral',
-    // Neptune — confusing; MC = career confusion/scandal, IC/ASC = dissolution, DC = deceptive bonds
+    // Saturn — malefic; MC = discipline (mixed), IC/ASC/DC = heavy burden and restriction
+    'Saturn-MC': 'neutral', 'Saturn-IC': 'avoid', 'Saturn-ASC': 'avoid', 'Saturn-DC': 'avoid',
+    // Uranus — unpredictable; MC = innovation (mixed), IC = disrupted home, ASC = eccentric, DC = unstable partners
+    'Uranus-MC': 'neutral', 'Uranus-IC': 'avoid', 'Uranus-ASC': 'neutral', 'Uranus-DC': 'avoid',
+    // Neptune — confusing; all angles bring dissolution, confusion, deception
     'Neptune-MC': 'avoid', 'Neptune-IC': 'avoid', 'Neptune-ASC': 'avoid', 'Neptune-DC': 'avoid',
-    // Pluto — intense; MC = power (mixed), IC/ASC/DC = overwhelming transformation
-    'Pluto-MC': 'neutral', 'Pluto-IC': 'avoid', 'Pluto-ASC': 'avoid', 'Pluto-DC': 'avoid',
+    // Pluto — intense; MC = power struggles, IC/ASC/DC = overwhelming transformation
+    'Pluto-MC': 'avoid', 'Pluto-IC': 'avoid', 'Pluto-ASC': 'avoid', 'Pluto-DC': 'avoid',
   };
   return ratings[key] || 'neutral';
 }
@@ -202,16 +202,16 @@ function getLineDescription(planetId, angle, zodiacInfo) {
     'Saturn-MC': `Saturn Midheaven — serious career responsibility. Hard work pays off slowly. Saturn in ${zodiacInfo.sign} demands discipline for lasting achievement.`,
     'Saturn-IC': `Saturn on the IC — heavy foundations. Responsibility toward family and roots. Saturn in ${zodiacInfo.sign} builds enduring but demanding structures.`,
     'Saturn-ASC': `Saturn Ascendant — heaviness settles on your identity. You feel older, more restricted. Saturn in ${zodiacInfo.sign} suppresses spontaneity. Best avoided for long stays.`,
-    'Saturn-DC': `Saturn Descendant — serious, committed partnerships but with restriction. Saturn in ${zodiacInfo.sign} attracts relationships that demand maturity.`,
+    'Saturn-DC': `Saturn Descendant — heavy, restrictive partnerships. Relationships feel burdensome and isolating. Saturn in ${zodiacInfo.sign} attracts demanding bonds that limit your freedom. Long-term stays may bring loneliness.`,
     'Uranus-MC': `Uranus Midheaven — sudden career changes and breakthroughs. Uranus in ${zodiacInfo.sign} brings innovative, unconventional professional paths.`,
     'Uranus-IC': `Uranus on the IC — restless home life, sudden moves. Uranus in ${zodiacInfo.sign} disrupts domestic stability but sparks freedom.`,
     'Uranus-ASC': `Uranus Ascendant — radical self-expression. Others see you as unique and unpredictable. Uranus in ${zodiacInfo.sign} makes you a revolutionary.`,
-    'Uranus-DC': `Uranus Descendant — exciting but unstable partnerships. Uranus in ${zodiacInfo.sign} attracts unconventional, electric connections.`,
+    'Uranus-DC': `Uranus Descendant — unstable, unpredictable partnerships. Partners may suddenly disappear or relationships end without warning. Uranus in ${zodiacInfo.sign} makes commitment difficult here. Avoid for long-term settling.`,
     'Neptune-MC': `Neptune Midheaven — career confusion, lack of clear direction, and risk of scandal or deception in public life. Neptune in ${zodiacInfo.sign} can dissolve professional structures. Creative potential exists but requires extreme clarity.`,
     'Neptune-IC': `Neptune on the IC — your sense of home dissolves. Confusion about roots, boundaries blur. Neptune in ${zodiacInfo.sign} undermines structures.`,
     'Neptune-ASC': `Neptune Ascendant — dreamy, ethereal presence but identity confusion. Neptune in ${zodiacInfo.sign} makes you seem mysterious and elusive.`,
     'Neptune-DC': `Neptune Descendant — idealized but potentially deceptive partnerships. Neptune in ${zodiacInfo.sign} creates romantic illusions.`,
-    'Pluto-MC': `Pluto Midheaven — transformative career power. Intense public presence. Pluto in ${zodiacInfo.sign} brings deep, lasting professional change.`,
+    'Pluto-MC': `Pluto Midheaven — intense power struggles in career. You attract formidable opponents and face relentless professional crises. Pluto in ${zodiacInfo.sign} demands total transformation — not for the faint of heart.`,
     'Pluto-IC': `Pluto on the IC — deep psychological transformation at home. Pluto in ${zodiacInfo.sign} unearths buried family dynamics.`,
     'Pluto-ASC': `Pluto Ascendant — identity-level intensity. Power struggles, forced transformation. Pluto in ${zodiacInfo.sign} challenges your core being.`,
     'Pluto-DC': `Pluto Descendant — intense, transformative relationships. Power dynamics in partnerships. Pluto in ${zodiacInfo.sign} attracts fateful bonds.`,
