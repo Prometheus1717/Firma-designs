@@ -157,8 +157,8 @@ function getQuality(planetId, angle) {
     'Mercury-MC': 'neutral', 'Mercury-IC': 'neutral', 'Mercury-ASC': 'neutral', 'Mercury-DC': 'neutral',
     // Venus — great benefic, positive on all angles
     'Venus-MC': 'thrive', 'Venus-IC': 'thrive', 'Venus-ASC': 'thrive', 'Venus-DC': 'thrive',
-    // Mars — malefic; MC = drive but conflict, ASC = aggression/accidents, IC/DC = domestic/relational conflict
-    'Mars-MC': 'neutral', 'Mars-IC': 'avoid', 'Mars-ASC': 'avoid', 'Mars-DC': 'avoid',
+    // Mars — malefic; MC/ASC = mixed energy (drive + conflict), IC/DC = domestic/relational conflict
+    'Mars-MC': 'neutral', 'Mars-IC': 'avoid', 'Mars-ASC': 'neutral', 'Mars-DC': 'avoid',
     // Jupiter — great benefic, positive on all angles
     'Jupiter-MC': 'thrive', 'Jupiter-IC': 'thrive', 'Jupiter-ASC': 'thrive', 'Jupiter-DC': 'thrive',
     // Saturn — malefic; MC = discipline (mixed), IC/ASC/DC = heavy burden and restriction
@@ -193,7 +193,7 @@ function getLineDescription(planetId, angle, zodiacInfo) {
     'Venus-DC': `Venus Descendant — love and partnership flourish. Venus in ${zodiacInfo.sign} attracts harmonious, beautiful relationships.`,
     'Mars-MC': `Mars Midheaven — ambition and competitive drive in career, but also potential for conflict with authority. Mars in ${zodiacInfo.sign} pushes hard but may create enemies along the way.`,
     'Mars-IC': `Mars on the IC — volatile home energy. Domestic disputes, property conflicts, and aggressive family dynamics. Mars in ${zodiacInfo.sign} creates tension at your foundation. Caution advised for long stays.`,
-    'Mars-ASC': `Mars Ascendant — heightened aggression and confrontation. Prone to accidents, arguments, and impulsive behavior. Mars in ${zodiacInfo.sign} amplifies combativeness. Exercise caution here.`,
+    'Mars-ASC': `Mars Ascendant — high physical energy and assertiveness. Can be channeled into sports, fitness, and courageous action, but may also bring impulsive behavior and confrontations. Mars in ${zodiacInfo.sign} makes you bold — use this energy consciously.`,
     'Mars-DC': `Mars Descendant — combative partnerships and power struggles in relationships. Mars in ${zodiacInfo.sign} attracts conflict-prone connections. Arguments and separations are more likely here.`,
     'Jupiter-MC': `Jupiter Midheaven — expansion, luck, and recognition in career. Jupiter in ${zodiacInfo.sign} opens doors to abundant opportunity.`,
     'Jupiter-IC': `Jupiter on the IC — abundant home life, generosity of spirit. Jupiter in ${zodiacInfo.sign} creates a feeling of inner wealth.`,
@@ -204,7 +204,7 @@ function getLineDescription(planetId, angle, zodiacInfo) {
     'Saturn-ASC': `Saturn Ascendant — heaviness settles on your identity. You feel older, more restricted. Saturn in ${zodiacInfo.sign} suppresses spontaneity. Best avoided for long stays.`,
     'Saturn-DC': `Saturn Descendant — heavy, restrictive partnerships. Relationships feel burdensome and isolating. Saturn in ${zodiacInfo.sign} attracts demanding bonds that limit your freedom. Long-term stays may bring loneliness.`,
     'Uranus-MC': `Uranus Midheaven — sudden career changes and breakthroughs. Uranus in ${zodiacInfo.sign} brings innovative, unconventional professional paths.`,
-    'Uranus-IC': `Uranus on the IC — restless home life, sudden moves. Uranus in ${zodiacInfo.sign} disrupts domestic stability but sparks freedom.`,
+    'Uranus-IC': `Uranus on the IC — restless, unstable home life. Sudden relocations, disrupted foundations, and difficulty putting down roots. Uranus in ${zodiacInfo.sign} makes domestic stability difficult here.`,
     'Uranus-ASC': `Uranus Ascendant — radical self-expression. Others see you as unique and unpredictable. Uranus in ${zodiacInfo.sign} makes you a revolutionary.`,
     'Uranus-DC': `Uranus Descendant — unstable, unpredictable partnerships. Partners may suddenly disappear or relationships end without warning. Uranus in ${zodiacInfo.sign} makes commitment difficult here. Avoid for long-term settling.`,
     'Neptune-MC': `Neptune Midheaven — career confusion, lack of clear direction, and risk of scandal or deception in public life. Neptune in ${zodiacInfo.sign} can dissolve professional structures. Creative potential exists but requires extreme clarity.`,
@@ -212,9 +212,9 @@ function getLineDescription(planetId, angle, zodiacInfo) {
     'Neptune-ASC': `Neptune Ascendant — dreamy, ethereal presence but identity confusion. Neptune in ${zodiacInfo.sign} makes you seem mysterious and elusive.`,
     'Neptune-DC': `Neptune Descendant — idealized but potentially deceptive partnerships. Neptune in ${zodiacInfo.sign} creates romantic illusions.`,
     'Pluto-MC': `Pluto Midheaven — intense power struggles in career. You attract formidable opponents and face relentless professional crises. Pluto in ${zodiacInfo.sign} demands total transformation — not for the faint of heart.`,
-    'Pluto-IC': `Pluto on the IC — deep psychological transformation at home. Pluto in ${zodiacInfo.sign} unearths buried family dynamics.`,
+    'Pluto-IC': `Pluto on the IC — overwhelming psychological intensity at home. Buried family secrets surface, power struggles within the family, and deep emotional crises. Pluto in ${zodiacInfo.sign} forces confrontation with your roots.`,
     'Pluto-ASC': `Pluto Ascendant — identity-level intensity. Power struggles, forced transformation. Pluto in ${zodiacInfo.sign} challenges your core being.`,
-    'Pluto-DC': `Pluto Descendant — intense, transformative relationships. Power dynamics in partnerships. Pluto in ${zodiacInfo.sign} attracts fateful bonds.`,
+    'Pluto-DC': `Pluto Descendant — intense power struggles in relationships. Partners may try to control or manipulate you. Pluto in ${zodiacInfo.sign} attracts obsessive, overwhelming bonds that challenge your autonomy.`,
   };
   return descs[`${planetId}-${angle}`] || `${planetId} ${angle} line — ${zodiacInfo.sign} ${zodiacInfo.deg}°${zodiacInfo.min}'`;
 }
