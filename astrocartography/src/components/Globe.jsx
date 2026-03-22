@@ -121,7 +121,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const par = canvas.parentElement;
     const W = par.clientWidth, H = par.clientHeight;
     if (!W || !H) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; }
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Globe from '../components/Globe';
-import NatalWheel from '../components/NatalWheel';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
@@ -193,8 +192,6 @@ export default function Dashboard({ demo = false }) {
   const [showAngleInfo, setShowAngleInfo] = useState(false);
   const [flatMap, setFlatMap] = useState(false);
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
-  const [showNatal, setShowNatal] = useState(false);
-  const [natalView, setNatalView] = useState('table'); // 'table' | 'wheel'
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [guideTab, _setGuideTab] = useState(0);
@@ -221,7 +218,6 @@ export default function Dashboard({ demo = false }) {
   // Close all popups/overlays — prevents window overlap
   const closeAllPopups = useCallback((except) => {
     if (except !== 'popup') setPopup(null);
-    if (except !== 'natal') setShowNatal(false);
     if (except !== 'angle') setShowAngleInfo(false);
     if (except !== 'city') setCityPop(null);
     if (except !== 'guide') setShowGuide(false);
@@ -461,9 +457,6 @@ export default function Dashboard({ demo = false }) {
                   return `${dateFmt} · ${timeFmt}`;
                 })()}</div>
                 <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 6 }}>Location: {profile?.birth_city}</div>
-                {chartData?.natal && <div style={{ ...F, fontSize: 9, color: '#5A7088' }}>
-                  ☉ {chartData.natal.sun?.sign} · ☽ {chartData.natal.moon?.sign} · ASC {chartData.natal.asc?.sign}
-                </div>}
                 <div style={{ borderTop: '1px solid #1A2840', marginTop: 10, paddingTop: 10, display: 'flex', gap: 12 }}>
                   <span onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer' }}>Edit birth data</span>
                   <span onClick={signOut} style={{ ...F, fontSize: 9, color: '#F04060', cursor: 'pointer' }}>Sign out</span>
@@ -607,150 +600,6 @@ export default function Dashboard({ demo = false }) {
             </button>
           </div>
 
-          {/* Natal chart button — below map toggle */}
-          <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
-            ☉ Natal Chart
-          </div>
-
-          {/* Natal chart popup */}
-          {showNatal && chartData?.planets && (
-            <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => setShowNatal(false)} />
-            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 400, background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>NATAL CHART</span>
-                  {chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span onClick={() => setNatalView(natalView === 'table' ? 'wheel' : 'table')}
-                    style={{ cursor: 'pointer', ...F, fontSize: 8, fontWeight: 700, letterSpacing: 0.5, padding: '4px 8px', borderRadius: 4, border: '1px solid #1A2840', background: natalView === 'wheel' ? 'rgba(0,216,138,.12)' : 'transparent', color: natalView === 'wheel' ? '#00D88A' : '#5A7088', transition: 'all .15s' }}>
-                    {natalView === 'table' ? 'WHEEL' : 'TABLE'}
-                  </span>
-                  <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
-                </div>
-              </div>
-
-              {natalView === 'wheel' ? (
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: mob ? 12 : 16, overflowY: 'auto', background: '#0A1018' }}>
-                  <NatalWheel planets={chartData.planets} natal={chartData.natal} size={mob ? Math.min(window.innerWidth - 40, 340) : 360} />
-                  {/* Aspect legend */}
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 10, padding: '8px 0' }}>
-                    {[
-                      { name: 'Conjunction', color: '#E8A838', dash: false },
-                      { name: 'Sextile', color: '#5BA8D4', dash: true },
-                      { name: 'Square', color: '#F04060', dash: false },
-                      { name: 'Trine', color: '#00D88A', dash: false },
-                      { name: 'Opposition', color: '#D45050', dash: true },
-                    ].map(a => (
-                      <div key={a.name} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <div style={{ width: 12, height: 0, borderTop: `1.5px ${a.dash ? 'dashed' : 'solid'} ${a.color}`, opacity: 0.6 }} />
-                        <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (<>
-
-              {/* Column headers */}
-              <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
-              </div>
-
-              {/* Planet rows */}
-              <div style={{ flex: 1, overflowY: 'auto' }}>
-                {chartData.planets.map((p, i) => {
-                  const elem = SIGN_ELEMENTS[p.sign] || '';
-                  const mode = SIGN_MODES[p.sign] || '';
-                  const pc = PCOL[p.id] || '#8098B0';
-                  const pd = PLANET_DOMAINS[p.id];
-                  return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                      {/* Planet */}
-                      <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1 }}>{p.symbol}</span>
-                        <div>
-                          <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
-                          {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
-                        </div>
-                      </div>
-                      {/* Sign */}
-                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
-                      </div>
-                      {/* Degree */}
-                      <div style={{ width: 60, textAlign: 'right' }}>
-                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}°</span>
-                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
-                      </div>
-                      {/* Element */}
-                      <div style={{ width: 50, textAlign: 'center' }}>
-                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
-                      </div>
-                      {/* Domain */}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{pd?.domain || ''}</div>
-                        <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{mode}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Angles section */}
-                {chartData.natal && <>
-                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
-                  {[
-                    { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
-                    { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
-                  ].map((a, i) => a.data && (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
-                      <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '△' : '▽'}</span>
-                        <div>
-                          <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
-                          <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
-                        </div>
-                      </div>
-                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
-                      </div>
-                      <div style={{ width: 60, textAlign: 'right' }}>
-                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}°</span>
-                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
-                      </div>
-                      <div style={{ width: 50, textAlign: 'center' }}>
-                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{a.desc}</div>
-                      </div>
-                    </div>
-                  ))}
-                </>}
-
-                {/* Element summary footer */}
-                <div style={{ padding: '8px 14px', borderTop: '1px solid #1A2840', background: '#0D1520', display: 'flex', gap: 12 }}>
-                  {['Fire', 'Earth', 'Air', 'Water'].map(el => {
-                    const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
-                    return (
-                      <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <div style={{ width: 6, height: 6, borderRadius: 1, background: ELEM_COL[el] }} />
-                        <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#D0DDE8', fontWeight: 700 }}>{count}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              </>)}
-            </div>
-            </>)}
 
           {/* Line info popup */}
           {typeof popup === 'number' && lines[popup] && (<>
@@ -938,7 +787,6 @@ export default function Dashboard({ demo = false }) {
                         { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
                         { step: '03', title: 'Click on cities', desc: 'Cities near your lines appear in the bottom panel. Click any city to get a detailed reading of what that planetary energy means for you there.' },
                         { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
-                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your full planetary positions — signs, degrees, elements, and domains.' },
                       ].map(s => (
                         <div key={s.step} style={{ background: '#0D1520', padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <span style={{ ...F, fontSize: 20, fontWeight: 700, color: '#8068C040', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
