@@ -627,7 +627,6 @@ export default function Dashboard({ demo = false }) {
             const tabs = [
               { id: 'profile', label: 'PROFILE', icon: '◉' },
               { id: 'birth', label: 'BIRTH DATA', icon: '☿' },
-              { id: 'settings', label: 'SETTINGS', icon: '⚙' },
               { id: 'account', label: 'ACCOUNT', icon: '⛓' },
             ];
             const [y, m, d] = (profile?.birth_date || '').split('-');
@@ -647,7 +646,10 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 11, fontWeight: 700, color: '#D0DDE8', letterSpacing: 2 }}>SETTINGS</div>
                     <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
                   </div>
-                  <div onClick={() => setShowSettings(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #1A2840', transition: 'all .15s' }}>×</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div onClick={signOut} title="Sign out" style={{ ...F, fontSize: 11, color: '#F04060', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #F0406030', background: '#F0406008', transition: 'all .15s' }}>⏻</div>
+                    <div onClick={() => setShowSettings(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #1A2840', transition: 'all .15s' }}>×</div>
+                  </div>
                 </div>
 
                 {/* Tab navigation */}
@@ -734,44 +736,6 @@ export default function Dashboard({ demo = false }) {
 
                     <div onClick={() => { setShowSettings(false); navigate('/birth-data'); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: '#00D88A08', letterSpacing: 1 }}>
                       EDIT BIRTH DATA
-                    </div>
-                  </div>)}
-
-                  {/* ── SETTINGS TAB ── */}
-                  {settingsTab === 'settings' && (<div>
-                    <div style={{ ...F, fontSize: 10, color: '#5A7088', marginBottom: 20, lineHeight: 1.6 }}>
-                      Customize your Natal Navigator experience.
-                    </div>
-
-                    {/* Map style toggle */}
-                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 12 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div>
-                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Map View</div>
-                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>Switch between globe and flat map projection</div>
-                        </div>
-                        <div onClick={() => setFlatMap(!flatMap)} style={{ ...F, fontSize: 9, fontWeight: 600, color: flatMap ? '#5BA8D4' : '#00D88A', cursor: 'pointer', padding: '6px 14px', borderRadius: 6, border: `1px solid ${flatMap ? '#5BA8D440' : '#00D88A40'}`, background: flatMap ? '#5BA8D410' : '#00D88A10' }}>
-                          {flatMap ? 'FLAT MAP' : 'GLOBE'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Hidden planets indicator */}
-                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 12 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div>
-                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Planet Visibility</div>
-                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>
-                            {hiddenPlanets.size === 0 ? 'All 10 planets visible' : `${10 - hiddenPlanets.size} of 10 planets visible`}
-                          </div>
-                        </div>
-                        {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '6px 14px', borderRadius: 6, border: '1px solid #00D88A40', background: '#00D88A10' }}>SHOW ALL</div>}
-                      </div>
-                    </div>
-
-                    {/* Future settings placeholder */}
-                    <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 20, textAlign: 'center', lineHeight: 1.6 }}>
-                      More settings coming soon — language, themes, and notification preferences.
                     </div>
                   </div>)}
 
