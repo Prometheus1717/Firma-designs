@@ -104,6 +104,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     lastTap: 0, lastTapX: 0, lastTapY: 0,
     // Mobile: throttle redraws to ~15fps (66ms) for battery; desktop: 30fps
     frameInterval: isMobile ? 66 : 33,
+    // Cached atmosphere gradient — avoid per-frame allocation (Chrome/Firefox GC pressure)
+    _atmosGrad: null, _atmosScale: 0, _atmosCx: 0, _atmosCy: 0,
   });
   const [, forceUpdate] = useState(0);
   const [showLines, setShowLines] = useState(true);
@@ -167,10 +169,13 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       path = geoPath(proj, ctx);
       center = [-s.rot[0], -s.rot[1]];
 
-      // Atmosphere
-      const ag = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
-      ag.addColorStop(0, 'transparent'); ag.addColorStop(1, 'rgba(0,216,138,.03)');
-      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
+      // Atmosphere — cache gradient to avoid per-frame allocation (Chrome/Firefox GC pressure)
+      if (s._atmosScale !== s.scale || s._atmosCx !== cx || s._atmosCy !== cy) {
+        s._atmosGrad = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
+        s._atmosGrad.addColorStop(0, 'transparent'); s._atmosGrad.addColorStop(1, 'rgba(0,216,138,.03)');
+        s._atmosScale = s.scale; s._atmosCx = cx; s._atmosCy = cy;
+      }
+      ctx.fillStyle = s._atmosGrad; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
 
       // Ocean
       ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
@@ -556,9 +561,13 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       onCityClick(closest);
     };
 
-    c.addEventListener('mousedown', dn); window.addEventListener('mousemove', mv); window.addEventListener('mouseup', up);
+    // Throttle mousemove to avoid overwhelming Chrome/Firefox with high-frequency events
+    let _mvRaf = 0;
+    const mvThrottled = (e) => { if (_mvRaf) return; _mvRaf = requestAnimationFrame(() => { mv(e); _mvRaf = 0; }); };
+
+    c.addEventListener('mousedown', dn, { passive: true }); window.addEventListener('mousemove', mvThrottled, { passive: true }); window.addEventListener('mouseup', up, { passive: true });
     c.addEventListener('touchstart', dn, { passive: false }); c.addEventListener('touchmove', mv, { passive: false }); c.addEventListener('touchend', up, { passive: true });
-    c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl); c.addEventListener('click', click);
+    c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl, { passive: true }); c.addEventListener('click', click, { passive: true });
     const rs = () => { scheduleRedraw(); }; window.addEventListener('resize', rs);
 
     // Pause RAF loop when tab is hidden, resume when visible
@@ -577,9 +586,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     return () => {
       cancelAnimationFrame(s.raf);
+      cancelAnimationFrame(_mvRaf);
       clearTimeout(autoStopTimer);
       document.removeEventListener('visibilitychange', onVis);
-      c.removeEventListener('mousedown', dn); window.removeEventListener('mousemove', mv); window.removeEventListener('mouseup', up);
+      c.removeEventListener('mousedown', dn); window.removeEventListener('mousemove', mvThrottled); window.removeEventListener('mouseup', up);
       c.removeEventListener('touchstart', dn); c.removeEventListener('touchmove', mv); c.removeEventListener('touchend', up);
       c.removeEventListener('wheel', wh); c.removeEventListener('dblclick', dbl); c.removeEventListener('click', click);
       window.removeEventListener('resize', rs);
