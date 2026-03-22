@@ -145,13 +145,32 @@ function findDSCLine(planetLon, date, obliquity, latitudes) {
 }
 
 function getQuality(planetId, angle) {
-  const benefics = ['Venus', 'Jupiter', 'Sun'];
-  const malefics = ['Saturn', 'Pluto', 'Neptune'];
-  if (benefics.includes(planetId)) return 'thrive';
-  if (malefics.includes(planetId)) return 'avoid';
-  if (planetId === 'Mars') return angle === 'MC' ? 'thrive' : 'neutral';
-  if (planetId === 'Moon') return 'thrive';
-  return 'neutral';
+  // Nuanced classification based on traditional astrocartography:
+  // Each planet-angle combo is rated individually
+  const key = `${planetId}-${angle}`;
+  const ratings = {
+    // Sun — generally positive, especially MC/ASC
+    'Sun-MC': 'thrive', 'Sun-IC': 'thrive', 'Sun-ASC': 'thrive', 'Sun-DC': 'thrive',
+    // Moon — thrive on IC (home), neutral on MC (emotional exposure)
+    'Moon-MC': 'neutral', 'Moon-IC': 'thrive', 'Moon-ASC': 'thrive', 'Moon-DC': 'thrive',
+    // Mercury — neutral everywhere (communication, adaptable)
+    'Mercury-MC': 'neutral', 'Mercury-IC': 'neutral', 'Mercury-ASC': 'neutral', 'Mercury-DC': 'neutral',
+    // Venus — great benefic, thrive everywhere
+    'Venus-MC': 'thrive', 'Venus-IC': 'thrive', 'Venus-ASC': 'thrive', 'Venus-DC': 'thrive',
+    // Mars — ambitious on MC, challenging on other angles
+    'Mars-MC': 'thrive', 'Mars-IC': 'avoid', 'Mars-ASC': 'neutral', 'Mars-DC': 'avoid',
+    // Jupiter — great benefic, thrive everywhere
+    'Jupiter-MC': 'thrive', 'Jupiter-IC': 'thrive', 'Jupiter-ASC': 'thrive', 'Jupiter-DC': 'thrive',
+    // Saturn — discipline on MC (career builder), heavy on IC/ASC, serious on DC
+    'Saturn-MC': 'neutral', 'Saturn-IC': 'avoid', 'Saturn-ASC': 'avoid', 'Saturn-DC': 'neutral',
+    // Uranus — innovative on MC, disruptive elsewhere
+    'Uranus-MC': 'neutral', 'Uranus-IC': 'avoid', 'Uranus-ASC': 'neutral', 'Uranus-DC': 'neutral',
+    // Neptune — creative on MC, confusing on IC/ASC, illusory on DC
+    'Neptune-MC': 'neutral', 'Neptune-IC': 'avoid', 'Neptune-ASC': 'avoid', 'Neptune-DC': 'avoid',
+    // Pluto — powerful on MC, intense on IC, transformative but heavy on ASC/DC
+    'Pluto-MC': 'neutral', 'Pluto-IC': 'avoid', 'Pluto-ASC': 'avoid', 'Pluto-DC': 'avoid',
+  };
+  return ratings[key] || 'neutral';
 }
 
 function getLineDescription(planetId, angle, zodiacInfo) {

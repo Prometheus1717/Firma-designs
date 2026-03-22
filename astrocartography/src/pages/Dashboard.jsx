@@ -71,8 +71,9 @@ function gcDist(la1, lo1, la2, lo2) {
 }
 
 function getCitiesOnLines(lines, cities, threshold = 3.5) {
-  const r = [], seen = new Set();
   const grid = getCityGrid(cities);
+  // Phase 1: compute distance from every city to every line, keep the best (closest) match
+  const best = new Map(); // cityName → { la, lo, name, line, lc, q, dist, desc }
 
   for (const l of lines) {
     if (l.type === 'curve') {
@@ -80,16 +81,14 @@ function getCitiesOnLines(lines, cities, threshold = 3.5) {
       for (const seg of (l.segments || [l.points])) { if (seg) pts.push(...seg); }
       if (!pts.length) continue;
       // Sample curve points and gather candidate cities from grid cells
-      const candidates = new Map(); // name → [la, lo, name]
+      const candidates = new Map();
       for (let i = 0; i < pts.length; i += 4) {
         const nearby = getCitiesNearPoint(grid, pts[i][1], pts[i][0], threshold + 1);
         for (const c of nearby) {
-          if (!seen.has(c[2]) && !candidates.has(c[2])) candidates.set(c[2], c);
+          if (!candidates.has(c[2])) candidates.set(c[2], c);
         }
       }
-      // Only check distances for candidates
       for (const [name, [la, lo]] of candidates) {
-        if (seen.has(name)) continue;
         let minD = Infinity, bestI = 0;
         for (let i = 0; i < pts.length; i += 8) {
           const d = gcDist(la, lo, pts[i][1], pts[i][0]);
@@ -104,24 +103,27 @@ function getCitiesOnLines(lines, cities, threshold = 3.5) {
           }
         }
         if (minD <= threshold) {
-          seen.add(name);
-          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: Math.round(minD * 10) / 10, desc: l.desc });
+          const prev = best.get(name);
+          if (!prev || minD < prev.dist) {
+            best.set(name, { la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: Math.round(minD * 10) / 10, desc: l.desc });
+          }
         }
       }
     } else {
-      // Meridian line — only check cities in the longitude band
-      const nearby = getCitiesNearPoint(grid, 0, l.lo, threshold + 1);
-      // Also check all latitudes by scanning the full longitude band
+      // Meridian line
       for (const [la, lo, name] of cities) {
         const d = Math.min(Math.abs(lo - l.lo), 360 - Math.abs(lo - l.lo));
-        if (d <= threshold && !seen.has(name)) {
-          seen.add(name);
-          r.push({ la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: Math.round(d * 10) / 10, desc: l.desc });
+        if (d <= threshold) {
+          const prev = best.get(name);
+          const rounded = Math.round(d * 10) / 10;
+          if (!prev || rounded < prev.dist) {
+            best.set(name, { la, lo, name, line: l.n, lc: l.c, q: l.quality, dist: rounded, desc: l.desc });
+          }
         }
       }
     }
   }
-  return r.sort((a, b) => a.dist - b.dist);
+  return Array.from(best.values()).sort((a, b) => a.dist - b.dist);
 }
 
 function cityReading(c) {
