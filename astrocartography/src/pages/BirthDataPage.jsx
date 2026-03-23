@@ -93,15 +93,22 @@ export default function BirthDataPage() {
     try {
       // 1. Save to Supabase and pre-calculate chart in parallel
       const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
+
+      // Timeout wrapper — never hang more than 15s on mobile networks
+      const withTimeout = (promise, ms) => Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Check your internet connection and try again.')), ms)),
+      ]);
+
       const [, chartData] = await Promise.all([
-        saveBirthData({
+        withTimeout(saveBirthData({
           name: name.trim(),
           date,
           time,
           city: selectedCity.name,
           lat: selectedCity.lat,
           lng: selectedCity.lng,
-        }),
+        }), 15000),
         // Calculate chart on main thread while Supabase write is in flight.
         // ~200ms calculation runs concurrently with ~500ms network call = free.
         new Promise((resolve) => {

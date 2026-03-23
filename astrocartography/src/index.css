@@ -27,6 +27,13 @@ body {
 [style*="animation: ts"] {
   will-change: transform;
   backface-visibility: hidden;
+  contain: layout style;
+}
+
+/* Force GPU layer for canvas elements — eliminates Chrome compositing jank */
+canvas {
+  will-change: contents;
+  contain: strict;
 }
 
 *::-webkit-scrollbar {

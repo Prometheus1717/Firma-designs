@@ -140,9 +140,10 @@ function DemoOrDashboard() {
   const { user, loading, hasBirthData, profile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
-  // User is logged in — wait for profile to load before deciding where to go.
-  // Without profile we don't know if they have birth data, so show loading.
-  if (!profile) return <LoadingScreen />;
+  // User is logged in — if we know they have birth data, go to dashboard.
+  // If profile loaded but no birth data, go to birth-data form.
+  // If profile hasn't loaded yet, default to birth-data (safest — they can always
+  // be redirected from there if hasBirthData becomes true once profile arrives).
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/birth-data" replace />;
 }

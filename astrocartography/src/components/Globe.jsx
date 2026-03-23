@@ -102,8 +102,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     pinchDist: 0,
     // Double-tap tracking
     lastTap: 0, lastTapX: 0, lastTapY: 0,
-    // Mobile: throttle redraws to ~15fps (66ms) for battery; desktop: 30fps
-    frameInterval: isMobile ? 66 : 33,
+    // Mobile: throttle redraws to ~15fps (66ms) for battery; desktop: 60fps
+    frameInterval: isMobile ? 66 : 16,
     // Cached atmosphere gradient — avoid per-frame allocation (Chrome/Firefox GC pressure)
     _atmosGrad: null, _atmosScale: 0, _atmosCx: 0, _atmosCy: 0,
   });
@@ -332,7 +332,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const cv = canvasRef.current;
       const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) * 1.5;
       const shouldRotate = !isFlat && s.auto && !s.drag && !globeFills;
-      if (shouldRotate) { s.rot = [s.rot[0] - .06, s.rot[1]]; s.dirty = true; }
+      if (shouldRotate) { const rotSpeed = isMobile ? .06 : .03; s.rot = [s.rot[0] - rotSpeed, s.rot[1]]; s.dirty = true; }
 
       if (s.dirty) {
         const elapsed = ts - s.lastDraw;
@@ -662,7 +662,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }} />
+      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none', willChange: 'contents', contain: 'strict' }} />
       {/* Layer toggle buttons — bottom left */}
       <div style={{ position: 'absolute', bottom: isMobile ? 8 : 12, left: isMobile ? 8 : 12, zIndex: 50, display: 'flex', flexDirection: 'column', gap: isMobile ? 4 : 6 }}>
         <button

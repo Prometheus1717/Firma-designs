@@ -3,6 +3,23 @@ import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
+// ─── Rate limiter ───
+// Prevents brute-force auth attempts client-side.
+// Tracks per-action timestamps and blocks when threshold exceeded.
+const _rateLimits = {};
+function checkRateLimit(action, maxAttempts = 5, windowMs = 60000) {
+  const now = Date.now();
+  if (!_rateLimits[action]) _rateLimits[action] = [];
+  // Prune expired entries
+  _rateLimits[action] = _rateLimits[action].filter(t => now - t < windowMs);
+  if (_rateLimits[action].length >= maxAttempts) {
+    const oldestInWindow = _rateLimits[action][0];
+    const waitSec = Math.ceil((windowMs - (now - oldestInWindow)) / 1000);
+    throw new Error(`Too many attempts. Please wait ${waitSec}s before trying again.`);
+  }
+  _rateLimits[action].push(now);
+}
+
 // ─── localStorage profile cache ───
 // Eliminates the Supabase profile round-trip for returning users.
 // On mobile networks this saves 300ms-2s of blocking wait time.
@@ -61,9 +78,11 @@ export function AuthProvider({ children }) {
       if (!readyRef.done) { readyRef.done = true; setReady(true); }
     };
     // If we have a cached profile, mark ready immediately — no waiting for network
-    // The profile will be refreshed in the background
+    // The profile will be refreshed in the background.
+    // Safety timeout: 2s max wait (was 3s) — on slow mobile networks, showing the
+    // app with partial data is better than an indefinite loading screen.
     const hasCached = !!_initialCachedProfile;
-    const authTimeout = setTimeout(markReady, hasCached ? 0 : 3000);
+    const authTimeout = setTimeout(markReady, hasCached ? 0 : 2000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const u = session?.user ?? null;
@@ -107,19 +126,34 @@ export function AuthProvider({ children }) {
   const loading = !ready;
 
   async function signUp(email, password) {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    if (data?.user) {
-      await supabase.from('profiles').upsert({
-        id: data.user.id,
-        email: data.user.email,
-        updated_at: new Date().toISOString(),
-      });
+    checkRateLimit('signup', 5, 300000); // 5 attempts per 5 minutes
+    // Set signingInRef to prevent onAuthStateChange from racing with profile upsert
+    signingInRef.current = true;
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data?.user) {
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          email: data.user.email,
+          updated_at: new Date().toISOString(),
+        });
+        // If auto-confirmed (session exists), load profile and mark ready
+        if (data.session) {
+          setUser(data.user);
+          const profileData = await loadProfile(data.user.id);
+          setCachedProfile(profileData);
+          setReady(true);
+        }
+      }
+      return data;
+    } finally {
+      signingInRef.current = false;
     }
-    return data;
   }
 
   async function signIn(email, password) {
+    checkRateLimit('signin', 8, 60000); // 8 attempts per minute
     signingInRef.current = true;
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -173,6 +207,7 @@ export function AuthProvider({ children }) {
   }
 
   async function resetPassword(email) {
+    checkRateLimit('reset', 3, 300000); // 3 attempts per 5 minutes
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/reset-password',
     });
