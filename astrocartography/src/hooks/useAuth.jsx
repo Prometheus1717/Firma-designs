@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(() => _initialCachedProfile);
   const [ready, setReady] = useState(false);
+  const [showBirthDataModal, setShowBirthDataModal] = useState(false);
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
 
@@ -105,9 +106,14 @@ export function AuthProvider({ children }) {
             markReady();
             loadProfile(u.id);
           } else {
-            await loadProfile(u.id);
+            const profileData = await loadProfile(u.id);
             clearTimeout(authTimeout);
             markReady();
+            // Detect newly verified user (came from email link, no birth data yet)
+            // Show the birth data modal instead of redirecting to /birth-data page
+            if (profileData && !profileData.birth_date && !profileData.birth_time) {
+              setShowBirthDataModal(true);
+            }
           }
         }
       } else {
@@ -126,6 +132,10 @@ export function AuthProvider({ children }) {
   const isAdmin = profile?.is_admin === true;
   const loading = !ready;
 
+  function dismissBirthDataModal() {
+    setShowBirthDataModal(false);
+  }
+
   async function signUp(email, password) {
     checkRateLimit('signup', 5, 300000); // 5 attempts per 5 minutes
     // Set signingInRef to prevent onAuthStateChange from racing with profile upsert
@@ -139,12 +149,13 @@ export function AuthProvider({ children }) {
           email: data.user.email,
           updated_at: new Date().toISOString(),
         });
-        // If auto-confirmed (session exists), load profile and mark ready
+        // If auto-confirmed (session exists), load profile and show birth data modal
         if (data.session) {
           setUser(data.user);
           const profileData = await loadProfile(data.user.id);
           setCachedProfile(profileData);
           setReady(true);
+          setShowBirthDataModal(true);
         }
         // Send welcome email (fire-and-forget — don't block the signup flow)
         sendWelcomeEmail(data.user.email).catch(() => {});
@@ -240,7 +251,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );

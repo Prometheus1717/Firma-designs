@@ -1,6 +1,7 @@
 import { lazy, Suspense, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import BirthDataModal from './components/BirthDataModal';
 
 // Lazy imports with retry — if chunk fails to load (mobile network), retry once
 function lazyRetry(fn) {
@@ -115,7 +116,7 @@ function ProtectedRoute({ children }) {
 function AuthRoute({ children }) {
   const { user, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/birth-data'} replace />;
+  if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/'} replace />;
   return children;
 }
 
@@ -128,24 +129,31 @@ function AdminRoute({ children }) {
 }
 
 function SmartRedirect() {
-  const { user, loading, hasBirthData, profile } = useAuth();
+  const { user, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/" replace />;
-  if (hasBirthData || !profile) return <Navigate to="/dashboard" replace />;
-  return <Navigate to="/birth-data" replace />;
+  if (hasBirthData) return <Navigate to="/dashboard" replace />;
+  // No birth data — redirect to home where modal will show
+  return <Navigate to="/" replace />;
 }
 
 // Landing page: demo for guests, redirect for logged-in users
 function DemoOrDashboard() {
-  const { user, loading, hasBirthData, profile } = useAuth();
+  const { user, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
-  // User is logged in — if we know they have birth data, go to dashboard.
-  // If profile loaded but no birth data, go to birth-data form.
-  // If profile hasn't loaded yet, default to birth-data (safest — they can always
-  // be redirected from there if hasBirthData becomes true once profile arrives).
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
-  return <Navigate to="/birth-data" replace />;
+  // User is logged in but has no birth data — show demo globe with modal overlay
+  // Always show modal for logged-in users without birth data (whether newly verified or returning)
+  return (
+    <>
+      <Dashboard demo />
+      <BirthDataModal onComplete={() => {
+        dismissBirthDataModal();
+        if (user) loadProfile(user.id);
+      }} />
+    </>
+  );
 }
 
 // Clear error-reload counter on successful app mount
