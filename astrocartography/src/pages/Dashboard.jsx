@@ -852,7 +852,7 @@ export default function Dashboard({ demo = false }) {
                       </div>
                     </div>
 
-                    <div onClick={() => { setShowSettings(false); navigate('/birth-data'); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: '#00D88A08', letterSpacing: 1 }}>
+                    <div onClick={() => { setShowSettings(false); navigate('/birth-data', { state: { edit: true } }); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: '#00D88A08', letterSpacing: 1 }}>
                       EDIT BIRTH DATA
                     </div>
                   </div>)}

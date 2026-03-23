@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 
@@ -9,6 +9,8 @@ const F = { fontFamily: 'JetBrains Mono, monospace' };
 export default function BirthDataPage() {
   const { saveBirthData, signOut, hasBirthData, profile, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isEditing = location.state?.edit === true;
   const [name, setName] = useState('');
   const [date, setDate] = useState(''); // internal: YYYY-MM-DD
   const [dateDisplay, setDateDisplay] = useState(''); // shown: dd.mm.yyyy
@@ -22,12 +24,39 @@ export default function BirthDataPage() {
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
 
-  // If birth data already exists (e.g. returning user), skip straight to dashboard
+  // If birth data already exists and NOT editing, skip straight to dashboard
   useEffect(() => {
-    if (hasBirthData) {
+    if (hasBirthData && !isEditing) {
       navigate('/dashboard', { replace: true });
     }
-  }, [hasBirthData, navigate]);
+  }, [hasBirthData, isEditing, navigate]);
+
+  // Pre-fill form when editing existing birth data
+  useEffect(() => {
+    if (isEditing && profile) {
+      setName(profile.display_name || '');
+      if (profile.birth_date) {
+        const [y, m, d] = profile.birth_date.split('-');
+        setDate(profile.birth_date);
+        setDateDisplay(`${d}.${m}.${y}`);
+      }
+      if (profile.birth_time) {
+        setTime(profile.birth_time);
+        const [hh, mi] = profile.birth_time.split(':');
+        const h12 = (parseInt(hh) % 12) || 12;
+        const ampm = parseInt(hh) < 12 ? 'AM' : 'PM';
+        setTimeDisplay(`${hh}:${mi}`);
+      }
+      if (profile.birth_city) {
+        setCitySearch(profile.birth_city);
+        setSelectedCity({
+          name: profile.birth_city,
+          lat: profile.birth_lat,
+          lng: profile.birth_lng,
+        });
+      }
+    }
+  }, [isEditing, profile]);
 
   // Live search via OpenStreetMap Nominatim (free, worldwide, no API key needed)
   useEffect(() => {
@@ -141,7 +170,7 @@ export default function BirthDataPage() {
     <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ marginBottom: 32, textAlign: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>ENTER YOUR BIRTH DATA</div>
+        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</div>
       </div>
 
       <div style={{ width: '100%', maxWidth: 460, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32 }}>
@@ -292,11 +321,15 @@ export default function BirthDataPage() {
               letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer', marginTop: 8,
             }}
           >
-            {submitting ? 'CALCULATING YOUR CHART...' : 'GENERATE MY NATAL CHART'}
+            {submitting ? 'CALCULATING YOUR CHART...' : isEditing ? 'UPDATE MY NATAL CHART' : 'GENERATE MY NATAL CHART'}
           </button>
         </form>
 
-        <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
+        {isEditing ? (
+          <div onClick={() => navigate('/dashboard')} style={{ ...F, fontSize: 9, color: '#5A7088', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>← Back to Dashboard</div>
+        ) : (
+          <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
+        )}
       </div>
     </div>
   );
