@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { sendWelcomeEmail } from '../lib/email';
 
 const AuthContext = createContext(null);
 
@@ -145,6 +146,8 @@ export function AuthProvider({ children }) {
           setCachedProfile(profileData);
           setReady(true);
         }
+        // Send welcome email (fire-and-forget — don't block the signup flow)
+        sendWelcomeEmail(data.user.email).catch(() => {});
       }
       return data;
     } finally {
