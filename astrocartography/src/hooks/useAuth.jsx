@@ -130,6 +130,7 @@ export function AuthProvider({ children }) {
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
   const isAdmin = profile?.is_admin === true;
+  const isPremium = profile?.is_premium === true;
   const loading = !ready;
 
   function dismissBirthDataModal() {
@@ -251,7 +252,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );
