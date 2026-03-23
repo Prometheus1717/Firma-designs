@@ -1,10 +1,13 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'RESEND_API_KEY not configured' });
   }
 
   const { to, subject, html, from } = req.body;
@@ -14,6 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
       from: from || 'NatalNavigator <noreply@natalnavigator.com>',
       to: Array.isArray(to) ? to : [to],
