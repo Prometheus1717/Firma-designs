@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   try {
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
-      from: from || 'NatalNavigator <noreply@natalnavigator.com>',
+      from: from || 'NatalNavigator <info@natalnavigator.com>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,
