@@ -662,7 +662,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none', willChange: 'contents', contain: 'strict' }} />
+      <canvas ref={canvasRef} role="img" aria-label="Interactive 3D astrocartography globe showing personalized planetary lines across the world" style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none', willChange: 'contents', contain: 'strict' }} />
       {/* Layer toggle buttons — bottom left */}
       <div style={{ position: 'absolute', bottom: isMobile ? 8 : 12, left: isMobile ? 8 : 12, zIndex: 50, display: 'flex', flexDirection: 'column', gap: isMobile ? 4 : 6 }}>
         <button

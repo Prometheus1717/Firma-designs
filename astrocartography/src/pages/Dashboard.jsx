@@ -213,6 +213,8 @@ export default function Dashboard({ demo = false }) {
   const [upgradeError, setUpgradeError] = useState('');
   const [paywallEnabled, setPaywallEnabled] = useState(true);
 
+  useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
+
   // Handle ?payment=success|cancelled redirect from Stripe
   useEffect(() => {
     const payment = searchParams.get('payment');
@@ -577,8 +579,9 @@ export default function Dashboard({ demo = false }) {
           Premium activated! Welcome to NatalNavigator Premium. &#10003;
         </div>
       )}
+      <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Natal Navigator — Astrocartography Dashboard</h1>
       {/* TOPBAR */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0, minWidth: 0 }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12, minWidth: 0, overflow: 'hidden' }}>
           <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: '#00D88A', letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>NATAL NAVIGATOR</span>
           <span style={{ ...F, fontSize: 9, color: '#00D88A', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -599,7 +602,7 @@ export default function Dashboard({ demo = false }) {
             </div>
           </>}
         </div>
-      </div>
+      </nav>
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: '#0B1218', borderBottom: '1px solid #14202C', display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>

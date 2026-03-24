@@ -24,6 +24,8 @@ export default function BirthDataPage() {
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
 
+  useEffect(() => { document.title = isEditing ? 'Edit Birth Data — Natal Navigator' : 'Enter Birth Data — Natal Navigator'; }, [isEditing]);
+
   // If birth data already exists and NOT editing, skip straight to dashboard
   useEffect(() => {
     if (hasBirthData && !isEditing) {
@@ -167,11 +169,11 @@ export default function BirthDataPage() {
   // If birth data exists, redirect fires via useEffect above — no blocking screen needed
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ marginBottom: 32, textAlign: 'center' }}>
-        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</div>
-      </div>
+    <main style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <header style={{ marginBottom: 32, textAlign: 'center' }}>
+        <h1 style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
+        <p style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2, margin: 0 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</p>
+      </header>
 
       <div style={{ width: '100%', maxWidth: 460, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32 }}>
         <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20, lineHeight: 1.7 }}>
@@ -331,6 +333,6 @@ export default function BirthDataPage() {
           <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

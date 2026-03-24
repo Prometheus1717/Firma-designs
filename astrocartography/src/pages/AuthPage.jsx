@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -13,6 +13,10 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
+
+  useEffect(() => {
+    document.title = mode === 'login' ? 'Sign In — Natal Navigator' : mode === 'signup' ? 'Create Account — Natal Navigator' : 'Reset Password — Natal Navigator';
+  }, [mode]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -49,12 +53,12 @@ export default function AuthPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <main style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       {/* Logo */}
-      <div style={{ marginBottom: 40, textAlign: 'center' }}>
-        <div style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
-      </div>
+      <header style={{ marginBottom: 40, textAlign: 'center' }}>
+        <h1 style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
+        <p style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2, margin: 0 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</p>
+      </header>
 
       {/* Card */}
       <div style={{ width: '100%', maxWidth: 400, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32, position: 'relative' }}>
@@ -178,6 +182,6 @@ export default function AuthPage() {
 
       <div style={{ ...F, fontSize: 8, color: '#1A2840', marginTop: 32 }}>NATAL NAVIGATOR © 2026</div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
+    </main>
   );
 }
