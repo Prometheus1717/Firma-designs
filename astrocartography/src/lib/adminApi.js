@@ -6,7 +6,9 @@ export async function fetchAllProfiles({ search = '', sortField = 'updated_at', 
     .select('*', { count: 'exact' });
 
   if (search) {
-    query = query.or(`display_name.ilike.%${search}%,birth_city.ilike.%${search}%,email.ilike.%${search}%`);
+    // Escape special PostgREST filter characters to prevent filter injection
+    const safe = search.replace(/[%_\\(),."']/g, c => '\\' + c);
+    query = query.or(`display_name.ilike.%${safe}%,birth_city.ilike.%${safe}%,email.ilike.%${safe}%`);
   }
 
   query = query
