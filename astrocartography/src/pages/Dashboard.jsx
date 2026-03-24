@@ -523,9 +523,9 @@ export default function Dashboard({ demo = false }) {
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
                 <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>&euro;</span>
-                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>2.99</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>3.99</span>
               </div>
-              <div style={{ ...F, fontSize: 10, color: '#4A6078', marginTop: 4, letterSpacing: 1 }}>ONE-TIME &middot; LIFETIME ACCESS</div>
+              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>ONE-TIME &middot; LIFETIME ACCESS</div>
             </div>
 
             {/* CTA */}
@@ -540,14 +540,14 @@ export default function Dashboard({ demo = false }) {
             </div>
 
             {/* What's included — compact */}
-            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', maxWidth: 260, margin: '28px auto 0' }}>
+            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', maxWidth: 260, margin: '28px auto 0', justifyItems: 'center' }}>
               {[
                 '3D Globe',
                 'City Analysis',
                 'Natal Chart',
                 'Flat Map View',
               ].map((f, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, justifySelf: 'center' }}>
                   <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#00D88A', flexShrink: 0 }} />
                   <span style={{ ...F, fontSize: 10, color: '#6A8098' }}>{f}</span>
                 </div>
