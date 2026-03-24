@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { sendWelcomeEmail } from '../lib/email';
+import { identifyUser, resetUser, trackEvent } from '../lib/posthog';
 
 const AuthContext = createContext(null);
 
@@ -106,6 +107,7 @@ export function AuthProvider({ children }) {
 
       if (u) {
         if (!signingInRef.current) {
+          identifyUser(u.id, { email: u.email });
           if (hasCached) {
             markReady();
             loadProfile(u.id);
@@ -166,6 +168,8 @@ export function AuthProvider({ children }) {
         }
         // Send welcome email (fire-and-forget — don't block the signup flow)
         sendWelcomeEmail(data.user.email).catch(() => {});
+        identifyUser(data.user.id, { email: data.user.email });
+        trackEvent('user_signed_up', { email: data.user.email });
       }
       return data;
     } finally {
@@ -183,6 +187,8 @@ export function AuthProvider({ children }) {
         setUser(data.user);
         const profileData = await loadProfile(data.user.id);
         setCachedProfile(profileData);
+        identifyUser(data.user.id, { email: data.user.email, is_premium: profileData?.is_premium });
+        trackEvent('user_signed_in');
       }
       setReady(true);
       return data;
@@ -192,6 +198,8 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
+    trackEvent('user_signed_out');
+    resetUser();
     fetchIdRef.current++;
     setCachedProfile(null);
     await supabase.auth.signOut();

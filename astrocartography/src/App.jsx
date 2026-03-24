@@ -1,9 +1,13 @@
-import { lazy, Suspense, Component } from 'react';
+import { lazy, Suspense, Component, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import BirthDataModal from './components/BirthDataModal';
+import { initPostHog, trackPageView } from './lib/posthog';
+
+// Initialize PostHog on app load
+initPostHog();
 
 // Lazy imports with retry — if chunk fails to load (mobile network), retry once
 function lazyRetry(fn) {
@@ -183,6 +187,15 @@ function DemoOrDashboard() {
   );
 }
 
+// SPA pageview tracker — fires on every route change
+function PageViewTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  return null;
+}
+
 // Clear error-reload counter on successful app mount
 try { sessionStorage.removeItem('nn_err_reloads'); } catch {}
 
@@ -190,6 +203,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundaryWithLocation>
+        <PageViewTracker />
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>
             <Routes>

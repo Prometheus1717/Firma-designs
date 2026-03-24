@@ -6,6 +6,7 @@ import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
 import { redirectToCheckout } from '../lib/stripe';
+import { trackEvent } from '../lib/posthog';
 
 // Demo chart: Elon Musk — public birth data
 const DEMO = {
@@ -220,6 +221,7 @@ export default function Dashboard({ demo = false }) {
     const payment = searchParams.get('payment');
     if (payment === 'success') {
       setPaymentStatus('success');
+      trackEvent('payment_success');
       // Refresh profile to pick up is_premium=true from webhook
       if (user) {
         // Small delay to let webhook process
@@ -230,6 +232,7 @@ export default function Dashboard({ demo = false }) {
       setSearchParams({}, { replace: true });
     } else if (payment === 'cancelled') {
       setPaymentStatus('cancelled');
+      trackEvent('payment_cancelled');
       setSearchParams({}, { replace: true });
       setTimeout(() => setPaymentStatus(null), 5000);
     }
@@ -249,9 +252,19 @@ export default function Dashboard({ demo = false }) {
   // Determine if user should see paywall
   const showPaywall = !demo && paywallEnabled === true && !isPremium && profile?.is_admin !== true;
 
+  // Track paywall impression once
+  const paywallTracked = useRef(false);
+  useEffect(() => {
+    if (showPaywall && !paywallTracked.current) {
+      paywallTracked.current = true;
+      trackEvent('paywall_viewed');
+    }
+  }, [showPaywall]);
+
   // Upgrade handler with error handling
   const handleUpgrade = async () => {
     if (!user?.email) return;
+    trackEvent('checkout_clicked');
     setUpgradeLoading(true);
     setUpgradeError('');
     try {
