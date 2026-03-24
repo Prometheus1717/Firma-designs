@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { fetchAllProfiles, fetchAdminStats } from '../lib/adminApi';
+import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium } from '../lib/adminApi';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -38,18 +38,23 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paywallEnabled, setPaywallEnabled] = useState(true);
+  const [paywallLoading, setPaywallLoading] = useState(false);
+  const [premiumToggling, setPremiumToggling] = useState(null);
   const pageSize = 25;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [s, u] = await Promise.all([
+      const [s, u, pw] = await Promise.all([
         fetchAdminStats(),
         fetchAllProfiles({ search, sortField, sortAsc, page, pageSize }),
+        fetchPaywallSetting(),
       ]);
       setStats(s);
       setUsers(u.data);
       setTotal(u.total);
+      setPaywallEnabled(pw);
     } catch (e) {
       console.error('Admin fetch error:', e);
     }
@@ -105,12 +110,36 @@ export default function AdminPage() {
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+        {/* PAYWALL TOGGLE */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0D1520', border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
+          <div>
+            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Paywall</div>
+            <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
+              {paywallEnabled ? 'Active — free users see the upgrade screen' : 'Disabled — all users have full access'}
+            </div>
+          </div>
+          <div
+            onClick={async () => {
+              setPaywallLoading(true);
+              try {
+                await updatePaywallSetting(!paywallEnabled);
+                setPaywallEnabled(!paywallEnabled);
+              } catch (e) { console.error('Paywall toggle error:', e); }
+              setPaywallLoading(false);
+            }}
+            style={{ ...F, fontSize: 9, fontWeight: 600, cursor: paywallLoading ? 'default' : 'pointer', padding: '8px 20px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: paywallEnabled ? '#F04060' : '#00D88A', border: `1px solid ${paywallEnabled ? '#F0406040' : '#00D88A40'}`, background: paywallEnabled ? '#F0406010' : '#00D88A10' }}
+          >
+            {paywallLoading ? '...' : paywallEnabled ? 'DISABLE' : 'ENABLE'}
+          </div>
+        </div>
+
         {/* STATS */}
         {stats && (
           <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
             <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" />
             <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" />
             <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" />
+            <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" />
           </div>
         )}
 
@@ -156,6 +185,7 @@ export default function AdminPage() {
                 <div style={{ ...F, fontSize: 11, color: '#D0DDE8', width: 140, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {u.display_name || '—'}
                   {u.is_admin && <span style={{ ...F, fontSize: 7, color: '#D8A030', marginLeft: 6 }}>ADMIN</span>}
+                  {u.is_premium && <span style={{ ...F, fontSize: 7, color: '#E8A838', marginLeft: 4 }}>PRO</span>}
                 </div>
                 <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 220, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || '—'}</div>
                 <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 140, flexShrink: 0 }}>{u.birth_city || '—'}</div>
@@ -195,6 +225,7 @@ export default function AdminPage() {
               <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>
                 {selected.display_name || 'No name'}
                 {selected.is_admin && <span style={{ ...F, fontSize: 9, color: '#D8A030', marginLeft: 10 }}>ADMIN</span>}
+                {selected.is_premium && <span style={{ ...F, fontSize: 9, color: '#E8A838', marginLeft: 10 }}>PREMIUM</span>}
               </div>
               <span onClick={() => setSelected(null)} style={{ ...F, fontSize: 11, color: '#5A7088', cursor: 'pointer' }}>CLOSE</span>
             </div>
@@ -206,6 +237,7 @@ export default function AdminPage() {
                 ['BIRTH TIME', formatTime(selected.birth_time)],
                 ['BIRTH CITY', selected.birth_city],
                 ['COORDINATES', selected.birth_lat != null ? `${selected.birth_lat?.toFixed(2)}, ${selected.birth_lng?.toFixed(2)}` : '—'],
+                ['STRIPE ID', selected.stripe_customer_id || '—'],
                 ['LAST UPDATE', selected.updated_at ? new Date(selected.updated_at).toLocaleString('de-DE') : '—'],
                 ['CREATED', selected.created_at ? new Date(selected.created_at).toLocaleString('de-DE') : '—'],
               ].map(([label, val]) => (
@@ -214,6 +246,31 @@ export default function AdminPage() {
                   <div style={{ ...F, fontSize: 11, color: '#B0C0D0', wordBreak: 'break-all' }}>{val || '—'}</div>
                 </div>
               ))}
+            </div>
+            {/* Premium toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTop: '1px solid #1A2840' }}>
+              <div>
+                <div style={{ ...F, fontSize: 10, fontWeight: 600, color: '#D0DDE8' }}>Premium Status</div>
+                <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
+                  {selected.is_premium ? 'This user has premium access' : 'This user is on the free plan'}
+                </div>
+              </div>
+              <div
+                onClick={async () => {
+                  if (premiumToggling === selected.id) return;
+                  setPremiumToggling(selected.id);
+                  try {
+                    const newVal = !selected.is_premium;
+                    await toggleUserPremium(selected.id, newVal);
+                    setSelected({ ...selected, is_premium: newVal });
+                    setUsers(prev => prev.map(u => u.id === selected.id ? { ...u, is_premium: newVal } : u));
+                  } catch (e) { console.error('Premium toggle error:', e); }
+                  setPremiumToggling(null);
+                }}
+                style={{ ...F, fontSize: 9, fontWeight: 600, cursor: premiumToggling === selected.id ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: selected.is_premium ? '#F04060' : '#E8A838', border: `1px solid ${selected.is_premium ? '#F0406040' : '#E8A83840'}`, background: selected.is_premium ? '#F0406010' : '#E8A83810' }}
+              >
+                {premiumToggling === selected.id ? '...' : selected.is_premium ? 'REVOKE PREMIUM' : 'GRANT PREMIUM'}
+              </div>
             </div>
           </div>
         )}

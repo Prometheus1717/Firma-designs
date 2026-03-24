@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
@@ -179,8 +179,9 @@ function getInitialChart(demo, profile) {
 }
 
 export default function Dashboard({ demo = false }) {
-  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName } = useAuth();
+  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
@@ -207,6 +208,57 @@ export default function Dashboard({ demo = false }) {
   const guideContentRef = useRef(null);
   const setGuideTab = (i) => { _setGuideTab(i); if (guideContentRef.current) guideContentRef.current.scrollTop = 0; };
   const [pageVisible, setPageVisible] = useState(true);
+  const [paymentStatus, setPaymentStatus] = useState(null); // 'success' | 'cancelled'
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState('');
+  const [paywallEnabled, setPaywallEnabled] = useState(true);
+
+  // Handle ?payment=success|cancelled redirect from Stripe
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    if (payment === 'success') {
+      setPaymentStatus('success');
+      // Refresh profile to pick up is_premium=true from webhook
+      if (user) {
+        // Small delay to let webhook process
+        const t = setTimeout(() => loadProfile(user.id), 1500);
+        return () => clearTimeout(t);
+      }
+      // Clean URL
+      setSearchParams({}, { replace: true });
+    } else if (payment === 'cancelled') {
+      setPaymentStatus('cancelled');
+      setSearchParams({}, { replace: true });
+      setTimeout(() => setPaymentStatus(null), 5000);
+    }
+  }, []);
+
+  // Fetch global paywall setting
+  useEffect(() => {
+    if (demo) return;
+    import('../lib/supabase').then(({ supabase }) => {
+      supabase.from('app_settings').select('value').eq('key', 'paywall_enabled').single()
+        .then(({ data }) => {
+          if (data) setPaywallEnabled(data.value === 'true');
+        });
+    });
+  }, [demo]);
+
+  // Determine if user should see paywall
+  const showPaywall = !demo && paywallEnabled && !isPremium && profile?.is_admin !== true;
+
+  // Upgrade handler with error handling
+  const handleUpgrade = async () => {
+    if (!user?.email) return;
+    setUpgradeLoading(true);
+    setUpgradeError('');
+    try {
+      await redirectToCheckout(user.email, user.id);
+    } catch (err) {
+      setUpgradeError(err.message || 'Failed to start checkout');
+      setUpgradeLoading(false);
+    }
+  };
 
   // Pause animations & timers when tab is hidden
   useEffect(() => {
@@ -433,8 +485,91 @@ export default function Dashboard({ demo = false }) {
     );
   }
 
+  // ─── PAYWALL SCREEN ───
+  if (showPaywall) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+        {/* Payment success banner */}
+        {paymentStatus === 'success' && (
+          <div style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', border: '1px solid #00D88A30', borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
+            Payment received! Activating your account...
+          </div>
+        )}
+
+        <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
+          {/* Logo */}
+          <div style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
+          <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
+
+          {/* Upgrade card */}
+          <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 16, padding: mob ? 24 : 40, textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>&#10024;</div>
+            <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#D0DDE8', marginBottom: 8 }}>Unlock Your Natal Chart</div>
+            <div style={{ ...F, fontSize: 12, color: '#8098B0', lineHeight: 1.7, marginBottom: 28 }}>
+              Get your personalized astrocartography map with planetary lines, city matches, and natal wheel — calculated from your exact birth data.
+            </div>
+
+            {/* Features */}
+            <div style={{ textAlign: 'left', marginBottom: 28 }}>
+              {[
+                'Interactive 3D globe with your planetary lines',
+                'City-by-city analysis — thrive, neutral, avoid zones',
+                'Full natal wheel chart with all 10 planets',
+                'Flat map view with line overlays',
+                'Unlimited access — one-time payment',
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: i < 4 ? '1px solid #14202C' : 'none' }}>
+                  <span style={{ ...F, fontSize: 12, color: '#00D88A' }}>&#10003;</span>
+                  <span style={{ ...F, fontSize: 11, color: '#B0C0D0' }}>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Price */}
+            <div style={{ marginBottom: 24 }}>
+              <span style={{ ...F, fontSize: 36, fontWeight: 700, color: '#E8A838' }}>4.99</span>
+              <span style={{ ...F, fontSize: 14, color: '#5A7088', marginLeft: 4 }}>EUR</span>
+              <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>One-time payment — lifetime access</div>
+            </div>
+
+            {/* Error */}
+            {upgradeError && (
+              <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12 }}>{upgradeError}</div>
+            )}
+
+            {/* CTA */}
+            <div
+              onClick={handleUpgrade}
+              style={{ ...F, fontSize: 13, fontWeight: 700, color: '#0A1018', background: upgradeLoading ? '#5A7088' : '#E8A838', padding: '14px 0', borderRadius: 8, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1, transition: 'all .2s' }}
+            >
+              {upgradeLoading ? 'REDIRECTING...' : 'UNLOCK NOW'}
+            </div>
+
+            {/* Security note */}
+            <div style={{ ...F, fontSize: 8, color: '#3A5068', marginTop: 12 }}>
+              Secure payment via Stripe. No card data stored on our servers.
+            </div>
+          </div>
+
+          {/* Sign out link */}
+          <div onClick={signOut} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', marginTop: 20 }}>
+            Sign out
+          </div>
+        </div>
+
+        <style>{`@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden' }}>
+      {/* Payment success banner */}
+      {paymentStatus === 'success' && (
+        <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', borderBottom: '1px solid #00D88A30', padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
+          Premium activated! Welcome to NatalNavigator Premium. &#10003;
+        </div>
+      )}
       {/* TOPBAR */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12, minWidth: 0, overflow: 'hidden' }}>
@@ -874,7 +1009,7 @@ export default function Dashboard({ demo = false }) {
                           <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>{isPremium ? 'Full access to all features' : 'Upgrade to unlock all features'}</div>
                         </div>
                         {!isPremium && (
-                          <div onClick={() => { if (user?.email) redirectToCheckout(user.email, user.id); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>UPGRADE</div>
+                          <div onClick={handleUpgrade} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: upgradeLoading ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>{upgradeLoading ? '...' : 'UPGRADE'}</div>
                         )}
                       </div>
                     </div>

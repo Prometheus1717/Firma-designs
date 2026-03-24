@@ -34,5 +34,34 @@ export async function fetchAdminStats() {
     .select('*', { count: 'exact', head: true })
     .not('birth_date', 'is', null);
 
-  return { totalUsers: totalUsers || 0, recentSignups: recentSignups || 0, withBirthData: withBirthData || 0 };
+  const { count: premiumUsers } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_premium', true);
+
+  return { totalUsers: totalUsers || 0, recentSignups: recentSignups || 0, withBirthData: withBirthData || 0, premiumUsers: premiumUsers || 0 };
+}
+
+export async function fetchPaywallSetting() {
+  const { data } = await supabase
+    .from('app_settings')
+    .select('value')
+    .eq('key', 'paywall_enabled')
+    .single();
+  return data?.value === 'true';
+}
+
+export async function updatePaywallSetting(enabled) {
+  const { error } = await supabase
+    .from('app_settings')
+    .upsert({ key: 'paywall_enabled', value: enabled ? 'true' : 'false', updated_at: new Date().toISOString() });
+  if (error) throw error;
+}
+
+export async function toggleUserPremium(userId, isPremium) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ is_premium: isPremium, updated_at: new Date().toISOString() })
+    .eq('id', userId);
+  if (error) throw error;
 }
