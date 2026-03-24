@@ -1,0 +1,9 @@
+# https://natalnavigator.com robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /reset-password
+
+# Sitemap
+Sitemap: https://natalnavigator.com/sitemap.xml

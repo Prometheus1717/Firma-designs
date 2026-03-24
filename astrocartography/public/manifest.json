@@ -1,0 +1,19 @@
+{
+  "name": "Natal Navigator — Astrocartography Globe",
+  "short_name": "Natal Navigator",
+  "description": "Interactive astrocartography globe. Discover where your planets align for career, love, and personal growth.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A1018",
+  "theme_color": "#00D88A",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "personalization", "education"]
+}
