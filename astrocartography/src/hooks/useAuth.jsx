@@ -76,17 +76,21 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const readyRef = { done: false };
+    const gotAuthRef = { done: false };
     const markReady = () => {
       if (!readyRef.done) { readyRef.done = true; setReady(true); }
     };
-    // If we have a cached profile, mark ready immediately — no waiting for network
-    // The profile will be refreshed in the background.
-    // Safety timeout: 2s max wait (was 3s) — on slow mobile networks, showing the
-    // app with partial data is better than an indefinite loading screen.
     const hasCached = !!_initialCachedProfile;
-    const authTimeout = setTimeout(markReady, hasCached ? 0 : 2000);
+    // Safety timeout: only fires after we received the initial auth event.
+    // This prevents flashing the wrong route when auth is still resolving.
+    // 3s absolute max — on very slow mobile networks, better to show app than hang.
+    const authTimeout = setTimeout(() => {
+      if (gotAuthRef.done) markReady();
+    }, hasCached ? 0 : 2000);
+    const absoluteTimeout = setTimeout(markReady, 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      gotAuthRef.done = true;
       const u = session?.user ?? null;
       setUser(u);
 
@@ -108,6 +112,7 @@ export function AuthProvider({ children }) {
           } else {
             const profileData = await loadProfile(u.id);
             clearTimeout(authTimeout);
+            clearTimeout(absoluteTimeout);
             markReady();
             // Detect newly verified user (came from email link, no birth data yet)
             // Show the birth data modal instead of redirecting to /birth-data page
@@ -121,11 +126,12 @@ export function AuthProvider({ children }) {
         setProfile(null);
         setCachedProfile(null);
         clearTimeout(authTimeout);
+        clearTimeout(absoluteTimeout);
         markReady();
       }
     });
 
-    return () => { clearTimeout(authTimeout); subscription.unsubscribe(); };
+    return () => { clearTimeout(authTimeout); clearTimeout(absoluteTimeout); subscription.unsubscribe(); };
   }, [loadProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);

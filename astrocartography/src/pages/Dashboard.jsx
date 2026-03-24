@@ -211,7 +211,7 @@ export default function Dashboard({ demo = false }) {
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success' | 'cancelled'
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState('');
-  const [paywallEnabled, setPaywallEnabled] = useState(true);
+  const [paywallEnabled, setPaywallEnabled] = useState(null);
 
   useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
 
@@ -247,7 +247,7 @@ export default function Dashboard({ demo = false }) {
   }, [demo]);
 
   // Determine if user should see paywall
-  const showPaywall = !demo && paywallEnabled && !isPremium && profile?.is_admin !== true;
+  const showPaywall = !demo && paywallEnabled === true && !isPremium && profile?.is_admin !== true;
 
   // Upgrade handler with error handling
   const handleUpgrade = async () => {

@@ -45,10 +45,18 @@ function LoadingScreen() {
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { error: null };
+    this.state = { error: null, reloading: false };
   }
   static getDerivedStateFromError(error) {
-    return { error };
+    // Check if we should auto-reload (transient errors) — if so, show loading, not error
+    try {
+      const key = 'nn_err_reloads';
+      const count = parseInt(sessionStorage.getItem(key) || '0', 10);
+      if (count < 2) {
+        return { error, reloading: true };
+      }
+    } catch { /* sessionStorage disabled */ }
+    return { error, reloading: false };
   }
   componentDidCatch() {
     // Auto-reload for transient initialization errors (TDZ, chunk race conditions).
@@ -67,11 +75,28 @@ class ErrorBoundary extends Component {
   }
   componentDidUpdate(prevProps) {
     if (this.state.error && prevProps.locationKey !== this.props.locationKey) {
-      this.setState({ error: null });
+      this.setState({ error: null, reloading: false });
     }
   }
   render() {
     if (this.state.error) {
+      // During auto-reload, show the loading screen — never flash the error UI
+      if (this.state.reloading) {
+        return (
+          <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{
+                  width: 6, height: 6, borderRadius: '50%', background: '#00D88A',
+                  animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite`,
+                }} />
+              ))}
+            </div>
+            <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
+          </div>
+        );
+      }
       return (
         <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#00D88A', letterSpacing: 5, marginBottom: 20 }}>NATAL NAVIGATOR</div>
