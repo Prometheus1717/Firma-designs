@@ -5,6 +5,7 @@ import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
+import { redirectToCheckout } from '../lib/stripe';
 
 // Demo chart: Elon Musk — public birth data
 const DEMO = {
@@ -178,7 +179,7 @@ function getInitialChart(demo, profile) {
 }
 
 export default function Dashboard({ demo = false }) {
-  const { user, profile, hasBirthData, signOut, deleteAccount, updateDisplayName } = useAuth();
+  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName } = useAuth();
   const navigate = useNavigate();
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
@@ -790,7 +791,10 @@ export default function Dashboard({ demo = false }) {
                         {(displayName || '?')[0].toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>{displayName}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>{displayName}</div>
+                          {isPremium && <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#E8A838', padding: '2px 6px', borderRadius: 3, background: '#E8A83818', border: '1px solid #E8A83830', letterSpacing: 1 }}>PREMIUM</div>}
+                        </div>
                         <div style={{ ...F, fontSize: 10, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
                       </div>
                     </div>
@@ -859,6 +863,22 @@ export default function Dashboard({ demo = false }) {
 
                   {/* ── ACCOUNT TAB ── */}
                   {settingsTab === 'account' && (<div>
+                    {/* Premium status */}
+                    <div style={{ background: isPremium ? '#00D88A08' : '#E8A83808', border: `1px solid ${isPremium ? '#00D88A20' : '#E8A83820'}`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Plan</div>
+                            <div style={{ ...F, fontSize: 8, fontWeight: 700, color: isPremium ? '#00D88A' : '#E8A838', padding: '2px 8px', borderRadius: 4, background: isPremium ? '#00D88A18' : '#E8A83818', border: `1px solid ${isPremium ? '#00D88A30' : '#E8A83830'}`, letterSpacing: 1 }}>{isPremium ? 'PREMIUM' : 'FREE'}</div>
+                          </div>
+                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>{isPremium ? 'Full access to all features' : 'Upgrade to unlock all features'}</div>
+                        </div>
+                        {!isPremium && (
+                          <div onClick={() => { if (user?.email) redirectToCheckout(user.email, user.id); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>UPGRADE</div>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Sign out */}
                     <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
