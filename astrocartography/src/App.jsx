@@ -1,5 +1,7 @@
 import { lazy, Suspense, Component } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import BirthDataModal from './components/BirthDataModal';
 
@@ -202,6 +204,8 @@ export default function App() {
           </Suspense>
         </AuthProvider>
       </ErrorBoundaryWithLocation>
+      <Analytics />
+      <SpeedInsights />
     </BrowserRouter>
   );
 }
