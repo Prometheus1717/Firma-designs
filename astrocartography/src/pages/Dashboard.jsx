@@ -516,7 +516,7 @@ export default function Dashboard({ demo = false }) {
             <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#00D88A', letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
             <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: '#D0DDE8', marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
             <div style={{ ...F, fontSize: 11, color: '#6A8098', lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
-              Planetary lines, city analysis, and natal wheel — calculated from your exact birth data.
+              Planetary lines, city analysis, and natal chart — calculated from your exact birth data.
             </div>
 
             {/* Price — centered, clean */}
@@ -540,11 +540,11 @@ export default function Dashboard({ demo = false }) {
             </div>
 
             {/* What's included — compact */}
-            <div style={{ textAlign: 'left', marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+            <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', maxWidth: 260, margin: '28px auto 0' }}>
               {[
                 '3D Globe',
                 'City Analysis',
-                'Natal Wheel',
+                'Natal Chart',
                 'Flat Map View',
               ].map((f, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
