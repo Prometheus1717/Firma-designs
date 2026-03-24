@@ -255,7 +255,12 @@ export default function Dashboard({ demo = false }) {
     try {
       await redirectToCheckout(user.email, user.id);
     } catch (err) {
-      setUpgradeError(err.message || 'Failed to start checkout');
+      const msg = err.message || '';
+      if (msg.includes('Stripe not configured') || msg.includes('Failed to create checkout')) {
+        setUpgradeError('Payment is being set up. Please try again soon.');
+      } else {
+        setUpgradeError(msg || 'Something went wrong. Please try again.');
+      }
       setUpgradeLoading(false);
     }
   };
@@ -502,52 +507,54 @@ export default function Dashboard({ demo = false }) {
           <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
 
           {/* Upgrade card */}
-          <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 16, padding: mob ? 24 : 40, textAlign: 'center' }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>&#10024;</div>
-            <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#D0DDE8', marginBottom: 8 }}>Unlock Your Natal Chart</div>
-            <div style={{ ...F, fontSize: 12, color: '#8098B0', lineHeight: 1.7, marginBottom: 28 }}>
-              Get your personalized astrocartography map with planetary lines, city matches, and natal wheel — calculated from your exact birth data.
+          <div style={{ background: 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: '1px solid #1A2840', borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+            {/* Subtle glow effect */}
+            <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: 'radial-gradient(ellipse, #00D88A08 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#00D88A', letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
+            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: '#D0DDE8', marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
+            <div style={{ ...F, fontSize: 11, color: '#6A8098', lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
+              Planetary lines, city analysis, and natal wheel — calculated from your exact birth data.
             </div>
 
-            {/* Features */}
-            <div style={{ textAlign: 'left', marginBottom: 28 }}>
+            {/* Price — centered, clean */}
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
+                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>&euro;</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>4.99</span>
+              </div>
+              <div style={{ ...F, fontSize: 10, color: '#4A6078', marginTop: 4, letterSpacing: 1 }}>ONE-TIME &middot; LIFETIME ACCESS</div>
+            </div>
+
+            {/* CTA */}
+            {upgradeError && (
+              <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12 }}>{upgradeError}</div>
+            )}
+            <div
+              onClick={handleUpgrade}
+              style={{ ...F, fontSize: 13, fontWeight: 700, color: '#0A1018', background: upgradeLoading ? '#5A7088' : '#00D88A', padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : '0 0 20px #00D88A20' }}
+            >
+              {upgradeLoading ? 'REDIRECTING...' : 'GET STARTED'}
+            </div>
+
+            {/* What's included — compact */}
+            <div style={{ textAlign: 'left', marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
               {[
-                'Interactive 3D globe with your planetary lines',
-                'City-by-city analysis — thrive, neutral, avoid zones',
-                'Full natal wheel chart with all 10 planets',
-                'Flat map view with line overlays',
-                'Unlimited access — one-time payment',
+                '3D Globe',
+                'City Analysis',
+                'Natal Wheel',
+                'Flat Map View',
               ].map((f, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: i < 4 ? '1px solid #14202C' : 'none' }}>
-                  <span style={{ ...F, fontSize: 12, color: '#00D88A' }}>&#10003;</span>
-                  <span style={{ ...F, fontSize: 11, color: '#B0C0D0' }}>{f}</span>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#00D88A', flexShrink: 0 }} />
+                  <span style={{ ...F, fontSize: 10, color: '#6A8098' }}>{f}</span>
                 </div>
               ))}
             </div>
 
-            {/* Price */}
-            <div style={{ marginBottom: 24 }}>
-              <span style={{ ...F, fontSize: 36, fontWeight: 700, color: '#E8A838' }}>4.99</span>
-              <span style={{ ...F, fontSize: 14, color: '#5A7088', marginLeft: 4 }}>EUR</span>
-              <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>One-time payment — lifetime access</div>
-            </div>
-
-            {/* Error */}
-            {upgradeError && (
-              <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12 }}>{upgradeError}</div>
-            )}
-
-            {/* CTA */}
-            <div
-              onClick={handleUpgrade}
-              style={{ ...F, fontSize: 13, fontWeight: 700, color: '#0A1018', background: upgradeLoading ? '#5A7088' : '#E8A838', padding: '14px 0', borderRadius: 8, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1, transition: 'all .2s' }}
-            >
-              {upgradeLoading ? 'REDIRECTING...' : 'UNLOCK NOW'}
-            </div>
-
             {/* Security note */}
-            <div style={{ ...F, fontSize: 8, color: '#3A5068', marginTop: 12 }}>
-              Secure payment via Stripe. No card data stored on our servers.
+            <div style={{ ...F, fontSize: 8, color: '#2A3848', marginTop: 20, letterSpacing: 0.5 }}>
+              Secure checkout via Stripe &middot; No card data stored
             </div>
           </div>
 
