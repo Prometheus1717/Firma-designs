@@ -523,7 +523,7 @@ export default function Dashboard({ demo = false }) {
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
                 <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>&euro;</span>
-                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>4.99</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>2.99</span>
               </div>
               <div style={{ ...F, fontSize: 10, color: '#4A6078', marginTop: 4, letterSpacing: 1 }}>ONE-TIME &middot; LIFETIME ACCESS</div>
             </div>
