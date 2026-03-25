@@ -7,16 +7,23 @@ const mockRange = vi.fn().mockResolvedValue({ data: [], count: 0, error: null })
 const mockGte = vi.fn().mockReturnThis();
 const mockNot = vi.fn().mockResolvedValue({ count: 5 });
 
+const headResult = { count: 10 };
+const headChain = () => ({
+  gte: vi.fn().mockResolvedValue(headResult),
+  not: vi.fn().mockResolvedValue({ count: 5 }),
+  eq: vi.fn().mockResolvedValue(headResult),
+  then: (cb) => cb(headResult),
+});
+
 vi.mock('../lib/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn((sel, opts) => {
         if (opts?.head) {
-          return {
-            gte: mockGte,
-            not: mockNot,
-            then: (cb) => cb({ count: 10 }),
-          };
+          return headChain();
+        }
+        if (sel === 'key, value') {
+          return Promise.resolve({ data: [{ key: 'paywall_enabled', value: 'true' }], error: null });
         }
         return {
           or: vi.fn().mockReturnValue({
@@ -27,13 +34,20 @@ vi.mock('../lib/supabase', () => ({
           order: vi.fn().mockReturnValue({
             range: vi.fn().mockResolvedValue({ data: [{ id: '1' }, { id: '2' }], count: 2, error: null }),
           }),
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: { value: 'true' }, error: null }),
+          }),
         };
+      }),
+      upsert: vi.fn().mockResolvedValue({ error: null }),
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
       }),
     })),
   },
 }));
 
-import { fetchAllProfiles, fetchAdminStats } from '../lib/adminApi';
+import { fetchAllProfiles, fetchAdminStats, fetchAllAppSettings, updateAppSetting, fetchPaywallSetting } from '../lib/adminApi';
 
 describe('adminApi', () => {
   beforeEach(() => {
@@ -70,6 +84,7 @@ describe('adminApi', () => {
       expect(result).toHaveProperty('totalUsers');
       expect(result).toHaveProperty('recentSignups');
       expect(result).toHaveProperty('withBirthData');
+      expect(result).toHaveProperty('premiumUsers');
     });
 
     it('returns numeric values', async () => {
@@ -77,6 +92,27 @@ describe('adminApi', () => {
       expect(typeof result.totalUsers).toBe('number');
       expect(typeof result.recentSignups).toBe('number');
       expect(typeof result.withBirthData).toBe('number');
+      expect(typeof result.premiumUsers).toBe('number');
+    });
+  });
+
+  describe('fetchAllAppSettings', () => {
+    it('returns settings map', async () => {
+      const result = await fetchAllAppSettings();
+      expect(typeof result).toBe('object');
+    });
+  });
+
+  describe('updateAppSetting', () => {
+    it('does not throw on valid input', async () => {
+      await expect(updateAppSetting('display_price', '4.99')).resolves.not.toThrow();
+    });
+  });
+
+  describe('fetchPaywallSetting', () => {
+    it('returns a boolean', async () => {
+      const result = await fetchPaywallSetting();
+      expect(typeof result).toBe('boolean');
     });
   });
 });

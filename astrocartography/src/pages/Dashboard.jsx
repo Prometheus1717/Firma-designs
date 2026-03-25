@@ -273,6 +273,10 @@ export default function Dashboard({ demo = false }) {
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState('');
   const [paywallEnabled, setPaywallEnabled] = useState(null);
+  const [displayPrice, setDisplayPrice] = useState('3.99');
+  const [displayCurrency, setDisplayCurrency] = useState('EUR');
+  const [priceLabel, setPriceLabel] = useState('ONE-TIME \u00b7 LIFETIME ACCESS');
+  const [announcement, setAnnouncement] = useState(null);
 
   useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
 
@@ -298,13 +302,22 @@ export default function Dashboard({ demo = false }) {
     }
   }, []);
 
-  // Fetch global paywall setting
+  // Fetch global app settings (paywall, pricing, announcement)
   useEffect(() => {
     if (demo) return;
     import('../lib/supabase').then(({ supabase }) => {
-      supabase.from('app_settings').select('value').eq('key', 'paywall_enabled').single()
+      supabase.from('app_settings').select('key, value')
         .then(({ data }) => {
-          if (data) setPaywallEnabled(data.value === 'true');
+          if (!data) return;
+          const s = {};
+          data.forEach(r => { s[r.key] = r.value; });
+          if (s.paywall_enabled !== undefined) setPaywallEnabled(s.paywall_enabled === 'true');
+          if (s.display_price) setDisplayPrice(s.display_price);
+          if (s.display_currency) setDisplayCurrency(s.display_currency);
+          if (s.price_label) setPriceLabel(s.price_label);
+          if (s.announcement_active === 'true' && s.announcement_text) {
+            setAnnouncement({ text: s.announcement_text, color: s.announcement_color || '#D8A030' });
+          }
         });
     });
   }, [demo]);
@@ -595,10 +608,10 @@ export default function Dashboard({ demo = false }) {
             {/* Price — centered, clean */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
-                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>&euro;</span>
-                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>3.99</span>
+                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '\u20AC' : displayCurrency === 'GBP' ? '\u00A3' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>{displayPrice}</span>
               </div>
-              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>ONE-TIME &middot; LIFETIME ACCESS</div>
+              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
             </div>
 
             {/* CTA */}
@@ -650,6 +663,12 @@ export default function Dashboard({ demo = false }) {
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', borderBottom: '1px solid #00D88A30', padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
           Premium activated! Welcome to NatalNavigator Premium. &#10003;
+        </div>
+      )}
+      {/* Announcement banner from admin settings */}
+      {announcement && (
+        <div onClick={() => setAnnouncement(null)} style={{ ...F, fontSize: 10, color: announcement.color, background: `${announcement.color}10`, borderBottom: `1px solid ${announcement.color}30`, padding: '7px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 399, flexShrink: 0, lineHeight: 1.5 }}>
+          {announcement.text}
         </div>
       )}
       <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Natal Navigator — Astrocartography Dashboard</h1>

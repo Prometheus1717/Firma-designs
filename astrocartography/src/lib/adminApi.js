@@ -67,3 +67,22 @@ export async function toggleUserPremium(userId, isPremium) {
     .eq('id', userId);
   if (error) throw error;
 }
+
+// ─── App Settings (generic key-value) ───
+
+export async function fetchAllAppSettings() {
+  const { data, error } = await supabase
+    .from('app_settings')
+    .select('key, value, updated_at');
+  if (error) throw error;
+  const map = {};
+  (data || []).forEach(r => { map[r.key] = r.value; });
+  return map;
+}
+
+export async function updateAppSetting(key, value) {
+  const { error } = await supabase
+    .from('app_settings')
+    .upsert({ key, value: String(value), updated_at: new Date().toISOString() });
+  if (error) throw error;
+}

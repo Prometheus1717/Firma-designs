@@ -1,15 +1,41 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium } from '../lib/adminApi';
+import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium, fetchAllAppSettings, updateAppSetting } from '../lib/adminApi';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
+
+// ─── Reusable Components ───
 
 function StatCard({ label, value, color }) {
   return (
     <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '18px 20px', flex: 1, minWidth: 140 }}>
       <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>{label}</div>
       <div style={{ ...F, fontSize: 28, fontWeight: 700, color }}>{value}</div>
+    </div>
+  );
+}
+
+function SettingRow({ label, description, children }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid #14202C', flexWrap: 'wrap', gap: 12 }}>
+      <div style={{ flex: 1, minWidth: 180 }}>
+        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{label}</div>
+        {description && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3, lineHeight: 1.5 }}>{description}</div>}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>{children}</div>
+    </div>
+  );
+}
+
+function ToggleButton({ active, onToggle, loading, activeLabel, inactiveLabel, activeColor = '#00D88A', inactiveColor = '#F04060' }) {
+  const color = active ? inactiveColor : activeColor;
+  return (
+    <div
+      onClick={loading ? undefined : onToggle}
+      style={{ ...F, fontSize: 9, fontWeight: 600, cursor: loading ? 'default' : 'pointer', padding: '8px 20px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color, border: `1px solid ${color}40`, background: `${color}10` }}
+    >
+      {loading ? '...' : active ? inactiveLabel : activeLabel}
     </div>
   );
 }
@@ -26,9 +52,367 @@ function formatTime(t) {
   return `${h}:${m}`;
 }
 
+// ─── Tab: Overview ───
+
+function OverviewTab({ stats, paywallEnabled, setPaywallEnabled }) {
+  const [paywallLoading, setPaywallLoading] = useState(false);
+
+  return (
+    <>
+      {/* STATS */}
+      {stats && (
+        <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
+          <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" />
+          <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" />
+          <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" />
+          <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" />
+        </div>
+      )}
+
+      {/* PAYWALL */}
+      <div style={{ background: '#0D1520', border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
+        <SettingRow
+          label="Paywall"
+          description={paywallEnabled ? 'Active — free users see the upgrade screen' : 'Disabled — all users have full access'}
+        >
+          <ToggleButton
+            active={paywallEnabled}
+            loading={paywallLoading}
+            onToggle={async () => {
+              setPaywallLoading(true);
+              try {
+                await updatePaywallSetting(!paywallEnabled);
+                setPaywallEnabled(!paywallEnabled);
+              } catch (e) { console.error('Paywall toggle error:', e); }
+              setPaywallLoading(false);
+            }}
+            activeLabel="ENABLE"
+            inactiveLabel="DISABLE"
+          />
+        </SettingRow>
+      </div>
+
+      {/* Quick info */}
+      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1.2, marginBottom: 14 }}>QUICK INFO</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          {[
+            ['Conversion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#E8A838'],
+            ['Completion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.withBirthData / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#5BA8D4'],
+            ['Weekly Growth', stats ? `${stats.totalUsers > 0 ? ((stats.recentSignups / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#D8A030'],
+          ].map(([label, val, color]) => (
+            <div key={label} style={{ background: '#0A1018', borderRadius: 8, padding: '12px 16px' }}>
+              <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 6 }}>{label}</div>
+              <div style={{ ...F, fontSize: 18, fontWeight: 700, color }}>{val}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Tab: Pricing & Settings ───
+
+function SettingsTab({ settings, onSave }) {
+  const [price, setPrice] = useState('');
+  const [currency, setCurrency] = useState('');
+  const [priceLabel, setPriceLabel] = useState('');
+  const [announcementText, setAnnouncementText] = useState('');
+  const [announcementActive, setAnnouncementActive] = useState(false);
+  const [announcementColor, setAnnouncementColor] = useState('');
+  const [saving, setSaving] = useState(null); // which field is saving
+  const [saved, setSaved] = useState(null); // which field was saved
+
+  // Sync from loaded settings
+  useEffect(() => {
+    if (!settings) return;
+    setPrice(settings.display_price || '3.99');
+    setCurrency(settings.display_currency || 'EUR');
+    setPriceLabel(settings.price_label || 'ONE-TIME · LIFETIME ACCESS');
+    setAnnouncementText(settings.announcement_text || '');
+    setAnnouncementActive(settings.announcement_active === 'true');
+    setAnnouncementColor(settings.announcement_color || '#D8A030');
+  }, [settings]);
+
+  const save = async (key, value) => {
+    setSaving(key);
+    try {
+      await onSave(key, value);
+      setSaved(key);
+      setTimeout(() => setSaved(null), 2000);
+    } catch (e) { console.error('Save error:', e); }
+    setSaving(null);
+  };
+
+  const inputStyle = { padding: '8px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box', width: '100%', maxWidth: 240 };
+  const saveBtn = (key, value) => (
+    <div
+      onClick={() => save(key, value)}
+      style={{ ...F, fontSize: 9, fontWeight: 600, cursor: saving === key ? 'default' : 'pointer', padding: '8px 16px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: saved === key ? '#00D88A' : '#5BA8D4', border: `1px solid ${saved === key ? '#00D88A40' : '#5BA8D440'}`, background: saved === key ? '#00D88A10' : '#5BA8D410', whiteSpace: 'nowrap' }}
+    >
+      {saving === key ? '...' : saved === key ? 'SAVED' : 'SAVE'}
+    </div>
+  );
+
+  return (
+    <>
+      {/* PRICING */}
+      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#E8A838', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: '1px solid #14202C' }}>PRICING</div>
+
+        <SettingRow label="Display Price" description="The price shown on the paywall screen. Make sure it matches your Stripe price.">
+          <input value={price} onChange={e => setPrice(e.target.value)} style={{ ...inputStyle, maxWidth: 100, textAlign: 'right' }} placeholder="3.99" />
+          {saveBtn('display_price', price)}
+        </SettingRow>
+
+        <SettingRow label="Currency" description="Currency symbol or code shown next to the price.">
+          <select
+            value={currency}
+            onChange={e => { setCurrency(e.target.value); save('display_currency', e.target.value); }}
+            style={{ ...inputStyle, maxWidth: 120, cursor: 'pointer', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none', paddingRight: 28, backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%235A7088\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
+          >
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+            <option value="CHF">CHF</option>
+          </select>
+        </SettingRow>
+
+        <SettingRow label="Price Label" description="Text shown below the price (e.g. ONE-TIME · LIFETIME ACCESS).">
+          <input value={priceLabel} onChange={e => setPriceLabel(e.target.value)} style={{ ...inputStyle, maxWidth: 260 }} placeholder="ONE-TIME · LIFETIME ACCESS" />
+          {saveBtn('price_label', priceLabel)}
+        </SettingRow>
+
+        <div style={{ ...F, fontSize: 9, color: '#5A7088', padding: '14px 0 6px', lineHeight: 1.6 }}>
+          The actual charge amount is controlled by your Stripe Price ID (environment variable). Change the display price here whenever you update Stripe.
+        </div>
+      </div>
+
+      {/* ANNOUNCEMENT BANNER */}
+      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#D8A030', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: '1px solid #14202C' }}>ANNOUNCEMENT BANNER</div>
+
+        <SettingRow label="Banner Active" description="Show a banner at the top of the dashboard for all users.">
+          <ToggleButton
+            active={announcementActive}
+            loading={saving === 'announcement_active'}
+            onToggle={() => {
+              const newVal = !announcementActive;
+              setAnnouncementActive(newVal);
+              save('announcement_active', newVal ? 'true' : 'false');
+            }}
+            activeLabel="ENABLE"
+            inactiveLabel="DISABLE"
+          />
+        </SettingRow>
+
+        <SettingRow label="Banner Text" description="Message shown in the announcement banner.">
+          <input value={announcementText} onChange={e => setAnnouncementText(e.target.value)} style={{ ...inputStyle, maxWidth: 320 }} placeholder="Scheduled maintenance tonight at 22:00 CET" />
+          {saveBtn('announcement_text', announcementText)}
+        </SettingRow>
+
+        <SettingRow label="Banner Color" description="Accent color for the announcement banner.">
+          <div style={{ display: 'flex', gap: 8 }}>
+            {['#D8A030', '#F04060', '#00D88A', '#5BA8D4', '#A070D0'].map(c => (
+              <div
+                key={c}
+                onClick={() => { setAnnouncementColor(c); save('announcement_color', c); }}
+                style={{ width: 28, height: 28, borderRadius: 6, background: c, cursor: 'pointer', border: announcementColor === c ? '2px solid #D0DDE8' : '2px solid transparent', transition: 'border .15s' }}
+              />
+            ))}
+          </div>
+        </SettingRow>
+
+        {/* Preview */}
+        {announcementText && (
+          <div style={{ marginTop: 12, marginBottom: 8 }}>
+            <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 8 }}>PREVIEW</div>
+            <div style={{ ...F, fontSize: 10, color: announcementColor, background: `${announcementColor}10`, border: `1px solid ${announcementColor}30`, borderRadius: 6, padding: '8px 14px', lineHeight: 1.5 }}>
+              {announcementText}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── Tab: Users ───
+
+function UsersTab({ users, total, loading, selected, setSelected, premiumToggling, setPremiumToggling, page, setPage, pageSize, searchInput, setSearchInput, sortField, setSortField, sortAsc, setSortAsc, setUsers }) {
+  const totalPages = Math.ceil(total / pageSize);
+
+  function handleSort(field) {
+    if (sortField === field) setSortAsc(!sortAsc);
+    else { setSortField(field); setSortAsc(true); }
+    setPage(1);
+  }
+
+  const sortArrow = (field) => sortField === field ? (sortAsc ? ' \u25B2' : ' \u25BC') : '';
+
+  const columns = [
+    { key: 'display_name', label: 'NAME', w: 140 },
+    { key: 'email', label: 'EMAIL', w: 220 },
+    { key: 'birth_city', label: 'BIRTH CITY', w: 140 },
+    { key: 'birth_date', label: 'BIRTH DATE', w: 100 },
+    { key: 'birth_time', label: 'TIME', w: 70 },
+    { key: 'updated_at', label: 'LAST UPDATE', w: 120 },
+  ];
+
+  return (
+    <>
+      {/* SEARCH */}
+      <div style={{ marginBottom: 16 }}>
+        <input
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          placeholder="Search by name, email, or city..."
+          style={{ width: '100%', maxWidth: 400, padding: '10px 14px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
+        />
+      </div>
+
+      {/* TABLE */}
+      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, overflow: 'hidden' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', background: '#0B1218', borderBottom: '1px solid #1A2840', padding: '10px 14px', overflowX: 'auto' }}>
+          {columns.map(col => (
+            <div
+              key={col.key}
+              onClick={() => handleSort(col.key)}
+              style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1.2, cursor: 'pointer', width: col.w, minWidth: col.w, flexShrink: 0, userSelect: 'none' }}
+            >
+              {col.label}{sortArrow(col.key)}
+            </div>
+          ))}
+        </div>
+
+        {/* Rows */}
+        <div style={{ overflowX: 'auto' }}>
+          {loading ? (
+            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>Loading...</div>
+          ) : users.length === 0 ? (
+            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>No users found</div>
+          ) : (
+            users.map(u => (
+              <div
+                key={u.id}
+                onClick={() => setSelected(selected?.id === u.id ? null : u)}
+                style={{ display: 'flex', padding: '10px 14px', borderBottom: '1px solid #14202C', cursor: 'pointer', background: selected?.id === u.id ? '#101C28' : 'transparent', transition: 'background .15s', minWidth: 'fit-content' }}
+                onMouseEnter={e => { if (selected?.id !== u.id) e.currentTarget.style.background = '#0C1620'; }}
+                onMouseLeave={e => { if (selected?.id !== u.id) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <div style={{ ...F, fontSize: 11, color: '#D0DDE8', width: 140, minWidth: 140, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {u.display_name || '\u2014'}
+                  {u.is_admin && <span style={{ ...F, fontSize: 7, color: '#D8A030', marginLeft: 6 }}>ADMIN</span>}
+                  {u.is_premium && <span style={{ ...F, fontSize: 7, color: '#E8A838', marginLeft: 4 }}>PRO</span>}
+                </div>
+                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 220, minWidth: 220, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || '\u2014'}</div>
+                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 140, minWidth: 140, flexShrink: 0 }}>{u.birth_city || '\u2014'}</div>
+                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 100, minWidth: 100, flexShrink: 0 }}>{formatDate(u.birth_date)}</div>
+                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 70, minWidth: 70, flexShrink: 0 }}>{formatTime(u.birth_time)}</div>
+                <div style={{ ...F, fontSize: 11, color: '#5A7088', width: 120, minWidth: 120, flexShrink: 0 }}>{u.updated_at ? new Date(u.updated_at).toLocaleDateString('de-DE') : '\u2014'}</div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 16 }}>
+          <button
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page <= 1}
+            style={{ ...F, fontSize: 9, color: page <= 1 ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page <= 1 ? 'default' : 'pointer' }}
+          >
+            PREV
+          </button>
+          <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{page} / {totalPages}</span>
+          <button
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page >= totalPages}
+            style={{ ...F, fontSize: 9, color: page >= totalPages ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page >= totalPages ? 'default' : 'pointer' }}
+          >
+            NEXT
+          </button>
+        </div>
+      )}
+
+      {/* USER DETAIL PANEL */}
+      {selected && (
+        <div style={{ marginTop: 16, background: '#0D1520', border: `1px solid ${selected.is_admin ? '#D8A03040' : '#1A2840'}`, borderRadius: 10, padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>
+              {selected.display_name || 'No name'}
+              {selected.is_admin && <span style={{ ...F, fontSize: 9, color: '#D8A030', marginLeft: 10 }}>ADMIN</span>}
+              {selected.is_premium && <span style={{ ...F, fontSize: 9, color: '#E8A838', marginLeft: 10 }}>PREMIUM</span>}
+            </div>
+            <span onClick={() => setSelected(null)} style={{ ...F, fontSize: 11, color: '#5A7088', cursor: 'pointer' }}>CLOSE</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
+            {[
+              ['EMAIL', selected.email],
+              ['USER ID', selected.id],
+              ['BIRTH DATE', formatDate(selected.birth_date)],
+              ['BIRTH TIME', formatTime(selected.birth_time)],
+              ['BIRTH CITY', selected.birth_city],
+              ['COORDINATES', selected.birth_lat != null ? `${selected.birth_lat?.toFixed(2)}, ${selected.birth_lng?.toFixed(2)}` : '\u2014'],
+              ['STRIPE ID', selected.stripe_customer_id || '\u2014'],
+              ['LAST UPDATE', selected.updated_at ? new Date(selected.updated_at).toLocaleString('de-DE') : '\u2014'],
+              ['CREATED', selected.created_at ? new Date(selected.created_at).toLocaleString('de-DE') : '\u2014'],
+            ].map(([label, val]) => (
+              <div key={label}>
+                <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+                <div style={{ ...F, fontSize: 11, color: '#B0C0D0', wordBreak: 'break-all' }}>{val || '\u2014'}</div>
+              </div>
+            ))}
+          </div>
+          {/* Premium toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTop: '1px solid #1A2840', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div style={{ ...F, fontSize: 10, fontWeight: 600, color: '#D0DDE8' }}>Premium Status</div>
+              <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
+                {selected.is_premium ? 'This user has premium access' : 'This user is on the free plan'}
+              </div>
+            </div>
+            <div
+              onClick={async () => {
+                if (premiumToggling === selected.id) return;
+                setPremiumToggling(selected.id);
+                try {
+                  const newVal = !selected.is_premium;
+                  await toggleUserPremium(selected.id, newVal);
+                  setSelected({ ...selected, is_premium: newVal });
+                  setUsers(prev => prev.map(u => u.id === selected.id ? { ...u, is_premium: newVal } : u));
+                } catch (e) { console.error('Premium toggle error:', e); }
+                setPremiumToggling(null);
+              }}
+              style={{ ...F, fontSize: 9, fontWeight: 600, cursor: premiumToggling === selected.id ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: selected.is_premium ? '#F04060' : '#E8A838', border: `1px solid ${selected.is_premium ? '#F0406040' : '#E8A83840'}`, background: selected.is_premium ? '#F0406010' : '#E8A83810' }}
+            >
+              {premiumToggling === selected.id ? '...' : selected.is_premium ? 'REVOKE PREMIUM' : 'GRANT PREMIUM'}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ─── Main Admin Page ───
+
+const TABS = [
+  { key: 'overview', label: 'OVERVIEW', color: '#00D88A' },
+  { key: 'settings', label: 'SETTINGS', color: '#E8A838' },
+  { key: 'users', label: 'USERS', color: '#5BA8D4' },
+];
+
 export default function AdminPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Data state
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState(0);
@@ -39,22 +423,24 @@ export default function AdminPage() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paywallEnabled, setPaywallEnabled] = useState(true);
-  const [paywallLoading, setPaywallLoading] = useState(false);
   const [premiumToggling, setPremiumToggling] = useState(null);
+  const [appSettings, setAppSettings] = useState(null);
   const pageSize = 25;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [s, u, pw] = await Promise.all([
+      const [s, u, pw, as] = await Promise.all([
         fetchAdminStats(),
         fetchAllProfiles({ search, sortField, sortAsc, page, pageSize }),
         fetchPaywallSetting(),
+        fetchAllAppSettings(),
       ]);
       setStats(s);
       setUsers(u.data);
       setTotal(u.total);
       setPaywallEnabled(pw);
+      setAppSettings(as);
     } catch (e) {
       console.error('Admin fetch error:', e);
     }
@@ -70,24 +456,10 @@ export default function AdminPage() {
     return () => clearTimeout(t);
   }, [searchInput]);
 
-  const totalPages = Math.ceil(total / pageSize);
-
-  function handleSort(field) {
-    if (sortField === field) setSortAsc(!sortAsc);
-    else { setSortField(field); setSortAsc(true); }
-    setPage(1);
-  }
-
-  const sortArrow = (field) => sortField === field ? (sortAsc ? ' ▲' : ' ▼') : '';
-
-  const columns = [
-    { key: 'display_name', label: 'NAME', w: 140 },
-    { key: 'email', label: 'EMAIL', w: 220 },
-    { key: 'birth_city', label: 'BIRTH CITY', w: 140 },
-    { key: 'birth_date', label: 'BIRTH DATE', w: 100 },
-    { key: 'birth_time', label: 'TIME', w: 70 },
-    { key: 'updated_at', label: 'LAST UPDATE', w: 120 },
-  ];
+  const handleSaveSetting = async (key, value) => {
+    await updateAppSetting(key, value);
+    setAppSettings(prev => ({ ...prev, [key]: String(value) }));
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0A1018', color: '#D0DDE8', overflow: 'hidden' }}>
@@ -109,170 +481,50 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
-        {/* PAYWALL TOGGLE */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0D1520', border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
-          <div>
-            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Paywall</div>
-            <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
-              {paywallEnabled ? 'Active — free users see the upgrade screen' : 'Disabled — all users have full access'}
+      {/* TAB BAR */}
+      <div style={{ display: 'flex', gap: 0, background: '#0B1218', borderBottom: '1px solid #1A2840', flexShrink: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        {TABS.map(t => {
+          const active = activeTab === t.key;
+          return (
+            <div
+              key={t.key}
+              onClick={() => setActiveTab(t.key)}
+              style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1.5, padding: '12px 24px', cursor: 'pointer', color: active ? t.color : '#5A7088', borderBottom: active ? `2px solid ${t.color}` : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', userSelect: 'none' }}
+            >
+              {t.label}
             </div>
-          </div>
-          <div
-            onClick={async () => {
-              setPaywallLoading(true);
-              try {
-                await updatePaywallSetting(!paywallEnabled);
-                setPaywallEnabled(!paywallEnabled);
-              } catch (e) { console.error('Paywall toggle error:', e); }
-              setPaywallLoading(false);
-            }}
-            style={{ ...F, fontSize: 9, fontWeight: 600, cursor: paywallLoading ? 'default' : 'pointer', padding: '8px 20px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: paywallEnabled ? '#F04060' : '#00D88A', border: `1px solid ${paywallEnabled ? '#F0406040' : '#00D88A40'}`, background: paywallEnabled ? '#F0406010' : '#00D88A10' }}
-          >
-            {paywallLoading ? '...' : paywallEnabled ? 'DISABLE' : 'ENABLE'}
-          </div>
-        </div>
+          );
+        })}
+      </div>
 
-        {/* STATS */}
-        {stats && (
-          <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
-            <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" />
-            <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" />
-            <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" />
-            <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" />
-          </div>
+      {/* CONTENT */}
+      <div style={{ flex: 1, overflow: 'auto', padding: 20, WebkitOverflowScrolling: 'touch' }}>
+        {activeTab === 'overview' && (
+          <OverviewTab stats={stats} paywallEnabled={paywallEnabled} setPaywallEnabled={setPaywallEnabled} />
         )}
-
-        {/* SEARCH */}
-        <div style={{ marginBottom: 16 }}>
-          <input
-            value={searchInput}
-            onChange={e => setSearchInput(e.target.value)}
-            placeholder="Search by name, email, or city..."
-            style={{ width: '100%', maxWidth: 400, padding: '10px 14px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
+        {activeTab === 'settings' && (
+          <SettingsTab settings={appSettings} onSave={handleSaveSetting} />
+        )}
+        {activeTab === 'users' && (
+          <UsersTab
+            users={users}
+            total={total}
+            loading={loading}
+            selected={selected}
+            setSelected={setSelected}
+            premiumToggling={premiumToggling}
+            setPremiumToggling={setPremiumToggling}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortAsc={sortAsc}
+            setSortAsc={setSortAsc}
+            setUsers={setUsers}
           />
-        </div>
-
-        {/* TABLE */}
-        <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, overflow: 'hidden' }}>
-          {/* Header */}
-          <div style={{ display: 'flex', background: '#0B1218', borderBottom: '1px solid #1A2840', padding: '10px 14px' }}>
-            {columns.map(col => (
-              <div
-                key={col.key}
-                onClick={() => handleSort(col.key)}
-                style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1.2, cursor: 'pointer', width: col.w, flexShrink: 0, userSelect: 'none' }}
-              >
-                {col.label}{sortArrow(col.key)}
-              </div>
-            ))}
-          </div>
-
-          {/* Rows */}
-          {loading ? (
-            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>Loading...</div>
-          ) : users.length === 0 ? (
-            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>No users found</div>
-          ) : (
-            users.map(u => (
-              <div
-                key={u.id}
-                onClick={() => setSelected(selected?.id === u.id ? null : u)}
-                style={{ display: 'flex', padding: '10px 14px', borderBottom: '1px solid #14202C', cursor: 'pointer', background: selected?.id === u.id ? '#101C28' : 'transparent', transition: 'background .15s' }}
-                onMouseEnter={e => { if (selected?.id !== u.id) e.currentTarget.style.background = '#0C1620'; }}
-                onMouseLeave={e => { if (selected?.id !== u.id) e.currentTarget.style.background = 'transparent'; }}
-              >
-                <div style={{ ...F, fontSize: 11, color: '#D0DDE8', width: 140, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {u.display_name || '—'}
-                  {u.is_admin && <span style={{ ...F, fontSize: 7, color: '#D8A030', marginLeft: 6 }}>ADMIN</span>}
-                  {u.is_premium && <span style={{ ...F, fontSize: 7, color: '#E8A838', marginLeft: 4 }}>PRO</span>}
-                </div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 220, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || '—'}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 140, flexShrink: 0 }}>{u.birth_city || '—'}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 100, flexShrink: 0 }}>{formatDate(u.birth_date)}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 70, flexShrink: 0 }}>{formatTime(u.birth_time)}</div>
-                <div style={{ ...F, fontSize: 11, color: '#5A7088', width: 120, flexShrink: 0 }}>{u.updated_at ? new Date(u.updated_at).toLocaleDateString('de-DE') : '—'}</div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* PAGINATION */}
-        {totalPages > 1 && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 16 }}>
-            <button
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page <= 1}
-              style={{ ...F, fontSize: 9, color: page <= 1 ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page <= 1 ? 'default' : 'pointer' }}
-            >
-              PREV
-            </button>
-            <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{page} / {totalPages}</span>
-            <button
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page >= totalPages}
-              style={{ ...F, fontSize: 9, color: page >= totalPages ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page >= totalPages ? 'default' : 'pointer' }}
-            >
-              NEXT
-            </button>
-          </div>
-        )}
-
-        {/* USER DETAIL PANEL */}
-        {selected && (
-          <div style={{ marginTop: 16, background: '#0D1520', border: `1px solid ${selected.is_admin ? '#D8A03040' : '#1A2840'}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>
-                {selected.display_name || 'No name'}
-                {selected.is_admin && <span style={{ ...F, fontSize: 9, color: '#D8A030', marginLeft: 10 }}>ADMIN</span>}
-                {selected.is_premium && <span style={{ ...F, fontSize: 9, color: '#E8A838', marginLeft: 10 }}>PREMIUM</span>}
-              </div>
-              <span onClick={() => setSelected(null)} style={{ ...F, fontSize: 11, color: '#5A7088', cursor: 'pointer' }}>CLOSE</span>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
-              {[
-                ['EMAIL', selected.email],
-                ['USER ID', selected.id],
-                ['BIRTH DATE', formatDate(selected.birth_date)],
-                ['BIRTH TIME', formatTime(selected.birth_time)],
-                ['BIRTH CITY', selected.birth_city],
-                ['COORDINATES', selected.birth_lat != null ? `${selected.birth_lat?.toFixed(2)}, ${selected.birth_lng?.toFixed(2)}` : '—'],
-                ['STRIPE ID', selected.stripe_customer_id || '—'],
-                ['LAST UPDATE', selected.updated_at ? new Date(selected.updated_at).toLocaleString('de-DE') : '—'],
-                ['CREATED', selected.created_at ? new Date(selected.created_at).toLocaleString('de-DE') : '—'],
-              ].map(([label, val]) => (
-                <div key={label}>
-                  <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
-                  <div style={{ ...F, fontSize: 11, color: '#B0C0D0', wordBreak: 'break-all' }}>{val || '—'}</div>
-                </div>
-              ))}
-            </div>
-            {/* Premium toggle */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTop: '1px solid #1A2840' }}>
-              <div>
-                <div style={{ ...F, fontSize: 10, fontWeight: 600, color: '#D0DDE8' }}>Premium Status</div>
-                <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
-                  {selected.is_premium ? 'This user has premium access' : 'This user is on the free plan'}
-                </div>
-              </div>
-              <div
-                onClick={async () => {
-                  if (premiumToggling === selected.id) return;
-                  setPremiumToggling(selected.id);
-                  try {
-                    const newVal = !selected.is_premium;
-                    await toggleUserPremium(selected.id, newVal);
-                    setSelected({ ...selected, is_premium: newVal });
-                    setUsers(prev => prev.map(u => u.id === selected.id ? { ...u, is_premium: newVal } : u));
-                  } catch (e) { console.error('Premium toggle error:', e); }
-                  setPremiumToggling(null);
-                }}
-                style={{ ...F, fontSize: 9, fontWeight: 600, cursor: premiumToggling === selected.id ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, letterSpacing: 0.5, transition: 'all .2s', color: selected.is_premium ? '#F04060' : '#E8A838', border: `1px solid ${selected.is_premium ? '#F0406040' : '#E8A83840'}`, background: selected.is_premium ? '#F0406010' : '#E8A83810' }}
-              >
-                {premiumToggling === selected.id ? '...' : selected.is_premium ? 'REVOKE PREMIUM' : 'GRANT PREMIUM'}
-              </div>
-            </div>
-          </div>
         )}
       </div>
     </div>
