@@ -24,6 +24,31 @@ const LINE_COLORS = {
   Neptune: '#4868B8', Pluto: '#7048A0',
 };
 
+function norm360(a) { return ((a % 360) + 360) % 360; }
+
+// Porphyry house cusps — returns array [null, cusp1..cusp12] in ecliptic degrees
+function porphyryHouses(ascLon, mcLon) {
+  const dsc = norm360(ascLon + 180), ic = norm360(mcLon + 180);
+  function tri(a, b) { const s = norm360(b - a); return [norm360(a + s / 3), norm360(a + 2 * s / 3)]; }
+  const [c2, c3] = tri(ic, ascLon);
+  const [c11, c12] = tri(ascLon, mcLon);
+  const [c8, c9] = tri(mcLon, dsc);
+  const [c5, c6] = tri(dsc, ic);
+  return [null, ascLon, c2, c3, ic, c5, c6, dsc, c8, c9, mcLon, c11, c12];
+}
+
+// Determine which house (1-12) a planet at ecliptic longitude falls in
+function getHouse(planetLon, cusps) {
+  for (let h = 1; h <= 12; h++) {
+    const start = cusps[h];
+    const end = cusps[h === 12 ? 1 : h + 1];
+    const pNorm = norm360(planetLon - start);
+    const hSize = norm360(end - start);
+    if (pNorm < hSize) return h;
+  }
+  return 1; // fallback
+}
+
 function eclipticToZodiac(lon) {
   const sign = Math.floor(lon / 30);
   const deg = lon - sign * 30;
@@ -289,6 +314,18 @@ export function calculateChart({ date, time, lat, lng }) {
   const natalMCZodiac = eclipticToZodiac(natalMC);
   const natalASCZodiac = eclipticToZodiac(natalASC);
 
+  // Calculate Porphyry house cusps and assign each planet to a house
+  const cusps = porphyryHouses(natalASC, natalMC);
+  for (const p of planetPositions) {
+    p.house = getHouse(p.fullDeg, cusps);
+  }
+
+  // House cusps as zodiac positions (for display)
+  const houseCusps = [];
+  for (let h = 1; h <= 12; h++) {
+    houseCusps.push({ house: h, ...eclipticToZodiac(cusps[h]) });
+  }
+
   const planetString = planetPositions.map(p =>
     `${p.symbol} ${p.sign} ${p.deg}°${String(p.min).padStart(2, '0')}'${p.retrograde ? '℞' : ''}`
   ).join(' · ') + ` · ASC ${natalASCZodiac.sign} ${natalASCZodiac.deg}°${String(natalASCZodiac.min).padStart(2, '0')}' · MC ${natalMCZodiac.sign} ${natalMCZodiac.deg}°${String(natalMCZodiac.min).padStart(2, '0')}'`;
@@ -301,6 +338,7 @@ export function calculateChart({ date, time, lat, lng }) {
       sun: planetPositions.find(p => p.id === 'Sun'),
       moon: planetPositions.find(p => p.id === 'Moon'),
     },
+    houseCusps,
     planetString,
     birthLocation: { lat: parsedLat, lng: parsedLng },
   };

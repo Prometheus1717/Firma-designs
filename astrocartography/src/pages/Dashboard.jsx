@@ -263,6 +263,8 @@ export default function Dashboard({ demo = false }) {
   const [flatMap, setFlatMap] = useState(false);
   const [hiddenPlanets, setHiddenPlanets] = useState(new Set());
   const [showNatal, setShowNatal] = useState(false);
+  const [natalTab, setNatalTab] = useState('chart'); // 'chart' | 'planets'
+  const [selectedPlacement, setSelectedPlacement] = useState(null); // { id, type } for detail view
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [guideTab, _setGuideTab] = useState(0);
@@ -447,6 +449,12 @@ export default function Dashboard({ demo = false }) {
       finally { setLoading(false); }
     });
   }, [demo, hasBirthData, profile]);
+
+  // Lazy-load natal readings data when chart is available
+  useEffect(() => {
+    if (!chartData?.planets || window.__natalReadings) return;
+    import('../data/natalReadings').then(mod => { window.__natalReadings = mod; }).catch(() => {});
+  }, [chartData]);
 
   const lines = chartData?.lines || [];
   const visibleLines = useMemo(() => lines.filter(l => !hiddenPlanets.has(l.planet)), [lines, hiddenPlanets]);
@@ -836,113 +844,257 @@ export default function Dashboard({ demo = false }) {
 
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
-            <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => setShowNatal(false)} />
-            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 400, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
+            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>NATAL CHART</span>
-                  {chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
+                  {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: '#5A7088', marginRight: 4 }}>&larr;</span>}
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? 'ASCENDANT' : selectedPlacement.type === 'mc' ? 'MIDHEAVEN' : selectedPlacement.id?.toUpperCase()) : 'NATAL CHART'}</span>
+                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}\u00B0 \u00B7 MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}\u00B0</span>}
                 </div>
-                <span onClick={() => setShowNatal(false)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+                <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>\u2715</span>
               </div>
 
-              {/* Column headers */}
-              <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
-                <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
-              </div>
-
-              {/* Planet rows */}
-              <div style={{ flex: 1, overflowY: 'auto' }}>
-                {chartData.planets.map((p, i) => {
-                  const elem = SIGN_ELEMENTS[p.sign] || '';
-                  const mode = SIGN_MODES[p.sign] || '';
-                  const pc = PCOL[p.id] || '#8098B0';
-                  const pd = PLANET_DOMAINS[p.id];
-                  return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                      {/* Planet */}
-                      <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1 }}>{p.symbol}</span>
-                        <div>
-                          <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
-                          {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
-                        </div>
-                      </div>
-                      {/* Sign */}
-                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
-                      </div>
-                      {/* Degree */}
-                      <div style={{ width: 60, textAlign: 'right' }}>
-                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}°</span>
-                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
-                      </div>
-                      {/* Element */}
-                      <div style={{ width: 50, textAlign: 'center' }}>
-                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
-                      </div>
-                      {/* Domain */}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{pd?.domain || ''}</div>
-                        <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{mode}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Angles section */}
-                {chartData.natal && <>
-                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
-                  {[
-                    { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
-                    { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
-                  ].map((a, i) => a.data && (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
-                      <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '△' : '▽'}</span>
-                        <div>
-                          <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
-                          <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
-                        </div>
-                      </div>
-                      <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
-                      </div>
-                      <div style={{ width: 60, textAlign: 'right' }}>
-                        <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}°</span>
-                        <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
-                      </div>
-                      <div style={{ width: 50, textAlign: 'center' }}>
-                        <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{a.desc}</div>
-                      </div>
+              {/* Tab bar — only when no detail view */}
+              {!selectedPlacement && (
+                <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0 }}>
+                  {[{ key: 'chart', label: 'CHART' }, { key: 'planets', label: 'YOUR BIRTH CHART' }].map(t => (
+                    <div key={t.key} onClick={() => setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
+                      {t.label}
                     </div>
                   ))}
-                </>}
+                </div>
+              )}
 
-                {/* Element summary footer */}
-                <div style={{ padding: '8px 14px', borderTop: '1px solid #1A2840', background: '#0D1520', display: 'flex', gap: 12 }}>
-                  {['Fire', 'Earth', 'Air', 'Water'].map(el => {
-                    const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
+              {/* ═══ DETAIL VIEW — Planet / ASC / MC reading ═══ */}
+              {selectedPlacement && (() => {
+                const sp = selectedPlacement;
+                let signData, signReading, houseReading, houseNum, pc, degStr;
+                if (sp.type === 'planet') {
+                  const p = chartData.planets.find(pl => pl.id === sp.id);
+                  if (!p) return null;
+                  pc = PCOL[p.id] || '#8098B0';
+                  degStr = `${p.deg}\u00B0 ${p.sign.slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' \u211E' : ''}`;
+                  houseNum = p.house;
+                  signData = p;
+                  const nR = window.__natalReadings;
+                  signReading = nR?.PLANET_IN_SIGN?.[`${p.id}-${p.sign}`];
+                  houseReading = nR?.PLANET_IN_HOUSE?.[`${p.id}-${houseNum}`];
+                } else if (sp.type === 'asc') {
+                  const a = chartData.natal.asc;
+                  pc = '#E8A838';
+                  degStr = `${a.deg}\u00B0 ${a.sign.slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
+                  signData = a;
+                  houseNum = null;
+                  const nR = window.__natalReadings;
+                  signReading = nR?.ASC_IN_SIGN?.[a.sign];
+                  houseReading = null;
+                } else if (sp.type === 'mc') {
+                  const m = chartData.natal.mc;
+                  pc = '#E8A838';
+                  degStr = `${m.deg}\u00B0 ${m.sign.slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
+                  signData = m;
+                  houseNum = null;
+                  const nR = window.__natalReadings;
+                  signReading = nR?.MC_IN_SIGN?.[m.sign];
+                  houseReading = null;
+                }
+                const elem = SIGN_ELEMENTS[signData?.sign] || '';
+                const titleLabel = sp.type === 'asc' ? 'Ascendant' : sp.type === 'mc' ? 'Midheaven' : sp.id;
+                const nR = window.__natalReadings;
+                const houseInfo = houseNum ? nR?.HOUSE_INFO?.[houseNum] : null;
+                const planetInfo = sp.type === 'planet' ? nR?.PLANET_INFO?.[sp.id] : null;
+                return (
+                  <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                    {/* Title section */}
+                    <div style={{ padding: '20px 18px 16px', borderBottom: '1px solid #14202C' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '\u25B3' : sp.type === 'mc' ? '\u25BD' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
+                        <span style={{ fontSize: 28, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[signData?.sign] || ''}</span>
+                      </div>
+                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#D0DDE8', letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} in {signData?.sign}</div>
+                      <div style={{ ...F, fontSize: 11, color: '#5A7088' }}>{degStr}</div>
+                      {houseNum && <div style={{ ...F, fontSize: 11, color: pc, marginTop: 4 }}>{titleLabel} in the {['','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth'][houseNum]} House</div>}
+                    </div>
+
+                    {/* Planet info badge */}
+                    {planetInfo && (
+                      <div style={{ padding: '10px 18px', borderBottom: '1px solid #14202C', background: '#0C1420' }}>
+                        <div style={{ ...F, fontSize: 9, color: '#5A7088', lineHeight: 1.6 }}>{planetInfo.description}</div>
+                      </div>
+                    )}
+
+                    {/* Sign reading */}
+                    {signReading && (
+                      <div style={{ padding: '18px 18px 14px' }}>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? 'YOUR RISING SIGN' : sp.type === 'mc' ? 'YOUR MIDHEAVEN' : `${sp.id?.toUpperCase()} IN ${signData?.sign?.toUpperCase()}`}</div>
+                        <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{signReading.text}</div>
+                      </div>
+                    )}
+
+                    {/* House reading */}
+                    {houseReading && (
+                      <div style={{ padding: '14px 18px 18px', borderTop: '1px solid #14202C' }}>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} IN THE {['','FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH','SEVENTH','EIGHTH','NINTH','TENTH','ELEVENTH','TWELFTH'][houseNum]} HOUSE</div>
+                        <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{houseReading.text}</div>
+                      </div>
+                    )}
+
+                    {/* Details section */}
+                    <div style={{ padding: '14px 18px 20px', borderTop: '1px solid #1A2840' }}>
+                      <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>DETAILS</div>
+                      {[
+                        ['Position', `${signData?.deg}\u00B0 ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
+                        houseNum ? ['House', `${houseNum}${houseNum===1?'st':houseNum===2?'nd':houseNum===3?'rd':'th'} House${houseInfo ? ' \u2014 ' + houseInfo.keyword : ''}`] : null,
+                        ['Element', elem],
+                        ['Mode', SIGN_MODES[signData?.sign] || ''],
+                        sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? ['Motion', 'Retrograde \u211E'] : null,
+                        planetInfo?.rules ? ['Rules', planetInfo.rules] : null,
+                      ].filter(Boolean).map(([label, val]) => (
+                        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #14202C' }}>
+                          <span style={{ ...F, fontSize: 11, fontWeight: 600, color: '#8098B0' }}>{label}</span>
+                          <span style={{ ...F, fontSize: 11, color: '#D0DDE8' }}>{val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ═══ CHART TAB — original planet table ═══ */}
+              {!selectedPlacement && natalTab === 'chart' && (
+                <>
+                  {/* Column headers */}
+                  <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018', flexShrink: 0 }}>
+                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
+                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
+                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
+                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
+                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
+                  </div>
+                  <div style={{ flex: 1, overflowY: 'auto' }}>
+                    {chartData.planets.map((p, i) => {
+                      const elem = SIGN_ELEMENTS[p.sign] || '';
+                      const mode = SIGN_MODES[p.sign] || '';
+                      const pc = PCOL[p.id] || '#8098B0';
+                      const pd = PLANET_DOMAINS[p.id];
+                      return (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                          <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
+                            <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1 }}>{p.symbol}</span>
+                            <div>
+                              <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
+                              {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
+                            </div>
+                          </div>
+                          <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
+                            <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
+                          </div>
+                          <div style={{ width: 60, textAlign: 'right' }}>
+                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}\u00B0</span>
+                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
+                          </div>
+                          <div style={{ width: 50, textAlign: 'center' }}>
+                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{pd?.domain || ''}</div>
+                            <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{mode}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {chartData.natal && <>
+                      <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
+                      {[
+                        { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign \u2014 your outward persona' },
+                        { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
+                      ].map((a, i) => a.data && (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
+                          <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
+                            <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '\u25B3' : '\u25BD'}</span>
+                            <div>
+                              <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
+                              <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
+                            </div>
+                          </div>
+                          <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
+                            <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
+                          </div>
+                          <div style={{ width: 60, textAlign: 'right' }}>
+                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}\u00B0</span>
+                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
+                          </div>
+                          <div style={{ width: 50, textAlign: 'center' }}>
+                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{a.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </>}
+                    <div style={{ padding: '8px 14px', borderTop: '1px solid #1A2840', background: '#0D1520', display: 'flex', gap: 12 }}>
+                      {['Fire', 'Earth', 'Air', 'Water'].map(el => {
+                        const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
+                        return (
+                          <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <div style={{ width: 6, height: 6, borderRadius: 1, background: ELEM_COL[el] }} />
+                            <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
+                            <span style={{ ...F, fontSize: 9, color: '#D0DDE8', fontWeight: 700 }}>{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ═══ PLANETS TAB — clickable list with readings ═══ */}
+              {!selectedPlacement && natalTab === 'planets' && (
+                <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                  {chartData.planets.map((p, i) => {
+                    const elem = SIGN_ELEMENTS[p.sign] || '';
+                    const pc = PCOL[p.id] || '#8098B0';
                     return (
-                      <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <div style={{ width: 6, height: 6, borderRadius: 1, background: ELEM_COL[el] }} />
-                        <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
-                        <span style={{ ...F, fontSize: 9, color: '#D0DDE8', fontWeight: 700 }}>{count}</span>
+                      <div key={i} onClick={() => setSelectedPlacement({ id: p.id, type: 'planet' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: 18, color: pc, lineHeight: 1 }}>{p.symbol}</span>
+                          <div>
+                            <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{p.id} in {p.sign}</div>
+                            {p.house && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' \u00B7 Retrograde' : ''}</div>}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{p.deg}\u00B0 {p.sign.slice(0,3)} {String(p.min).padStart(2,'0')}'</span>
+                          <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
+                        </div>
                       </div>
                     );
                   })}
+
+                  {/* Angles */}
+                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
+                  {[
+                    { label: 'Ascendant', type: 'asc', data: chartData.natal?.asc, symbol: '\u25B3' },
+                    { label: 'Midheaven', type: 'mc', data: chartData.natal?.mc, symbol: '\u25BD' },
+                  ].map(a => a.data && (
+                    <div key={a.type} onClick={() => setSelectedPlacement({ id: a.label, type: a.type })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{ fontSize: 18, color: '#E8A838', lineHeight: 1 }}>{a.symbol}</span>
+                        <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{a.label} in {a.data.sign}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{a.data.deg}\u00B0 {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
+                        <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
             </>)}
 
@@ -1309,7 +1461,7 @@ export default function Dashboard({ demo = false }) {
                         { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
                         { step: '03', title: 'Click on cities', desc: 'Cities near your lines appear in the bottom panel. Click any city to get a detailed reading of what that planetary energy means for you there.' },
                         { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
-                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your full planetary positions — signs, degrees, elements, and domains.' },
+                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your planetary positions. Switch to "Your Birth Chart" for detailed readings \u2014 tap any planet to see what it means in your sign and house.' },
                       ].map(s => (
                         <div key={s.step} style={{ background: '#0D1520', padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <span style={{ ...F, fontSize: 20, fontWeight: 700, color: '#8068C040', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
