@@ -1,4 +1,5 @@
 import * as Astronomy from 'astronomy-engine';
+import tzlookup from 'tz-lookup';
 
 const PLANETS = [
   { id: 'Sun', symbol: '☉', body: Astronomy.Body.Sun },
@@ -247,12 +248,37 @@ function getLineDescription(planetId, angle, zodiacInfo) {
 export function calculateChart({ date, time, lat, lng }) {
   // Normalize time — Supabase may return HH:MM:SS, we need HH:MM:SS for ISO
   const normalizedTime = time.length === 5 ? `${time}:00` : time; // HH:MM → HH:MM:00
-  const birthDate = new Date(`${date}T${normalizedTime}Z`);
-  if (isNaN(birthDate.getTime())) throw new Error(`Invalid date/time: ${date} ${time}`);
 
   const parsedLat = parseFloat(lat);
   const parsedLng = parseFloat(lng);
   if (isNaN(parsedLat) || isNaN(parsedLng)) throw new Error('Invalid coordinates');
+
+  // Convert local birth time to UTC using the timezone of the birth location.
+  // Users enter their birth time in local time (e.g. 21:00 in Germany),
+  // but astronomy calculations require UTC.
+  const tz = tzlookup(parsedLat, parsedLng);
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute, sec] = normalizedTime.split(':').map(Number);
+
+  // Use Intl.DateTimeFormat to get the exact UTC offset at the birth moment,
+  // including historical DST rules (browsers have full ICU timezone data).
+  const naiveUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, sec || 0));
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, timeZoneName: 'longOffset',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  });
+  const tzPart = fmt.formatToParts(naiveUTC).find(p => p.type === 'timeZoneName')?.value || '';
+  // Parse "GMT+02:00" or "GMT-05:00" or "GMT" (= UTC)
+  const offsetMatch = tzPart.match(/GMT([+-])(\d{1,2}):?(\d{2})?/);
+  let offsetMinutes = 0;
+  if (offsetMatch) {
+    const sign = offsetMatch[1] === '+' ? 1 : -1;
+    offsetMinutes = sign * (parseInt(offsetMatch[2]) * 60 + parseInt(offsetMatch[3] || '0'));
+  }
+  // Local time = UTC + offset, so UTC = local - offset
+  const birthDate = new Date(Date.UTC(year, month - 1, day, hour, minute, (sec || 0)) - offsetMinutes * 60000);
+  if (isNaN(birthDate.getTime())) throw new Error(`Invalid date/time: ${date} ${time}`);
 
   const astroDate = Astronomy.MakeTime(birthDate);
   const obliquity = 23.4393 - 0.0000004 * (astroDate.ut - 2451545.0);
