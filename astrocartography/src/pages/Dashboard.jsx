@@ -24,7 +24,7 @@ const THEMES = {
     bg: '#0A1018', bgAlt: '#0D1520', bgPanel: '#0B1218', bgCard: '#101C28',
     border: '#1A2840', borderLight: '#14202C',
     text: '#D0DDE8', textMid: '#8098B0', textDim: '#5A7088', textFaint: '#3A5068',
-    accent: '#00D88A', accentBg: T.accent + '15', accentBorder: T.accent + '40',
+    accent: '#00D88A', accentBg: '#00D88A15', accentBorder: '#00D88A40',
     navBg: '#0D1520', sidebarBg: '#0D1520',
     popupBg: 'rgba(10,16,24,.98)', popupOverlay: 'rgba(13,21,32,.92)',
     globeBg: '#0A1018',
