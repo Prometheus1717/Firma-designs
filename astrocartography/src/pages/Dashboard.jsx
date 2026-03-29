@@ -277,7 +277,7 @@ export default function Dashboard({ demo = false }) {
   const [paywallEnabled, setPaywallEnabled] = useState(null);
   const [displayPrice, setDisplayPrice] = useState('3.99');
   const [displayCurrency, setDisplayCurrency] = useState('EUR');
-  const [priceLabel, setPriceLabel] = useState('ONE-TIME \u00b7 LIFETIME ACCESS');
+  const [priceLabel, setPriceLabel] = useState('ONE-TIME · LIFETIME ACCESS');
   const [announcement, setAnnouncement] = useState(null);
 
   useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
@@ -630,7 +630,7 @@ export default function Dashboard({ demo = false }) {
             {/* Price — centered, clean */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
-                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '\u20AC' : displayCurrency === 'GBP' ? '\u00A3' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
+                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
                 <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>{displayPrice}</span>
               </div>
               <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
@@ -865,17 +865,17 @@ export default function Dashboard({ demo = false }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: '#5A7088', marginRight: 4 }}>&larr;</span>}
                   <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? 'ASCENDANT' : selectedPlacement.type === 'mc' ? 'MIDHEAVEN' : selectedPlacement.id?.toUpperCase()) : 'NATAL CHART'}</span>
-                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}\u00B0 \u00B7 MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}\u00B0</span>}
+                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
                 </div>
-                <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>\u2715</span>
+                <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
               </div>
 
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
                 <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0 }}>
-                  {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '\u2193 PDF' }].map(t => (
+                  {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '↓ PDF' }].map(t => (
                     <div key={t.key} onClick={() => t.key === 'pdf' ? handleDownloadPDF() : setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: t.key === 'pdf' ? (pdfLoading ? '#00D88A' : '#5A7088') : natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key && t.key !== 'pdf' ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
-                      {t.key === 'pdf' && pdfLoading ? '\u23F3 ...' : t.label}
+                      {t.key === 'pdf' && pdfLoading ? '⏳ ...' : t.label}
                     </div>
                   ))}
                 </div>
@@ -889,7 +889,7 @@ export default function Dashboard({ demo = false }) {
                   const p = chartData.planets.find(pl => pl.id === sp.id);
                   if (!p) return null;
                   pc = PCOL[p.id] || '#8098B0';
-                  degStr = `${p.deg}\u00B0 ${p.sign.slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' \u211E' : ''}`;
+                  degStr = `${p.deg}° ${p.sign.slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' ℞' : ''}`;
                   houseNum = p.house;
                   signData = p;
                   const nR = window.__natalReadings;
@@ -898,7 +898,7 @@ export default function Dashboard({ demo = false }) {
                 } else if (sp.type === 'asc') {
                   const a = chartData.natal.asc;
                   pc = '#E8A838';
-                  degStr = `${a.deg}\u00B0 ${a.sign.slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
+                  degStr = `${a.deg}° ${a.sign.slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
                   signData = a;
                   houseNum = null;
                   const nR = window.__natalReadings;
@@ -907,7 +907,7 @@ export default function Dashboard({ demo = false }) {
                 } else if (sp.type === 'mc') {
                   const m = chartData.natal.mc;
                   pc = '#E8A838';
-                  degStr = `${m.deg}\u00B0 ${m.sign.slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
+                  degStr = `${m.deg}° ${m.sign.slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
                   signData = m;
                   houseNum = null;
                   const nR = window.__natalReadings;
@@ -924,7 +924,7 @@ export default function Dashboard({ demo = false }) {
                     {/* Title section */}
                     <div style={{ padding: '20px 18px 16px', borderBottom: '1px solid #14202C' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                        <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '\u25B3' : sp.type === 'mc' ? '\u25BD' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
+                        <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '△' : sp.type === 'mc' ? '▽' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
                         <span style={{ fontSize: 28, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[signData?.sign] || ''}</span>
                       </div>
                       <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#D0DDE8', letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} in {signData?.sign}</div>
@@ -959,11 +959,11 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ padding: '14px 18px 20px', borderTop: '1px solid #1A2840' }}>
                       <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>DETAILS</div>
                       {[
-                        ['Position', `${signData?.deg}\u00B0 ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
-                        houseNum ? ['House', `${houseNum}${houseNum===1?'st':houseNum===2?'nd':houseNum===3?'rd':'th'} House${houseInfo ? ' \u2014 ' + houseInfo.keyword : ''}`] : null,
+                        ['Position', `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
+                        houseNum ? ['House', `${houseNum}${houseNum===1?'st':houseNum===2?'nd':houseNum===3?'rd':'th'} House${houseInfo ? ' — ' + houseInfo.keyword : ''}`] : null,
                         ['Element', elem],
                         ['Mode', SIGN_MODES[signData?.sign] || ''],
-                        sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? ['Motion', 'Retrograde \u211E'] : null,
+                        sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? ['Motion', 'Retrograde ℞'] : null,
                         planetInfo?.rules ? ['Rules', planetInfo.rules] : null,
                       ].filter(Boolean).map(([label, val]) => (
                         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #14202C' }}>
@@ -996,7 +996,7 @@ export default function Dashboard({ demo = false }) {
                       return (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                            <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1 }}>{p.symbol}</span>
+                            <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1, width: 18, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                             <div>
                               <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
                               {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
@@ -1007,7 +1007,7 @@ export default function Dashboard({ demo = false }) {
                             <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
-                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}\u00B0</span>
+                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}°</span>
                             <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
@@ -1023,12 +1023,12 @@ export default function Dashboard({ demo = false }) {
                     {chartData.natal && <>
                       <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
                       {[
-                        { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign \u2014 your outward persona' },
+                        { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
                         { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
                       ].map((a, i) => a.data && (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
-                            <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '\u25B3' : '\u25BD'}</span>
+                            <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '△' : '▽'}</span>
                             <div>
                               <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
                               <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
@@ -1039,7 +1039,7 @@ export default function Dashboard({ demo = false }) {
                             <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
-                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}\u00B0</span>
+                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}°</span>
                             <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
@@ -1076,14 +1076,14 @@ export default function Dashboard({ demo = false }) {
                     return (
                       <div key={i} onClick={() => setSelectedPlacement({ id: p.id, type: 'planet' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <span style={{ fontSize: 18, color: pc, lineHeight: 1 }}>{p.symbol}</span>
+                          <span style={{ fontSize: 18, color: pc, lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                           <div>
                             <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{p.id} in {p.sign}</div>
-                            {p.house && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' \u00B7 Retrograde' : ''}</div>}
+                            {p.house && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' · Retrograde' : ''}</div>}
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{p.deg}\u00B0 {p.sign.slice(0,3)} {String(p.min).padStart(2,'0')}'</span>
+                          <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{p.deg}° {p.sign.slice(0,3)} {String(p.min).padStart(2,'0')}'</span>
                           <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
                         </div>
                       </div>
@@ -1093,16 +1093,16 @@ export default function Dashboard({ demo = false }) {
                   {/* Angles */}
                   <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
                   {[
-                    { label: 'Ascendant', type: 'asc', data: chartData.natal?.asc, symbol: '\u25B3' },
-                    { label: 'Midheaven', type: 'mc', data: chartData.natal?.mc, symbol: '\u25BD' },
+                    { label: 'Ascendant', type: 'asc', data: chartData.natal?.asc, symbol: '△' },
+                    { label: 'Midheaven', type: 'mc', data: chartData.natal?.mc, symbol: '▽' },
                   ].map(a => a.data && (
                     <div key={a.type} onClick={() => setSelectedPlacement({ id: a.label, type: a.type })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ fontSize: 18, color: '#E8A838', lineHeight: 1 }}>{a.symbol}</span>
+                        <span style={{ fontSize: 18, color: '#E8A838', lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{a.symbol}</span>
                         <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{a.label} in {a.data.sign}</div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{a.data.deg}\u00B0 {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
+                        <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{a.data.deg}° {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
                         <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
                       </div>
                     </div>
@@ -1475,7 +1475,7 @@ export default function Dashboard({ demo = false }) {
                         { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
                         { step: '03', title: 'Click on cities', desc: 'Cities near your lines appear in the bottom panel. Click any city to get a detailed reading of what that planetary energy means for you there.' },
                         { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
-                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your planetary positions. Switch to "Your Birth Chart" for detailed readings \u2014 tap any planet to see what it means in your sign and house.' },
+                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your planetary positions. Switch to "Your Birth Chart" for detailed readings — tap any planet to see what it means in your sign and house.' },
                       ].map(s => (
                         <div key={s.step} style={{ background: '#0D1520', padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <span style={{ ...F, fontSize: 20, fontWeight: 700, color: '#8068C040', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
