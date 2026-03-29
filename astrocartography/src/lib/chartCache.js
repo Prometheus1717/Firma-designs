@@ -2,7 +2,7 @@
 // Uses localStorage so returning users skip the expensive astronomy-engine computation entirely
 
 const CACHE_KEY = 'nn_chart_cache';
-const CACHE_VERSION = 2; // bump when calculateChart output format changes
+const CACHE_VERSION = 3; // v3: timezone-corrected calculations (local birth time → UTC)
 
 function cacheId({ date, time, lat, lng }) {
   return `${date}|${time}|${parseFloat(lat).toFixed(4)}|${parseFloat(lng).toFixed(4)}`;
