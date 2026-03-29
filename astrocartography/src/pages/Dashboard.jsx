@@ -495,6 +495,20 @@ export default function Dashboard({ demo = false }) {
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
   const planetString = chartData?.planetString || '';
 
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (pdfLoading || !chartData) return;
+    setPdfLoading(true);
+    trackEvent('pdf_download');
+    try {
+      const nR = window.__natalReadings || await import('../data/natalReadings');
+      const { generateNatalPDF } = await import('../lib/generatePDF');
+      await generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn: cityReading, natalReadings: nR });
+    } catch (err) { console.error('PDF generation failed:', err); }
+    finally { setPdfLoading(false); }
+  }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC]);
+
   const flyTo = useCallback((la, lo) => {
     Globe.flyTo?.(la, lo);
   }, []);
@@ -842,10 +856,17 @@ export default function Dashboard({ demo = false }) {
             ☉ Natal Chart
           </div>
 
+          {/* PDF Download button */}
+          {chartData && !demo && (
+            <div onClick={handleDownloadPDF} style={{ position: 'absolute', top: 76, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: pdfLoading ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, cursor: pdfLoading ? 'wait' : 'pointer', color: pdfLoading ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+              {pdfLoading ? '\u23F3 Generating...' : '\u2193 Download PDF'}
+            </div>
+          )}
+
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
             <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
-            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'absolute', top: mob ? 4 : 110, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 118px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
