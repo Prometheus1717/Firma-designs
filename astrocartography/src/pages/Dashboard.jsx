@@ -856,17 +856,10 @@ export default function Dashboard({ demo = false }) {
             ☉ Natal Chart
           </div>
 
-          {/* PDF Download button */}
-          {chartData && !demo && (
-            <div onClick={handleDownloadPDF} style={{ position: 'absolute', top: 76, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: pdfLoading ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, cursor: pdfLoading ? 'wait' : 'pointer', color: pdfLoading ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
-              {pdfLoading ? '\u23F3 Generating...' : '\u2193 Download PDF'}
-            </div>
-          )}
-
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
             <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
-            <div style={{ position: 'absolute', top: mob ? 4 : 110, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 118px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -880,9 +873,9 @@ export default function Dashboard({ demo = false }) {
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
                 <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0 }}>
-                  {[{ key: 'chart', label: 'CHART' }, { key: 'planets', label: 'YOUR BIRTH CHART' }].map(t => (
-                    <div key={t.key} onClick={() => setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
-                      {t.label}
+                  {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '\u2193 PDF' }].map(t => (
+                    <div key={t.key} onClick={() => t.key === 'pdf' ? handleDownloadPDF() : setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: t.key === 'pdf' ? (pdfLoading ? '#00D88A' : '#5A7088') : natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key && t.key !== 'pdf' ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
+                      {t.key === 'pdf' && pdfLoading ? '\u23F3 ...' : t.label}
                     </div>
                   ))}
                 </div>

@@ -1,17 +1,4 @@
-// Load jsPDF from CDN on demand — zero impact on bundle/build
-let jsPDFPromise = null;
-function loadJsPDF() {
-  if (jsPDFPromise) return jsPDFPromise;
-  jsPDFPromise = new Promise((resolve, reject) => {
-    if (window.jspdf) return resolve(window.jspdf.jsPDF);
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
-    s.onload = () => resolve(window.jspdf.jsPDF);
-    s.onerror = () => { jsPDFPromise = null; reject(new Error('Failed to load jsPDF')); };
-    document.head.appendChild(s);
-  });
-  return jsPDFPromise;
-}
+import jsPDF from 'jspdf';
 
 // ── Colors ──
 const C = {
@@ -123,7 +110,6 @@ function cityBlock(d, y, cities, color, readingFn, pw, ph, max) {
 
 // ══════════════════════════════════════════
 export async function generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn, natalReadings }) {
-  const jsPDF = await loadJsPDF();
   const d = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pw = d.internal.pageSize.getWidth();
   const ph = d.internal.pageSize.getHeight();
