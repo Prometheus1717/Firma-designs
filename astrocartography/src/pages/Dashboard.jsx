@@ -18,6 +18,31 @@ const DEMO = {
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
+
+const THEMES = {
+  dark: {
+    bg: '#0A1018', bgAlt: '#0D1520', bgPanel: '#0B1218', bgCard: '#101C28',
+    border: '#1A2840', borderLight: '#14202C',
+    text: '#D0DDE8', textMid: '#8098B0', textDim: '#5A7088', textFaint: '#3A5068',
+    accent: '#00D88A', accentBg: T.accent + '15', accentBorder: T.accent + '40',
+    navBg: '#0D1520', sidebarBg: '#0D1520',
+    popupBg: 'rgba(10,16,24,.98)', popupOverlay: 'rgba(13,21,32,.92)',
+    globeBg: '#0A1018',
+    tickerBg: '#0B1218',
+    shadow: '0 16px 48px rgba(0,0,0,.6)',
+  },
+  light: {
+    bg: '#F5F7FA', bgAlt: '#FFFFFF', bgPanel: '#EEF1F5', bgCard: '#E8ECF0',
+    border: '#D0D6DE', borderLight: '#E0E4EA',
+    text: '#1A2030', textMid: '#4A5568', textDim: '#718096', textFaint: '#A0AEC0',
+    accent: '#00B870', accentBg: '#00B87015', accentBorder: '#00B87040',
+    navBg: '#FFFFFF', sidebarBg: '#FFFFFF',
+    popupBg: 'rgba(255,255,255,.98)', popupOverlay: 'rgba(255,255,255,.92)',
+    globeBg: '#E8ECF0',
+    tickerBg: '#F0F2F5',
+    shadow: '0 16px 48px rgba(0,0,0,.12)',
+  },
+};
 const PCOL = { Sun: '#E8A838', Moon: '#C0C0C0', Mercury: '#5BA8D4', Venus: '#D4729A', Mars: '#D45050', Jupiter: '#8068C0', Saturn: '#887058', Uranus: '#40B0A0', Neptune: '#4868B8', Pluto: '#7048A0' };
 const SIGN_SYMBOLS = { Aries: '♈\uFE0E', Taurus: '♉\uFE0E', Gemini: '♊\uFE0E', Cancer: '♋\uFE0E', Leo: '♌\uFE0E', Virgo: '♍\uFE0E', Libra: '♎\uFE0E', Scorpio: '♏\uFE0E', Sagittarius: '♐\uFE0E', Capricorn: '♑\uFE0E', Aquarius: '♒\uFE0E', Pisces: '♓\uFE0E' };
 const SIGN_ELEMENTS = { Aries: 'Fire', Taurus: 'Earth', Gemini: 'Air', Cancer: 'Water', Leo: 'Fire', Virgo: 'Earth', Libra: 'Air', Scorpio: 'Water', Sagittarius: 'Fire', Capricorn: 'Earth', Aquarius: 'Air', Pisces: 'Water' };
@@ -243,6 +268,10 @@ export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem('nn_theme') === 'light'; } catch { return false; } });
+  const T = lightMode ? THEMES.light : THEMES.dark;
+  // Persist theme choice
+  useEffect(() => { try { localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark'); } catch {} }, [lightMode]);
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
@@ -578,11 +607,11 @@ export default function Dashboard({ demo = false }) {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
-        <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.accent, letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
+        <div style={{ ...F, fontSize: 11, color: T.textMid, marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
+        <div style={{ width: 240, height: 3, background: T.border, borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '100%', background: T.accent, borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
         <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
       </div>
@@ -591,9 +620,9 @@ export default function Dashboard({ demo = false }) {
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{ ...F, fontSize: 14, color: '#F04060', marginBottom: 16 }}>Error: {error}</div>
-        <button onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+        <button onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 11, color: T.accent, background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
           Re-enter birth data
         </button>
       </div>
@@ -603,37 +632,37 @@ export default function Dashboard({ demo = false }) {
   // ─── PAYWALL SCREEN ───
   if (showPaywall) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         {/* Payment success banner */}
         {paymentStatus === 'success' && (
-          <div style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', border: '1px solid #00D88A30', borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
+          <div style={{ ...F, fontSize: 11, color: T.accent, background: T.accent + '10', border: '1px solid #00D88A30', borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
             Payment received! Activating your account...
           </div>
         )}
 
         <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
           {/* Logo */}
-          <div style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-          <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
+          <div style={{ ...F, fontSize: 22, fontWeight: 700, color: T.accent, letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
+          <div style={{ ...F, fontSize: 9, color: T.textDim, letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
 
           {/* Upgrade card */}
-          <div style={{ background: 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: '1px solid #1A2840', borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: lightMode ? 'linear-gradient(160deg, #F0F3F7 0%, #F5F7FA 50%, #EEF0F5 100%)' : 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: '1px solid ' + T.border, borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             {/* Subtle glow effect */}
             <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: 'radial-gradient(ellipse, #00D88A08 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#00D88A', letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
-            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: '#D0DDE8', marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
-            <div style={{ ...F, fontSize: 11, color: '#6A8098', lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
+            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.accent, letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
+            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: T.text, marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
+            <div style={{ ...F, fontSize: 11, color: T.textDim, lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
               Planetary lines, city analysis, and natal chart — calculated from your exact birth data.
             </div>
 
             {/* Price — centered, clean */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
-                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
-                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>{displayPrice}</span>
+                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: T.text, alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: T.text, letterSpacing: -1 }}>{displayPrice}</span>
               </div>
-              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
+              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.accent, marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
             </div>
 
             {/* CTA */}
@@ -642,7 +671,7 @@ export default function Dashboard({ demo = false }) {
             )}
             <div
               onClick={handleUpgrade}
-              style={{ ...F, fontSize: 13, fontWeight: 700, color: '#0A1018', background: upgradeLoading ? '#5A7088' : '#00D88A', padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : '0 0 20px #00D88A20' }}
+              style={{ ...F, fontSize: 13, fontWeight: 700, color: T.bg, background: upgradeLoading ? T.textDim : '#00D88A', padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : '0 0 20px ' + T.accent + '20' }}
             >
               {upgradeLoading ? 'REDIRECTING...' : 'GET STARTED'}
             </div>
@@ -656,20 +685,20 @@ export default function Dashboard({ demo = false }) {
                 'Flat Map View',
               ].map((f, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, justifySelf: 'center' }}>
-                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#00D88A', flexShrink: 0 }} />
-                  <span style={{ ...F, fontSize: 10, color: '#6A8098' }}>{f}</span>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: T.accent, flexShrink: 0 }} />
+                  <span style={{ ...F, fontSize: 10, color: T.textDim }}>{f}</span>
                 </div>
               ))}
             </div>
 
             {/* Security note */}
-            <div style={{ ...F, fontSize: 8, color: '#2A3848', marginTop: 20, letterSpacing: 0.5 }}>
+            <div style={{ ...F, fontSize: 8, color: T.textFaint, marginTop: 20, letterSpacing: 0.5 }}>
               Secure checkout via Stripe &middot; No card data stored
             </div>
           </div>
 
           {/* Sign out link */}
-          <div onClick={signOut} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', marginTop: 20 }}>
+          <div onClick={signOut} style={{ ...F, fontSize: 9, color: T.textDim, cursor: 'pointer', marginTop: 20 }}>
             Sign out
           </div>
         </div>
@@ -680,10 +709,10 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: T.bg, color: T.text, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden' }}>
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
-        <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', borderBottom: '1px solid #00D88A30', padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
+        <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: T.accent, background: T.accent + '10', borderBottom: '1px solid #00D88A30', padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
           Premium activated! Welcome to NatalNavigator Premium. &#10003;
         </div>
       )}
@@ -695,23 +724,24 @@ export default function Dashboard({ demo = false }) {
       )}
       <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Natal Navigator — Astrocartography Dashboard</h1>
       {/* TOPBAR */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', zIndex: 300, flexShrink: 0, minWidth: 0 }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: T.bgAlt, borderBottom: '1px solid ' + T.border, zIndex: 300, flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12, minWidth: 0, overflow: 'hidden' }}>
-          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: '#00D88A', letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>NATAL NAVIGATOR</span>
-          <span style={{ ...F, fontSize: 9, color: '#00D88A', display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#00D88A', boxShadow: '0 0 6px #00D88A' }} />
+          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: T.accent, letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>NATAL NAVIGATOR</span>
+          <span style={{ ...F, fontSize: 9, color: T.accent, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: T.accent, boxShadow: '0 0 6px ' + T.accent }} />
             {!mob && 'LIVE'}
           </span>
-          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: '#5A7088', cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
+          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.textDim, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.border}`, letterSpacing: 0.5 }}>HOW IT WORKS</span>
+          <span onClick={() => setLightMode(!lightMode)} style={{ ...F, fontSize: mob ? 12 : 14, cursor: 'pointer', padding: mob ? '2px 6px' : '3px 8px', borderRadius: 4, border: `1px solid ${T.border}`, background: lightMode ? '#FFF3D0' : T.bgCard, transition: 'all .2s', lineHeight: 1, userSelect: 'none' }}>{lightMode ? '☀' : '☾'}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
-          {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: '#5A7088' }} />}
+          {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.textDim }} />}
           {demo ? <>
-            <span style={{ ...F, fontSize: mob ? 7 : 8, color: '#5A7088', background: '#101C28', padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: '1px solid #1A2840' }}>DEMO: {DEMO.name}</span>
-            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: '#0A1018', background: '#00D88A', padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
+            <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.textDim, background: T.bgCard, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: '1px solid ' + T.border }}>DEMO: {DEMO.name}</span>
+            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.accent, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
           </> : <>
-            {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
-            <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? '#00D88A' : '#8098B0', cursor: 'pointer', background: showSettings ? '#00D88A10' : '#101C28', padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? '#00D88A40' : '#1A2840'}`, transition: 'all .2s' }}>
+            {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: COL.neutral + '10', padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.borderLight}`, letterSpacing: 1 }}>ADMIN</span>}
+            <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? '#00D88A' : T.textMid, cursor: 'pointer', background: showSettings ? T.accent + '10' : T.bgCard, padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? T.accentBorder : T.border}`, transition: 'all .2s' }}>
               ◉ {displayName}
             </div>
           </>}
@@ -719,7 +749,7 @@ export default function Dashboard({ demo = false }) {
       </nav>
 
       {/* PLANET TICKER */}
-      <div style={{ height: 24, minHeight: 24, background: '#0B1218', borderBottom: '1px solid #14202C', display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
+      <div style={{ height: 24, minHeight: 24, background: T.bgPanel, borderBottom: '1px solid ' + T.borderLight, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[planetString, planetString].map((t, i) => <span key={i} style={{ color: '#E8A838', padding: '0 20px' }}>{t}</span>)}
         </div>
@@ -728,23 +758,23 @@ export default function Dashboard({ demo = false }) {
       {/* MAIN */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minWidth: 0 }}>
         {/* LEFT SIDEBAR */}
-        {!mob && <div style={{ width: 220, minWidth: 220, background: '#0D1520', borderRight: '1px solid #1A2840', overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+        {!mob && <div style={{ width: 220, minWidth: 220, background: T.bgAlt, borderRight: '1px solid ' + T.border, overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Header with info button */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 12px 6px' }}>
-            <span style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2 }}>PLANETS</span>
+            <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 2 }}>PLANETS</span>
             <div style={{ display: 'flex', gap: 4 }}>
-              {hiddenPlanets.size > 0 && <span onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: '#00D88A', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: '1px solid #00D88A40', background: '#00D88A10' }}>All on</span>}
-              <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#3A5068', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? '#00D88A40' : '#1A2840'}`, background: showAngleInfo ? '#00D88A10' : 'transparent' }}>?</span>
+              {hiddenPlanets.size > 0 && <span onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.accent, cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: '1px solid #00D88A40', background: T.accent + '10' }}>All on</span>}
+              <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.accent : T.textFaint, cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? T.accentBorder : T.border}`, background: showAngleInfo ? T.accent + '10' : 'transparent' }}>?</span>
             </div>
           </div>
 
           {/* Angle info panel (collapsible) */}
-          {showAngleInfo && <div style={{ margin: '0 8px 8px', background: '#0A1420', border: '1px solid #1A2840', borderRadius: 6, padding: 10 }}>
-            <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8098B0', marginBottom: 8 }}>LINE TYPES</div>
+          {showAngleInfo && <div style={{ margin: '0 8px 8px', background: T.bgPanel, border: '1px solid ' + T.border, borderRadius: 6, padding: 10 }}>
+            <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.textMid, marginBottom: 8 }}>LINE TYPES</div>
             {ANGLE_ORDER.map(a => {
               const info = ANGLE_INFO[a];
               return (
-                <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #14202C' }}>
+                <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid ' + T.borderLight }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     {/* Visual dash preview */}
                     <svg width="22" height="6" style={{ flexShrink: 0 }}>
@@ -753,14 +783,14 @@ export default function Dashboard({ demo = false }) {
                       {a === 'ASC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray="8,3" />}
                       {a === 'DC' && <line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray="2,2" />}
                     </svg>
-                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D0DDE8' }}>{info.label}</span>
-                    <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{info.full}</span>
+                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.text }}>{info.label}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.textDim }}>{info.full}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: '#6A8098', lineHeight: 1.5, marginLeft: 30 }}>{info.desc}</div>
+                  <div style={{ fontSize: 10, color: T.textDim, lineHeight: 1.5, marginLeft: 30 }}>{info.desc}</div>
                 </div>
               );
             })}
-            <div style={{ ...F, fontSize: 8, color: '#3A5068', lineHeight: 1.5, borderTop: '1px solid #14202C', paddingTop: 6, marginTop: 2 }}>
+            <div style={{ ...F, fontSize: 8, color: T.textFaint, lineHeight: 1.5, borderTop: '1px solid ' + T.borderLight, paddingTop: 6, marginTop: 2 }}>
               MC & IC are vertical meridian lines (pole to pole).<br />
               ASC & DC are curved lines that follow the horizon.
             </div>
@@ -773,25 +803,25 @@ export default function Dashboard({ demo = false }) {
             const planetCities = onLines.filter(c => g.lines.some(l => l.n === c.line));
             return (
               <div key={g.planet} style={{ opacity: isHidden ? 0.4 : 1, transition: 'opacity .15s' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', background: isOpen ? '#101C28' : 'transparent', transition: 'background .15s' }}>
-                  <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 3, cursor: 'pointer', flexShrink: 0, background: isHidden ? '#1A2840' : g.color + '25', border: `1px solid ${isHidden ? '#1A2840' : g.color + '50'}` }} title={isHidden ? 'Show on map' : 'Hide from map'}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid ' + T.borderLight, background: isOpen ? T.bgCard : 'transparent', transition: 'background .15s' }}>
+                  <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 3, cursor: 'pointer', flexShrink: 0, background: isHidden ? T.border : g.color + '25', border: `1px solid ${isHidden ? T.border : g.color + '50'}` }} title={isHidden ? 'Show on map' : 'Hide from map'}>
                     <span style={{ ...F, fontSize: 8, color: isHidden ? '#3A5068' : g.color }}>{isHidden ? '○' : '●'}</span>
                   </div>
                   <div onClick={() => { setExpandedPlanet(isOpen ? null : g.planet); }} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
                     <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
-                    <span style={{ ...F, fontSize: 10, color: '#B0C0D0', flex: 1, fontWeight: 600 }}>{g.planet}</span>
+                    <span style={{ ...F, fontSize: 10, color: T.textMid, flex: 1, fontWeight: 600 }}>{g.planet}</span>
                     <div style={{ display: 'flex', gap: 3 }}>
                       {g.lines.map(l => (
-                        <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
+                        <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral, background: (l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral) + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
                       ))}
                     </div>
-                    <span style={{ ...F, fontSize: 10, color: '#3A5068', transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
+                    <span style={{ ...F, fontSize: 10, color: T.textFaint, transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
                   </div>
                 </div>
                 {/* Expanded detail */}
-                {isOpen && <div style={{ background: '#0A1420', borderBottom: '1px solid #14202C' }}>
+                {isOpen && <div style={{ background: T.bgPanel, borderBottom: '1px solid ' + T.borderLight }}>
                   {g.lines.map((l, li) => (
-                    <div key={li} onClick={() => { setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid #0F1820' }}>
+                    <div key={li} onClick={() => { setPopup(lines.indexOf(l) === popup ? null : lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 28px', cursor: 'pointer', borderBottom: '1px solid ' + T.borderLight }}>
                       {/* Dash preview */}
                       <svg width="18" height="4" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" />}
@@ -799,13 +829,13 @@ export default function Dashboard({ demo = false }) {
                         {l.angle === 'ASC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="8,3" />}
                         {l.angle === 'DC' && <line x1="0" y1="2" x2="18" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="2,2" />}
                       </svg>
-                      <span style={{ ...F, fontSize: 9, color: '#8098B0', flex: 1 }}>{l.angle}</span>
-                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>
+                      <span style={{ ...F, fontSize: 9, color: T.textMid, flex: 1 }}>{l.angle}</span>
+                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral }}>
                         {l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'}
                       </span>
                     </div>
                   ))}
-                  {planetCities.length > 0 && <div style={{ padding: '4px 12px 6px 28px', ...F, fontSize: 8, color: '#3A5068', lineHeight: 1.5 }}>
+                  {planetCities.length > 0 && <div style={{ padding: '4px 12px 6px 28px', ...F, fontSize: 8, color: T.textFaint, lineHeight: 1.5 }}>
                     {planetCities.slice(0, 5).map(c => c.name).join(' · ')}{planetCities.length > 5 ? ` +${planetCities.length - 5}` : ''}
                   </div>}
                 </div>}
@@ -814,67 +844,67 @@ export default function Dashboard({ demo = false }) {
           })}
 
           {/* Zones */}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>ZONES</div>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid ' + T.border, marginTop: 2 }}>ZONES</div>
           {[['thrive', 'Thrive Zone', 'Strengths amplified'], ['avoid', 'Caution Zone', 'Challenges likely'], ['neutral', 'Neutral', 'Subtle influence']].map(([t, l, d]) => (
-            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 12px', ...F, fontSize: 9, color: '#8098B0' }}>
+            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 12px', ...F, fontSize: 9, color: T.textMid }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: COL[t], flexShrink: 0 }} />
               <span>{l}</span>
-              <span style={{ fontSize: 7, color: '#3A5068', marginLeft: 'auto' }}>{d}</span>
+              <span style={{ fontSize: 7, color: T.textFaint, marginLeft: 'auto' }}>{d}</span>
             </div>
           ))}
 
           {/* Top Cities */}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid #1A2840', marginTop: 2 }}>TOP CITIES</div>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 2, padding: '12px 12px 6px', borderTop: '1px solid ' + T.border, marginTop: 2 }}>TOP CITIES</div>
           {bestCities.map((c, i) => (
             <div key={i} onClick={() => { flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
-              <span style={{ color: '#00D88A', fontWeight: 700, width: 14 }}>{i + 1}.</span>
-              <span style={{ color: '#B0C0D0' }}>{c.name}</span>
-              <span style={{ color: '#3A5068', marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
+              <span style={{ color: T.accent, fontWeight: 700, width: 14 }}>{i + 1}.</span>
+              <span style={{ color: T.textMid }}>{c.name}</span>
+              <span style={{ color: T.textFaint, marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
             </div>
           ))}
-          <div style={{ ...F, fontSize: 8, color: '#1A2840', padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
+          <div style={{ ...F, fontSize: 8, color: T.border, padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
             Drag = Rotate · Scroll = Zoom<br />Double-click = Zoom to point<br />Click city = Reading
           </div>
         </div>}
 
         {/* GLOBE */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
+          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* Map mode toggle — top right */}
-          <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden', width: 160 }}>
-            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? '#00D88A' : '#5A7088', background: !flatMap ? '#00D88A15' : 'transparent', borderRight: '1px solid #1A2840', flex: 1 }}>
+          <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.popupOverlay, border: '1px solid ' + T.border, borderRadius: 6, overflow: 'hidden', width: 160 }}>
+            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? '#00D88A' : T.textDim, background: !flatMap ? T.accent + '15' : 'transparent', borderRight: '1px solid ' + T.border, flex: 1 }}>
               ◉ Globe
             </button>
-            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? '#00D88A' : '#5A7088', background: flatMap ? '#00D88A15' : 'transparent', flex: 1 }}>
+            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? '#00D88A' : T.textDim, background: flatMap ? T.accent + '15' : 'transparent', flex: 1 }}>
               ▭ Map
             </button>
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : 'rgba(13,21,32,.92)', border: `1px solid ${showNatal ? '#00D88A40' : '#1A2840'}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : '#5A7088', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.popupOverlay, border: `1px solid ${showNatal ? T.accentBorder : T.border}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? '#00D88A' : T.textDim, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
             ☉ Natal Chart
           </div>
 
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
             <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
-            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: 'rgba(10,16,24,.98)', border: '1px solid #1A2840', borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: T.popupBg, border: '1px solid ' + T.border, borderRadius: 8, boxShadow: T.shadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0D1520', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid ' + T.border, background: T.bgAlt, flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: '#5A7088', marginRight: 4 }}>&larr;</span>}
-                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? 'ASCENDANT' : selectedPlacement.type === 'mc' ? 'MIDHEAVEN' : selectedPlacement.id?.toUpperCase()) : 'NATAL CHART'}</span>
-                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
+                  {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: T.textDim, marginRight: 4 }}>&larr;</span>}
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.text, letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? 'ASCENDANT' : selectedPlacement.type === 'mc' ? 'MIDHEAVEN' : selectedPlacement.id?.toUpperCase()) : 'NATAL CHART'}</span>
+                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: T.textFaint }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
                 </div>
-                <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+                <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.textDim }}>✕</span>
               </div>
 
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
-                <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0 }}>
+                <div style={{ display: 'flex', borderBottom: '1px solid ' + T.border, background: T.bgPanel, flexShrink: 0 }}>
                   {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '↓ PDF' }].map(t => (
-                    <div key={t.key} onClick={() => t.key === 'pdf' ? handleDownloadPDF() : setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: t.key === 'pdf' ? (pdfLoading ? '#00D88A' : '#5A7088') : natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key && t.key !== 'pdf' ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
+                    <div key={t.key} onClick={() => t.key === 'pdf' ? handleDownloadPDF() : setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: t.key === 'pdf' ? (pdfLoading ? T.accent : T.textDim) : natalTab === t.key ? T.accent : T.textDim, borderBottom: natalTab === t.key && t.key !== 'pdf' ? '2px solid ' + T.accent : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
                       {t.key === 'pdf' && pdfLoading ? '⏳ ...' : t.label}
                     </div>
                   ))}
@@ -922,42 +952,42 @@ export default function Dashboard({ demo = false }) {
                 return (
                   <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     {/* Title section */}
-                    <div style={{ padding: '20px 18px 16px', borderBottom: '1px solid #14202C' }}>
+                    <div style={{ padding: '20px 18px 16px', borderBottom: '1px solid ' + T.borderLight }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                         <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '△' : sp.type === 'mc' ? '▽' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
                         <span style={{ fontSize: 28, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[signData?.sign] || ''}</span>
                       </div>
-                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#D0DDE8', letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} in {signData?.sign}</div>
-                      <div style={{ ...F, fontSize: 11, color: '#5A7088' }}>{degStr}</div>
+                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.text, letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} in {signData?.sign}</div>
+                      <div style={{ ...F, fontSize: 11, color: T.textDim }}>{degStr}</div>
                       {houseNum && <div style={{ ...F, fontSize: 11, color: pc, marginTop: 4 }}>{titleLabel} in the {['','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth'][houseNum]} House</div>}
                     </div>
 
                     {/* Planet info badge */}
                     {planetInfo && (
-                      <div style={{ padding: '10px 18px', borderBottom: '1px solid #14202C', background: '#0C1420' }}>
-                        <div style={{ ...F, fontSize: 9, color: '#5A7088', lineHeight: 1.6 }}>{planetInfo.description}</div>
+                      <div style={{ padding: '10px 18px', borderBottom: '1px solid ' + T.borderLight, background: T.bgPanel }}>
+                        <div style={{ ...F, fontSize: 9, color: T.textDim, lineHeight: 1.6 }}>{planetInfo.description}</div>
                       </div>
                     )}
 
                     {/* Sign reading */}
                     {signReading && (
                       <div style={{ padding: '18px 18px 14px' }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? 'YOUR RISING SIGN' : sp.type === 'mc' ? 'YOUR MIDHEAVEN' : `${sp.id?.toUpperCase()} IN ${signData?.sign?.toUpperCase()}`}</div>
-                        <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{signReading.text}</div>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.textFaint, letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? 'YOUR RISING SIGN' : sp.type === 'mc' ? 'YOUR MIDHEAVEN' : `${sp.id?.toUpperCase()} IN ${signData?.sign?.toUpperCase()}`}</div>
+                        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{signReading.text}</div>
                       </div>
                     )}
 
                     {/* House reading */}
                     {houseReading && (
-                      <div style={{ padding: '14px 18px 18px', borderTop: '1px solid #14202C' }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} IN THE {['','FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH','SEVENTH','EIGHTH','NINTH','TENTH','ELEVENTH','TWELFTH'][houseNum]} HOUSE</div>
-                        <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{houseReading.text}</div>
+                      <div style={{ padding: '14px 18px 18px', borderTop: '1px solid ' + T.borderLight }}>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.textFaint, letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} IN THE {['','FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH','SEVENTH','EIGHTH','NINTH','TENTH','ELEVENTH','TWELFTH'][houseNum]} HOUSE</div>
+                        <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{houseReading.text}</div>
                       </div>
                     )}
 
                     {/* Details section */}
-                    <div style={{ padding: '14px 18px 20px', borderTop: '1px solid #1A2840' }}>
-                      <div style={{ ...F, fontSize: 8, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, marginBottom: 10 }}>DETAILS</div>
+                    <div style={{ padding: '14px 18px 20px', borderTop: '1px solid ' + T.border }}>
+                      <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.textFaint, letterSpacing: 1.5, marginBottom: 10 }}>DETAILS</div>
                       {[
                         ['Position', `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
                         houseNum ? ['House', `${houseNum}${houseNum===1?'st':houseNum===2?'nd':houseNum===3?'rd':'th'} House${houseInfo ? ' — ' + houseInfo.keyword : ''}`] : null,
@@ -966,9 +996,9 @@ export default function Dashboard({ demo = false }) {
                         sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? ['Motion', 'Retrograde ℞'] : null,
                         planetInfo?.rules ? ['Rules', planetInfo.rules] : null,
                       ].filter(Boolean).map(([label, val]) => (
-                        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #14202C' }}>
-                          <span style={{ ...F, fontSize: 11, fontWeight: 600, color: '#8098B0' }}>{label}</span>
-                          <span style={{ ...F, fontSize: 11, color: '#D0DDE8' }}>{val}</span>
+                        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid ' + T.borderLight }}>
+                          <span style={{ ...F, fontSize: 11, fontWeight: 600, color: T.textMid }}>{label}</span>
+                          <span style={{ ...F, fontSize: 11, color: T.text }}>{val}</span>
                         </div>
                       ))}
                     </div>
@@ -980,12 +1010,12 @@ export default function Dashboard({ demo = false }) {
               {!selectedPlacement && natalTab === 'chart' && (
                 <>
                   {/* Column headers */}
-                  <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid #14202C', background: '#0A1018', flexShrink: 0 }}>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
-                    <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
+                  <div style={{ display: 'flex', padding: '5px 14px', borderBottom: '1px solid ' + T.borderLight, background: T.bg, flexShrink: 0 }}>
+                    <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
+                    <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
+                    <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
+                    <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
+                    <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
                   </div>
                   <div style={{ flex: 1, overflowY: 'auto' }}>
                     {chartData.planets.map((p, i) => {
@@ -994,7 +1024,7 @@ export default function Dashboard({ demo = false }) {
                       const pc = PCOL[p.id] || '#8098B0';
                       const pd = PLANET_DOMAINS[p.id];
                       return (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid ' + T.borderLight, transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.bgCard} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
                             <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1, width: 18, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                             <div>
@@ -1004,61 +1034,61 @@ export default function Dashboard({ demo = false }) {
                           </div>
                           <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
                             <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
-                            <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{p.sign}</span>
+                            <span style={{ ...F, fontSize: 9, color: T.textMid, fontWeight: 600 }}>{p.sign}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
-                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{p.deg}°</span>
-                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(p.min).padStart(2, '0')}'</span>
+                            <span style={{ ...F, fontSize: 10, color: T.text, fontWeight: 600 }}>{p.deg}°</span>
+                            <span style={{ ...F, fontSize: 8, color: T.textDim }}>{String(p.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
                             <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || '#5A7088', background: (ELEM_COL[elem] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
                           </div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{pd?.domain || ''}</div>
-                            <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{mode}</div>
+                            <div style={{ ...F, fontSize: 8, color: T.textDim }}>{pd?.domain || ''}</div>
+                            <div style={{ ...F, fontSize: 7, color: T.textFaint }}>{mode}</div>
                           </div>
                         </div>
                       );
                     })}
                     {chartData.natal && <>
-                      <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
+                      <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.textFaint, letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: '1px solid ' + T.border }}>ANGLES</div>
                       {[
                         { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
                         { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
                       ].map((a, i) => a.data && (
-                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid #14202C' }}>
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: '1px solid ' + T.borderLight }}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
                             <span style={{ ...F, fontSize: 15, color: '#E8A838', lineHeight: 1 }}>{a.short === 'ASC' ? '△' : '▽'}</span>
                             <div>
                               <div style={{ ...F, fontSize: 10, color: '#E8A838', fontWeight: 600 }}>{a.label}</div>
-                              <div style={{ ...F, fontSize: 7, color: '#5A7088' }}>{a.short}</div>
+                              <div style={{ ...F, fontSize: 7, color: T.textDim }}>{a.short}</div>
                             </div>
                           </div>
                           <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
                             <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
-                            <span style={{ ...F, fontSize: 9, color: '#B0C0D0', fontWeight: 600 }}>{a.data.sign}</span>
+                            <span style={{ ...F, fontSize: 9, color: T.textMid, fontWeight: 600 }}>{a.data.sign}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
-                            <span style={{ ...F, fontSize: 10, color: '#D0DDE8', fontWeight: 600 }}>{a.data.deg}°</span>
-                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{String(a.data.min).padStart(2, '0')}'</span>
+                            <span style={{ ...F, fontSize: 10, color: T.text, fontWeight: 600 }}>{a.data.deg}°</span>
+                            <span style={{ ...F, fontSize: 8, color: T.textDim }}>{String(a.data.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
                             <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088', background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || '#5A7088') + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
                           </div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ ...F, fontSize: 8, color: '#6A8098' }}>{a.desc}</div>
+                            <div style={{ ...F, fontSize: 8, color: T.textDim }}>{a.desc}</div>
                           </div>
                         </div>
                       ))}
                     </>}
-                    <div style={{ padding: '8px 14px', borderTop: '1px solid #1A2840', background: '#0D1520', display: 'flex', gap: 12 }}>
+                    <div style={{ padding: '8px 14px', borderTop: '1px solid ' + T.border, background: T.bgAlt, display: 'flex', gap: 12 }}>
                       {['Fire', 'Earth', 'Air', 'Water'].map(el => {
                         const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
                         return (
                           <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                             <div style={{ width: 6, height: 6, borderRadius: 1, background: ELEM_COL[el] }} />
                             <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
-                            <span style={{ ...F, fontSize: 9, color: '#D0DDE8', fontWeight: 700 }}>{count}</span>
+                            <span style={{ ...F, fontSize: 9, color: T.text, fontWeight: 700 }}>{count}</span>
                           </div>
                         );
                       })}
@@ -1074,36 +1104,36 @@ export default function Dashboard({ demo = false }) {
                     const elem = SIGN_ELEMENTS[p.sign] || '';
                     const pc = PCOL[p.id] || '#8098B0';
                     return (
-                      <div key={i} onClick={() => setSelectedPlacement({ id: p.id, type: 'planet' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                      <div key={i} onClick={() => setSelectedPlacement({ id: p.id, type: 'planet' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid ' + T.borderLight, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.bgCard} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <span style={{ fontSize: 18, color: pc, lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                           <div>
-                            <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{p.id} in {p.sign}</div>
-                            {p.house && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' · Retrograde' : ''}</div>}
+                            <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.text }}>{p.id} in {p.sign}</div>
+                            {p.house && <div style={{ ...F, fontSize: 9, color: T.textDim, marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' · Retrograde' : ''}</div>}
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{p.deg}° {p.sign.slice(0,3)} {String(p.min).padStart(2,'0')}'</span>
-                          <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
+                          <span style={{ ...F, fontSize: 10, color: T.textDim }}>{p.deg}° {p.sign.slice(0,3)} {String(p.min).padStart(2,'0')}'</span>
+                          <span style={{ ...F, fontSize: 12, color: T.textFaint }}>&rsaquo;</span>
                         </div>
                       </div>
                     );
                   })}
 
                   {/* Angles */}
-                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#3A5068', letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: '1px solid #1A2840' }}>ANGLES</div>
+                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.textFaint, letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: '1px solid ' + T.border }}>ANGLES</div>
                   {[
                     { label: 'Ascendant', type: 'asc', data: chartData.natal?.asc, symbol: '△' },
                     { label: 'Midheaven', type: 'mc', data: chartData.natal?.mc, symbol: '▽' },
                   ].map(a => a.data && (
-                    <div key={a.type} onClick={() => setSelectedPlacement({ id: a.label, type: a.type })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <div key={a.type} onClick={() => setSelectedPlacement({ id: a.label, type: a.type })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid ' + T.borderLight, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.bgCard} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span style={{ fontSize: 18, color: '#E8A838', lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{a.symbol}</span>
-                        <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#D0DDE8' }}>{a.label} in {a.data.sign}</div>
+                        <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.text }}>{a.label} in {a.data.sign}</div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ ...F, fontSize: 10, color: '#5A7088' }}>{a.data.deg}° {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
-                        <span style={{ ...F, fontSize: 12, color: '#3A5068' }}>&rsaquo;</span>
+                        <span style={{ ...F, fontSize: 10, color: T.textDim }}>{a.data.deg}° {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
+                        <span style={{ ...F, fontSize: 12, color: T.textFaint }}>&rsaquo;</span>
                       </div>
                     </div>
                   ))}
@@ -1115,32 +1145,32 @@ export default function Dashboard({ demo = false }) {
           {/* Line info popup */}
           {typeof popup === 'number' && lines[popup] && (<>
             <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setPopup(null)} />
-            <div style={{ position: 'absolute', top: mob ? 8 : 50, left: mob ? 8 : 8, right: mob ? 8 : 'auto', width: mob ? 'auto' : 320, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 8, padding: 16, zIndex: 100, boxShadow: '0 12px 40px rgba(0,0,0,.5)' }}>
+            <div style={{ position: 'absolute', top: mob ? 8 : 50, left: mob ? 8 : 8, right: mob ? 8 : 'auto', width: mob ? 'auto' : 320, background: T.popupOverlay, border: '1px solid ' + T.border, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.shadow }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <div style={{ width: 20, height: 3, borderRadius: 2, background: lines[popup].c }} />
                 <span style={{ ...F, fontSize: 13, fontWeight: 700, color: lines[popup].c }}>{lines[popup].n}</span>
-                <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{lines[popup].angle}</span>
-                <span onClick={() => setPopup(null)} style={{ marginLeft: 'auto', cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088' }}>✕</span>
+                <span style={{ ...F, fontSize: 9, color: T.textDim }}>{lines[popup].angle}</span>
+                <span onClick={() => setPopup(null)} style={{ marginLeft: 'auto', cursor: 'pointer', ...F, fontSize: 14, color: T.textDim }}>✕</span>
               </div>
-              <div style={{ fontSize: 13, color: '#8098B0', lineHeight: 1.8 }}>{lines[popup].desc}</div>
-              <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 10 }}>Cities: {onLines.filter(c => c.line === lines[popup].n).map(c => c.name).join(' · ')}</div>
+              <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.8 }}>{lines[popup].desc}</div>
+              <div style={{ ...F, fontSize: 9, color: T.textFaint, marginTop: 10 }}>Cities: {onLines.filter(c => c.line === lines[popup].n).map(c => c.name).join(' · ')}</div>
             </div>
           </>)}
 
           {/* City reading popup */}
           {cityPop && (<>
             <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setCityPop(null)} />
-            <div style={{ position: 'absolute', bottom: mob ? 8 : 16, right: mob ? 8 : 16, left: mob ? 8 : 'auto', width: mob ? 'auto' : 340, background: 'rgba(13,21,32,.97)', border: `1px solid ${cityPop.lc}30`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: '0 12px 40px rgba(0,0,0,.5)' }}>
+            <div style={{ position: 'absolute', bottom: mob ? 8 : 16, right: mob ? 8 : 16, left: mob ? 8 : 'auto', width: mob ? 'auto' : 340, background: T.popupOverlay, border: `1px solid ${cityPop.lc}30`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.shadow }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: cityPop.lc }} />
-                <span style={{ ...F, fontSize: 14, fontWeight: 700, color: '#D0DDE8' }}>{cityPop.name}</span>
+                <span style={{ ...F, fontSize: 14, fontWeight: 700, color: T.text }}>{cityPop.name}</span>
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: cityPop.q === 'thrive' ? COL.thrive : cityPop.q === 'avoid' ? COL.avoid : COL.neutral, marginLeft: 'auto' }}>
                   {cityPop.q === 'thrive' ? 'THRIVE' : cityPop.q === 'avoid' ? 'CAUTION' : 'NEUTRAL'}
                 </span>
-                <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: '#5A7088', marginLeft: 8 }}>✕</span>
+                <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.textDim, marginLeft: 8 }}>✕</span>
               </div>
               <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° from line</div>
-              <div style={{ fontSize: 12, color: '#8098B0', lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
+              <div style={{ fontSize: 12, color: T.textMid, lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
             </div>
           </>)}
 
@@ -1160,24 +1190,24 @@ export default function Dashboard({ demo = false }) {
             const timeFmt = bt ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '—';
 
             return (<>
-              <div onClick={() => setShowSettings(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(5,10,16,.92)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 700, animation: 'fadeIn .2s ease-out' }} />
-              <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: mob ? 'calc(100% - 24px)' : 520, maxHeight: mob ? 'calc(100% - 48px)' : '80vh', background: '#0D1520', border: '1px solid #1A2840', borderRadius: 16, zIndex: 710, display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(0,216,138,.05)', animation: 'fadeIn .25s ease-out' }}>
+              <div onClick={() => setShowSettings(false)} style={{ position: 'fixed', inset: 0, background: lightMode ? 'rgba(255,255,255,.9)' : 'rgba(5,10,16,.92)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 700, animation: 'fadeIn .2s ease-out' }} />
+              <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: mob ? 'calc(100% - 24px)' : 520, maxHeight: mob ? 'calc(100% - 48px)' : '80vh', background: T.bgAlt, border: '1px solid ' + T.border, borderRadius: 16, zIndex: 710, display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: lightMode ? '0 16px 48px rgba(0,0,0,.1)' : '0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(0,216,138,.05)', animation: 'fadeIn .25s ease-out' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '14px 16px' : '18px 24px', borderBottom: '1px solid #1A2840', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '14px 16px' : '18px 24px', borderBottom: '1px solid ' + T.border, flexShrink: 0 }}>
                   <div>
-                    <div style={{ ...F, fontSize: 11, fontWeight: 700, color: '#D0DDE8', letterSpacing: 2 }}>SETTINGS</div>
-                    <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
+                    <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.text, letterSpacing: 2 }}>SETTINGS</div>
+                    <div style={{ ...F, fontSize: 9, color: T.textDim, marginTop: 2 }}>{user?.email}</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div onClick={signOut} title="Sign out" style={{ ...F, fontSize: 11, color: '#F04060', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #F0406030', background: '#F0406008', transition: 'all .15s' }}>⏻</div>
-                    <div onClick={() => setShowSettings(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid #1A2840', transition: 'all .15s' }}>×</div>
+                    <div onClick={() => setShowSettings(false)} style={{ ...F, fontSize: 14, color: T.textDim, cursor: 'pointer', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: '1px solid ' + T.border, transition: 'all .15s' }}>×</div>
                   </div>
                 </div>
 
                 {/* Tab navigation */}
-                <div style={{ display: 'flex', padding: mob ? '0 12px' : '0 20px', gap: mob ? 0 : 4, borderBottom: '1px solid #1A2840', flexShrink: 0, overflowX: 'auto' }}>
+                <div style={{ display: 'flex', padding: mob ? '0 12px' : '0 20px', gap: mob ? 0 : 4, borderBottom: '1px solid ' + T.border, flexShrink: 0, overflowX: 'auto' }}>
                   {tabs.map(t => (
-                    <div key={t.id} onClick={() => { setSettingsTab(t.id); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: settingsTab === t.id ? '#00D88A' : '#5A7088', padding: mob ? '10px 8px' : '12px 14px', cursor: 'pointer', borderBottom: settingsTab === t.id ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
+                    <div key={t.id} onClick={() => { setSettingsTab(t.id); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: settingsTab === t.id ? T.accent : T.textDim, padding: mob ? '10px 8px' : '12px 14px', cursor: 'pointer', borderBottom: settingsTab === t.id ? '2px solid ' + T.accent : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
                       <span style={{ marginRight: 5, fontSize: mob ? 9 : 10 }}>{t.icon}</span>{t.label}
                     </div>
                   ))}
@@ -1190,76 +1220,76 @@ export default function Dashboard({ demo = false }) {
                   {settingsTab === 'profile' && (<div>
                     {/* Avatar / initials */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #00D88A30, #00D88A10)', border: '2px solid #00D88A40', display: 'flex', alignItems: 'center', justifyContent: 'center', ...F, fontSize: 20, fontWeight: 700, color: '#00D88A' }}>
+                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #00D88A30, #00D88A10)', border: '2px solid #00D88A40', display: 'flex', alignItems: 'center', justifyContent: 'center', ...F, fontSize: 20, fontWeight: 700, color: T.accent }}>
                         {(displayName || '?')[0].toUpperCase()}
                       </div>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>{displayName}</div>
+                          <div style={{ ...F, fontSize: 16, fontWeight: 700, color: T.text }}>{displayName}</div>
                           {isPremium && <div style={{ ...F, fontSize: 7, fontWeight: 700, color: '#E8A838', padding: '2px 6px', borderRadius: 3, background: '#E8A83818', border: '1px solid #E8A83830', letterSpacing: 1 }}>PREMIUM</div>}
                         </div>
-                        <div style={{ ...F, fontSize: 10, color: '#5A7088', marginTop: 2 }}>{user?.email}</div>
+                        <div style={{ ...F, fontSize: 10, color: T.textDim, marginTop: 2 }}>{user?.email}</div>
                       </div>
                     </div>
 
                     {/* Display name */}
                     <div style={{ marginBottom: 20 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>DISPLAY NAME</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>DISPLAY NAME</div>
                       {editingName ? (
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <input value={nameInput} onChange={e => setNameInput(e.target.value)} maxLength={40} autoFocus style={{ ...F, fontSize: 13, color: '#D0DDE8', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, padding: '8px 12px', flex: 1, outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && nameInput.trim()) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); } if (e.key === 'Escape') setEditingName(false); }} />
-                          <div onClick={() => { if (nameInput.trim() && !savingName) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); }}} style={{ ...F, fontSize: 9, color: savingName ? '#3A5068' : '#00D88A', cursor: savingName ? 'default' : 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #00D88A40', background: '#00D88A10' }}>{savingName ? 'SAVING...' : 'SAVE'}</div>
-                          <div onClick={() => setEditingName(false)} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 10px' }}>CANCEL</div>
+                          <input value={nameInput} onChange={e => setNameInput(e.target.value)} maxLength={40} autoFocus style={{ ...F, fontSize: 13, color: T.text, background: T.bg, border: '1px solid ' + T.border, borderRadius: 6, padding: '8px 12px', flex: 1, outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && nameInput.trim()) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); } if (e.key === 'Escape') setEditingName(false); }} />
+                          <div onClick={() => { if (nameInput.trim() && !savingName) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); }}} style={{ ...F, fontSize: 9, color: savingName ? '#3A5068' : '#00D88A', cursor: savingName ? 'default' : 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #00D88A40', background: T.accent + '10' }}>{savingName ? 'SAVING...' : 'SAVE'}</div>
+                          <div onClick={() => setEditingName(false)} style={{ ...F, fontSize: 9, color: T.textDim, cursor: 'pointer', padding: '8px 10px' }}>CANCEL</div>
                         </div>
                       ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{ ...F, fontSize: 13, color: '#D0DDE8', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px', flex: 1 }}>{displayName || '—'}</div>
-                          <div onClick={() => { setNameInput(displayName || ''); setEditingName(true); }} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #1A2840' }}>EDIT</div>
+                          <div style={{ ...F, fontSize: 13, color: T.text, background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 6, padding: '8px 12px', flex: 1 }}>{displayName || '—'}</div>
+                          <div onClick={() => { setNameInput(displayName || ''); setEditingName(true); }} style={{ ...F, fontSize: 9, color: T.textDim, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid ' + T.border }}>EDIT</div>
                         </div>
                       )}
                     </div>
 
                     {/* Email (read-only) */}
                     <div style={{ marginBottom: 20 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>EMAIL</div>
-                      <div style={{ ...F, fontSize: 13, color: '#8098B0', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px' }}>{user?.email}</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>EMAIL</div>
+                      <div style={{ ...F, fontSize: 13, color: T.textMid, background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 6, padding: '8px 12px' }}>{user?.email}</div>
                     </div>
 
                     {/* Member since */}
                     <div>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>MEMBER SINCE</div>
-                      <div style={{ ...F, fontSize: 13, color: '#8098B0', background: '#0A1018', border: '1px solid #14202C', borderRadius: 6, padding: '8px 12px' }}>{user?.created_at ? new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>MEMBER SINCE</div>
+                      <div style={{ ...F, fontSize: 13, color: T.textMid, background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 6, padding: '8px 12px' }}>{user?.created_at ? new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}</div>
                     </div>
                   </div>)}
 
                   {/* ── BIRTH DATA TAB ── */}
                   {settingsTab === 'birth' && (<div>
-                    <div style={{ ...F, fontSize: 10, color: '#8098B0', marginBottom: 20, lineHeight: 1.6 }}>
+                    <div style={{ ...F, fontSize: 10, color: T.textMid, marginBottom: 20, lineHeight: 1.6 }}>
                       Your birth data is the foundation of your astrocartography chart. All planetary line calculations depend on these values.
                     </div>
 
                     <div style={{ display: 'grid', gap: 16 }}>
-                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>DATE OF BIRTH</div>
-                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{dateFmt}</div>
+                      <div style={{ background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>DATE OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 15, color: T.text, fontWeight: 600 }}>{dateFmt}</div>
                       </div>
 
-                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>TIME OF BIRTH</div>
-                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{timeFmt}</div>
-                        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>Precision matters — even 4 minutes shifts your ASC lines by ~1°</div>
+                      <div style={{ background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>TIME OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 15, color: T.text, fontWeight: 600 }}>{timeFmt}</div>
+                        <div style={{ ...F, fontSize: 9, color: T.textFaint, marginTop: 4 }}>Precision matters — even 4 minutes shifts your ASC lines by ~1°</div>
                       </div>
 
-                      <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>BIRTH LOCATION</div>
-                        <div style={{ ...F, fontSize: 15, color: '#D0DDE8', fontWeight: 600 }}>{profile?.birth_city || '—'}</div>
-                        <div style={{ ...F, fontSize: 9, color: '#3A5068', marginTop: 4 }}>
+                      <div style={{ background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 10, padding: 16 }}>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, marginBottom: 8 }}>BIRTH LOCATION</div>
+                        <div style={{ ...F, fontSize: 15, color: T.text, fontWeight: 600 }}>{profile?.birth_city || '—'}</div>
+                        <div style={{ ...F, fontSize: 9, color: T.textFaint, marginTop: 4 }}>
                           {profile?.birth_lat != null ? `${Math.abs(profile.birth_lat).toFixed(4)}°${profile.birth_lat >= 0 ? 'N' : 'S'} · ${Math.abs(profile.birth_lng).toFixed(4)}°${profile.birth_lng >= 0 ? 'E' : 'W'}` : '—'}
                         </div>
                       </div>
                     </div>
 
-                    <div onClick={() => { setShowSettings(false); navigate('/birth-data', { state: { edit: true } }); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#00D88A', cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: '#00D88A08', letterSpacing: 1 }}>
+                    <div onClick={() => { setShowSettings(false); navigate('/birth-data', { state: { edit: true } }); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: T.accent, cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: '1px solid #00D88A40', borderRadius: 8, background: T.accent + '08', letterSpacing: 1 }}>
                       EDIT BIRTH DATA
                     </div>
                   </div>)}
@@ -1267,14 +1297,14 @@ export default function Dashboard({ demo = false }) {
                   {/* ── ACCOUNT TAB ── */}
                   {settingsTab === 'account' && (<div>
                     {/* Premium status */}
-                    <div style={{ background: isPremium ? '#00D88A08' : '#E8A83808', border: `1px solid ${isPremium ? '#00D88A20' : '#E8A83820'}`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
+                    <div style={{ background: isPremium ? T.accent + '08' : '#E8A83808', border: `1px solid ${isPremium ? T.accent + '20' : '#E8A83820'}`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Plan</div>
-                            <div style={{ ...F, fontSize: 8, fontWeight: 700, color: isPremium ? '#00D88A' : '#E8A838', padding: '2px 8px', borderRadius: 4, background: isPremium ? '#00D88A18' : '#E8A83818', border: `1px solid ${isPremium ? '#00D88A30' : '#E8A83830'}`, letterSpacing: 1 }}>{isPremium ? 'PREMIUM' : 'FREE'}</div>
+                            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.text }}>Plan</div>
+                            <div style={{ ...F, fontSize: 8, fontWeight: 700, color: isPremium ? '#00D88A' : '#E8A838', padding: '2px 8px', borderRadius: 4, background: isPremium ? '#00D88A18' : '#E8A83818', border: `1px solid ${isPremium ? T.accent + '30' : '#E8A83830'}`, letterSpacing: 1 }}>{isPremium ? 'PREMIUM' : 'FREE'}</div>
                           </div>
-                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>{isPremium ? 'Full access to all features' : 'Upgrade to unlock all features'}</div>
+                          <div style={{ ...F, fontSize: 9, color: T.textDim, marginTop: 3 }}>{isPremium ? 'Full access to all features' : 'Upgrade to unlock all features'}</div>
                         </div>
                         {!isPremium && (
                           <div onClick={handleUpgrade} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: upgradeLoading ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>{upgradeLoading ? '...' : 'UPGRADE'}</div>
@@ -1283,11 +1313,11 @@ export default function Dashboard({ demo = false }) {
                     </div>
 
                     {/* Sign out */}
-                    <div style={{ background: '#0A1018', border: '1px solid #14202C', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+                    <div style={{ background: T.bg, border: '1px solid ' + T.borderLight, borderRadius: 10, padding: 16, marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
-                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>Sign Out</div>
-                          <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3 }}>Sign out of your account on this device</div>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.text }}>Sign Out</div>
+                          <div style={{ ...F, fontSize: 9, color: T.textDim, marginTop: 3 }}>Sign out of your account on this device</div>
                         </div>
                         <div onClick={signOut} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: '#F0406010', letterSpacing: 0.5 }}>SIGN OUT</div>
                       </div>
@@ -1297,8 +1327,8 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ borderTop: '1px solid #F0406020', paddingTop: 20, marginTop: 8 }}>
                       <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', letterSpacing: 1.5, marginBottom: 12 }}>DANGER ZONE</div>
                       <div style={{ background: '#F0406008', border: '1px solid #F0406020', borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8', marginBottom: 4 }}>Delete Account</div>
-                        <div style={{ ...F, fontSize: 9, color: '#8098B0', lineHeight: 1.6, marginBottom: 14 }}>
+                        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.text, marginBottom: 4 }}>Delete Account</div>
+                        <div style={{ ...F, fontSize: 9, color: T.textMid, lineHeight: 1.6, marginBottom: 14 }}>
                           Permanently delete your profile and all associated data. This action cannot be undone.
                         </div>
                         {!confirmDelete ? (
@@ -1308,7 +1338,7 @@ export default function Dashboard({ demo = false }) {
                             <div style={{ ...F, fontSize: 10, color: '#F04060', fontWeight: 600, marginBottom: 10 }}>Are you sure? This cannot be undone.</div>
                             <div style={{ display: 'flex', gap: 10 }}>
                               <div onClick={() => { deleteAccount(); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, background: '#F04060', letterSpacing: 0.5 }}>YES, DELETE</div>
-                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid #1A2840' }}>CANCEL</div>
+                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: T.textDim, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: '1px solid ' + T.border }}>CANCEL</div>
                             </div>
                           </div>
                         )}
@@ -1324,7 +1354,7 @@ export default function Dashboard({ demo = false }) {
           {/* HOW IT WORKS guide */}
           {showGuide && (() => {
             const TABS = [
-              { id: 'overview', label: 'OVERVIEW', color: '#00D88A' },
+              { id: 'overview', label: 'OVERVIEW', color: T.accent },
               { id: 'lines', label: 'LINES', color: '#5BA8D4' },
               { id: 'planets', label: 'PLANETS', color: '#D4729A' },
               { id: 'zones', label: 'ZONES', color: '#E8A838' },
@@ -1336,24 +1366,24 @@ export default function Dashboard({ demo = false }) {
             const hasNext = gt < TABS.length - 1;
             const hasPrev = gt > 0;
             return (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,16,24,.88)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }} onClick={() => setShowGuide(false)}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, width: mob ? 'calc(100% - 24px)' : 620, maxWidth: 660, maxHeight: mob ? 'calc(100% - 24px)' : 'calc(100% - 48px)', boxShadow: '0 24px 64px rgba(0,0,0,.7)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', inset: 0, zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: lightMode ? 'rgba(255,255,255,.85)' : 'rgba(10,16,24,.88)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }} onClick={() => setShowGuide(false)}>
+              <div onClick={e => e.stopPropagation()} style={{ background: T.bgAlt, border: '1px solid ' + T.border, borderRadius: 10, width: mob ? 'calc(100% - 24px)' : 620, maxWidth: 660, maxHeight: mob ? 'calc(100% - 24px)' : 'calc(100% - 48px)', boxShadow: lightMode ? '0 24px 64px rgba(0,0,0,.15)' : '0 24px 64px rgba(0,0,0,.7)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: '1px solid #1A2840', background: '#0A1018', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: '1px solid ' + T.border, background: T.bg, flexShrink: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: '#00D88A', letterSpacing: 2 }}>SYSTEM GUIDE</span>
-                    <span style={{ ...F, fontSize: 8, color: '#3A5068' }}>{gt + 1}/{TABS.length}</span>
+                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.accent, letterSpacing: 2 }}>SYSTEM GUIDE</span>
+                    <span style={{ ...F, fontSize: 8, color: T.textFaint }}>{gt + 1}/{TABS.length}</span>
                   </div>
-                  <span onClick={() => setShowGuide(false)} style={{ cursor: 'pointer', ...F, fontSize: 16, color: '#5A7088', lineHeight: 1 }}>✕</span>
+                  <span onClick={() => setShowGuide(false)} style={{ cursor: 'pointer', ...F, fontSize: 16, color: T.textDim, lineHeight: 1 }}>✕</span>
                 </div>
 
                 {/* Tab bar */}
-                <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0, overflowX: 'auto' }}>
+                <div style={{ display: 'flex', borderBottom: '1px solid ' + T.border, background: T.bgPanel, flexShrink: 0, overflowX: 'auto' }}>
                   {TABS.map((t, i) => (
                     <button key={t.id} onClick={() => setGuideTab(i)} style={{
                       ...F, fontSize: mob ? 7 : 8, fontWeight: 700, letterSpacing: 1,
                       padding: mob ? '8px 8px' : '9px 14px', border: 'none', cursor: 'pointer',
-                      color: i === gt ? t.color : '#3A5068',
+                      color: i === gt ? t.color : T.textFaint,
                       background: i === gt ? t.color + '12' : 'transparent',
                       borderBottom: i === gt ? `2px solid ${t.color}` : '2px solid transparent',
                       whiteSpace: 'nowrap', flex: mob ? 1 : 'none',
@@ -1367,23 +1397,23 @@ export default function Dashboard({ demo = false }) {
                   {/* TAB 0: Overview */}
                   {gt === 0 && <>
                     <div style={{ marginBottom: 24 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ width: 16, height: 1, background: '#00D88A' }} />WHAT IS NATAL NAVIGATOR
+                      <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.accent, letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ width: 16, height: 1, background: T.accent }} />WHAT IS NATAL NAVIGATOR
                       </div>
-                      <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8 }}>
-                        Natal Navigator is an <strong style={{ color: '#D0DDE8' }}>astrocartography tool</strong> that maps your birth chart onto the globe. It reveals which cities and regions of the world are energetically aligned with your planetary positions — showing you where your strengths are amplified and where challenges may arise.
+                      <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.8 }}>
+                        Natal Navigator is an <strong style={{ color: T.text }}>astrocartography tool</strong> that maps your birth chart onto the globe. It reveals which cities and regions of the world are energetically aligned with your planetary positions — showing you where your strengths are amplified and where challenges may arise.
                       </div>
                     </div>
-                    <div style={{ width: '100%', height: 1, background: '#1A2840', marginBottom: 24 }} />
+                    <div style={{ width: '100%', height: 1, background: T.border, marginBottom: 24 }} />
                     <div>
                       <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#E8A838', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ width: 16, height: 1, background: '#E8A838' }} />WHAT IS ASTROCARTOGRAPHY
                       </div>
-                      <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8, marginBottom: 12 }}>
-                        Astrocartography (or locational astrology) calculates where each planet in your birth chart was rising, setting, culminating, or at its lowest point — and projects those positions as <strong style={{ color: '#D0DDE8' }}>lines across the globe</strong>. Living near or traveling to these lines activates the planet's energy in your life.
+                      <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.8, marginBottom: 12 }}>
+                        Astrocartography (or locational astrology) calculates where each planet in your birth chart was rising, setting, culminating, or at its lowest point — and projects those positions as <strong style={{ color: T.text }}>lines across the globe</strong>. Living near or traveling to these lines activates the planet's energy in your life.
                       </div>
-                      <div style={{ fontSize: 13, color: '#B0C0D0', lineHeight: 1.8 }}>
-                        Your birth chart is a snapshot of the sky at the exact moment you were born. The positions of the Sun, Moon, and planets at that time define your personality traits, strengths, and life themes. Astrocartography extends this by asking: <em style={{ color: '#8098B0' }}>where on Earth were these planetary energies strongest?</em>
+                      <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.8 }}>
+                        Your birth chart is a snapshot of the sky at the exact moment you were born. The positions of the Sun, Moon, and planets at that time define your personality traits, strengths, and life themes. Astrocartography extends this by asking: <em style={{ color: T.textMid }}>where on Earth were these planetary energies strongest?</em>
                       </div>
                     </div>
                   </>}
@@ -1393,8 +1423,8 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#5BA8D4', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 16, height: 1, background: '#5BA8D4' }} />THE FOUR LINE TYPES
                     </div>
-                    <div style={{ fontSize: 12, color: '#6A8098', lineHeight: 1.7, marginBottom: 16 }}>
-                      Each planet produces four lines on the globe — one for each angle. The line type determines <em style={{ color: '#B0C0D0' }}>which area of life</em> the planet's energy activates at that location.
+                    <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7, marginBottom: 16 }}>
+                      Each planet produces four lines on the globe — one for each angle. The line type determines <em style={{ color: T.textMid }}>which area of life</em> the planet's energy activates at that location.
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 10 }}>
                       {[
@@ -1403,17 +1433,17 @@ export default function Dashboard({ demo = false }) {
                         { angle: 'ASC', label: 'Ascendant', dash: '8,3', desc: 'Where a planet was rising on the eastern horizon. Activates identity, self-expression, and first impressions. Personal and physical energy.' },
                         { angle: 'DC', label: 'Descendant', dash: '2,2', desc: 'Where a planet was setting on the western horizon. Activates partnerships, relationships, and collaboration. Interpersonal energy.' },
                       ].map(a => (
-                        <div key={a.angle} style={{ background: '#0A1420', border: '1px solid #14202C', borderRadius: 6, padding: 14 }}>
+                        <div key={a.angle} style={{ background: T.bgPanel, border: '1px solid ' + T.borderLight, borderRadius: 6, padding: 14 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                             <svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#8098B0" strokeWidth="2" strokeDasharray={a.dash || undefined} /></svg>
-                            <span style={{ ...F, fontSize: 12, fontWeight: 700, color: '#D0DDE8' }}>{a.angle}</span>
-                            <span style={{ ...F, fontSize: 8, color: '#5A7088' }}>{a.label}</span>
+                            <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.text }}>{a.angle}</span>
+                            <span style={{ ...F, fontSize: 8, color: T.textDim }}>{a.label}</span>
                           </div>
-                          <div style={{ fontSize: 11, color: '#6A8098', lineHeight: 1.7 }}>{a.desc}</div>
+                          <div style={{ fontSize: 11, color: T.textDim, lineHeight: 1.7 }}>{a.desc}</div>
                         </div>
                       ))}
                     </div>
-                    <div style={{ ...F, fontSize: 8, color: '#3A5068', lineHeight: 1.6, marginTop: 14, padding: '10px 12px', background: '#0A1420', borderRadius: 5, border: '1px solid #14202C' }}>
+                    <div style={{ ...F, fontSize: 8, color: T.textFaint, lineHeight: 1.6, marginTop: 14, padding: '10px 12px', background: T.bgPanel, borderRadius: 5, border: '1px solid ' + T.borderLight }}>
                       MC & IC are vertical meridian lines (pole to pole). ASC & DC are curved lines that follow the horizon.
                     </div>
                   </>}
@@ -1423,16 +1453,16 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D4729A', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 16, height: 1, background: '#D4729A' }} />PLANETARY ENERGIES
                     </div>
-                    <div style={{ fontSize: 12, color: '#6A8098', lineHeight: 1.7, marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7, marginBottom: 16 }}>
                       Each planet governs specific life themes. When you live near or visit a planetary line, that planet's energy is amplified in the corresponding area of your life.
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 1, background: T.borderLight, borderRadius: 6, overflow: 'hidden', border: '1px solid ' + T.borderLight }}>
                       {Object.entries(PLANET_DOMAINS).map(([planet, { domain, icon }]) => (
-                        <div key={planet} style={{ background: '#0D1520', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div key={planet} style={{ background: T.bgAlt, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
                           <span style={{ fontSize: 18, color: PCOL[planet], lineHeight: 1, width: 24, textAlign: 'center' }}>{icon}</span>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ ...F, fontSize: 11, fontWeight: 700, color: PCOL[planet] }}>{planet}</div>
-                            <div style={{ ...F, fontSize: 8, color: '#5A7088', marginTop: 1 }}>{domain}</div>
+                            <div style={{ ...F, fontSize: 8, color: T.textDim, marginTop: 1 }}>{domain}</div>
                           </div>
                         </div>
                       ))}
@@ -1444,20 +1474,20 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#E8A838', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 16, height: 1, background: '#E8A838' }} />ZONE CLASSIFICATION
                     </div>
-                    <div style={{ fontSize: 12, color: '#6A8098', lineHeight: 1.7, marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7, marginBottom: 16 }}>
                       Cities near your lines are classified into three zones based on the planet's traditional nature. Use these as guidance, not absolute rules.
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {[
-                        { zone: 'THRIVE', color: '#00D88A', sym: '▲', desc: 'Benefic planetary lines — Sun (vitality, recognition), Moon (emotional belonging), Venus (love, beauty), and Jupiter (luck, expansion). Each planet activates different strengths depending on the angle: MC amplifies career, IC deepens roots, ASC enhances identity, DC enriches partnerships.' },
+                        { zone: 'THRIVE', color: T.accent, sym: '▲', desc: 'Benefic planetary lines — Sun (vitality, recognition), Moon (emotional belonging), Venus (love, beauty), and Jupiter (luck, expansion). Each planet activates different strengths depending on the angle: MC amplifies career, IC deepens roots, ASC enhances identity, DC enriches partnerships.' },
                         { zone: 'NEUTRAL', color: '#D8A030', sym: '◆', desc: 'Mixed-energy lines — Mercury (communication, intellect) and some Mars/Saturn/Uranus angles. Effects are subtle and depend on conscious engagement. These placements offer both opportunity and challenge — how you work with the energy determines the outcome.' },
                         { zone: 'CAUTION', color: '#F04060', sym: '▼', desc: 'Challenging planetary lines — Saturn (restriction, heaviness), Mars (conflict, aggression), Neptune (confusion, deception), Pluto (power struggles, intensity), and certain Uranus angles (instability). Each planet brings specific difficulties: Saturn isolates, Mars provokes, Neptune confuses, Pluto overwhelms. Short visits can teach lessons; long-term stays require awareness.' },
                       ].map(z => (
-                        <div key={z.zone} style={{ background: '#0A1420', border: `1px solid ${z.color}20`, borderRadius: 6, padding: 14, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                        <div key={z.zone} style={{ background: T.bgPanel, border: `1px solid ${z.color}20`, borderRadius: 6, padding: 14, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <div style={{ ...F, fontSize: 16, color: z.color, lineHeight: 1, flexShrink: 0, marginTop: 2 }}>{z.sym}</div>
                           <div>
                             <div style={{ ...F, fontSize: 11, fontWeight: 700, color: z.color, letterSpacing: 1, marginBottom: 5 }}>{z.zone}</div>
-                            <div style={{ fontSize: 12, color: '#6A8098', lineHeight: 1.7 }}>{z.desc}</div>
+                            <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7 }}>{z.desc}</div>
                           </div>
                         </div>
                       ))}
@@ -1469,7 +1499,7 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8068C0', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 16, height: 1, background: '#8068C0' }} />HOW TO USE
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: T.borderLight, borderRadius: 6, overflow: 'hidden', border: '1px solid ' + T.borderLight }}>
                       {[
                         { step: '01', title: 'Create your chart', desc: 'Sign up and enter your exact birth date, time, and location. Accuracy matters — even 15 minutes can shift your lines.' },
                         { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
@@ -1477,11 +1507,11 @@ export default function Dashboard({ demo = false }) {
                         { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
                         { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your planetary positions. Switch to "Your Birth Chart" for detailed readings — tap any planet to see what it means in your sign and house.' },
                       ].map(s => (
-                        <div key={s.step} style={{ background: '#0D1520', padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                        <div key={s.step} style={{ background: T.bgAlt, padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <span style={{ ...F, fontSize: 20, fontWeight: 700, color: '#8068C040', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
                           <div>
-                            <div style={{ ...F, fontSize: 11, fontWeight: 700, color: '#D0DDE8', marginBottom: 4 }}>{s.title}</div>
-                            <div style={{ fontSize: 12, color: '#6A8098', lineHeight: 1.7 }}>{s.desc}</div>
+                            <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>{s.title}</div>
+                            <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7 }}>{s.desc}</div>
                           </div>
                         </div>
                       ))}
@@ -1493,7 +1523,7 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#40B0A0', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 16, height: 1, background: '#40B0A0' }} />FREQUENTLY ASKED QUESTIONS
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: '#14202C', borderRadius: 6, overflow: 'hidden', border: '1px solid #14202C' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: T.borderLight, borderRadius: 6, overflow: 'hidden', border: '1px solid ' + T.borderLight }}>
                       {[
                         { q: 'Do I need to know my exact birth time?', a: 'Yes. Your birth time determines the Ascendant and house cusps, which shift your lines significantly. If you don\'t know your exact time, check your birth certificate or contact the hospital of birth.' },
                         { q: 'How close to a line do I need to be?', a: 'The influence is strongest within 1-2° of a line (roughly 100-200 km). We show cities up to 3.5° away, with signal strength decreasing with distance.' },
@@ -1501,11 +1531,11 @@ export default function Dashboard({ demo = false }) {
                         { q: 'What\'s the difference between globe and map view?', a: 'Globe view shows Earth in 3D for spatial context. Map view unfolds the projection flat, making it easier to trace lines across continents and compare regions.' },
                         { q: 'Is this based on real astronomy?', a: 'Yes. Planetary positions are calculated using high-precision astronomical algorithms (astronomy-engine), comparable to research-grade ephemeris data. Astrocartography then applies astrological interpretation to these positions.' },
                       ].map((faq, i) => (
-                        <div key={i} style={{ background: '#0D1520', padding: '14px 16px' }}>
-                          <div style={{ ...F, fontSize: 11, fontWeight: 700, color: '#B0C0D0', marginBottom: 6, display: 'flex', gap: 8 }}>
+                        <div key={i} style={{ background: T.bgAlt, padding: '14px 16px' }}>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.textMid, marginBottom: 6, display: 'flex', gap: 8 }}>
                             <span style={{ color: '#40B0A0', flexShrink: 0 }}>Q</span>{faq.q}
                           </div>
-                          <div style={{ fontSize: 12, color: '#5A7088', lineHeight: 1.7, paddingLeft: 20 }}>{faq.a}</div>
+                          <div style={{ fontSize: 12, color: T.textDim, lineHeight: 1.7, paddingLeft: 20 }}>{faq.a}</div>
                         </div>
                       ))}
                     </div>
@@ -1513,11 +1543,11 @@ export default function Dashboard({ demo = false }) {
                 </div>
 
                 {/* Bottom navigation */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', borderTop: '1px solid #1A2840', background: '#0A1018', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', borderTop: '1px solid ' + T.border, background: T.bg, flexShrink: 0 }}>
                   {hasPrev ? (
                     <div onClick={() => setGuideTab(gt - 1)} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                      <span style={{ ...F, fontSize: 12, color: '#5A7088' }}>←</span>
-                      <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{TABS[gt - 1].label}</span>
+                      <span style={{ ...F, fontSize: 12, color: T.textDim }}>←</span>
+                      <span style={{ ...F, fontSize: 9, color: T.textDim }}>{TABS[gt - 1].label}</span>
                     </div>
                   ) : <div />}
                   {hasNext ? (
@@ -1526,9 +1556,9 @@ export default function Dashboard({ demo = false }) {
                       <span style={{ ...F, fontSize: 12, color: TABS[gt + 1].color }}>→</span>
                     </div>
                   ) : (
-                    <div onClick={() => setShowGuide(false)} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: '#00D88A15', border: '1px solid #00D88A30', borderRadius: 5, padding: '6px 14px' }}>
-                      <span style={{ ...F, fontSize: 9, color: '#00D88A', fontWeight: 600 }}>START EXPLORING</span>
-                      <span style={{ ...F, fontSize: 12, color: '#00D88A' }}>→</span>
+                    <div onClick={() => setShowGuide(false)} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: T.accent + '15', border: '1px solid #00D88A30', borderRadius: 5, padding: '6px 14px' }}>
+                      <span style={{ ...F, fontSize: 9, color: T.accent, fontWeight: 600 }}>START EXPLORING</span>
+                      <span style={{ ...F, fontSize: 12, color: T.accent }}>→</span>
                     </div>
                   )}
                 </div>
@@ -1538,19 +1568,19 @@ export default function Dashboard({ demo = false }) {
 
           {/* Demo gate popup */}
           {showDemoGate && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,16,24,.88)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }} onClick={() => setShowDemoGate(false)}>
-              <div onClick={e => e.stopPropagation()} style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: '0 24px 64px rgba(0,0,0,.6)', textAlign: 'center', position: 'relative' }}>
-                <span onClick={() => setShowDemoGate(false)} style={{ position: 'absolute', top: 12, right: 14, cursor: 'pointer', ...F, fontSize: 16, color: '#5A7088', lineHeight: 1, zIndex: 1 }}>✕</span>
-                <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#00D88A', letterSpacing: 2, marginBottom: 12 }}>DISCOVER YOUR CHART</div>
-                <div style={{ fontSize: 13, color: '#8098B0', lineHeight: 1.7, marginBottom: 24 }}>
-                  You're viewing <strong style={{ color: '#D0DDE8' }}>{DEMO.name}'s</strong> chart as a demo.<br />
-                  Sign up to see <strong style={{ color: '#00D88A' }}>your own</strong> planetary lines, city readings, and natal chart.
+            <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: lightMode ? 'rgba(255,255,255,.85)' : 'rgba(10,16,24,.88)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }} onClick={() => setShowDemoGate(false)}>
+              <div onClick={e => e.stopPropagation()} style={{ background: T.bgAlt, border: '1px solid ' + T.border, borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: lightMode ? '0 24px 64px rgba(0,0,0,.12)' : '0 24px 64px rgba(0,0,0,.6)', textAlign: 'center', position: 'relative' }}>
+                <span onClick={() => setShowDemoGate(false)} style={{ position: 'absolute', top: 12, right: 14, cursor: 'pointer', ...F, fontSize: 16, color: T.textDim, lineHeight: 1, zIndex: 1 }}>✕</span>
+                <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.accent, letterSpacing: 2, marginBottom: 12 }}>DISCOVER YOUR CHART</div>
+                <div style={{ fontSize: 13, color: T.textMid, lineHeight: 1.7, marginBottom: 24 }}>
+                  You're viewing <strong style={{ color: T.text }}>{DEMO.name}'s</strong> chart as a demo.<br />
+                  Sign up to see <strong style={{ color: T.accent }}>your own</strong> planetary lines, city readings, and natal chart.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 12, fontWeight: 700, color: '#0A1018', background: '#00D88A', border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
+                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.accent, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
                     CREATE MY CHART
                   </button>
-                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: '#8098B0', background: 'transparent', border: '1px solid #1A2840', borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
+                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: T.textMid, background: 'transparent', border: '1px solid ' + T.border, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
                     I already have an account
                   </button>
                 </div>
@@ -1561,40 +1591,40 @@ export default function Dashboard({ demo = false }) {
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
             <div style={{ display: 'flex', gap: 4 }}>
-              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? '#00D88A' : '#8098B0', background: 'rgba(13,21,32,.95)', border: `1px solid ${popup === 'leg' ? '#00D88A40' : '#1A2840'}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
-              <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? '#00D88A' : '#5A7088', background: 'rgba(13,21,32,.95)', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
+              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? '#00D88A' : T.textMid, background: T.popupOverlay, border: `1px solid ${popup === 'leg' ? T.accentBorder : T.border}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
+              <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.accent : T.textDim, background: T.popupOverlay, border: '1px solid ' + T.border, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
             </div>
-            {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
-              {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: '#00D88A', cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: '1px solid #00D88A40', background: '#00D88A10', textAlign: 'center' }}>Show all planets</div>}
+            {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.popupOverlay, border: '1px solid ' + T.border, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
+              {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.accent, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: '1px solid #00D88A40', background: T.accent + '10', textAlign: 'center' }}>Show all planets</div>}
               {planetGroups.map(g => {
                 const isHid = hiddenPlanets.has(g.planet);
                 return (
                 <div key={g.planet} style={{ marginBottom: 2 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 4px' }}>
-                    <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 28, height: 18, borderRadius: 9, background: isHid ? '#1A2840' : g.color + '35', border: `1px solid ${isHid ? '#2A3848' : g.color + '60'}`, cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'all .15s' }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: isHid ? '#3A5068' : g.color, position: 'absolute', top: 2, left: isHid ? 2 : 12, transition: 'all .15s' }} />
+                    <div onClick={e => { e.stopPropagation(); togglePlanet(g.planet); }} style={{ width: 28, height: 18, borderRadius: 9, background: isHid ? T.border : g.color + '35', border: `1px solid ${isHid ? T.border : g.color + '60'}`, cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'all .15s' }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: isHid ? T.textFaint : g.color, position: 'absolute', top: 2, left: isHid ? 2 : 12, transition: 'all .15s' }} />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer', opacity: isHid ? 0.4 : 1, transition: 'opacity .15s' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
                       <span style={{ fontSize: 14 }}>{g.symbol}</span>
-                      <span style={{ ...F, fontSize: 10, color: '#B0C0D0', fontWeight: 600 }}>{g.planet}</span>
+                      <span style={{ ...F, fontSize: 10, color: T.textMid, fontWeight: 600 }}>{g.planet}</span>
                       <div style={{ display: 'flex', gap: 3, marginLeft: 'auto' }}>
                         {g.lines.map(l => (
-                          <span key={l.angle} style={{ ...F, fontSize: 6, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 3px', borderRadius: 2 }}>{l.angle}</span>
+                          <span key={l.angle} style={{ ...F, fontSize: 6, color: l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral, background: (l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral) + '15', padding: '1px 3px', borderRadius: 2 }}>{l.angle}</span>
                         ))}
                       </div>
-                      <span style={{ ...F, fontSize: 11, color: '#3A5068', transform: expandedPlanet === g.planet ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
+                      <span style={{ ...F, fontSize: 11, color: T.textFaint, transform: expandedPlanet === g.planet ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .15s' }}>›</span>
                     </div>
                   </div>
                   {expandedPlanet === g.planet && g.lines.map((l, li) => (
-                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 4px 5px 40px', cursor: 'pointer', borderBottom: '1px solid #14202C' }}>
+                    <div key={li} onClick={e => { e.stopPropagation(); setPopup(lines.indexOf(l)); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 4px 5px 40px', cursor: 'pointer', borderBottom: '1px solid ' + T.borderLight }}>
                       <svg width="16" height="4" style={{ flexShrink: 0 }}>
                         {l.angle === 'MC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" />}
                         {l.angle === 'IC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="3,2" />}
                         {l.angle === 'ASC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="6,2" />}
                         {l.angle === 'DC' && <line x1="0" y1="2" x2="16" y2="2" stroke={l.c} strokeWidth="2" strokeDasharray="1.5,1.5" />}
                       </svg>
-                      <span style={{ ...F, fontSize: 9, color: '#8098B0' }}>{l.angle}</span>
-                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? '#00D88A' : l.quality === 'avoid' ? '#F04060' : '#D8A030' }}>
+                      <span style={{ ...F, fontSize: 9, color: T.textMid }}>{l.angle}</span>
+                      <span style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral }}>
                         {l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'}
                       </span>
                     </div>
@@ -1603,15 +1633,15 @@ export default function Dashboard({ demo = false }) {
               )})}
             </div></>}
             {/* Mobile angle info */}
-            {showAngleInfo && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: 'rgba(13,21,32,.97)', border: '1px solid #1A2840', borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
+            {showAngleInfo && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.popupOverlay, border: '1px solid ' + T.border, borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8098B0' }}>LINE TYPES</span>
-                <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: '#5A7088', cursor: 'pointer' }}>✕</span>
+                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.textMid }}>LINE TYPES</span>
+                <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: T.textDim, cursor: 'pointer' }}>✕</span>
               </div>
               {ANGLE_ORDER.map(a => {
                 const info = ANGLE_INFO[a];
                 return (
-                  <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #14202C' }}>
+                  <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid ' + T.borderLight }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <svg width="16" height="4">
                         {a === 'MC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" />}
@@ -1619,10 +1649,10 @@ export default function Dashboard({ demo = false }) {
                         {a === 'ASC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" strokeDasharray="8,3" />}
                         {a === 'DC' && <line x1="0" y1="2" x2="16" y2="2" stroke="#8098B0" strokeWidth="2" strokeDasharray="2,2" />}
                       </svg>
-                      <span style={{ ...F, fontSize: 10, fontWeight: 700, color: '#D0DDE8' }}>{info.label}</span>
-                      <span style={{ ...F, fontSize: 7, color: '#5A7088' }}>{info.full}</span>
+                      <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.text }}>{info.label}</span>
+                      <span style={{ ...F, fontSize: 7, color: T.textDim }}>{info.full}</span>
                     </div>
-                    <div style={{ fontSize: 10, color: '#6A8098', lineHeight: 1.5, marginLeft: 22 }}>{info.desc}</div>
+                    <div style={{ fontSize: 10, color: T.textDim, lineHeight: 1.5, marginLeft: 22 }}>{info.desc}</div>
                   </div>
                 );
               })}
@@ -1632,21 +1662,21 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: '#0D1520', borderTop: '1px solid #1A2840', display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: T.bgAlt, borderTop: '1px solid ' + T.border, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #14202C', flexShrink: 0 }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid ' + T.borderLight, flexShrink: 0 }}>
             {[
               { id: 'thrive', label: '▲ THRIVE', count: thriveC.length, col: COL.thrive },
               { id: 'neutral', label: '◆ NEUTRAL', count: neutralC.length, col: COL.neutral },
               { id: 'avoid', label: '▼ AVOID', count: avoidC.length, col: COL.avoid },
-              { id: 'all', label: 'ALL', count: onLines.length, col: '#B0C0D0' },
+              { id: 'all', label: 'ALL', count: onLines.length, col: T.textMid },
             ].map(t => (
               <button key={t.id} onClick={() => setTab(t.id)} style={{
-                flex: 1, background: tab === t.id ? '#101C28' : 'transparent', border: 'none',
+                flex: 1, background: tab === t.id ? T.bgCard : 'transparent', border: 'none',
                 borderBottom: tab === t.id ? `2px solid ${t.col}` : '2px solid transparent',
-                color: tab === t.id ? t.col : '#3A5068',
+                color: tab === t.id ? t.col : T.textFaint,
                 cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
               }}>
                 {t.label} ({t.count})
@@ -1655,13 +1685,13 @@ export default function Dashboard({ demo = false }) {
           </div>
 
           {/* Column headers */}
-          {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: '1px solid #14202C', flexShrink: 0, background: '#0A1018' }}>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
-            <span style={{ ...F, fontSize: 7, color: '#3A5068', fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
+          {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: '1px solid ' + T.borderLight, flexShrink: 0, background: T.bg }}>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
+            <span style={{ ...F, fontSize: 7, color: T.textFaint, fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
           </div>}
 
           {/* City rows */}
@@ -1670,41 +1700,41 @@ export default function Dashboard({ demo = false }) {
               const imp = cityImpact(c);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid #14202C', cursor: 'pointer', overflow: 'hidden' }}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: '1px solid ' + T.borderLight, cursor: 'pointer', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, minWidth: 0 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}</span>
                     <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2, flexShrink: 0, whiteSpace: 'nowrap' }}>{c.line}</span>
                     <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>{imp.strengthPct}%</span>
                   </div>
-                  <div style={{ ...F, fontSize: 8, color: '#5A7088', lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
+                  <div style={{ ...F, fontSize: 8, color: T.textDim, lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid #14202C', cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = '#101C28'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: '1px solid ' + T.borderLight, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.bgCard} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   {/* City */}
                   <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <div>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: '#D0DDE8', lineHeight: 1.2 }}>{c.name}</div>
-                      <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: T.text, lineHeight: 1.2 }}>{c.name}</div>
+                      <div style={{ ...F, fontSize: 7, color: T.textFaint }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
                     </div>
                   </div>
                   {/* Line */}
                   <div style={{ width: 100, flexShrink: 0 }}>
                     <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {c.line}</span>
-                    <div style={{ ...F, fontSize: 7, color: '#3A5068' }}>{c.dist.toFixed(1)}° orb</div>
+                    <div style={{ ...F, fontSize: 7, color: T.textFaint }}>{c.dist.toFixed(1)}° orb</div>
                   </div>
                   {/* Signal strength */}
                   <div style={{ width: 60, display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
                     <span style={{ ...F, fontSize: 8, fontWeight: 700, color: qCol }}>{imp.strengthPct}%</span>
-                    <div style={{ width: 36, height: 3, background: '#14202C', borderRadius: 2, marginTop: 2 }}>
+                    <div style={{ width: 36, height: 3, background: T.borderLight, borderRadius: 2, marginTop: 2 }}>
                       <div style={{ width: `${imp.strengthPct}%`, height: '100%', background: qCol, borderRadius: 2 }} />
                     </div>
-                    <span style={{ ...F, fontSize: 6, color: '#3A5068', marginTop: 1 }}>{imp.strength}</span>
+                    <span style={{ ...F, fontSize: 6, color: T.textFaint, marginTop: 1 }}>{imp.strength}</span>
                   </div>
                   {/* Domain */}
                   <div style={{ width: 130, flexShrink: 0 }}>
-                    <div style={{ ...F, fontSize: 8, color: '#8098B0' }}>{imp.domain}</div>
+                    <div style={{ ...F, fontSize: 8, color: T.textMid }}>{imp.domain}</div>
                   </div>
                   {/* Life area */}
                   <div style={{ width: 110, flexShrink: 0 }}>
@@ -1712,7 +1742,7 @@ export default function Dashboard({ demo = false }) {
                   </div>
                   {/* Reading */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ ...F, fontSize: 8, color: '#6A8098', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{imp.summary}</div>
+                    <div style={{ ...F, fontSize: 8, color: T.textDim, lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{imp.summary}</div>
                   </div>
                 </div>
               );
@@ -1721,8 +1751,8 @@ export default function Dashboard({ demo = false }) {
         </div>
 
         {/* Right: Lines summary — desktop only */}
-        {!mob && <div style={{ width: 260, minWidth: 260, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderLeft: '1px solid #1A2840' }}>
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#5A7088', letterSpacing: 1.5, padding: '8px 12px', borderBottom: '1px solid #14202C', background: '#0A1018' }}>
+        {!mob && <div style={{ width: 260, minWidth: 260, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderLeft: '1px solid ' + T.border }}>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: 1.5, padding: '8px 12px', borderBottom: '1px solid ' + T.borderLight, background: T.bg }}>
             ON YOUR LINES — {onLines.length} CITIES
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '2px 0' }}>
@@ -1731,13 +1761,13 @@ export default function Dashboard({ demo = false }) {
               if (!cities.length) return null;
               const qCol = l.quality === 'thrive' ? COL.thrive : l.quality === 'avoid' ? COL.avoid : COL.neutral;
               return (
-                <div key={i} style={{ padding: '3px 12px', borderBottom: '1px solid #0F1820' }}>
+                <div key={i} style={{ padding: '3px 12px', borderBottom: '1px solid ' + T.borderLight }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                     <div style={{ width: 10, height: 2, background: l.c, borderRadius: 1, flexShrink: 0 }} />
-                    <span style={{ ...F, fontSize: 8, color: '#8098B0', fontWeight: 600 }}>{l.n}</span>
+                    <span style={{ ...F, fontSize: 8, color: T.textMid, fontWeight: 600 }}>{l.n}</span>
                     <span style={{ ...F, fontSize: 6, color: qCol, fontWeight: 700, marginLeft: 'auto' }}>{l.quality === 'thrive' ? '▲' : l.quality === 'avoid' ? '▼' : '◆'} {cities.length}</span>
                   </div>
-                  <div style={{ ...F, fontSize: 7, color: '#5A7088', lineHeight: 1.4 }}>{cities.map(c => c.name).join(' · ')}</div>
+                  <div style={{ ...F, fontSize: 7, color: T.textDim, lineHeight: 1.4 }}>{cities.map(c => c.name).join(' · ')}</div>
                 </div>
               );
             })}
@@ -1746,7 +1776,7 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM TICKER */}
-      <div style={{ height: 22, minHeight: 22, background: '#0A1018', borderTop: '1px solid #14202C', display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: '1px solid ' + T.borderLight, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
         <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[...Array(2)].flatMap(() => [
             bestCities[0] ? `★ Best city: ${bestCities[0].name} (${bestCities[0].line})` : '★ Your personalized chart',
@@ -1755,7 +1785,7 @@ export default function Dashboard({ demo = false }) {
             `▼ ${avoidC.length} caution`,
             `◉ ${onLines.length} total cities on your natal lines`,
           ]).map((t, i) => (
-            <span key={i} style={{ color: t.startsWith('▼') ? '#F04060' : t.startsWith('▲') ? '#00D88A' : '#5A7088', padding: '0 4px' }}>{t}</span>
+            <span key={i} style={{ color: t.startsWith('▼') ? '#F04060' : t.startsWith('▲') ? '#00D88A' : T.textDim, padding: '0 4px' }}>{t}</span>
           ))}
         </div>
       </div>

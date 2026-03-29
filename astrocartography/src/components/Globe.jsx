@@ -86,7 +86,7 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
+export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
   const canvasRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 900);
   // Compute initial globe scale: on mobile use width * 0.48 for a closer, fuller globe
@@ -116,6 +116,15 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
   showCitiesRef.current = showCities;
   const flatRef = useRef(flat);
   flatRef.current = flat;
+  const lightRef = useRef(lightMode);
+  lightRef.current = lightMode;
+
+  // Theme colors for canvas rendering
+  const TC = lightMode
+    ? { ocean: '#E0E6EE', grat: '#C0C8D0', gratFine: '#D0D6DE', land: '#D0D8E0', landStroke: '#8898A8', border: '#A0B0C0', cityLabel: '#1A2030', dimCity: '#718096', homeAccent: '#00B870' }
+    : { ocean: '#0B1420', grat: '#182838', gratFine: '#141E2C', land: '#0F1C28', landStroke: '#3A5A72', border: '#1C3040', cityLabel: '#D0DDE8', dimCity: '#5A7088', homeAccent: '#00D88A' };
+  const tcRef = useRef(TC);
+  tcRef.current = TC;
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -148,19 +157,20 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       center = null;
 
       // Ocean background — fill entire canvas
-      ctx.fillStyle = '#0B1420';
+      const tc = tcRef.current;
+      ctx.fillStyle = tc.ocean;
       ctx.fillRect(0, 0, W, H);
 
       // Graticule (cached geometry)
-      ctx.strokeStyle = '#182838'; ctx.lineWidth = .4;
+      ctx.strokeStyle = tc.grat; ctx.lineWidth = .4;
       ctx.beginPath(); path(GRAT_30); ctx.stroke();
       if (s.zoom > 1.5) {
-        ctx.strokeStyle = '#141E2C'; ctx.lineWidth = .2;
+        ctx.strokeStyle = tc.gratFine; ctx.lineWidth = .2;
         ctx.beginPath(); path(GRAT_10); ctx.stroke();
       }
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .5;
+      ctx.fillStyle = tc.land; ctx.strokeStyle = tc.landStroke; ctx.lineWidth = .5;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -172,25 +182,27 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       // Atmosphere — cache gradient to avoid per-frame allocation (Chrome/Firefox GC pressure)
       if (s._atmosScale !== s.scale || s._atmosCx !== cx || s._atmosCy !== cy) {
         s._atmosGrad = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
-        s._atmosGrad.addColorStop(0, 'transparent'); s._atmosGrad.addColorStop(1, 'rgba(0,216,138,.03)');
+        s._atmosGrad.addColorStop(0, 'transparent');
+        s._atmosGrad.addColorStop(1, lightRef.current ? 'rgba(0,184,112,.04)' : 'rgba(0,216,138,.03)');
         s._atmosScale = s.scale; s._atmosCx = cx; s._atmosCy = cy;
       }
       ctx.fillStyle = s._atmosGrad; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
 
       // Ocean
-      ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
+      const tc = tcRef.current;
+      ctx.fillStyle = tc.ocean; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
 
       // Graticule (cached geometry)
-      ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
+      ctx.strokeStyle = tc.grat; ctx.lineWidth = .3;
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .6;
+      ctx.fillStyle = tc.land; ctx.strokeStyle = tc.landStroke; ctx.lineWidth = .6;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
       // Sphere border
-      ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
+      ctx.strokeStyle = tc.border; ctx.lineWidth = .8;
       ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
     }
 
@@ -250,7 +262,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const lw = c.name.length * fs * 0.6, lh = fs + 2;
           if (canPlace(lx, ly - lh, lw, lh)) {
             ctx.font = `600 ${fs}px JetBrains Mono`;
-            ctx.fillStyle = '#D0DDE8'; ctx.textAlign = 'left';
+            ctx.fillStyle = tcRef.current.cityLabel; ctx.textAlign = 'left';
             ctx.fillText(c.name, lx, ly);
             labelBoxes.push([lx, ly - lh, lw, lh]);
           }
@@ -276,7 +288,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const r = isFlat ? (s.zoom > 5 ? 2.5 : 2) : (s.scale > 600 ? 2.5 : 1.5);
         // Check dot doesn't overlap existing labels
         if (!canPlace(p[0] - r - 2, p[1] - r - 2, r * 2 + 4, r * 2 + 4)) return;
-        ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .45;
+        ctx.fillStyle = tcRef.current.dimCity; ctx.globalAlpha = .45;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
         const showLabel = isFlat ? s.zoom > 2.5 : s.scale > 500;
@@ -288,7 +300,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const lw = name.length * fs * 0.6, lh = fs + 2;
           if (canPlace(lx, ly - lh, lw, lh)) {
             ctx.font = `500 ${fs}px JetBrains Mono`;
-            ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .55;
+            ctx.fillStyle = tcRef.current.dimCity; ctx.globalAlpha = .55;
             ctx.textAlign = 'left';
             ctx.fillText(name, lx, ly);
             ctx.globalAlpha = 1;
@@ -306,11 +318,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const p = proj([hLng, hLat]);
         if (p) {
           // Static ring instead of animated pulse
-          ctx.strokeStyle = '#00D88A'; ctx.lineWidth = 1; ctx.globalAlpha = .25;
+          ctx.strokeStyle = tcRef.current.homeAccent; ctx.lineWidth = 1; ctx.globalAlpha = .25;
           ctx.beginPath(); ctx.arc(p[0], p[1], 12, 0, Math.PI * 2); ctx.stroke();
-          ctx.globalAlpha = 1; ctx.fillStyle = '#00D88A';
+          ctx.globalAlpha = 1; ctx.fillStyle = tcRef.current.homeAccent;
           ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI * 2); ctx.fill();
-          ctx.font = 'bold 11px JetBrains Mono'; ctx.fillStyle = '#00D88A';
+          ctx.font = 'bold 11px JetBrains Mono'; ctx.fillStyle = tcRef.current.homeAccent;
           ctx.fillText(`${hLabel} ★`, p[0] + 10, p[1] + 4);
         }
       }
@@ -605,6 +617,15 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     if (s.scheduleRedraw) s.scheduleRedraw();
   }, [flat]);
 
+  // Redraw on theme change
+  useEffect(() => {
+    const s = S.current;
+    // Invalidate atmosphere gradient cache so it gets recreated with new theme
+    s._atmosScale = 0;
+    s.dirty = true;
+    if (s.scheduleRedraw) s.scheduleRedraw();
+  }, [lightMode]);
+
   // Expose flyTo
   Globe.flyTo = (la, lo) => {
     const s = S.current;
@@ -655,10 +676,14 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
   const btnIconSize = isMobile ? 13 : 16;
   const btnBase = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    width: btnSize, height: btnSize, borderRadius: isMobile ? 5 : 6, border: '1px solid #1A2840',
+    width: btnSize, height: btnSize, borderRadius: isMobile ? 5 : 6, border: lightMode ? '1px solid #C0C8D0' : '1px solid #1A2840',
     cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace',
     fontSize: 11, fontWeight: 600, padding: 0, transition: 'background .15s, color .15s',
   };
+  const btnOn = lightMode ? 'rgba(0,184,112,.15)' : 'rgba(0,216,138,.15)';
+  const btnOff = lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)';
+  const btnOnCol = lightMode ? '#00B870' : '#00D88A';
+  const btnOffCol = lightMode ? '#718096' : '#5A7088';
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -670,8 +695,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           title={showLines ? 'Hide natal lines' : 'Show natal lines'}
           style={{
             ...btnBase,
-            background: showLines ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
-            color: showLines ? '#00D88A' : '#5A7088',
+            background: showLines ? btnOn : btnOff,
+            color: showLines ? btnOnCol : btnOffCol,
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -683,8 +708,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           title={showCities ? 'Hide cities' : 'Show cities'}
           style={{
             ...btnBase,
-            background: showCities ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
-            color: showCities ? '#00D88A' : '#5A7088',
+            background: showCities ? btnOn : btnOff,
+            color: showCities ? btnOnCol : btnOffCol,
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
