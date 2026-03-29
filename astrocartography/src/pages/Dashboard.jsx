@@ -282,6 +282,29 @@ export default function Dashboard({ demo = false }) {
   const [announcement, setAnnouncement] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
+  const handleDownloadPDF = useCallback(async () => {
+    if (pdfLoading || !chartData) return;
+    setPdfLoading(true);
+    trackEvent('pdf_download');
+    try {
+      const nR = window.__natalReadings || await import('../data/natalReadings');
+      const { generateNatalPDF } = await import('../lib/generatePDF');
+      await generateNatalPDF({
+        displayName,
+        chartData,
+        thriveC,
+        avoidC,
+        neutralC,
+        cityReadingFn: cityReading,
+        natalReadings: nR,
+      });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC]);
+
   useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
 
   // Handle ?payment=success|cancelled redirect from Stripe
@@ -496,29 +519,6 @@ export default function Dashboard({ demo = false }) {
   const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
   const planetString = chartData?.planetString || '';
-
-  const handleDownloadPDF = useCallback(async () => {
-    if (pdfLoading || !chartData) return;
-    setPdfLoading(true);
-    trackEvent('pdf_download');
-    try {
-      const nR = window.__natalReadings || await import('../data/natalReadings');
-      const { generateNatalPDF } = await import('../lib/generatePDF');
-      await generateNatalPDF({
-        displayName,
-        chartData,
-        thriveC,
-        avoidC,
-        neutralC,
-        cityReadingFn: cityReading,
-        natalReadings: nR,
-      });
-    } catch (err) {
-      console.error('PDF generation failed:', err);
-    } finally {
-      setPdfLoading(false);
-    }
-  }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC]);
 
   const flyTo = useCallback((la, lo) => {
     Globe.flyTo?.(la, lo);
