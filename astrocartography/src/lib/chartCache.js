@@ -2,7 +2,7 @@
 // Uses localStorage so returning users skip the expensive astronomy-engine computation entirely
 
 const CACHE_KEY = 'nn_chart_cache';
-const CACHE_VERSION = 3; // v3: timezone-corrected calculations (local birth time → UTC)
+const CACHE_VERSION = 4; // v4: fixed Porphyry house cusp calculation
 
 function cacheId({ date, time, lat, lng }) {
   return `${date}|${time}|${parseFloat(lat).toFixed(4)}|${parseFloat(lng).toFixed(4)}`;

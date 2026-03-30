@@ -56,15 +56,22 @@ function sub(d, y, title, color, pw, ph) {
   return y;
 }
 
-function bt(d, y, text, pw, ph, indent) {
+function bt(d, y, text, pw, ph, indent, bullet) {
   indent = indent || 18;
   d.setFont('helvetica', 'normal');
   d.setFontSize(8.5);
   sc(d, C.textMid);
-  const lines = d.splitTextToSize(text, pw - indent - 18);
-  for (const line of lines) {
+  const textW = pw - indent - 18 - (bullet ? 6 : 0);
+  const textX = indent + (bullet ? 6 : 0);
+  const lines = d.splitTextToSize(text, textW);
+  for (let i = 0; i < lines.length; i++) {
     y = cp(d, y, 5, pw, ph);
-    d.text(line, indent, y);
+    if (bullet && i === 0) {
+      sc(d, C.accent);
+      d.text('\u2022', indent, y);
+      sc(d, C.textMid);
+    }
+    d.text(lines[i], textX, y);
     y += 3.8;
   }
   return y + 1;
@@ -103,7 +110,7 @@ function cityBlock(d, y, cities, color, readingFn, pw, ph, max) {
     d.setFont('helvetica', 'normal'); d.setFontSize(7.5); sc(d, C.textDim);
     d.text(`${c.line}  \u00B7  ${c.dist.toFixed(1)}\u00B0 orb`, pw - 20, y + 3, { align: 'right' });
     y += 9;
-    if (reading) { y = bt(d, y, reading, pw, ph, 20); y += 1; }
+    if (reading) { y = bt(d, y, reading, pw, ph, 20, true); y += 1; }
   }
   return y + 3;
 }
@@ -221,8 +228,8 @@ export async function generateNatalPDF({ displayName, chartData, thriveC, avoidC
         for (const line of dl) { y = cp(d, y, 4, pw, ph); d.text(line, 20, y); y += 3.5; }
         y += 2;
       }
-      if (sr) { y = sub(d, y, `${p.id.toUpperCase()} IN ${p.sign.toUpperCase()}`, PCOL[p.id], pw, ph); y = bt(d, y, sr.text, pw, ph); y += 1; }
-      if (hr) { y = sub(d, y, `${p.id.toUpperCase()} IN THE ${ORDINALS[p.house].toUpperCase()} HOUSE`, PCOL[p.id], pw, ph); y = bt(d, y, hr.text, pw, ph); }
+      if (sr) { y = sub(d, y, `${p.id.toUpperCase()} IN ${p.sign.toUpperCase()}`, PCOL[p.id], pw, ph); y = bt(d, y, sr.text, pw, ph, 18, true); y += 1; }
+      if (hr) { y = sub(d, y, `${p.id.toUpperCase()} IN THE ${ORDINALS[p.house].toUpperCase()} HOUSE`, PCOL[p.id], pw, ph); y = bt(d, y, hr.text, pw, ph, 18, true); }
       y += 4;
     }
   }
@@ -235,7 +242,7 @@ export async function generateNatalPDF({ displayName, chartData, thriveC, avoidC
       fr(d, 16, y - 1, pw - 32, 9, C.panel);
       d.setFont('helvetica', 'bold'); d.setFontSize(10); sc(d, '#E8A838');
       d.text(`Ascendant in ${chartData.natal.asc.sign}`, 20, y + 5);
-      y += 12; y = bt(d, y, r.text, pw, ph); y += 4;
+      y += 12; y = bt(d, y, r.text, pw, ph, 18, true); y += 4;
     }
   }
 
@@ -247,7 +254,7 @@ export async function generateNatalPDF({ displayName, chartData, thriveC, avoidC
       fr(d, 16, y - 1, pw - 32, 9, C.panel);
       d.setFont('helvetica', 'bold'); d.setFontSize(10); sc(d, '#E8A838');
       d.text(`Midheaven in ${chartData.natal.mc.sign}`, 20, y + 5);
-      y += 12; y = bt(d, y, r.text, pw, ph); y += 4;
+      y += 12; y = bt(d, y, r.text, pw, ph, 18, true); y += 4;
     }
   }
 

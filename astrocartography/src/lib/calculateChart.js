@@ -31,10 +31,10 @@ function norm360(a) { return ((a % 360) + 360) % 360; }
 function porphyryHouses(ascLon, mcLon) {
   const dsc = norm360(ascLon + 180), ic = norm360(mcLon + 180);
   function tri(a, b) { const s = norm360(b - a); return [norm360(a + s / 3), norm360(a + 2 * s / 3)]; }
-  const [c2, c3] = tri(ic, ascLon);
-  const [c11, c12] = tri(ascLon, mcLon);
-  const [c8, c9] = tri(mcLon, dsc);
-  const [c5, c6] = tri(dsc, ic);
+  const [c2, c3] = tri(ascLon, ic);
+  const [c5, c6] = tri(ic, dsc);
+  const [c8, c9] = tri(dsc, mcLon);
+  const [c11, c12] = tri(mcLon, ascLon);
   return [null, ascLon, c2, c3, ic, c5, c6, dsc, c8, c9, mcLon, c11, c12];
 }
 

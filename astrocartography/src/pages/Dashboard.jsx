@@ -682,8 +682,14 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', filter: lightMode ? 'invert(1) hue-rotate(180deg)' : 'none', transition: 'filter .3s' }}>
-      {lightMode && <style>{`canvas, img, video, svg line, svg circle { filter: invert(1) hue-rotate(180deg); }`}</style>}
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', filter: lightMode ? 'invert(0.92) hue-rotate(180deg) saturate(1.3) brightness(1.06) contrast(0.96)' : 'none', transition: 'filter .35s ease' }}>
+      {lightMode && <style>{`
+        canvas, img, video, svg line, svg circle { filter: invert(0.92) hue-rotate(180deg) saturate(1.3) brightness(0.94) contrast(1.04); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #F0ECE6; }
+        ::-webkit-scrollbar-thumb { background: #C8C0B4; border-radius: 3px; }
+        ::selection { background: rgba(0, 180, 110, 0.25); }
+      `}</style>}
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', borderBottom: '1px solid #00D88A30', padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
@@ -706,7 +712,7 @@ export default function Dashboard({ demo = false }) {
             {!mob && 'LIVE'}
           </span>
           <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: '#5A7088', cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: '1px solid #1A2840', letterSpacing: 0.5 }}>HOW IT WORKS</span>
-          <span onClick={() => setLightMode(!lightMode)} style={{ ...F, fontSize: mob ? 12 : 14, cursor: 'pointer', padding: mob ? '2px 6px' : '3px 8px', borderRadius: 4, border: '1px solid #1A2840', background: lightMode ? '#FFF3D0' : '#101C28', transition: 'all .2s', lineHeight: 1, userSelect: 'none' }}>{lightMode ? '☀' : '☾'}</span>
+          <span onClick={() => setLightMode(!lightMode)} style={{ ...F, fontSize: mob ? 12 : 14, cursor: 'pointer', padding: mob ? '4px 8px' : '5px 10px', borderRadius: 6, border: lightMode ? '1px solid #2A3850' : '1px solid #1A2840', background: lightMode ? '#1A2840' : '#101C28', boxShadow: lightMode ? '0 0 8px rgba(255,220,100,.15)' : 'none', transition: 'all .25s ease', lineHeight: 1, userSelect: 'none' }}>{lightMode ? '☀' : '☾'}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: '#5A7088' }} />}
@@ -878,8 +884,8 @@ export default function Dashboard({ demo = false }) {
               {!selectedPlacement && (
                 <div style={{ display: 'flex', borderBottom: '1px solid #1A2840', background: '#0B1218', flexShrink: 0 }}>
                   {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '↓ PDF' }].map(t => (
-                    <div key={t.key} onClick={() => t.key === 'pdf' ? handleDownloadPDF() : setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: t.key === 'pdf' ? (pdfLoading ? '#00D88A' : '#5A7088') : natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key && t.key !== 'pdf' ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
-                      {t.key === 'pdf' && pdfLoading ? '⏳ ...' : t.label}
+                    <div key={t.key} onClick={() => setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === t.key ? '#00D88A' : '#5A7088', borderBottom: natalTab === t.key ? '2px solid #00D88A' : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
+                      {t.label}
                     </div>
                   ))}
                 </div>
@@ -1111,6 +1117,41 @@ export default function Dashboard({ demo = false }) {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* ═══ PDF TAB — info about what the PDF includes ═══ */}
+              {!selectedPlacement && natalTab === 'pdf' && (
+                <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '20px 18px' }}>
+                  <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                    <span style={{ fontSize: 32, display: 'block', marginBottom: 8 }}>📄</span>
+                    <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#D0DDE8', letterSpacing: 1 }}>YOUR NATAL REPORT</div>
+                    <div style={{ ...F, fontSize: 10, color: '#5A7088', marginTop: 4 }}>A personalized astrocartography PDF tailored to your birth chart</div>
+                  </div>
+                  <div style={{ background: '#101C28', borderRadius: 8, padding: '14px 16px', marginBottom: 12 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#00D88A', letterSpacing: 1, marginBottom: 10 }}>WHAT'S INCLUDED</div>
+                    {[
+                      ['☉', 'Full natal chart with all 10 planets, signs, degrees & houses'],
+                      ['♀', 'In-depth personality readings for each planetary placement'],
+                      ['△', 'Ascendant & Midheaven sign interpretations'],
+                      ['✦', 'Top thrive cities — your best locations worldwide'],
+                      ['⚠', 'Caution zones — places to approach with care'],
+                      ['◎', 'Neutral zones with subtle planetary influences'],
+                      ['✍', 'Personalized city-level readings with orb distances'],
+                    ].map(([icon, text], i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
+                        <span style={{ fontSize: 12, color: '#00D88A', flexShrink: 0, width: 16, textAlign: 'center', lineHeight: '18px' }}>{icon}</span>
+                        <span style={{ ...F, fontSize: 10, color: '#8098B0', lineHeight: 1.6 }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ background: '#101C28', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D8A030', letterSpacing: 1, marginBottom: 6 }}>FORMAT</div>
+                    <div style={{ ...F, fontSize: 10, color: '#8098B0', lineHeight: 1.6 }}>Multi-page A4 PDF with dark theme design. Includes page numbers, section headers, and your personal birth data summary.</div>
+                  </div>
+                  <button onClick={handleDownloadPDF} disabled={pdfLoading} style={{ ...F, width: '100%', fontSize: 12, fontWeight: 700, letterSpacing: 1, color: '#0A1018', background: pdfLoading ? '#5A7088' : '#00D88A', border: 'none', borderRadius: 8, padding: '14px 0', cursor: pdfLoading ? 'default' : 'pointer', transition: 'all .2s' }}>
+                    {pdfLoading ? '⏳ GENERATING...' : '↓ DOWNLOAD PDF'}
+                  </button>
                 </div>
               )}
             </div>
