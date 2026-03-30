@@ -2,7 +2,7 @@
 // Uses localStorage so returning users skip the expensive astronomy-engine computation entirely
 
 const CACHE_KEY = 'nn_chart_cache';
-const CACHE_VERSION = 4; // v4: fixed Porphyry house cusp calculation
+const CACHE_VERSION = 5; // v5: fixed ASC formula (was returning DSC) + obliquity calculation
 
 function cacheId({ date, time, lat, lng }) {
   return `${date}|${time}|${parseFloat(lat).toFixed(4)}|${parseFloat(lng).toFixed(4)}`;

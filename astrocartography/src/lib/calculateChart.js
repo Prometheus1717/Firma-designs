@@ -71,8 +71,9 @@ function ascLongitude(lstHours, latDeg, obliquityDeg) {
   const lstRad = (lstHours * 15) * Math.PI / 180;
   const latRad = latDeg * Math.PI / 180;
   const oblRad = obliquityDeg * Math.PI / 180;
-  const y = -Math.cos(lstRad);
-  const x = Math.sin(oblRad) * Math.tan(latRad) + Math.cos(oblRad) * Math.sin(lstRad);
+  // Negate both to select the ascending (not descending) ecliptic-horizon intersection
+  const y = Math.cos(lstRad);
+  const x = -(Math.sin(oblRad) * Math.tan(latRad) + Math.cos(oblRad) * Math.sin(lstRad));
   let asc = Math.atan2(y, x) * 180 / Math.PI;
   if (asc < 0) asc += 360;
   return asc;
@@ -281,7 +282,8 @@ export function calculateChart({ date, time, lat, lng }) {
   if (isNaN(birthDate.getTime())) throw new Error(`Invalid date/time: ${date} ${time}`);
 
   const astroDate = Astronomy.MakeTime(birthDate);
-  const obliquity = 23.4393 - 0.0000004 * (astroDate.ut - 2451545.0);
+  // astroDate.ut is already days since J2000.0 — do NOT subtract J2000 JD again
+  const obliquity = 23.4393 - 0.0000004 * astroDate.ut;
   const gast = Astronomy.SiderealTime(astroDate);
   const lst = gast + parsedLng / 15;
   const natalMC = mcLongitude(lst, obliquity);
