@@ -682,13 +682,13 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', filter: lightMode ? 'invert(0.92) hue-rotate(180deg) saturate(1.3) brightness(1.06) contrast(0.96)' : 'none', transition: 'filter .35s ease' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: '#0A1018', color: '#D0DDE8', fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', filter: lightMode ? 'invert(0.92) hue-rotate(180deg) sepia(0.08) saturate(1.1) brightness(1.08) contrast(0.94)' : 'none', transition: 'filter .35s ease' }}>
       {lightMode && <style>{`
-        canvas, img, video, svg line, svg circle { filter: invert(0.92) hue-rotate(180deg) saturate(1.3) brightness(0.94) contrast(1.04); }
+        canvas, img, video, svg line, svg circle { filter: invert(0.92) hue-rotate(180deg) sepia(0.08) saturate(1.1) brightness(0.92) contrast(1.06); }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #F0ECE6; }
         ::-webkit-scrollbar-thumb { background: #C8C0B4; border-radius: 3px; }
-        ::selection { background: rgba(0, 180, 110, 0.25); }
+        ::selection { background: rgba(0, 140, 80, 0.2); }
       `}</style>}
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
@@ -849,7 +849,7 @@ export default function Dashboard({ demo = false }) {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0A1018', cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: 'rgba(13,21,32,.92)', border: '1px solid #1A2840', borderRadius: 6, overflow: 'hidden', width: 160 }}>

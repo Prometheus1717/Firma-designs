@@ -86,8 +86,10 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat }) {
+export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
   const canvasRef = useRef(null);
+  const lightRef = useRef(lightMode);
+  lightRef.current = lightMode;
   const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 900);
   // Compute initial globe scale: on mobile use width * 0.48 for a closer, fuller globe
   const initScale = typeof window !== 'undefined'
@@ -133,6 +135,19 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     let proj, path, center;
 
+    const lt = lightRef.current;
+    // Theme colors — Apple Maps inspired beige for light, deep navy for dark
+    const ocean = lt ? '#DED8CB' : '#0B1420';
+    const land = lt ? '#F0EBE0' : '#0F1C28';
+    const border = lt ? '#A09484' : '#3A5A72';
+    const grat1 = lt ? '#CEC8BC' : '#182838';
+    const grat2 = lt ? '#D8D2C6' : '#141E2C';
+    const grat3 = lt ? '#D0C8BC' : '#142030';
+    const sphereB = lt ? '#B0A898' : '#1C3040';
+    const labelC = lt ? '#2C2820' : '#D0DDE8';
+    const dimLabel = lt ? '#6A6258' : '#5A7088';
+    const accentG = lt ? 'rgba(0,140,80,.04)' : 'rgba(0,216,138,.03)';
+
     if (isFlat) {
       // Flat map — Equirectangular projection
       // Use max scale so the map always fills the canvas (no empty bars)
@@ -148,19 +163,19 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       center = null;
 
       // Ocean background — fill entire canvas
-      ctx.fillStyle = '#0B1420';
+      ctx.fillStyle = ocean;
       ctx.fillRect(0, 0, W, H);
 
       // Graticule (cached geometry)
-      ctx.strokeStyle = '#182838'; ctx.lineWidth = .4;
+      ctx.strokeStyle = grat1; ctx.lineWidth = .4;
       ctx.beginPath(); path(GRAT_30); ctx.stroke();
       if (s.zoom > 1.5) {
-        ctx.strokeStyle = '#141E2C'; ctx.lineWidth = .2;
+        ctx.strokeStyle = grat2; ctx.lineWidth = .2;
         ctx.beginPath(); path(GRAT_10); ctx.stroke();
       }
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .5;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = .5;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -170,27 +185,28 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       center = [-s.rot[0], -s.rot[1]];
 
       // Atmosphere — cache gradient to avoid per-frame allocation (Chrome/Firefox GC pressure)
-      if (s._atmosScale !== s.scale || s._atmosCx !== cx || s._atmosCy !== cy) {
+      const atmosKey = `${s.scale}_${cx}_${cy}_${lt}`;
+      if (s._atmosKey !== atmosKey) {
         s._atmosGrad = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
-        s._atmosGrad.addColorStop(0, 'transparent'); s._atmosGrad.addColorStop(1, 'rgba(0,216,138,.03)');
-        s._atmosScale = s.scale; s._atmosCx = cx; s._atmosCy = cy;
+        s._atmosGrad.addColorStop(0, 'transparent'); s._atmosGrad.addColorStop(1, accentG);
+        s._atmosKey = atmosKey;
       }
       ctx.fillStyle = s._atmosGrad; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
 
       // Ocean
-      ctx.fillStyle = '#0B1420'; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ocean; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
 
       // Graticule (cached geometry)
-      ctx.strokeStyle = '#142030'; ctx.lineWidth = .3;
+      ctx.strokeStyle = grat3; ctx.lineWidth = .3;
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = '#0F1C28'; ctx.strokeStyle = '#3A5A72'; ctx.lineWidth = .6;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = .6;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
       // Sphere border
-      ctx.strokeStyle = '#1C3040'; ctx.lineWidth = .8;
+      ctx.strokeStyle = sphereB; ctx.lineWidth = .8;
       ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
     }
 
@@ -250,7 +266,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const lw = c.name.length * fs * 0.6, lh = fs + 2;
           if (canPlace(lx, ly - lh, lw, lh)) {
             ctx.font = `600 ${fs}px JetBrains Mono`;
-            ctx.fillStyle = '#D0DDE8'; ctx.textAlign = 'left';
+            ctx.fillStyle = labelC; ctx.textAlign = 'left';
             ctx.fillText(c.name, lx, ly);
             labelBoxes.push([lx, ly - lh, lw, lh]);
           }
@@ -276,7 +292,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const r = isFlat ? (s.zoom > 5 ? 2.5 : 2) : (s.scale > 600 ? 2.5 : 1.5);
         // Check dot doesn't overlap existing labels
         if (!canPlace(p[0] - r - 2, p[1] - r - 2, r * 2 + 4, r * 2 + 4)) return;
-        ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .45;
+        ctx.fillStyle = dimLabel; ctx.globalAlpha = .45;
         ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, Math.PI * 2); ctx.fill();
         ctx.globalAlpha = 1;
         const showLabel = isFlat ? s.zoom > 2.5 : s.scale > 500;
@@ -288,7 +304,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           const lw = name.length * fs * 0.6, lh = fs + 2;
           if (canPlace(lx, ly - lh, lw, lh)) {
             ctx.font = `500 ${fs}px JetBrains Mono`;
-            ctx.fillStyle = '#5A7088'; ctx.globalAlpha = .55;
+            ctx.fillStyle = dimLabel; ctx.globalAlpha = .55;
             ctx.textAlign = 'left';
             ctx.fillText(name, lx, ly);
             ctx.globalAlpha = 1;
@@ -306,11 +322,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         const p = proj([hLng, hLat]);
         if (p) {
           // Static ring instead of animated pulse
-          ctx.strokeStyle = '#00D88A'; ctx.lineWidth = 1; ctx.globalAlpha = .25;
+          const homeC = lt ? '#00895A' : '#00D88A';
+          ctx.strokeStyle = homeC; ctx.lineWidth = 1; ctx.globalAlpha = .25;
           ctx.beginPath(); ctx.arc(p[0], p[1], 12, 0, Math.PI * 2); ctx.stroke();
-          ctx.globalAlpha = 1; ctx.fillStyle = '#00D88A';
+          ctx.globalAlpha = 1; ctx.fillStyle = homeC;
           ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI * 2); ctx.fill();
-          ctx.font = 'bold 11px JetBrains Mono'; ctx.fillStyle = '#00D88A';
+          ctx.font = 'bold 11px JetBrains Mono'; ctx.fillStyle = homeC;
           ctx.fillText(`${hLabel} ★`, p[0] + 10, p[1] + 4);
         }
       }
@@ -604,6 +621,14 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     }
     if (s.scheduleRedraw) s.scheduleRedraw();
   }, [flat]);
+
+  // Redraw on light mode change — invalidate cached atmosphere gradient
+  useEffect(() => {
+    const s = S.current;
+    s._atmosKey = null;
+    s.dirty = true;
+    if (s.scheduleRedraw) s.scheduleRedraw();
+  }, [lightMode]);
 
   // Expose flyTo
   Globe.flyTo = (la, lo) => {
