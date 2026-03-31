@@ -421,6 +421,27 @@
       <style>#root-loader { display: none; } #seo-content { display: block !important; } body { overflow: auto; position: static; height: auto; }</style>
     </noscript>
 
+    <!-- Force-clear stale service worker caches for existing users -->
+    <script>
+    (function(){
+      var V='nn-sw-v3';
+      if(localStorage.getItem('nn_sw_ver')===V)return;
+      localStorage.setItem('nn_sw_ver',V);
+      if('serviceWorker' in navigator){
+        var hadSW=false;
+        navigator.serviceWorker.getRegistrations().then(function(regs){
+          hadSW=regs.length>0;
+          return Promise.all(regs.map(function(r){return r.unregister();}));
+        }).then(function(){
+          return caches.keys();
+        }).then(function(keys){
+          return Promise.all(keys.map(function(k){return caches.delete(k);}));
+        }).then(function(){
+          if(hadSW)location.reload();
+        });
+      }
+    })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
