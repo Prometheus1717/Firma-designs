@@ -1,8 +1,8 @@
 // Service Worker — cache static assets so 100k users don't all re-download
 // Strategy: Cache-first for assets (immutable hashes), Network-first for HTML
 
-const CACHE_NAME = 'nn-v3';
-const ASSET_CACHE = 'nn-assets-v3';
+const CACHE_NAME = 'nn-v4';
+const ASSET_CACHE = 'nn-assets-v4';
 
 // Install: pre-cache the app shell
 self.addEventListener('install', (event) => {

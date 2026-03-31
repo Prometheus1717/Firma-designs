@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
-import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3 } from '../data/cities';
+import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
 import { redirectToCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
@@ -530,8 +530,8 @@ export default function Dashboard({ demo = false }) {
     finally { setPdfLoading(false); }
   }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC]);
 
-  const flyTo = useCallback((la, lo) => {
-    Globe.flyTo?.(la, lo);
+  const flyTo = useCallback((la, lo, name) => {
+    Globe.flyTo?.(la, lo, name);
   }, []);
 
   const handleCityClick = useCallback((city) => {
@@ -854,9 +854,9 @@ export default function Dashboard({ demo = false }) {
           {/* Top Cities */}
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>TOP CITIES</div>
           {bestCities.map((c, i) => (
-            <div key={i} onClick={() => { flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
+            <div key={i} onClick={() => { flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: T.ac, fontWeight: 700, width: 14 }}>{i + 1}.</span>
-              <span style={{ color: T.tm }}>{c.name}</span>
+              <span style={{ color: T.tm }}>{c.name}{CITY_COUNTRY[c.name] ? <span style={{ color: T.mu, fontSize: 7 }}>{' · '}{CITY_COUNTRY[c.name]}</span> : null}</span>
               <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
             </div>
           ))}
@@ -1733,23 +1733,23 @@ export default function Dashboard({ demo = false }) {
               const imp = cityImpact(c);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ padding: '6px 10px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', overflow: 'hidden' }}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ padding: '6px 10px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, minWidth: 0 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: T.tx, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: T.tx, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}{CITY_COUNTRY[c.name] ? <span style={{ fontWeight: 400, color: T.mu, fontSize: 9 }}>{' · '}{CITY_COUNTRY[c.name]}</span> : null}</span>
                     <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2, flexShrink: 0, whiteSpace: 'nowrap' }}>{c.line}</span>
                     <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>{imp.strengthPct}%</span>
                   </div>
                   <div style={{ ...F, fontSize: 8, color: T.td, lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                   {/* City */}
                   <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: T.tx, lineHeight: 1.2 }}>{c.name}</div>
-                      <div style={{ ...F, fontSize: 7, color: T.mu }}>{c.la.toFixed(1)}° {c.la >= 0 ? 'N' : 'S'}, {c.lo.toFixed(1)}° {c.lo >= 0 ? 'E' : 'W'}</div>
+                      <div style={{ ...F, fontSize: 7, color: T.mu }}>{CITY_COUNTRY[c.name] || `${c.la.toFixed(1)}° ${c.la >= 0 ? 'N' : 'S'}, ${c.lo.toFixed(1)}° ${c.lo >= 0 ? 'E' : 'W'}`}</div>
                     </div>
                   </div>
                   {/* Line */}

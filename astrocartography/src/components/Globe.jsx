@@ -108,6 +108,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     frameInterval: isMobile ? 66 : 16,
     // Cached atmosphere gradient — avoid per-frame allocation (Chrome/Firefox GC pressure)
     _atmosGrad: null, _atmosScale: 0, _atmosCx: 0, _atmosCy: 0,
+    // Fly-to animation state
+    anim: null,
+    // Highlighted city (shown with pulsing marker + label)
+    highlight: null,
   });
   const [, forceUpdate] = useState(0);
   const [showLines, setShowLines] = useState(true);
@@ -315,6 +319,46 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       });
     }
 
+    // ── Highlighted city (pulsing ring + label) ──
+    if (s.highlight) {
+      const hl = s.highlight;
+      const hlAge = (performance.now() - hl.time) / 1000; // seconds
+      if (hlAge < 8) { // show for 8 seconds
+        const visible = isFlat || (center && geoDistance([hl.lo, hl.la], center) < Math.PI / 2);
+        if (visible) {
+          const hp = proj([hl.lo, hl.la]);
+          if (hp) {
+            const pulse = 0.5 + 0.5 * Math.sin(hlAge * 4); // pulsing
+            const hlC = lt ? '#34C759' : '#00D88A';
+            // Pulsing outer ring
+            ctx.strokeStyle = hlC; ctx.lineWidth = 2; ctx.globalAlpha = 0.3 + 0.3 * pulse;
+            ctx.beginPath(); ctx.arc(hp[0], hp[1], 14 + 4 * pulse, 0, Math.PI * 2); ctx.stroke();
+            // Inner dot
+            ctx.globalAlpha = 0.9; ctx.fillStyle = hlC;
+            ctx.beginPath(); ctx.arc(hp[0], hp[1], 5, 0, Math.PI * 2); ctx.fill();
+            // City name label with background
+            ctx.font = 'bold 12px JetBrains Mono';
+            const tw = ctx.measureText(hl.name).width;
+            const lx = hp[0] + 20, ly = hp[1] - 8;
+            ctx.globalAlpha = 0.85;
+            ctx.fillStyle = lt ? 'rgba(248,246,242,.92)' : 'rgba(13,21,32,.92)';
+            ctx.beginPath();
+            const pad = 5, rad = 4;
+            const bx = lx - pad, by = ly - 12 - pad, bw = tw + pad * 2, bh = 16 + pad * 2;
+            ctx.roundRect(bx, by, bw, bh, rad); ctx.fill();
+            ctx.strokeStyle = hlC; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, rad); ctx.stroke();
+            ctx.globalAlpha = 1; ctx.fillStyle = hlC;
+            ctx.fillText(hl.name, lx, ly);
+            s.dirty = true; // keep redrawing for pulse animation
+            if (s.scheduleRedraw) s.scheduleRedraw();
+          }
+        }
+      } else {
+        s.highlight = null; // expired
+      }
+    }
+
     // Home marker (static — no animation to save CPU)
     if (homeLocation) {
       const [hLng, hLat, hLabel] = homeLocation;
@@ -351,13 +395,27 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const shouldRotate = !isFlat && s.auto && !s.drag && !globeFills;
       if (shouldRotate) { const rotSpeed = isMobile ? .06 : .03; s.rot = [s.rot[0] - rotSpeed, s.rot[1]]; s.dirty = true; }
 
+      // Fly-to animation interpolation
+      if (s.anim) {
+        const t = Math.min(1, (ts - s.anim.startTime) / s.anim.duration);
+        // Ease-in-out cubic
+        const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        s.rot = [
+          s.anim.startRot[0] + (s.anim.targetLon - s.anim.startRot[0]) * ease,
+          s.anim.startRot[1] + (s.anim.targetLat - s.anim.startRot[1]) * ease,
+        ];
+        s.scale = s.anim.startScale + (s.anim.targetScale - s.anim.startScale) * ease;
+        s.dirty = true;
+        if (t >= 1) s.anim = null;
+      }
+
       if (s.dirty) {
         const elapsed = ts - s.lastDraw;
         if (elapsed >= s.frameInterval) { draw(); s.dirty = false; s.lastDraw = ts; }
       }
 
-      // Keep loop alive only if auto-rotating or still dirty
-      if (shouldRotate || s.dirty || s.drag) {
+      // Keep loop alive only if auto-rotating or still dirty or animating
+      if (shouldRotate || s.dirty || s.drag || s.anim) {
         s.raf = requestAnimationFrame(loop);
       } else {
         loopRunning = false;
@@ -630,8 +688,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     if (s.scheduleRedraw) s.scheduleRedraw();
   }, [lightMode]);
 
-  // Expose flyTo
-  Globe.flyTo = (la, lo) => {
+  // Expose flyTo — smooth animated rotation + zoom
+  Globe.flyTo = (la, lo, name) => {
     const s = S.current;
     if (flatRef.current) {
       // Center on the city by computing pixel offset, clamped to edges
@@ -658,10 +716,38 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       }
     } else {
       s.auto = false;
-      s.rot = [-lo, -la];
-      s.scale = Math.max(s.scale, 450);
-      setTimeout(() => { s.auto = true; if (s.scheduleRedraw) s.scheduleRedraw(); }, 6000);
+      // Smooth fly-to animation: interpolate rotation and scale
+      const startRot = [...s.rot];
+      const targetRot = [-lo, -la];
+      // Shortest path for longitude wrapping
+      let dLon = targetRot[0] - startRot[0];
+      if (dLon > 180) dLon -= 360;
+      if (dLon < -180) dLon += 360;
+      const startScale = s.scale;
+      const targetScale = Math.max(s.scale, 450);
+      s.anim = {
+        startRot,
+        targetLon: startRot[0] + dLon,
+        targetLat: targetRot[1],
+        startScale,
+        targetScale,
+        startTime: performance.now(),
+        duration: 1400, // ms
+      };
+      clearTimeout(s._autoTimer);
+      s._autoTimer = setTimeout(() => { s.auto = true; if (s.scheduleRedraw) s.scheduleRedraw(); }, 8000);
     }
+    // Set highlighted city
+    if (name) {
+      s.highlight = { la, lo, name, time: performance.now() };
+    }
+    if (s.scheduleRedraw) s.scheduleRedraw();
+  };
+
+  // Expose highlight method (show city label without flying)
+  Globe.highlight = (la, lo, name) => {
+    const s = S.current;
+    s.highlight = name ? { la, lo, name, time: performance.now() } : null;
     if (s.scheduleRedraw) s.scheduleRedraw();
   };
 

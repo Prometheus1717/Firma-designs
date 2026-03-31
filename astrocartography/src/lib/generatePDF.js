@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { CITY_COUNTRY } from '../data/cities';
 
 // ── Colors ──
 const C = {
@@ -106,7 +107,8 @@ function cityBlock(d, y, cities, color, readingFn, pw, ph, max) {
     d.setFont('helvetica', 'bold'); d.setFontSize(8); sc(d, color);
     d.text(`${i + 1}.`, 20, y + 3);
     d.setFontSize(9); sc(d, C.text);
-    d.text(c.name, 30, y + 3);
+    const country = CITY_COUNTRY[c.name];
+    d.text(country ? `${c.name}, ${country}` : c.name, 30, y + 3);
     d.setFont('helvetica', 'normal'); d.setFontSize(7.5); sc(d, C.textDim);
     d.text(`${c.line}  \u00B7  ${c.dist.toFixed(1)}\u00B0 orb`, pw - 20, y + 3, { align: 'right' });
     y += 9;
