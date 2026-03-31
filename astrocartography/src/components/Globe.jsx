@@ -137,16 +137,16 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     const lt = lightRef.current;
     // Theme colors — Apple Maps inspired beige for light, deep navy for dark
-    const ocean = lt ? '#B8AE9A' : '#0B1420';
-    const land = lt ? '#DED4C2' : '#0F1C28';
-    const border = lt ? '#8A7E6C' : '#3A5A72';
-    const grat1 = lt ? '#AEA694' : '#182838';
-    const grat2 = lt ? '#BAB2A0' : '#141E2C';
-    const grat3 = lt ? '#B2AA98' : '#142030';
-    const sphereB = lt ? '#908678' : '#1C3040';
-    const labelC = lt ? '#2C2820' : '#D0DDE8';
-    const dimLabel = lt ? '#4A4438' : '#5A7088';
-    const accentG = lt ? 'rgba(0,80,50,.06)' : 'rgba(0,216,138,.03)';
+    const ocean = lt ? '#B8D0E0' : '#0B1420';
+    const land = lt ? '#ECE4D4' : '#0F1C28';
+    const border = lt ? '#C0BEB6' : '#3A5A72';
+    const grat1 = lt ? '#C4D4DE' : '#182838';
+    const grat2 = lt ? '#CCD8E0' : '#141E2C';
+    const grat3 = lt ? '#C8D4DC' : '#142030';
+    const sphereB = lt ? '#A8B8C4' : '#1C3040';
+    const labelC = lt ? '#1D1D1F' : '#D0DDE8';
+    const dimLabel = lt ? '#636366' : '#5A7088';
+    const accentG = lt ? 'rgba(52,199,89,.04)' : 'rgba(0,216,138,.03)';
 
     if (isFlat) {
       // Flat map — Equirectangular projection
