@@ -248,12 +248,12 @@ export default function Dashboard({ demo = false }) {
   // Apple-style theme palette
   const L = lightMode;
   const T = useMemo(() => L ? {
-    bg: '#F0EDE8', p: '#F8F6F2', c: '#EDEAE5', b: '#F3F1EC', d: '#E8E5E0', a: '#F0EDE8',
-    bd: '#DDD9D2', bs: '#E8E5E0',
-    tx: '#1D1D1F', tm: '#3C3C43', td: '#636366', mu: '#86868B',
-    ac: '#34C759', acBg: 'rgba(52,199,89,.10)', acBd: 'rgba(52,199,89,.30)',
-    pop: 'rgba(248,246,242,.97)', pan: 'rgba(248,246,242,.98)',
-    sh: '0 1px 4px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.04)', shH: '0 4px 14px rgba(0,0,0,.10)',
+    bg: '#EDE8E0', p: '#FFF1D4', c: '#F5E8C6', b: '#FCECD0', d: '#F0E4C0', a: '#FFF1D4',
+    bd: '#E0D4B8', bs: '#ECDFC4',
+    tx: '#2C2416', tm: '#5C4E38', td: '#7A6C54', mu: '#9C8E76',
+    ac: '#2D8C46', acBg: 'rgba(45,140,70,.12)', acBd: 'rgba(45,140,70,.35)',
+    pop: 'rgba(255,241,212,.97)', pan: 'rgba(255,241,212,.98)',
+    sh: '0 1px 4px rgba(0,0,0,.08), 0 0 1px rgba(0,0,0,.04)', shH: '0 4px 14px rgba(0,0,0,.12)',
     ov: 'rgba(0,0,0,.30)',
   } : {
     bg: '#0A1018', p: '#0D1520', c: '#101C28', b: '#0B1218', d: '#0A1420', a: '#0C1420',
