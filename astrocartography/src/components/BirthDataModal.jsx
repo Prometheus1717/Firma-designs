@@ -2,17 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
+import { isLightMode, getTheme } from '../lib/theme';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
-/**
- * Full-screen modal overlay for entering birth data.
- * Shown to newly verified users who haven't entered birth data yet.
- * Works across all devices, browsers, web and mobile.
- */
 export default function BirthDataModal({ onComplete }) {
   const { saveBirthData } = useAuth();
-  const [step, setStep] = useState(0); // 0 = welcome, 1 = form
+  const light = isLightMode();
+  const T = getTheme(light);
+  const btnTx = light ? '#FFFFFF' : '#0A1018';
+  const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [dateDisplay, setDateDisplay] = useState('');
@@ -27,13 +26,11 @@ export default function BirthDataModal({ onComplete }) {
   const [visible, setVisible] = useState(false);
   const debounceRef = useRef(null);
 
-  // Fade-in on mount
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30);
     return () => clearTimeout(t);
   }, []);
 
-  // City search via Nominatim
   useEffect(() => {
     if (selectedCity) return;
     if (citySearch.length < 2) { setResults([]); return; }
@@ -104,14 +101,14 @@ export default function BirthDataModal({ onComplete }) {
   }
 
   const inputStyle = {
-    width: '100%', padding: '12px 14px', background: '#0A1018',
-    border: '1px solid #1A2840', borderRadius: 8, color: '#D0DDE8',
+    width: '100%', padding: '12px 14px', background: T.bg,
+    border: `1px solid ${T.bd}`, borderRadius: 8, color: T.tx,
     ...F, fontSize: 13, outline: 'none', boxSizing: 'border-box',
     transition: 'border-color 0.2s',
   };
 
   const labelStyle = {
-    ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1.5,
+    ...F, fontSize: 9, color: T.td, letterSpacing: 1.5,
     display: 'block', marginBottom: 8, textTransform: 'uppercase',
   };
 
@@ -119,7 +116,7 @@ export default function BirthDataModal({ onComplete }) {
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'rgba(5, 8, 12, 0.85)',
+      background: light ? 'rgba(242,242,247,0.85)' : 'rgba(5, 8, 12, 0.85)',
       backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
       opacity: visible ? 1 : 0,
       transition: 'opacity 0.4s ease',
@@ -129,10 +126,10 @@ export default function BirthDataModal({ onComplete }) {
       {/* Modal Card */}
       <div style={{
         width: '100%', maxWidth: 480,
-        background: '#0D1520',
-        border: '1px solid #1A2840',
+        background: T.p,
+        border: `1px solid ${T.bd}`,
         borderRadius: 16,
-        boxShadow: '0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 216, 138, 0.05)',
+        boxShadow: light ? '0 24px 80px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 168, 107, 0.05)' : '0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 216, 138, 0.05)',
         transform: visible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.97)',
         transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease',
         opacity: visible ? 1 : 0,
@@ -142,31 +139,29 @@ export default function BirthDataModal({ onComplete }) {
       }}>
         {/* Top accent line */}
         <div style={{
-          height: 3, background: 'linear-gradient(90deg, #00D88A, #00B876)',
+          height: 3, background: T.ac,
           borderRadius: '16px 16px 0 0',
         }} />
 
         <div style={{ padding: '32px 28px' }}>
           {step === 0 ? (
-            /* ─── Welcome Step ─── */
             <div style={{ textAlign: 'center' }}>
-              {/* Animated star icon */}
               <div style={{
                 width: 72, height: 72, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #0D2818, #0D1520)',
-                border: '1px solid rgba(0, 216, 138, 0.2)',
+                background: light ? 'linear-gradient(135deg, #E8F5EE, #F2F2F7)' : 'linear-gradient(135deg, #0D2818, #0D1520)',
+                border: `1px solid ${T.acBd}`,
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: 24, fontSize: 32,
               }}>
                 &#10024;
               </div>
 
-              <div style={{ ...F, fontSize: 11, color: '#00D88A', letterSpacing: 3, marginBottom: 12 }}>
+              <div style={{ ...F, fontSize: 11, color: T.ac, letterSpacing: 3, marginBottom: 12 }}>
                 EMAIL VERIFIED
               </div>
 
               <h2 style={{
-                ...F, fontSize: 22, fontWeight: 700, color: '#D0DDE8',
+                ...F, fontSize: 22, fontWeight: 700, color: T.tx,
                 margin: '0 0 12px', lineHeight: 1.3,
               }}>
                 Welcome to NatalNavigator
@@ -174,7 +169,7 @@ export default function BirthDataModal({ onComplete }) {
 
               <p style={{
                 fontFamily: 'system-ui, -apple-system, sans-serif',
-                fontSize: 14, color: '#8A9BB0', lineHeight: 1.7,
+                fontSize: 14, color: T.tm, lineHeight: 1.7,
                 margin: '0 0 8px', padding: '0 8px',
               }}>
                 Your account is ready. To generate your personalized astrocartography globe, we need your exact birth details.
@@ -182,7 +177,7 @@ export default function BirthDataModal({ onComplete }) {
 
               <p style={{
                 fontFamily: 'system-ui, -apple-system, sans-serif',
-                fontSize: 12, color: '#5A7088', lineHeight: 1.6,
+                fontSize: 12, color: T.td, lineHeight: 1.6,
                 margin: '0 0 32px', padding: '0 8px',
               }}>
                 The more precise your data, the more accurate your planetary lines will be.
@@ -192,8 +187,8 @@ export default function BirthDataModal({ onComplete }) {
                 onClick={() => setStep(1)}
                 style={{
                   width: '100%', padding: '14px 0',
-                  background: '#00D88A', border: 'none', borderRadius: 10,
-                  color: '#0A1018', ...F, fontSize: 13, fontWeight: 700,
+                  background: T.ac, border: 'none', borderRadius: 10,
+                  color: btnTx, ...F, fontSize: 13, fontWeight: 700,
                   letterSpacing: 1.5, cursor: 'pointer',
                   transition: 'background 0.2s, transform 0.1s',
                 }}
@@ -202,28 +197,26 @@ export default function BirthDataModal({ onComplete }) {
               </button>
 
               <div style={{
-                ...F, fontSize: 9, color: '#3A5068', marginTop: 16,
+                ...F, fontSize: 9, color: T.mu, marginTop: 16,
               }}>
                 Takes less than a minute
               </div>
             </div>
           ) : (
-            /* ─── Form Step ─── */
             <div>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                <div style={{ ...F, fontSize: 11, color: '#00D88A', letterSpacing: 3, marginBottom: 8 }}>
+                <div style={{ ...F, fontSize: 11, color: T.ac, letterSpacing: 3, marginBottom: 8 }}>
                   BIRTH DATA
                 </div>
                 <div style={{
                   fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: 13, color: '#5A7088', lineHeight: 1.5,
+                  fontSize: 13, color: T.td, lineHeight: 1.5,
                 }}>
                   Enter your details for an accurate natal chart
                 </div>
               </div>
 
               <form onSubmit={handleSubmit}>
-                {/* Name */}
                 <label style={labelStyle}>Your Name</label>
                 <input
                   type="text"
@@ -233,7 +226,6 @@ export default function BirthDataModal({ onComplete }) {
                   placeholder="Optional"
                 />
 
-                {/* Date + Time row */}
                 <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>Birth Date *</label>
@@ -272,14 +264,13 @@ export default function BirthDataModal({ onComplete }) {
                       style={inputStyle}
                     />
                     {time && (
-                      <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 4 }}>
+                      <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 4 }}>
                         {(() => { const [h, mi] = time.split(':').map(Number); const h12 = h % 12 || 12; return `${h12}:${String(mi).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; })()}
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* City search */}
                 <label style={labelStyle}>Birth City *</label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -290,17 +281,16 @@ export default function BirthDataModal({ onComplete }) {
                     placeholder="London, New York, Sydney..."
                   />
                   {searching && (
-                    <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: '#5A7088' }}>
+                    <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: T.td }}>
                       searching...
                     </div>
                   )}
                 </div>
 
-                {/* Results dropdown */}
                 {!selectedCity && results.length > 0 && (
                   <div style={{
                     maxHeight: 180, overflowY: 'auto',
-                    background: '#0A1018', border: '1px solid #1A2840',
+                    background: T.bg, border: `1px solid ${T.bd}`,
                     borderRadius: 8, marginTop: 4, marginBottom: 12,
                   }}>
                     {results.map((c, i) => (
@@ -309,15 +299,15 @@ export default function BirthDataModal({ onComplete }) {
                         onClick={() => { setSelectedCity(c); setCitySearch(c.name); setResults([]); }}
                         style={{
                           padding: '10px 14px', cursor: 'pointer',
-                          borderBottom: '1px solid #14202C',
-                          ...F, fontSize: 11, color: '#B0C0D0',
+                          borderBottom: `1px solid ${T.d}`,
+                          ...F, fontSize: 11, color: T.tm,
                           transition: 'background 0.15s',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#101C28'}
+                        onMouseEnter={e => e.currentTarget.style.background = T.c}
                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                       >
                         <div>{c.name}</div>
-                        <div style={{ fontSize: 9, color: '#3A5068', marginTop: 2 }}>
+                        <div style={{ fontSize: 9, color: T.mu, marginTop: 2 }}>
                           {c.lat.toFixed(4)}, {c.lng.toFixed(4)}
                         </div>
                       </div>
@@ -325,32 +315,29 @@ export default function BirthDataModal({ onComplete }) {
                   </div>
                 )}
 
-                {/* No results */}
                 {!selectedCity && !searching && citySearch.length >= 2 && results.length === 0 && (
-                  <div style={{ ...F, fontSize: 9, color: '#5A7088', padding: '8px 0', marginBottom: 8 }}>
+                  <div style={{ ...F, fontSize: 9, color: T.td, padding: '8px 0', marginBottom: 8 }}>
                     No results. Try a different spelling or a nearby larger city.
                   </div>
                 )}
 
-                {/* Selected city */}
                 {selectedCity && (
                   <div style={{
-                    ...F, fontSize: 10, color: '#00D88A', marginTop: 8, marginBottom: 16,
-                    padding: '10px 14px', background: 'rgba(0,216,138,0.06)',
-                    borderRadius: 8, border: '1px solid rgba(0,216,138,0.15)',
+                    ...F, fontSize: 10, color: T.ac, marginTop: 8, marginBottom: 16,
+                    padding: '10px 14px', background: T.acBg,
+                    borderRadius: 8, border: `1px solid ${T.acBd}`,
                   }}>
-                    <span style={{ color: '#00D88A' }}>&#10003;</span> {selectedCity.name}
-                    <span style={{ color: '#5A7088' }}> ({selectedCity.lat.toFixed(2)}, {selectedCity.lng.toFixed(2)})</span>
+                    <span style={{ color: T.ac }}>&#10003;</span> {selectedCity.name}
+                    <span style={{ color: T.td }}> ({selectedCity.lat.toFixed(2)}, {selectedCity.lng.toFixed(2)})</span>
                     <span
                       onClick={() => { setSelectedCity(null); setCitySearch(''); setResults([]); }}
-                      style={{ color: '#5A7088', cursor: 'pointer', marginLeft: 12, textDecoration: 'underline' }}
+                      style={{ color: T.td, cursor: 'pointer', marginLeft: 12, textDecoration: 'underline' }}
                     >change</span>
                   </div>
                 )}
 
                 {!selectedCity && citySearch.length === 0 && <div style={{ height: 8 }} />}
 
-                {/* Error */}
                 {error && (
                   <div style={{
                     ...F, fontSize: 10, color: '#F04060', marginBottom: 12,
@@ -361,15 +348,14 @@ export default function BirthDataModal({ onComplete }) {
                   </div>
                 )}
 
-                {/* Submit */}
                 <button
                   type="submit"
                   disabled={submitting}
                   style={{
                     width: '100%', padding: '14px 0',
-                    background: submitting ? '#1A2840' : '#00D88A',
+                    background: submitting ? T.bd : T.ac,
                     border: 'none', borderRadius: 10,
-                    color: '#0A1018', ...F, fontSize: 12, fontWeight: 700,
+                    color: btnTx, ...F, fontSize: 12, fontWeight: 700,
                     letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer',
                     marginTop: 8, transition: 'background 0.2s',
                   }}
@@ -378,7 +364,7 @@ export default function BirthDataModal({ onComplete }) {
                     <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                       <span style={{
                         display: 'inline-block', width: 14, height: 14,
-                        border: '2px solid #0A1018', borderTopColor: 'transparent',
+                        border: `2px solid ${btnTx}`, borderTopColor: 'transparent',
                         borderRadius: '50%', animation: 'nn-spin .6s linear infinite',
                       }} />
                       CALCULATING YOUR CHART...
@@ -386,15 +372,14 @@ export default function BirthDataModal({ onComplete }) {
                   ) : 'GENERATE MY NATAL CHART'}
                 </button>
 
-                {/* Back button */}
                 <div
                   onClick={() => setStep(0)}
                   style={{
-                    ...F, fontSize: 9, color: '#5A7088', textAlign: 'center',
+                    ...F, fontSize: 9, color: T.td, textAlign: 'center',
                     marginTop: 16, cursor: 'pointer',
                   }}
                 >
-                  &#8592; Back
+                  \u2190 Back
                 </div>
               </form>
             </div>

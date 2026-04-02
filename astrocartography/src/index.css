@@ -18,31 +18,32 @@ body {
   font-family: 'Instrument Sans', sans-serif;
 }
 
+html[data-theme="light"] body {
+  background: #F2F2F7;
+  color: #1C1C1E;
+}
+
 @keyframes ts {
   0% { transform: translateX(0) translateZ(0); }
   100% { transform: translateX(-50%) translateZ(0); }
 }
 
-/* GPU-promote animated elements on Chrome/Firefox (Safari does this automatically) */
 [style*="animation: ts"] {
   will-change: transform;
   backface-visibility: hidden;
   contain: layout style;
 }
 
-/* Force GPU layer for canvas elements — eliminates Chrome compositing jank */
 canvas {
   will-change: contents;
   contain: strict;
 }
 
-/* Prevent iOS auto-zoom on input focus — inputs must be >= 16px */
 input, select, textarea {
   font-size: 16px !important;
   touch-action: manipulation;
 }
 
-/* Prevent double-tap zoom on interactive elements */
 button, a, [role="button"], [onclick] {
   touch-action: manipulation;
 }
@@ -53,4 +54,8 @@ button, a, [role="button"], [onclick] {
 *::-webkit-scrollbar-thumb {
   background: #1a2840;
   border-radius: 2px;
+}
+
+html[data-theme="light"] *::-webkit-scrollbar-thumb {
+  background: #D1D1D6;
 }

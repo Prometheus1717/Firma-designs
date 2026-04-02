@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
+import { isLightMode, getTheme } from '../lib/theme';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -11,11 +12,14 @@ export default function BirthDataPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isEditing = location.state?.edit === true;
+  const light = isLightMode();
+  const T = getTheme(light);
+  const btnTx = light ? '#FFFFFF' : '#0A1018';
   const [name, setName] = useState('');
-  const [date, setDate] = useState(''); // internal: YYYY-MM-DD
-  const [dateDisplay, setDateDisplay] = useState(''); // shown: dd.mm.yyyy
-  const [time, setTime] = useState(''); // internal: HH:MM
-  const [timeDisplay, setTimeDisplay] = useState(''); // shown: HH:MM (h:MM AM/PM)
+  const [date, setDate] = useState('');
+  const [dateDisplay, setDateDisplay] = useState('');
+  const [time, setTime] = useState('');
+  const [timeDisplay, setTimeDisplay] = useState('');
   const [citySearch, setCitySearch] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
   const [results, setResults] = useState([]);
@@ -24,16 +28,14 @@ export default function BirthDataPage() {
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
 
-  useEffect(() => { document.title = isEditing ? 'Edit Birth Data — Natal Navigator' : 'Enter Birth Data — Natal Navigator'; }, [isEditing]);
+  useEffect(() => { document.title = isEditing ? 'Edit Birth Data \u2014 Natal Navigator' : 'Enter Birth Data \u2014 Natal Navigator'; }, [isEditing]);
 
-  // If birth data already exists and NOT editing, skip straight to dashboard
   useEffect(() => {
     if (hasBirthData && !isEditing) {
       navigate('/dashboard', { replace: true });
     }
   }, [hasBirthData, isEditing, navigate]);
 
-  // Pre-fill form when editing existing birth data
   useEffect(() => {
     if (isEditing && profile) {
       setName(profile.display_name || '');
@@ -45,8 +47,6 @@ export default function BirthDataPage() {
       if (profile.birth_time) {
         setTime(profile.birth_time);
         const [hh, mi] = profile.birth_time.split(':');
-        const h12 = (parseInt(hh) % 12) || 12;
-        const ampm = parseInt(hh) < 12 ? 'AM' : 'PM';
         setTimeDisplay(`${hh}:${mi}`);
       }
       if (profile.birth_city) {
@@ -60,13 +60,9 @@ export default function BirthDataPage() {
     }
   }, [isEditing, profile]);
 
-  // Live search via OpenStreetMap Nominatim (free, worldwide, no API key needed)
   useEffect(() => {
     if (selectedCity) return;
-    if (citySearch.length < 2) {
-      setResults([]);
-      return;
-    }
+    if (citySearch.length < 2) { setResults([]); return; }
 
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
@@ -97,35 +93,21 @@ export default function BirthDataPage() {
             };
           });
         setResults(cities);
-      } catch {
-        setResults([]);
-      } finally {
-        setSearching(false);
-      }
+      } catch { setResults([]); }
+      finally { setSearching(false); }
     }, 350);
-
     return () => clearTimeout(debounceRef.current);
   }, [citySearch, selectedCity]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-
-    if (!selectedCity) {
-      setError('Please search and select your birth city.');
-      return;
-    }
-    if (!date || !time) {
-      setError('Please enter your birth date and exact time.');
-      return;
-    }
+    if (!selectedCity) { setError('Please search and select your birth city.'); return; }
+    if (!date || !time) { setError('Please enter your birth date and exact time.'); return; }
 
     setSubmitting(true);
     try {
-      // 1. Save to Supabase and pre-calculate chart in parallel
       const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
-
-      // Timeout wrapper — never hang more than 15s on mobile networks
       const withTimeout = (promise, ms) => Promise.race([
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Check your internet connection and try again.')), ms)),
@@ -133,31 +115,17 @@ export default function BirthDataPage() {
 
       const [, chartData] = await Promise.all([
         withTimeout(saveBirthData({
-          name: name.trim(),
-          date,
-          time,
+          name: name.trim(), date, time,
           city: selectedCity.name,
-          lat: selectedCity.lat,
-          lng: selectedCity.lng,
+          lat: selectedCity.lat, lng: selectedCity.lng,
         }), 15000),
-        // Calculate chart on main thread while Supabase write is in flight.
-        // ~200ms calculation runs concurrently with ~500ms network call = free.
         new Promise((resolve) => {
-          try {
-            const data = calculateChart(birthInput);
-            resolve(data);
-          } catch {
-            resolve(null); // Dashboard will recalculate if this fails
-          }
+          try { resolve(calculateChart(birthInput)); }
+          catch { resolve(null); }
         }),
       ]);
 
-      // 2. Cache the result so Dashboard loads instantly from localStorage
-      if (chartData) {
-        setCachedChart(birthInput, chartData);
-      }
-
-      // 3. Navigate — Dashboard will read from cache, zero loading
+      if (chartData) setCachedChart(birthInput, chartData);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -166,35 +134,36 @@ export default function BirthDataPage() {
     }
   }
 
-  // If birth data exists, redirect fires via useEffect above — no blocking screen needed
+  const inputStyle = {
+    width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`,
+    borderRadius: 6, color: T.tx, ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box',
+  };
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <main style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <header style={{ marginBottom: 32, textAlign: 'center' }}>
-        <h1 style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
-        <p style={{ ...F, fontSize: 10, color: '#5A7088', letterSpacing: 2, margin: 0 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</p>
+        <h1 style={{ ...F, fontSize: 18, fontWeight: 700, color: T.ac, letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
+        <p style={{ ...F, fontSize: 10, color: T.td, letterSpacing: 2, margin: 0 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</p>
       </header>
 
-      <div style={{ width: '100%', maxWidth: 460, background: '#0D1520', border: '1px solid #1A2840', borderRadius: 12, padding: 32 }}>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20, lineHeight: 1.7 }}>
+      <div style={{ width: '100%', maxWidth: 460, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32 }}>
+        <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20, lineHeight: 1.7 }}>
           For accurate astrocartography lines, we need your exact birth date, time, and location. The more precise, the better your chart.
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Name */}
-          <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>YOUR NAME</label>
+          <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>YOUR NAME</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 13, marginBottom: 16, outline: 'none', boxSizing: 'border-box' }}
+            style={{ ...inputStyle, fontSize: 13, marginBottom: 16 }}
             placeholder="Optional"
           />
 
-          {/* Date + Time */}
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
             <div style={{ flex: 1 }}>
-              <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH DATE * <span style={{ color: '#3A5068' }}>(dd.mm.yyyy)</span></label>
+              <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH DATE * <span style={{ color: T.mu }}>(dd.mm.yyyy)</span></label>
               <input
                 type="text"
                 required
@@ -202,27 +171,18 @@ export default function BirthDataPage() {
                 placeholder="18.03.1995"
                 onChange={e => {
                   let v = e.target.value.replace(/[^0-9.]/g, '');
-                  // Auto-insert dots after dd and mm
                   const digits = v.replace(/\./g, '');
-                  if (digits.length >= 5) {
-                    v = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4, 8);
-                  } else if (digits.length >= 3) {
-                    v = digits.slice(0, 2) + '.' + digits.slice(2, 4);
-                  }
+                  if (digits.length >= 5) v = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4, 8);
+                  else if (digits.length >= 3) v = digits.slice(0, 2) + '.' + digits.slice(2, 4);
                   setDateDisplay(v);
-                  // Parse dd.mm.yyyy → YYYY-MM-DD for internal use
                   const m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-                  if (m) {
-                    setDate(`${m[3]}-${m[2]}-${m[1]}`);
-                  } else {
-                    setDate('');
-                  }
+                  setDate(m ? `${m[3]}-${m[2]}-${m[1]}` : '');
                 }}
-                style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
+                style={inputStyle}
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: '#3A5068' }}>(exact)</span></label>
+              <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: T.mu }}>(exact)</span></label>
               <input
                 type="text"
                 required
@@ -231,82 +191,70 @@ export default function BirthDataPage() {
                 onChange={e => {
                   let v = e.target.value.replace(/[^0-9:]/g, '');
                   const digits = v.replace(/:/g, '');
-                  if (digits.length >= 3) {
-                    v = digits.slice(0, 2) + ':' + digits.slice(2, 4);
-                  }
+                  if (digits.length >= 3) v = digits.slice(0, 2) + ':' + digits.slice(2, 4);
                   setTimeDisplay(v);
                   const m = v.match(/^(\d{2}):(\d{2})$/);
-                  if (m && +m[1] < 24 && +m[2] < 60) {
-                    setTime(`${m[1]}:${m[2]}`);
-                  } else {
-                    setTime('');
-                  }
+                  setTime(m && +m[1] < 24 && +m[2] < 60 ? `${m[1]}:${m[2]}` : '');
                 }}
-                style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
+                style={inputStyle}
               />
               {time && (
-                <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 4 }}>
+                <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 4 }}>
                   {(() => { const [h, mi] = time.split(':').map(Number); const h12 = h % 12 || 12; return `${h12}:${String(mi).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; })()}
                 </div>
               )}
             </div>
           </div>
 
-          {/* City search */}
-          <label style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1, display: 'block', marginBottom: 6 }}>
-            BIRTH CITY * <span style={{ color: '#3A5068' }}>(search worldwide)</span>
+          <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>
+            BIRTH CITY * <span style={{ color: T.mu }}>(search worldwide)</span>
           </label>
           <div style={{ position: 'relative' }}>
             <input
               type="text"
               value={citySearch}
               onChange={e => { setCitySearch(e.target.value); setSelectedCity(null); }}
-              style={{ width: '100%', padding: '10px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
+              style={{ ...inputStyle, fontSize: 13 }}
               placeholder="London, New York, Sydney..."
             />
             {searching && (
-              <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: '#5A7088' }}>
+              <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: T.td }}>
                 searching...
               </div>
             )}
           </div>
 
-          {/* Search results */}
           {!selectedCity && results.length > 0 && (
-            <div style={{ maxHeight: 200, overflowY: 'auto', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, marginTop: 4, marginBottom: 12 }}>
+            <div style={{ maxHeight: 200, overflowY: 'auto', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, marginTop: 4, marginBottom: 12 }}>
               {results.map((c, i) => (
                 <div
                   key={i}
                   onClick={() => { setSelectedCity(c); setCitySearch(c.name); setResults([]); }}
-                  style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #14202C', ...F, fontSize: 11, color: '#B0C0D0', transition: 'background .15s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#101C28'}
+                  style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: `1px solid ${T.d}`, ...F, fontSize: 11, color: T.tm, transition: 'background .15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = T.c}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div>{c.name}</div>
-                  <div style={{ fontSize: 9, color: '#3A5068', marginTop: 2 }}>{c.lat.toFixed(4)}°, {c.lng.toFixed(4)}°</div>
+                  <div style={{ fontSize: 9, color: T.mu, marginTop: 2 }}>{c.lat.toFixed(4)}\u00B0, {c.lng.toFixed(4)}\u00B0</div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* No results hint */}
           {!selectedCity && !searching && citySearch.length >= 2 && results.length === 0 && (
-            <div style={{ ...F, fontSize: 9, color: '#5A7088', padding: '8px 0', marginBottom: 8 }}>
+            <div style={{ ...F, fontSize: 9, color: T.td, padding: '8px 0', marginBottom: 8 }}>
               No results. Try a different spelling or a nearby larger city.
             </div>
           )}
 
-          {/* Selected city confirmation */}
           {selectedCity && (
-            <div style={{ ...F, fontSize: 10, color: '#00D88A', marginTop: 8, marginBottom: 16, padding: '8px 12px', background: 'rgba(0,216,138,0.06)', borderRadius: 6, border: '1px solid rgba(0,216,138,0.15)' }}>
-              ✓ {selectedCity.name} <span style={{ color: '#5A7088' }}>({selectedCity.lat.toFixed(4)}°, {selectedCity.lng.toFixed(4)}°)</span>
-              <span onClick={() => { setSelectedCity(null); setCitySearch(''); setResults([]); }} style={{ color: '#5A7088', cursor: 'pointer', marginLeft: 12, textDecoration: 'underline' }}>change</span>
+            <div style={{ ...F, fontSize: 10, color: T.ac, marginTop: 8, marginBottom: 16, padding: '8px 12px', background: T.acBg, borderRadius: 6, border: `1px solid ${T.acBd}` }}>
+              \u2713 {selectedCity.name} <span style={{ color: T.td }}>({selectedCity.lat.toFixed(4)}\u00B0, {selectedCity.lng.toFixed(4)}\u00B0)</span>
+              <span onClick={() => { setSelectedCity(null); setCitySearch(''); setResults([]); }} style={{ color: T.td, cursor: 'pointer', marginLeft: 12, textDecoration: 'underline' }}>change</span>
             </div>
           )}
 
-          {!selectedCity && citySearch.length === 0 && (
-            <div style={{ height: 8 }} />
-          )}
+          {!selectedCity && citySearch.length === 0 && <div style={{ height: 8 }} />}
 
           {error && (
             <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12, padding: '10px 12px', background: 'rgba(240,64,96,0.08)', borderRadius: 6, border: '1px solid rgba(240,64,96,0.2)' }}>
@@ -318,8 +266,8 @@ export default function BirthDataPage() {
             type="submit"
             disabled={submitting}
             style={{
-              width: '100%', padding: '12px 0', background: submitting ? '#1A2840' : '#00D88A',
-              border: 'none', borderRadius: 6, color: '#0A1018', ...F, fontSize: 12, fontWeight: 700,
+              width: '100%', padding: '12px 0', background: submitting ? T.bd : T.ac,
+              border: 'none', borderRadius: 6, color: btnTx, ...F, fontSize: 12, fontWeight: 700,
               letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer', marginTop: 8,
             }}
           >
@@ -328,9 +276,9 @@ export default function BirthDataPage() {
         </form>
 
         {isEditing ? (
-          <div onClick={() => navigate('/dashboard')} style={{ ...F, fontSize: 9, color: '#5A7088', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>← Back to Dashboard</div>
+          <div onClick={() => navigate('/dashboard')} style={{ ...F, fontSize: 9, color: T.td, textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>\u2190 Back to Dashboard</div>
         ) : (
-          <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: '#3A5068', textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
+          <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: T.mu, textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
         )}
       </div>
     </main>

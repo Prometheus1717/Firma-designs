@@ -2,26 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium, fetchAllAppSettings, updateAppSetting } from '../lib/adminApi';
+import { isLightMode, getTheme } from '../lib/theme';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
-// ─── Reusable Components ───
-
-function StatCard({ label, value, color }) {
+function StatCard({ label, value, color, T }) {
   return (
-    <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '18px 20px', flex: 1, minWidth: 140 }}>
-      <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1.5, marginBottom: 8 }}>{label}</div>
+    <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: '18px 20px', flex: 1, minWidth: 140 }}>
+      <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{label}</div>
       <div style={{ ...F, fontSize: 28, fontWeight: 700, color }}>{value}</div>
     </div>
   );
 }
 
-function SettingRow({ label, description, children }) {
+function SettingRow({ label, description, children, T }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: '1px solid #14202C', flexWrap: 'wrap', gap: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${T.d}`, flexWrap: 'wrap', gap: 12 }}>
       <div style={{ flex: 1, minWidth: 180 }}>
-        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#D0DDE8' }}>{label}</div>
-        {description && <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 3, lineHeight: 1.5 }}>{description}</div>}
+        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx }}>{label}</div>
+        {description && <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 3, lineHeight: 1.5 }}>{description}</div>}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>{children}</div>
     </div>
@@ -41,7 +40,7 @@ function ToggleButton({ active, onToggle, loading, activeLabel, inactiveLabel, a
 }
 
 function formatDate(d) {
-  if (!d) return '—';
+  if (!d) return '\u2014';
   const [y, m, day] = d.split('-');
   return `${day}.${m}.${y?.slice(-2)}`;
 }
@@ -52,28 +51,25 @@ function formatTime(t) {
   return `${h}:${m}`;
 }
 
-// ─── Tab: Overview ───
-
-function OverviewTab({ stats, paywallEnabled, setPaywallEnabled }) {
+function OverviewTab({ stats, paywallEnabled, setPaywallEnabled, T }) {
   const [paywallLoading, setPaywallLoading] = useState(false);
 
   return (
     <>
-      {/* STATS */}
       {stats && (
         <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
-          <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" />
-          <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" />
-          <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" />
-          <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" />
+          <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" T={T} />
+          <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" T={T} />
+          <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" T={T} />
+          <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" T={T} />
         </div>
       )}
 
-      {/* PAYWALL */}
-      <div style={{ background: '#0D1520', border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
+      <div style={{ background: T.p, border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
         <SettingRow
           label="Paywall"
-          description={paywallEnabled ? 'Active — free users see the upgrade screen' : 'Disabled — all users have full access'}
+          description={paywallEnabled ? 'Active \u2014 free users see the upgrade screen' : 'Disabled \u2014 all users have full access'}
+          T={T}
         >
           <ToggleButton
             active={paywallEnabled}
@@ -92,17 +88,16 @@ function OverviewTab({ stats, paywallEnabled, setPaywallEnabled }) {
         </SettingRow>
       </div>
 
-      {/* Quick info */}
-      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: 20 }}>
-        <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 1.2, marginBottom: 14 }}>QUICK INFO</div>
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1.2, marginBottom: 14 }}>QUICK INFO</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
           {[
-            ['Conversion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#E8A838'],
-            ['Completion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.withBirthData / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#5BA8D4'],
-            ['Weekly Growth', stats ? `${stats.totalUsers > 0 ? ((stats.recentSignups / stats.totalUsers) * 100).toFixed(1) : 0}%` : '—', '#D8A030'],
+            ['Conversion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#E8A838'],
+            ['Completion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.withBirthData / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#5BA8D4'],
+            ['Weekly Growth', stats ? `${stats.totalUsers > 0 ? ((stats.recentSignups / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#D8A030'],
           ].map(([label, val, color]) => (
-            <div key={label} style={{ background: '#0A1018', borderRadius: 8, padding: '12px 16px' }}>
-              <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 6 }}>{label}</div>
+            <div key={label} style={{ background: T.bg, borderRadius: 8, padding: '12px 16px' }}>
+              <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 6 }}>{label}</div>
               <div style={{ ...F, fontSize: 18, fontWeight: 700, color }}>{val}</div>
             </div>
           ))}
@@ -112,24 +107,21 @@ function OverviewTab({ stats, paywallEnabled, setPaywallEnabled }) {
   );
 }
 
-// ─── Tab: Pricing & Settings ───
-
-function SettingsTab({ settings, onSave }) {
+function SettingsTab({ settings, onSave, T }) {
   const [price, setPrice] = useState('');
   const [currency, setCurrency] = useState('');
   const [priceLabel, setPriceLabel] = useState('');
   const [announcementText, setAnnouncementText] = useState('');
   const [announcementActive, setAnnouncementActive] = useState(false);
   const [announcementColor, setAnnouncementColor] = useState('');
-  const [saving, setSaving] = useState(null); // which field is saving
-  const [saved, setSaved] = useState(null); // which field was saved
+  const [saving, setSaving] = useState(null);
+  const [saved, setSaved] = useState(null);
 
-  // Sync from loaded settings
   useEffect(() => {
     if (!settings) return;
     setPrice(settings.display_price || '3.99');
     setCurrency(settings.display_currency || 'EUR');
-    setPriceLabel(settings.price_label || 'ONE-TIME · LIFETIME ACCESS');
+    setPriceLabel(settings.price_label || 'ONE-TIME \u00B7 LIFETIME ACCESS');
     setAnnouncementText(settings.announcement_text || '');
     setAnnouncementActive(settings.announcement_active === 'true');
     setAnnouncementColor(settings.announcement_color || '#D8A030');
@@ -145,7 +137,7 @@ function SettingsTab({ settings, onSave }) {
     setSaving(null);
   };
 
-  const inputStyle = { padding: '8px 12px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box', width: '100%', maxWidth: 240 };
+  const inputStyle = { padding: '8px 12px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box', width: '100%', maxWidth: 240 };
   const saveBtn = (key, value) => (
     <div
       onClick={() => save(key, value)}
@@ -157,20 +149,19 @@ function SettingsTab({ settings, onSave }) {
 
   return (
     <>
-      {/* PRICING */}
-      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
-        <div style={{ ...F, fontSize: 9, color: '#E8A838', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: '1px solid #14202C' }}>PRICING</div>
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#E8A838', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: `1px solid ${T.d}` }}>PRICING</div>
 
-        <SettingRow label="Display Price" description="The price shown on the paywall screen. Make sure it matches your Stripe price.">
+        <SettingRow label="Display Price" description="The price shown on the paywall screen. Make sure it matches your Stripe price." T={T}>
           <input value={price} onChange={e => setPrice(e.target.value)} style={{ ...inputStyle, maxWidth: 100, textAlign: 'right' }} placeholder="3.99" />
           {saveBtn('display_price', price)}
         </SettingRow>
 
-        <SettingRow label="Currency" description="Currency symbol or code shown next to the price.">
+        <SettingRow label="Currency" description="Currency symbol or code shown next to the price." T={T}>
           <select
             value={currency}
             onChange={e => { setCurrency(e.target.value); save('display_currency', e.target.value); }}
-            style={{ ...inputStyle, maxWidth: 120, cursor: 'pointer', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none', paddingRight: 28, backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%235A7088\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
+            style={{ ...inputStyle, maxWidth: 120, cursor: 'pointer', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none', paddingRight: 28, backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235A7088'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center' }}
           >
             <option value="EUR">EUR</option>
             <option value="USD">USD</option>
@@ -179,21 +170,20 @@ function SettingsTab({ settings, onSave }) {
           </select>
         </SettingRow>
 
-        <SettingRow label="Price Label" description="Text shown below the price (e.g. ONE-TIME · LIFETIME ACCESS).">
-          <input value={priceLabel} onChange={e => setPriceLabel(e.target.value)} style={{ ...inputStyle, maxWidth: 260 }} placeholder="ONE-TIME · LIFETIME ACCESS" />
+        <SettingRow label="Price Label" description="Text shown below the price (e.g. ONE-TIME \u00B7 LIFETIME ACCESS)." T={T}>
+          <input value={priceLabel} onChange={e => setPriceLabel(e.target.value)} style={{ ...inputStyle, maxWidth: 260 }} placeholder="ONE-TIME \u00B7 LIFETIME ACCESS" />
           {saveBtn('price_label', priceLabel)}
         </SettingRow>
 
-        <div style={{ ...F, fontSize: 9, color: '#5A7088', padding: '14px 0 6px', lineHeight: 1.6 }}>
+        <div style={{ ...F, fontSize: 9, color: T.td, padding: '14px 0 6px', lineHeight: 1.6 }}>
           The actual charge amount is controlled by your Stripe Price ID (environment variable). Change the display price here whenever you update Stripe.
         </div>
       </div>
 
-      {/* ANNOUNCEMENT BANNER */}
-      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
-        <div style={{ ...F, fontSize: 9, color: '#D8A030', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: '1px solid #14202C' }}>ANNOUNCEMENT BANNER</div>
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: '6px 20px 10px', marginBottom: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#D8A030', letterSpacing: 1.5, padding: '14px 0 8px', borderBottom: `1px solid ${T.d}` }}>ANNOUNCEMENT BANNER</div>
 
-        <SettingRow label="Banner Active" description="Show a banner at the top of the dashboard for all users.">
+        <SettingRow label="Banner Active" description="Show a banner at the top of the dashboard for all users." T={T}>
           <ToggleButton
             active={announcementActive}
             loading={saving === 'announcement_active'}
@@ -207,27 +197,26 @@ function SettingsTab({ settings, onSave }) {
           />
         </SettingRow>
 
-        <SettingRow label="Banner Text" description="Message shown in the announcement banner.">
+        <SettingRow label="Banner Text" description="Message shown in the announcement banner." T={T}>
           <input value={announcementText} onChange={e => setAnnouncementText(e.target.value)} style={{ ...inputStyle, maxWidth: 320 }} placeholder="Scheduled maintenance tonight at 22:00 CET" />
           {saveBtn('announcement_text', announcementText)}
         </SettingRow>
 
-        <SettingRow label="Banner Color" description="Accent color for the announcement banner.">
+        <SettingRow label="Banner Color" description="Accent color for the announcement banner." T={T}>
           <div style={{ display: 'flex', gap: 8 }}>
             {['#D8A030', '#F04060', '#00D88A', '#5BA8D4', '#A070D0'].map(c => (
               <div
                 key={c}
                 onClick={() => { setAnnouncementColor(c); save('announcement_color', c); }}
-                style={{ width: 28, height: 28, borderRadius: 6, background: c, cursor: 'pointer', border: announcementColor === c ? '2px solid #D0DDE8' : '2px solid transparent', transition: 'border .15s' }}
+                style={{ width: 28, height: 28, borderRadius: 6, background: c, cursor: 'pointer', border: announcementColor === c ? `2px solid ${T.tx}` : '2px solid transparent', transition: 'border .15s' }}
               />
             ))}
           </div>
         </SettingRow>
 
-        {/* Preview */}
         {announcementText && (
           <div style={{ marginTop: 12, marginBottom: 8 }}>
-            <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 8 }}>PREVIEW</div>
+            <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 8 }}>PREVIEW</div>
             <div style={{ ...F, fontSize: 10, color: announcementColor, background: `${announcementColor}10`, border: `1px solid ${announcementColor}30`, borderRadius: 6, padding: '8px 14px', lineHeight: 1.5 }}>
               {announcementText}
             </div>
@@ -238,9 +227,7 @@ function SettingsTab({ settings, onSave }) {
   );
 }
 
-// ─── Tab: Users ───
-
-function UsersTab({ users, total, loading, selected, setSelected, premiumToggling, setPremiumToggling, page, setPage, pageSize, searchInput, setSearchInput, sortField, setSortField, sortAsc, setSortAsc, setUsers }) {
+function UsersTab({ users, total, loading, selected, setSelected, premiumToggling, setPremiumToggling, page, setPage, pageSize, searchInput, setSearchInput, sortField, setSortField, sortAsc, setSortAsc, setUsers, T }) {
   const totalPages = Math.ceil(total / pageSize);
 
   function handleSort(field) {
@@ -262,93 +249,87 @@ function UsersTab({ users, total, loading, selected, setSelected, premiumTogglin
 
   return (
     <>
-      {/* SEARCH */}
       <div style={{ marginBottom: 16 }}>
         <input
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
           placeholder="Search by name, email, or city..."
-          style={{ width: '100%', maxWidth: 400, padding: '10px 14px', background: '#0A1018', border: '1px solid #1A2840', borderRadius: 6, color: '#D0DDE8', ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
+          style={{ width: '100%', maxWidth: 400, padding: '10px 14px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
         />
       </div>
 
-      {/* TABLE */}
-      <div style={{ background: '#0D1520', border: '1px solid #1A2840', borderRadius: 10, overflow: 'hidden' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', background: '#0B1218', borderBottom: '1px solid #1A2840', padding: '10px 14px', overflowX: 'auto' }}>
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', background: T.b, borderBottom: `1px solid ${T.bd}`, padding: '10px 14px', overflowX: 'auto' }}>
           {columns.map(col => (
             <div
               key={col.key}
               onClick={() => handleSort(col.key)}
-              style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1.2, cursor: 'pointer', width: col.w, minWidth: col.w, flexShrink: 0, userSelect: 'none' }}
+              style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1.2, cursor: 'pointer', width: col.w, minWidth: col.w, flexShrink: 0, userSelect: 'none' }}
             >
               {col.label}{sortArrow(col.key)}
             </div>
           ))}
         </div>
 
-        {/* Rows */}
         <div style={{ overflowX: 'auto' }}>
           {loading ? (
-            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>Loading...</div>
+            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: T.td }}>Loading...</div>
           ) : users.length === 0 ? (
-            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: '#5A7088' }}>No users found</div>
+            <div style={{ padding: 30, textAlign: 'center', ...F, fontSize: 11, color: T.td }}>No users found</div>
           ) : (
             users.map(u => (
               <div
                 key={u.id}
                 onClick={() => setSelected(selected?.id === u.id ? null : u)}
-                style={{ display: 'flex', padding: '10px 14px', borderBottom: '1px solid #14202C', cursor: 'pointer', background: selected?.id === u.id ? '#101C28' : 'transparent', transition: 'background .15s', minWidth: 'fit-content' }}
-                onMouseEnter={e => { if (selected?.id !== u.id) e.currentTarget.style.background = '#0C1620'; }}
+                style={{ display: 'flex', padding: '10px 14px', borderBottom: `1px solid ${T.d}`, cursor: 'pointer', background: selected?.id === u.id ? T.c : 'transparent', transition: 'background .15s', minWidth: 'fit-content' }}
+                onMouseEnter={e => { if (selected?.id !== u.id) e.currentTarget.style.background = T.a; }}
                 onMouseLeave={e => { if (selected?.id !== u.id) e.currentTarget.style.background = 'transparent'; }}
               >
-                <div style={{ ...F, fontSize: 11, color: '#D0DDE8', width: 140, minWidth: 140, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ ...F, fontSize: 11, color: T.tx, width: 140, minWidth: 140, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {u.display_name || '\u2014'}
                   {u.is_admin && <span style={{ ...F, fontSize: 7, color: '#D8A030', marginLeft: 6 }}>ADMIN</span>}
                   {u.is_premium && <span style={{ ...F, fontSize: 7, color: '#E8A838', marginLeft: 4 }}>PRO</span>}
                 </div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 220, minWidth: 220, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || '\u2014'}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 140, minWidth: 140, flexShrink: 0 }}>{u.birth_city || '\u2014'}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 100, minWidth: 100, flexShrink: 0 }}>{formatDate(u.birth_date)}</div>
-                <div style={{ ...F, fontSize: 11, color: '#8098B0', width: 70, minWidth: 70, flexShrink: 0 }}>{formatTime(u.birth_time)}</div>
-                <div style={{ ...F, fontSize: 11, color: '#5A7088', width: 120, minWidth: 120, flexShrink: 0 }}>{u.updated_at ? new Date(u.updated_at).toLocaleDateString('de-DE') : '\u2014'}</div>
+                <div style={{ ...F, fontSize: 11, color: T.tm, width: 220, minWidth: 220, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email || '\u2014'}</div>
+                <div style={{ ...F, fontSize: 11, color: T.tm, width: 140, minWidth: 140, flexShrink: 0 }}>{u.birth_city || '\u2014'}</div>
+                <div style={{ ...F, fontSize: 11, color: T.tm, width: 100, minWidth: 100, flexShrink: 0 }}>{formatDate(u.birth_date)}</div>
+                <div style={{ ...F, fontSize: 11, color: T.tm, width: 70, minWidth: 70, flexShrink: 0 }}>{formatTime(u.birth_time)}</div>
+                <div style={{ ...F, fontSize: 11, color: T.td, width: 120, minWidth: 120, flexShrink: 0 }}>{u.updated_at ? new Date(u.updated_at).toLocaleDateString('de-DE') : '\u2014'}</div>
               </div>
             ))
           )}
         </div>
       </div>
 
-      {/* PAGINATION */}
       {totalPages > 1 && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 16 }}>
           <button
             onClick={() => setPage(Math.max(1, page - 1))}
             disabled={page <= 1}
-            style={{ ...F, fontSize: 9, color: page <= 1 ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page <= 1 ? 'default' : 'pointer' }}
+            style={{ ...F, fontSize: 9, color: page <= 1 ? T.mu : T.ac, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 12px', cursor: page <= 1 ? 'default' : 'pointer' }}
           >
             PREV
           </button>
-          <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{page} / {totalPages}</span>
+          <span style={{ ...F, fontSize: 9, color: T.td }}>{page} / {totalPages}</span>
           <button
             onClick={() => setPage(Math.min(totalPages, page + 1))}
             disabled={page >= totalPages}
-            style={{ ...F, fontSize: 9, color: page >= totalPages ? '#3A5068' : '#00D88A', background: 'transparent', border: '1px solid #1A2840', borderRadius: 4, padding: '6px 12px', cursor: page >= totalPages ? 'default' : 'pointer' }}
+            style={{ ...F, fontSize: 9, color: page >= totalPages ? T.mu : T.ac, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 12px', cursor: page >= totalPages ? 'default' : 'pointer' }}
           >
             NEXT
           </button>
         </div>
       )}
 
-      {/* USER DETAIL PANEL */}
       {selected && (
-        <div style={{ marginTop: 16, background: '#0D1520', border: `1px solid ${selected.is_admin ? '#D8A03040' : '#1A2840'}`, borderRadius: 10, padding: 20 }}>
+        <div style={{ marginTop: 16, background: T.p, border: `1px solid ${selected.is_admin ? '#D8A03040' : T.bd}`, borderRadius: 10, padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
-            <div style={{ ...F, fontSize: 16, fontWeight: 700, color: '#D0DDE8' }}>
+            <div style={{ ...F, fontSize: 16, fontWeight: 700, color: T.tx }}>
               {selected.display_name || 'No name'}
               {selected.is_admin && <span style={{ ...F, fontSize: 9, color: '#D8A030', marginLeft: 10 }}>ADMIN</span>}
               {selected.is_premium && <span style={{ ...F, fontSize: 9, color: '#E8A838', marginLeft: 10 }}>PREMIUM</span>}
             </div>
-            <span onClick={() => setSelected(null)} style={{ ...F, fontSize: 11, color: '#5A7088', cursor: 'pointer' }}>CLOSE</span>
+            <span onClick={() => setSelected(null)} style={{ ...F, fontSize: 11, color: T.td, cursor: 'pointer' }}>CLOSE</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14 }}>
             {[
@@ -363,16 +344,15 @@ function UsersTab({ users, total, loading, selected, setSelected, premiumTogglin
               ['CREATED', selected.created_at ? new Date(selected.created_at).toLocaleString('de-DE') : '\u2014'],
             ].map(([label, val]) => (
               <div key={label}>
-                <div style={{ ...F, fontSize: 8, color: '#5A7088', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
-                <div style={{ ...F, fontSize: 11, color: '#B0C0D0', wordBreak: 'break-all' }}>{val || '\u2014'}</div>
+                <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+                <div style={{ ...F, fontSize: 11, color: T.tm, wordBreak: 'break-all' }}>{val || '\u2014'}</div>
               </div>
             ))}
           </div>
-          {/* Premium toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTop: '1px solid #1A2840', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTop: `1px solid ${T.bd}`, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <div style={{ ...F, fontSize: 10, fontWeight: 600, color: '#D0DDE8' }}>Premium Status</div>
-              <div style={{ ...F, fontSize: 9, color: '#5A7088', marginTop: 2 }}>
+              <div style={{ ...F, fontSize: 10, fontWeight: 600, color: T.tx }}>Premium Status</div>
+              <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 2 }}>
                 {selected.is_premium ? 'This user has premium access' : 'This user is on the free plan'}
               </div>
             </div>
@@ -399,8 +379,6 @@ function UsersTab({ users, total, loading, selected, setSelected, premiumTogglin
   );
 }
 
-// ─── Main Admin Page ───
-
 const TABS = [
   { key: 'overview', label: 'OVERVIEW', color: '#00D88A' },
   { key: 'settings', label: 'SETTINGS', color: '#E8A838' },
@@ -410,9 +388,9 @@ const TABS = [
 export default function AdminPage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const T = getTheme(isLightMode());
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Data state
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState(0);
@@ -449,7 +427,6 @@ export default function AdminPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Debounce search
   const [searchInput, setSearchInput] = useState('');
   useEffect(() => {
     const t = setTimeout(() => { setSearch(searchInput); setPage(1); }, 350);
@@ -462,34 +439,32 @@ export default function AdminPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0A1018', color: '#D0DDE8', overflow: 'hidden' }}>
-      {/* TOPBAR */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 38, minHeight: 38, background: '#0D1520', borderBottom: '1px solid #1A2840', flexShrink: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: T.bg, color: T.tx, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 38, minHeight: 38, background: T.p, borderBottom: `1px solid ${T.bd}`, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ ...F, fontSize: 12, fontWeight: 700, color: '#00D88A', letterSpacing: 3 }}>NATAL NAVIGATOR</span>
-          <div style={{ width: 1, height: 16, background: '#1A2840' }} />
+          <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.ac, letterSpacing: 3 }}>NATAL NAVIGATOR</span>
+          <div style={{ width: 1, height: 16, background: T.bd }} />
           <span style={{ ...F, fontSize: 9, color: '#D8A030', background: '#D8A03015', padding: '2px 8px', borderRadius: 3, letterSpacing: 1 }}>ADMIN</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ ...F, fontSize: 9, color: '#5A7088' }}>{profile?.display_name}</span>
+          <span style={{ ...F, fontSize: 9, color: T.td }}>{profile?.display_name}</span>
           <span
             onClick={() => navigate('/dashboard')}
-            style={{ ...F, fontSize: 9, color: '#00D88A', cursor: 'pointer', background: '#101C28', padding: '4px 10px', borderRadius: 4, border: '1px solid #1A2840' }}
+            style={{ ...F, fontSize: 9, color: T.ac, cursor: 'pointer', background: T.c, padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}` }}
           >
             DASHBOARD
           </span>
         </div>
       </div>
 
-      {/* TAB BAR */}
-      <div style={{ display: 'flex', gap: 0, background: '#0B1218', borderBottom: '1px solid #1A2840', flexShrink: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ display: 'flex', gap: 0, background: T.b, borderBottom: `1px solid ${T.bd}`, flexShrink: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {TABS.map(t => {
           const active = activeTab === t.key;
           return (
             <div
               key={t.key}
               onClick={() => setActiveTab(t.key)}
-              style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1.5, padding: '12px 24px', cursor: 'pointer', color: active ? t.color : '#5A7088', borderBottom: active ? `2px solid ${t.color}` : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', userSelect: 'none' }}
+              style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1.5, padding: '12px 24px', cursor: 'pointer', color: active ? t.color : T.td, borderBottom: active ? `2px solid ${t.color}` : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', userSelect: 'none' }}
             >
               {t.label}
             </div>
@@ -497,13 +472,12 @@ export default function AdminPage() {
         })}
       </div>
 
-      {/* CONTENT */}
       <div style={{ flex: 1, overflow: 'auto', padding: 20, WebkitOverflowScrolling: 'touch' }}>
         {activeTab === 'overview' && (
-          <OverviewTab stats={stats} paywallEnabled={paywallEnabled} setPaywallEnabled={setPaywallEnabled} />
+          <OverviewTab stats={stats} paywallEnabled={paywallEnabled} setPaywallEnabled={setPaywallEnabled} T={T} />
         )}
         {activeTab === 'settings' && (
-          <SettingsTab settings={appSettings} onSave={handleSaveSetting} />
+          <SettingsTab settings={appSettings} onSave={handleSaveSetting} T={T} />
         )}
         {activeTab === 'users' && (
           <UsersTab
@@ -524,6 +498,7 @@ export default function AdminPage() {
             sortAsc={sortAsc}
             setSortAsc={setSortAsc}
             setUsers={setUsers}
+            T={T}
           />
         )}
       </div>
