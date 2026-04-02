@@ -140,17 +140,17 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     let proj, path, center;
 
     const lt = lightRef.current;
-    // Theme colors — deep navy (dark mode only)
-    const ocean = '#0B1420';
-    const land = '#0F1C28';
-    const border = '#3A5A72';
-    const grat1 = '#182838';
-    const grat2 = '#141E2C';
-    const grat3 = '#142030';
-    const sphereB = '#1C3040';
-    const labelC = '#D0DDE8';
-    const dimLabel = '#5A7088';
-    const accentG = 'rgba(0,216,138,.03)';
+    // Theme colors — Apple-style light / Bloomberg dark
+    const ocean = lt ? '#C8DDF0' : '#0B1420';
+    const land = lt ? '#E8EDE2' : '#0F1C28';
+    const border = lt ? '#B8C4CC' : '#3A5A72';
+    const grat1 = lt ? '#D0D8E0' : '#182838';
+    const grat2 = lt ? '#D8DFE6' : '#141E2C';
+    const grat3 = lt ? '#D4DCE4' : '#142030';
+    const sphereB = lt ? '#A0B0C0' : '#1C3040';
+    const labelC = lt ? '#2C2C2E' : '#D0DDE8';
+    const dimLabel = lt ? '#8E8E93' : '#5A7088';
+    const accentG = lt ? 'rgba(0,168,107,.04)' : 'rgba(0,216,138,.03)';
 
     if (isFlat) {
       // Flat map — Equirectangular projection
@@ -341,7 +341,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             const tw = ctx.measureText(hl.name).width;
             const lx = hp[0] + 20, ly = hp[1] - 8;
             ctx.globalAlpha = 0.85;
-            ctx.fillStyle = 'rgba(13,21,32,.92)';
+            ctx.fillStyle = lt ? 'rgba(255,255,255,.92)' : 'rgba(13,21,32,.92)';
             ctx.beginPath();
             const pad = 5, rad = 4;
             const bx = lx - pad, by = ly - 12 - pad, bw = tw + pad * 2, bh = 16 + pad * 2;
@@ -781,8 +781,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           title={showLines ? 'Hide natal lines' : 'Show natal lines'}
           style={{
             ...btnBase,
-            background: showLines ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
-            color: showLines ? '#00D88A' : '#5A7088',
+            background: showLines ? 'rgba(0,168,107,.12)' : (lightRef.current ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'),
+            color: showLines ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8E8E93' : '#5A7088'),
+            borderColor: lightRef.current ? '#D1D1D6' : '#1A2840',
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -794,8 +795,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           title={showCities ? 'Hide cities' : 'Show cities'}
           style={{
             ...btnBase,
-            background: showCities ? 'rgba(0,216,138,.15)' : 'rgba(13,21,32,.85)',
-            color: showCities ? '#00D88A' : '#5A7088',
+            background: showCities ? 'rgba(0,168,107,.12)' : (lightRef.current ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'),
+            color: showCities ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8E8E93' : '#5A7088'),
+            borderColor: lightRef.current ? '#D1D1D6' : '#1A2840',
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
