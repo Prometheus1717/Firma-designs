@@ -243,9 +243,22 @@ export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const lightMode = false;
-  const L = false;
-  const T = useMemo(() => ({
+  const [lightMode, setLightMode] = useState(() => {
+    try { return localStorage.getItem('nn_theme') === 'light'; } catch { return false; }
+  });
+  const L = lightMode;
+  useEffect(() => {
+    try { localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark'); } catch {}
+  }, [lightMode]);
+  const T = useMemo(() => lightMode ? {
+    bg: '#F2F2F7', p: '#FFFFFF', c: '#F5F5FA', b: '#FAFAFA', d: '#F0F0F5', a: '#EEEEF3',
+    bd: '#D1D1D6', bs: '#E5E5EA',
+    tx: '#1C1C1E', tm: '#48484A', td: '#8E8E93', mu: '#AEAEB2',
+    ac: '#00A86B', acBg: 'rgba(0,168,107,.08)', acBd: 'rgba(0,168,107,.25)',
+    pop: 'rgba(255,255,255,.97)', pan: 'rgba(255,255,255,.98)',
+    sh: '0 16px 48px rgba(0,0,0,.08)', shH: '0 8px 32px rgba(0,0,0,.1)',
+    ov: 'rgba(255,255,255,.85)',
+  } : {
     bg: '#0A1018', p: '#0D1520', c: '#101C28', b: '#0B1218', d: '#0A1420', a: '#0C1420',
     bd: '#1A2840', bs: '#14202C',
     tx: '#D0DDE8', tm: '#8098B0', td: '#5A7088', mu: '#3A5068',
@@ -253,7 +266,7 @@ export default function Dashboard({ demo = false }) {
     pop: 'rgba(13,21,32,.97)', pan: 'rgba(10,16,24,.98)',
     sh: '0 16px 48px rgba(0,0,0,.5)', shH: '0 8px 32px rgba(0,0,0,.6)',
     ov: 'rgba(5,10,16,.92)',
-  }), []);
+  }, [lightMode]);
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
@@ -589,11 +602,11 @@ export default function Dashboard({ demo = false }) {
   // Loading state
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: '#8098B0', marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
-        <div style={{ width: 240, height: 3, background: '#1A2840', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ width: '100%', height: '100%', background: '#00D88A', borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.ac, letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
+        <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
+        <div style={{ width: 240, height: 3, background: T.bd, borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '100%', background: T.ac, borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
         <style>{`@keyframes loadbar { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
       </div>
@@ -602,9 +615,9 @@ export default function Dashboard({ demo = false }) {
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{ ...F, fontSize: 14, color: '#F04060', marginBottom: 16 }}>Error: {error}</div>
-        <button onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 11, color: '#00D88A', background: 'transparent', border: '1px solid #00D88A', borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
+        <button onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 11, color: T.ac, background: 'transparent', border: `1px solid ${T.ac}`, borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
           Re-enter birth data
         </button>
       </div>
@@ -614,37 +627,37 @@ export default function Dashboard({ demo = false }) {
   // ─── PAYWALL SCREEN ───
   if (showPaywall) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0A1018', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         {/* Payment success banner */}
         {paymentStatus === 'success' && (
-          <div style={{ ...F, fontSize: 11, color: '#00D88A', background: '#00D88A10', border: '1px solid #00D88A30', borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
+          <div style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, border: `1px solid ${T.acBd}`, borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
             Payment received! Activating your account...
           </div>
         )}
 
         <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
           {/* Logo */}
-          <div style={{ ...F, fontSize: 22, fontWeight: 700, color: '#00D88A', letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-          <div style={{ ...F, fontSize: 9, color: '#5A7088', letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
+          <div style={{ ...F, fontSize: 22, fontWeight: 700, color: T.ac, letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
+          <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
 
           {/* Upgrade card */}
-          <div style={{ background: 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: '1px solid #1A2840', borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: lightMode ? 'linear-gradient(160deg, #FFFFFF 0%, #F2F2F7 50%, #F5F5FA 100%)' : 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: `1px solid ${T.bd}`, borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             {/* Subtle glow effect */}
-            <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: 'radial-gradient(ellipse, #00D88A08 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: `radial-gradient(ellipse, ${T.acBg} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
-            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: '#00D88A', letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
-            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: '#D0DDE8', marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
-            <div style={{ ...F, fontSize: 11, color: '#6A8098', lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
+            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.ac, letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
+            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: T.tx, marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
+            <div style={{ ...F, fontSize: 11, color: T.td, lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
               Planetary lines, city analysis, and natal chart — calculated from your exact birth data.
             </div>
 
             {/* Price — centered, clean */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2 }}>
-                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: '#D0DDE8', alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
-                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: '#D0DDE8', letterSpacing: -1 }}>{displayPrice}</span>
+                <span style={{ ...F, fontSize: 14, fontWeight: 500, color: T.tx, alignSelf: 'flex-start', marginTop: 6 }}>{displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF' : '$'}</span>
+                <span style={{ ...F, fontSize: 48, fontWeight: 700, color: T.tx, letterSpacing: -1 }}>{displayPrice}</span>
               </div>
-              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: '#00D88A', marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
+              <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.ac, marginTop: 8, letterSpacing: 2 }}>{priceLabel}</div>
             </div>
 
             {/* CTA */}
@@ -653,7 +666,7 @@ export default function Dashboard({ demo = false }) {
             )}
             <div
               onClick={handleUpgrade}
-              style={{ ...F, fontSize: 13, fontWeight: 700, color: '#0A1018', background: upgradeLoading ? '#5A7088' : '#00D88A', padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : '0 0 20px #00D88A20' }}
+              style={{ ...F, fontSize: 13, fontWeight: 700, color: T.bg, background: upgradeLoading ? T.td : T.ac, padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : `0 0 20px ${T.acBg}` }}
             >
               {upgradeLoading ? 'REDIRECTING...' : 'GET STARTED'}
             </div>
@@ -667,20 +680,20 @@ export default function Dashboard({ demo = false }) {
                 'Flat Map View',
               ].map((f, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, justifySelf: 'center' }}>
-                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#00D88A', flexShrink: 0 }} />
-                  <span style={{ ...F, fontSize: 10, color: '#6A8098' }}>{f}</span>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: T.ac, flexShrink: 0 }} />
+                  <span style={{ ...F, fontSize: 10, color: T.td }}>{f}</span>
                 </div>
               ))}
             </div>
 
             {/* Security note */}
-            <div style={{ ...F, fontSize: 8, color: '#2A3848', marginTop: 20, letterSpacing: 0.5 }}>
+            <div style={{ ...F, fontSize: 8, color: T.mu, marginTop: 20, letterSpacing: 0.5 }}>
               Secure checkout via Stripe &middot; No card data stored
             </div>
           </div>
 
           {/* Sign out link */}
-          <div onClick={signOut} style={{ ...F, fontSize: 9, color: '#5A7088', cursor: 'pointer', marginTop: 20 }}>
+          <div onClick={signOut} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', marginTop: 20 }}>
             Sign out
           </div>
         </div>
@@ -716,6 +729,12 @@ export default function Dashboard({ demo = false }) {
           <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>HOW IT WORKS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
+          {/* Sun/Moon theme toggle */}
+          <div onClick={() => setLightMode(!lightMode)} style={{ width: mob ? 36 : 44, height: mob ? 20 : 22, borderRadius: 11, background: lightMode ? '#FFD60A' : '#1A2840', border: `1px solid ${lightMode ? '#F0C800' : '#2A3A50'}`, cursor: 'pointer', position: 'relative', transition: 'all .3s ease', display: 'flex', alignItems: 'center', padding: '0 3px', flexShrink: 0 }}>
+            <div style={{ width: mob ? 14 : 16, height: mob ? 14 : 16, borderRadius: '50%', background: lightMode ? '#FFF' : '#D0DDE8', position: 'absolute', left: lightMode ? (mob ? 19 : 25) : 3, transition: 'all .3s cubic-bezier(.4,0,.2,1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: mob ? 8 : 9, boxShadow: lightMode ? '0 1px 3px rgba(0,0,0,.15)' : 'none' }}>
+              {lightMode ? '☀' : '☽'}
+            </div>
+          </div>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.td }} />}
           {demo ? <>
             <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}` }}>DEMO: {DEMO.name}</span>
