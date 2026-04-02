@@ -243,19 +243,9 @@ export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem('nn_theme') === 'light'; } catch { return false; } });
-  useEffect(() => { try { localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark'); } catch {} }, [lightMode]);
-  // Apple-style theme palette
-  const L = lightMode;
-  const T = useMemo(() => L ? {
-    bg: '#EDE8E0', p: '#FFF1D4', c: '#F5E8C6', b: '#FCECD0', d: '#F0E4C0', a: '#FFF1D4',
-    bd: '#E0D4B8', bs: '#ECDFC4',
-    tx: '#2C2416', tm: '#5C4E38', td: '#7A6C54', mu: '#9C8E76',
-    ac: '#2D8C46', acBg: 'rgba(45,140,70,.12)', acBd: 'rgba(45,140,70,.35)',
-    pop: 'rgba(255,241,212,.97)', pan: 'rgba(255,241,212,.98)',
-    sh: '0 1px 4px rgba(0,0,0,.08), 0 0 1px rgba(0,0,0,.04)', shH: '0 4px 14px rgba(0,0,0,.12)',
-    ov: 'rgba(0,0,0,.30)',
-  } : {
+  const lightMode = false;
+  const L = false;
+  const T = useMemo(() => ({
     bg: '#0A1018', p: '#0D1520', c: '#101C28', b: '#0B1218', d: '#0A1420', a: '#0C1420',
     bd: '#1A2840', bs: '#14202C',
     tx: '#D0DDE8', tm: '#8098B0', td: '#5A7088', mu: '#3A5068',
@@ -263,7 +253,7 @@ export default function Dashboard({ demo = false }) {
     pop: 'rgba(13,21,32,.97)', pan: 'rgba(10,16,24,.98)',
     sh: '0 16px 48px rgba(0,0,0,.5)', shH: '0 8px 32px rgba(0,0,0,.6)',
     ov: 'rgba(5,10,16,.92)',
-  }, [L]);
+  }), []);
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
   const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
@@ -702,12 +692,6 @@ export default function Dashboard({ demo = false }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: T.bg, color: T.tx, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', transition: 'background .3s, color .3s' }}>
-      {L && <style>{`
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: ${T.c}; }
-        ::-webkit-scrollbar-thumb { background: ${T.bd}; border-radius: 3px; }
-        ::selection { background: rgba(0, 184, 112, 0.18); }
-      `}</style>}
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, borderBottom: `1px solid ${T.acBd}`, padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
@@ -730,13 +714,12 @@ export default function Dashboard({ demo = false }) {
             {!mob && 'LIVE'}
           </span>
           <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>HOW IT WORKS</span>
-          <span onClick={() => setLightMode(!lightMode)} style={{ ...F, fontSize: mob ? 12 : 14, cursor: 'pointer', padding: mob ? '4px 8px' : '5px 10px', borderRadius: 6, border: `1px solid ${T.bd}`, background: T.c, transition: 'all .25s ease', lineHeight: 1, userSelect: 'none' }}>{L ? '☀' : '☾'}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.td }} />}
           {demo ? <>
             <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}` }}>DEMO: {DEMO.name}</span>
-            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: L ? '#FFF' : T.bg, background: T.ac, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
+            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
             <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? T.ac : T.tm, cursor: 'pointer', background: showSettings ? T.acBg : T.c, padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? T.acBd : T.bd}`, transition: 'all .2s' }}>
