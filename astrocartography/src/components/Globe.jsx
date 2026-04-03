@@ -142,8 +142,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const lt = lightRef.current;
     // Theme colors — ceramic globe light / deep dark
     const ocean = lt ? '#B4C5D4' : '#0B1420';
-    const land = lt ? '#DDD4C8' : '#0F1C28';
-    const border = lt ? '#8A7E72' : '#3A5A72';
+    const land = lt ? '#EDE5DA' : '#0F1C28';
+    const border = lt ? '#C8BDB0' : '#3A5A72';
     const grat1 = lt ? 'rgba(160,175,190,.14)' : '#182838';
     const grat2 = lt ? 'rgba(160,175,190,.10)' : '#141E2C';
     const grat3 = lt ? 'rgba(160,175,190,.12)' : '#142030';
@@ -179,7 +179,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       }
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .9 : .5;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .5 : .5;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -222,7 +222,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
       // Countries — cream land on blue ocean
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .9 : .6;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .5 : .6;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
