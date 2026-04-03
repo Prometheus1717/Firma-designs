@@ -8,6 +8,8 @@ import { getCachedChart, setCachedChart } from '../lib/chartCache';
 import { redirectToCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
 import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
+import { getCityReading } from '../lib/cityReadingsI18n.js';
+import { getNatalReadings } from '../data/natalReadings.js';
 
 // Demo chart: Elon Musk — public birth data
 const DEMO = {
@@ -136,71 +138,7 @@ function getCitiesOnLines(lines, cities, threshold = 3.5) {
   return Array.from(best.values()).sort((a, b) => a.dist - b.dist);
 }
 
-const CITY_READINGS = {
-  // ── SUN ──
-  'Sun-MC-thrive': (n) => `${n} lies on your Sun MC line — the most powerful place for your career and public recognition. Here you step into authority naturally. People see you as a leader and your professional ambitions gain real traction. This is where you can build a lasting reputation and be celebrated for who you truly are.`,
-  'Sun-IC-thrive': (n) => `${n} lies on your Sun IC line — a place of deep inner vitality and connection to your roots. Living here strengthens your sense of self at the most fundamental level. Family bonds deepen, your home life feels radiant and warm, and you discover a quiet but powerful inner confidence.`,
-  'Sun-ASC-thrive': (n) => `${n} lies on your Sun ASC line — here your personality shines at full wattage. You feel genuinely alive, confident, and visible. Others are drawn to your energy. This is an ideal place to reinvent yourself, start fresh, or simply feel like the best version of you.`,
-  'Sun-DC-thrive': (n) => `${n} lies on your Sun DC line — partnerships become a source of joy and empowerment here. You attract confident, generous people who elevate your life. Romantic and business relationships flourish, and collaborations feel balanced and mutually energizing.`,
-  // ── MOON ──
-  'Moon-MC-thrive': (n) => `${n} lies on your Moon MC line — your emotional intelligence becomes your greatest public asset here. People feel connected to you on a deep level. You can thrive in nurturing professions — counseling, hospitality, healthcare, teaching — anything where empathy is valued. The public embraces your warmth.`,
-  'Moon-IC-thrive': (n) => `${n} lies on your Moon IC line — this is your soul's home. No other placement creates such a profound sense of belonging. Living here feels like coming home after a long journey. Emotional healing happens naturally, your intuition sharpens, and domestic life is deeply fulfilling.`,
-  'Moon-ASC-thrive': (n) => `${n} lies on your Moon ASC line — here your emotional world is visible and magnetic. Others sense your depth and respond with care. You become more intuitive, more empathetic, more attuned to the moods around you. Ideal for creative self-expression and emotional growth.`,
-  'Moon-DC-thrive': (n) => `${n} lies on your Moon DC line — deep emotional bonds form here almost effortlessly. Partnerships feel fated and nurturing. You attract caring, emotionally available people. Romantic connections are tender and intuitive. This is a powerful place for building family.`,
-  // ── MERCURY ──
-  'Mercury-MC-neutral': (n) => `${n} is near your Mercury MC line — your communication skills gain visibility here. Writing, speaking, teaching, and media work flow more easily. You may attract intellectual recognition, though the energy is subtle rather than dramatic. Good for networking and building a voice in your field.`,
-  'Mercury-IC-neutral': (n) => `${n} is near your Mercury IC line — your mental life deepens here. You think more clearly in private, journaling and study feel natural, and ideas come easily at home. The effect is gentle — a quiet intellectual sharpening rather than a dramatic shift. Good for writing retreats or academic work.`,
-  'Mercury-ASC-neutral': (n) => `${n} is near your Mercury ASC line — you come across as quick-witted and articulate here. Communication defines how others see you. The influence is moderate — you won't be transformed, but you'll notice conversations flow more easily and your ideas land with more impact.`,
-  'Mercury-DC-neutral': (n) => `${n} is near your Mercury DC line — intellectual connections thrive here. You attract smart, communicative partners and collaborators. Conversations spark new ideas. The effect is subtle but enriching — ideal for short-term collaborations, study abroad, or finding like-minded communities.`,
-  // ── VENUS ──
-  'Venus-MC-thrive': (n) => `${n} lies on your Venus MC line — you are perceived as charming, beautiful, and artistically gifted here. This is one of the best places for creative careers, fashion, art, music, and anything aesthetic. Social success comes easily — people want to be around you, and doors open through your natural magnetism.`,
-  'Venus-IC-thrive': (n) => `${n} lies on your Venus IC line — your home life becomes a sanctuary of beauty and comfort. Living here nourishes your soul through art, nature, and sensory pleasure. Relationships with family soften, your living space feels like a work of art, and daily life takes on a graceful, pleasurable quality.`,
-  'Venus-ASC-thrive': (n) => `${n} lies on your Venus ASC line — personal beauty, charm, and grace define your presence here. Others find you irresistible. This is an incredible placement for romance, social life, and self-confidence. You naturally attract love, compliments, and harmonious experiences wherever you go.`,
-  'Venus-DC-thrive': (n) => `${n} lies on your Venus DC line — this is one of the most powerful places for love and partnership. Romantic connections are harmonious, passionate, and enduring. You attract partners who value beauty, affection, and balance. Business partnerships also benefit from Venus's grace and diplomacy.`,
-  // ── MARS ──
-  'Mars-MC-neutral': (n) => `${n} is near your Mars MC line — career ambition intensifies here, but so does conflict with authority. You feel driven to compete, achieve, and lead, yet power struggles with bosses or institutions may arise. Channel this energy into entrepreneurship, athletics, or any field that rewards bold action.`,
-  'Mars-IC-avoid': (n) => `${n} falls on your Mars IC line — domestic life becomes volatile here. Arguments at home, property disputes, and family tensions are more likely. You may feel restless, irritable, or combative within your own walls. Short visits can energize you, but long-term residence risks chronic stress and conflict at your foundation.`,
-  'Mars-ASC-neutral': (n) => `${n} is near your Mars ASC line — physical energy and assertiveness spike here. You become bolder, more direct, and physically active. This can be channeled into sports, fitness, or courageous action. But impulsivity and confrontations also rise. Visit with awareness — this energy needs conscious direction.`,
-  'Mars-DC-avoid': (n) => `${n} falls on your Mars DC line — relationships become a battleground here. Partners provoke conflict, power struggles erupt, and arguments escalate. You attract combative, aggressive people. Existing relationships may fracture under the pressure. Avoid settling here long-term if harmony in partnerships matters to you.`,
-  // ── JUPITER ──
-  'Jupiter-MC-thrive': (n) => `${n} lies on your Jupiter MC line — this is one of the luckiest places for your career. Opportunities expand, mentors appear, and professional success feels almost effortless. You are seen as wise, generous, and trustworthy. Ideal for entrepreneurship, academia, law, publishing, or international business.`,
-  'Jupiter-IC-thrive': (n) => `${n} lies on your Jupiter IC line — home life feels abundant and generous here. Your living space expands, family relationships are warm and supportive, and there's a feeling of inner wealth and contentment. This is an excellent place to raise a family, buy property, or build a deeply satisfying private life.`,
-  'Jupiter-ASC-thrive': (n) => `${n} lies on your Jupiter ASC line — optimism, growth, and good fortune define your experience here. You feel larger than life — confident, adventurous, and open to possibility. Others see you as generous and inspiring. Travel, education, and philosophical exploration thrive in this location.`,
-  'Jupiter-DC-thrive': (n) => `${n} lies on your Jupiter DC line — partnerships expand and flourish here. You attract generous mentors, beneficial business partners, and warm romantic connections. Relationships bring growth, adventure, and mutual upliftment. This is an ideal place to find collaborators who share your vision.`,
-  // ── SATURN ──
-  'Saturn-MC-neutral': (n) => `${n} is near your Saturn MC line — career takes on a serious, disciplined quality here. Success is possible but demands hard work, patience, and resilience. You may face heavy responsibilities, rigid structures, or slow advancement. Those who persist build something enduring, but it will not come easy or quickly.`,
-  'Saturn-IC-avoid': (n) => `${n} falls on your Saturn IC line — home life feels heavy and burdensome here. Family obligations weigh on you, the living environment may feel cold or restrictive, and emotional warmth is hard to find. Loneliness, depression, or a sense of being trapped at home can develop over time. Not recommended for long-term living.`,
-  'Saturn-ASC-avoid': (n) => `${n} falls on your Saturn ASC line — your sense of self contracts here. You may feel older, heavier, more limited. Spontaneity fades, self-expression feels blocked, and others perceive you as stern or withdrawn. Chronic fatigue, low mood, or health issues related to restriction may surface. Best avoided for extended stays.`,
-  'Saturn-DC-avoid': (n) => `${n} falls on your Saturn DC line — relationships become heavy, demanding, and isolating here. Partners may be controlling, critical, or emotionally unavailable. Loneliness within partnerships is common. Commitments feel like burdens rather than choices. Long-term residence risks deep relational dissatisfaction.`,
-  // ── URANUS ──
-  'Uranus-MC-neutral': (n) => `${n} is near your Uranus MC line — your career takes unexpected turns here. Sudden breakthroughs, radical pivots, and unconventional professional paths are likely. This can bring exciting innovation, but also instability. Freelancers, tech founders, and creative rebels thrive here — traditional careers may feel disrupted.`,
-  'Uranus-IC-avoid': (n) => `${n} falls on your Uranus IC line — domestic stability is difficult here. Sudden relocations, housing disruptions, and unpredictable family dynamics keep you off-balance. You may feel unable to put down roots or create lasting security at home. The restless energy makes long-term settling challenging and stressful.`,
-  'Uranus-ASC-neutral': (n) => `${n} is near your Uranus ASC line — radical self-expression and individuality intensify here. Others see you as eccentric, visionary, or unpredictable. This can be liberating — you feel free to be yourself without compromise. But it can also make you feel alienated or misunderstood. Best for creative breakthroughs and reinvention.`,
-  'Uranus-DC-avoid': (n) => `${n} falls on your Uranus DC line — partnerships are unstable and unpredictable here. Relationships may begin suddenly and end without warning. Partners can be unreliable, commitment-averse, or emotionally erratic. If you value relational stability and consistency, this is not the place to build lasting bonds.`,
-  // ── NEPTUNE ──
-  'Neptune-MC-avoid': (n) => `${n} falls on your Neptune MC line — career direction becomes foggy and confused here. Professional boundaries dissolve, you may be deceived by colleagues, or your public reputation suffers from misunderstandings. Creative and spiritual work can still channel this energy, but practical career goals need extreme clarity and vigilance.`,
-  'Neptune-IC-avoid': (n) => `${n} falls on your Neptune IC line — your sense of home and roots dissolves here. Boundaries blur, you may feel ungrounded or lost. Housing problems, water damage, or deceptive living situations are more likely. Emotional confusion about where you belong can make long-term residence deeply disorienting.`,
-  'Neptune-ASC-avoid': (n) => `${n} falls on your Neptune ASC line — your identity becomes elusive and blurred here. Others project fantasies onto you, and you may lose clarity about who you really are. While this creates a mysterious, ethereal presence, it also risks confusion, escapism, and susceptibility to deception. Artistic types may find inspiration, but grounding is essential.`,
-  'Neptune-DC-avoid': (n) => `${n} falls on your Neptune DC line — partnerships are idealized but potentially deceptive here. You attract partners who seem magical but turn out to be unreliable, dishonest, or emotionally unavailable. Romantic illusions shatter painfully. Existing relationships may suffer from hidden lies or unclear boundaries. Approach with caution.`,
-  // ── PLUTO ──
-  'Pluto-MC-avoid': (n) => `${n} falls on your Pluto MC line — intense power struggles define your career here. You encounter formidable opponents, manipulation in professional settings, and relentless pressure to transform. While some experience profound career metamorphosis, the process is grueling. Not for the faint of heart — only settle here if you're ready for total professional reinvention.`,
-  'Pluto-IC-avoid': (n) => `${n} falls on your Pluto IC line — psychological intensity at home reaches extreme levels here. Buried family secrets surface, power struggles within the household erupt, and deep emotional crises force confrontation with your past. While transformative, this energy is overwhelming for most people. Long-term residence demands extraordinary emotional resilience.`,
-  'Pluto-ASC-avoid': (n) => `${n} falls on your Pluto ASC line — your identity undergoes forced, intense transformation here. Others perceive you as powerful but intimidating. You attract obsessive attention and power dynamics. While this can catalyze profound personal rebirth, the process often involves crisis, loss, and ego death. Not suitable for those seeking stability.`,
-  'Pluto-DC-avoid': (n) => `${n} falls on your Pluto DC line — relationships become intense, obsessive, and potentially manipulative here. Partners may try to control or dominate you, and you may find yourself drawn into toxic power dynamics. Existing bonds deepen to an almost unbearable degree. Only settle here if you can handle extreme emotional intensity in partnerships.`,
-};
-
-function cityReading(c) {
-  const parts = c.line.split(' ');
-  const planet = parts[0];
-  const angle = parts[1];
-  const key = `${planet}-${angle}-${c.q}`;
-  const fn = CITY_READINGS[key];
-  if (fn) return fn(c.name);
-  // Fallback for any unmapped combination
-  if (c.q === 'thrive') return `${c.name} lies on your ${c.line} line — a zone of activation where this planetary energy amplifies your strengths. Spending time here supports growth in ${ANGLE_EFFECTS[angle]?.area || 'this area of life'}.`;
-  if (c.q === 'avoid') return `${c.name} falls on your ${c.line} line — a zone of challenge where this planetary energy brings tension. Short visits may teach valuable lessons, but long-term residence requires conscious effort to navigate.`;
-  return `${c.name} is near your ${c.line} line — a zone of subtle influence. The effects are moderate and depend on how you engage with the energy. Neither strongly positive nor negative, this placement offers nuance rather than extremes.`;
-}
+// cityReading is now imported from cityReadingsI18n.js via getCityReading(c, lang, getAngleEffect)
 
 const PLANET_ICONS = { Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇' };
 const getPlanetDomain = (name, lang) => ({ domain: t(`dom${name}`, lang), icon: PLANET_ICONS[name] || '' });
@@ -472,11 +410,8 @@ export default function Dashboard({ demo = false }) {
     });
   }, [demo, hasBirthData, profile]);
 
-  // Lazy-load natal readings data when chart is available
-  useEffect(() => {
-    if (!chartData?.planets || window.__natalReadings) return;
-    import('../data/natalReadings').then(mod => { window.__natalReadings = mod; }).catch(() => {});
-  }, [chartData]);
+  // Natal readings are now imported directly via getNatalReadings(lang)
+  // No lazy-load needed — the module is imported at top level
 
   const lines = chartData?.lines || [];
   const visibleLines = useMemo(() => lines.filter(l => !hiddenPlanets.has(l.planet)), [lines, hiddenPlanets]);
@@ -531,9 +466,9 @@ export default function Dashboard({ demo = false }) {
     setPdfLoading(true);
     trackEvent('pdf_download');
     try {
-      const nR = window.__natalReadings || await import('../data/natalReadings');
+      const nR = getNatalReadings(lang);
       const { generateNatalPDF } = await import('../lib/generatePDF');
-      await generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn: cityReading, natalReadings: nR, lang });
+      await generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn: (c) => getCityReading(c, lang, getAngleEffect), natalReadings: nR, lang });
     } catch (err) { console.error('PDF generation failed:', err); }
     finally { setPdfLoading(false); }
   }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC, lang]);
@@ -950,7 +885,7 @@ export default function Dashboard({ demo = false }) {
                   degStr = `${p.deg}° ${tSign(p.sign, lang).slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' ℞' : ''}`;
                   houseNum = p.house;
                   signData = p;
-                  const nR = window.__natalReadings;
+                  const nR = getNatalReadings(lang);
                   signReading = nR?.PLANET_IN_SIGN?.[`${p.id}-${p.sign}`];
                   houseReading = nR?.PLANET_IN_HOUSE?.[`${p.id}-${houseNum}`];
                 } else if (sp.type === 'asc') {
@@ -959,7 +894,7 @@ export default function Dashboard({ demo = false }) {
                   degStr = `${a.deg}° ${tSign(a.sign, lang).slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
                   signData = a;
                   houseNum = null;
-                  const nR = window.__natalReadings;
+                  const nR = getNatalReadings(lang);
                   signReading = nR?.ASC_IN_SIGN?.[a.sign];
                   houseReading = null;
                 } else if (sp.type === 'mc') {
@@ -968,13 +903,13 @@ export default function Dashboard({ demo = false }) {
                   degStr = `${m.deg}° ${tSign(m.sign, lang).slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
                   signData = m;
                   houseNum = null;
-                  const nR = window.__natalReadings;
+                  const nR = getNatalReadings(lang);
                   signReading = nR?.MC_IN_SIGN?.[m.sign];
                   houseReading = null;
                 }
                 const elem = SIGN_ELEMENTS[signData?.sign] || '';
                 const titleLabel = sp.type === 'asc' ? t('ascendant', lang) : sp.type === 'mc' ? t('midheaven', lang) : tPlanet(sp.id, lang);
-                const nR = window.__natalReadings;
+                const nR = getNatalReadings(lang);
                 const houseInfo = houseNum ? nR?.HOUSE_INFO?.[houseNum] : null;
                 const planetInfo = sp.type === 'planet' ? nR?.PLANET_INFO?.[sp.id] : null;
                 return (
@@ -1233,7 +1168,7 @@ export default function Dashboard({ demo = false }) {
                 <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td, marginLeft: 8 }}>✕</span>
               </div>
               <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{tLine(cityPop.line, lang)} · {cityPop.dist.toFixed(1)}° {t('fromLine', lang)}</div>
-              <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
+              <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7 }}>{getCityReading(cityPop, lang, getAngleEffect)}</div>
             </div>
           </>)}
 

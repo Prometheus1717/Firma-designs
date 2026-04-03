@@ -424,7 +424,7 @@
     <!-- Force-clear stale service worker caches for existing users -->
     <script>
     (function(){
-      var V='nn-sw-v11';
+      var V='nn-sw-v12';
       if(localStorage.getItem('nn_sw_ver')===V)return;
       localStorage.setItem('nn_sw_ver',V);
       if('serviceWorker' in navigator){
