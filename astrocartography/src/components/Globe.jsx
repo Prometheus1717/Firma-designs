@@ -140,17 +140,17 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     let proj, path, center;
 
     const lt = lightRef.current;
-    // Theme colors — warm Bloomberg light / deep dark
-    const ocean = lt ? '#FFF1D4' : '#0B1420';
-    const land = lt ? '#E5D8C8' : '#0F1C28';
-    const border = lt ? '#9C8E7A' : '#3A5A72';
-    const grat1 = lt ? 'rgba(200,186,168,.18)' : '#182838';
-    const grat2 = lt ? 'rgba(200,186,168,.12)' : '#141E2C';
-    const grat3 = lt ? 'rgba(200,186,168,.15)' : '#142030';
-    const sphereB = lt ? '#A0907C' : '#1C3040';
-    const labelC = lt ? '#3A3530' : '#D0DDE8';
-    const dimLabel = lt ? '#8A8078' : '#5A7088';
-    const accentG = lt ? 'rgba(160,140,110,.10)' : 'rgba(0,216,138,.03)';
+    // Theme colors — ceramic globe light / deep dark
+    const ocean = lt ? '#B4C5D4' : '#0B1420';
+    const land = lt ? '#EDE5DA' : '#0F1C28';
+    const border = lt ? '#C8BDB0' : '#3A5A72';
+    const grat1 = lt ? 'rgba(160,175,190,.14)' : '#182838';
+    const grat2 = lt ? 'rgba(160,175,190,.10)' : '#141E2C';
+    const grat3 = lt ? 'rgba(160,175,190,.12)' : '#142030';
+    const sphereB = lt ? '#C0B8AE' : '#1C3040';
+    const labelC = lt ? '#3A3832' : '#D0DDE8';
+    const dimLabel = lt ? '#8A8580' : '#5A7088';
+    const accentG = lt ? 'rgba(140,160,180,.08)' : 'rgba(0,216,138,.03)';
 
     if (isFlat) {
       // Flat map — Equirectangular projection
@@ -178,8 +178,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         ctx.beginPath(); path(GRAT_10); ctx.stroke();
       }
 
-      // Countries (pre-built GeoJSON features) — stronger borders in light mode
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .7 : .5;
+      // Countries (pre-built GeoJSON features)
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .5 : .5;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -188,61 +188,60 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       path = geoPath(proj, ctx);
       center = [-s.rot[0], -s.rot[1]];
 
-      // Atmosphere — outer glow for depth
+      // Atmosphere — soft outer halo
       const atmosKey = `${s.scale}_${cx}_${cy}_${lt}`;
       if (s._atmosKey !== atmosKey) {
-        s._atmosGrad = ctx.createRadialGradient(cx, cy, s.scale * .88, cx, cy, s.scale * 1.12);
+        s._atmosGrad = ctx.createRadialGradient(cx, cy, s.scale * .92, cx, cy, s.scale * 1.08);
         if (lt) {
           s._atmosGrad.addColorStop(0, 'transparent');
-          s._atmosGrad.addColorStop(0.6, 'rgba(160,144,124,.04)');
-          s._atmosGrad.addColorStop(1, 'rgba(160,144,124,.12)');
+          s._atmosGrad.addColorStop(0.5, 'rgba(180,197,212,.03)');
+          s._atmosGrad.addColorStop(1, 'rgba(180,197,212,.07)');
         } else {
           s._atmosGrad.addColorStop(0, 'transparent');
           s._atmosGrad.addColorStop(1, accentG);
         }
         s._atmosKey = atmosKey;
       }
-      ctx.fillStyle = s._atmosGrad; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.12, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = s._atmosGrad; ctx.beginPath(); ctx.arc(cx, cy, s.scale * 1.08, 0, Math.PI * 2); ctx.fill();
 
-      // Sphere drop shadow (light mode only — gives the globe a lifted, 3D feel)
+      // Sphere with drop shadow (light mode — ceramic globe feel)
       if (lt) {
         ctx.save();
-        ctx.shadowColor = 'rgba(80,60,40,.12)';
-        ctx.shadowBlur = s.scale * 0.06;
-        ctx.shadowOffsetY = s.scale * 0.02;
+        ctx.shadowColor = 'rgba(60,70,80,.16)';
+        ctx.shadowBlur = s.scale * 0.08;
+        ctx.shadowOffsetY = s.scale * 0.03;
         ctx.fillStyle = ocean;
         ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       } else {
-        // Ocean
         ctx.fillStyle = ocean; ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
       }
 
-      // Graticule (cached geometry) — very subtle in light mode
-      ctx.strokeStyle = grat3; ctx.lineWidth = lt ? .25 : .3;
+      // Graticule — barely-there grid lines
+      ctx.strokeStyle = grat3; ctx.lineWidth = lt ? .2 : .3;
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
-      // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .8 : .6;
+      // Countries — cream land on blue ocean
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .5 : .6;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
-      // Inner edge vignette — darkens edges for spherical depth (light mode)
+      // Inner edge vignette — subtle spherical depth
       if (lt) {
         const vinKey = `vin_${s.scale}_${cx}_${cy}`;
         if (s._vinKey !== vinKey) {
-          s._vinGrad = ctx.createRadialGradient(cx, cy, s.scale * .55, cx, cy, s.scale);
+          s._vinGrad = ctx.createRadialGradient(cx, cy, s.scale * .6, cx, cy, s.scale);
           s._vinGrad.addColorStop(0, 'transparent');
-          s._vinGrad.addColorStop(0.75, 'transparent');
-          s._vinGrad.addColorStop(1, 'rgba(120,100,70,.08)');
+          s._vinGrad.addColorStop(0.8, 'transparent');
+          s._vinGrad.addColorStop(1, 'rgba(80,90,100,.06)');
           s._vinKey = vinKey;
         }
         ctx.fillStyle = s._vinGrad;
         ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.fill();
       }
 
-      // Sphere border — crisp and visible
-      ctx.strokeStyle = sphereB; ctx.lineWidth = lt ? 1.5 : .8;
+      // Sphere border — thin and refined
+      ctx.strokeStyle = sphereB; ctx.lineWidth = lt ? 1.0 : .8;
       ctx.beginPath(); ctx.arc(cx, cy, s.scale, 0, Math.PI * 2); ctx.stroke();
     }
 
