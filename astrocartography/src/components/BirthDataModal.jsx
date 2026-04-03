@@ -116,7 +116,7 @@ export default function BirthDataModal({ onComplete }) {
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: light ? 'rgba(242,242,247,0.85)' : 'rgba(5, 8, 12, 0.85)',
+      background: light ? 'rgba(242,240,237,0.85)' : 'rgba(5, 8, 12, 0.85)',
       backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
       opacity: visible ? 1 : 0,
       transition: 'opacity 0.4s ease',
@@ -148,7 +148,7 @@ export default function BirthDataModal({ onComplete }) {
             <div style={{ textAlign: 'center' }}>
               <div style={{
                 width: 72, height: 72, borderRadius: '50%',
-                background: light ? 'linear-gradient(135deg, #E8F5EE, #F2F2F7)' : 'linear-gradient(135deg, #0D2818, #0D1520)',
+                background: light ? 'linear-gradient(135deg, #E8F0EA, #F2F0ED)' : 'linear-gradient(135deg, #0D2818, #0D1520)',
                 border: `1px solid ${T.acBd}`,
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: 24, fontSize: 32,

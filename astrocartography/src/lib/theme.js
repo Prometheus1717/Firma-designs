@@ -1,8 +1,8 @@
 const LIGHT = {
-  bg: '#F2F2F7', p: '#FFFFFF', c: '#F5F5FA', b: '#FAFAFA', d: '#F0F0F5', a: '#EEEEF3',
-  bd: '#D1D1D6', bs: '#E5E5EA',
-  tx: '#1C1C1E', tm: '#48484A', td: '#8E8E93', mu: '#AEAEB2',
-  ac: '#00A86B', acBg: 'rgba(0,168,107,.08)', acBd: 'rgba(0,168,107,.25)',
+  bg: '#F2F0ED', p: '#FFFFFF', c: '#FAF9F7', b: '#F7F6F4', d: '#EDEAE6', a: '#F4F2EF',
+  bd: '#D6D2CC', bs: '#E5E2DD',
+  tx: '#1C1B1A', tm: '#55524E', td: '#8A8580', mu: '#B5B0AA',
+  ac: '#00A86B', acBg: 'rgba(0,168,107,.06)', acBd: 'rgba(0,168,107,.20)',
 };
 
 const DARK = {

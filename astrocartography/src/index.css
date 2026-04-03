@@ -19,8 +19,8 @@ body {
 }
 
 html[data-theme="light"] body {
-  background: #F2F2F7;
-  color: #1C1C1E;
+  background: #F2F0ED;
+  color: #1C1B1A;
 }
 
 @keyframes ts {
@@ -57,5 +57,5 @@ button, a, [role="button"], [onclick] {
 }
 
 html[data-theme="light"] *::-webkit-scrollbar-thumb {
-  background: #D1D1D6;
+  background: #D6D2CC;
 }

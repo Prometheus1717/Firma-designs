@@ -140,17 +140,17 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     let proj, path, center;
 
     const lt = lightRef.current;
-    // Theme colors — Apple-style light / Bloomberg dark
-    const ocean = lt ? '#C8DDF0' : '#0B1420';
-    const land = lt ? '#E8EDE2' : '#0F1C28';
-    const border = lt ? '#B8C4CC' : '#3A5A72';
-    const grat1 = lt ? '#D0D8E0' : '#182838';
-    const grat2 = lt ? '#D8DFE6' : '#141E2C';
-    const grat3 = lt ? '#D4DCE4' : '#142030';
-    const sphereB = lt ? '#A0B0C0' : '#1C3040';
-    const labelC = lt ? '#2C2C2E' : '#D0DDE8';
-    const dimLabel = lt ? '#8E8E93' : '#5A7088';
-    const accentG = lt ? 'rgba(0,168,107,.04)' : 'rgba(0,216,138,.03)';
+    // Theme colors — warm Bloomberg light / deep dark
+    const ocean = lt ? '#FFF1D4' : '#0B1420';
+    const land = lt ? '#E5D8C8' : '#0F1C28';
+    const border = lt ? '#C8BAA8' : '#3A5A72';
+    const grat1 = lt ? '#F0E4D4' : '#182838';
+    const grat2 = lt ? '#E8DCCC' : '#141E2C';
+    const grat3 = lt ? '#EDE0D0' : '#142030';
+    const sphereB = lt ? '#D4C8B8' : '#1C3040';
+    const labelC = lt ? '#3A3530' : '#D0DDE8';
+    const dimLabel = lt ? '#8A8078' : '#5A7088';
+    const accentG = lt ? 'rgba(180,160,130,.06)' : 'rgba(0,216,138,.03)';
 
     if (isFlat) {
       // Flat map — Equirectangular projection
@@ -782,8 +782,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           style={{
             ...btnBase,
             background: showLines ? 'rgba(0,168,107,.12)' : (lightRef.current ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'),
-            color: showLines ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8E8E93' : '#5A7088'),
-            borderColor: lightRef.current ? '#D1D1D6' : '#1A2840',
+            color: showLines ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8A8580' : '#5A7088'),
+            borderColor: lightRef.current ? '#D6D2CC' : '#1A2840',
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -796,8 +796,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
           style={{
             ...btnBase,
             background: showCities ? 'rgba(0,168,107,.12)' : (lightRef.current ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'),
-            color: showCities ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8E8E93' : '#5A7088'),
-            borderColor: lightRef.current ? '#D1D1D6' : '#1A2840',
+            color: showCities ? (lightRef.current ? '#00A86B' : '#00D88A') : (lightRef.current ? '#8A8580' : '#5A7088'),
+            borderColor: lightRef.current ? '#D6D2CC' : '#1A2840',
           }}
         >
           <svg width={btnIconSize} height={btnIconSize} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

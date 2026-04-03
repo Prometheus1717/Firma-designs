@@ -251,13 +251,13 @@ export default function Dashboard({ demo = false }) {
     try { localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark'); } catch {}
   }, [lightMode]);
   const T = useMemo(() => lightMode ? {
-    bg: '#F2F2F7', p: '#FFFFFF', c: '#F5F5FA', b: '#FAFAFA', d: '#F0F0F5', a: '#EEEEF3',
-    bd: '#D1D1D6', bs: '#E5E5EA',
-    tx: '#1C1C1E', tm: '#48484A', td: '#8E8E93', mu: '#AEAEB2',
-    ac: '#00A86B', acBg: 'rgba(0,168,107,.08)', acBd: 'rgba(0,168,107,.25)',
+    bg: '#F2F0ED', p: '#FFFFFF', c: '#FAF9F7', b: '#F7F6F4', d: '#EDEAE6', a: '#F4F2EF',
+    bd: '#D6D2CC', bs: '#E5E2DD',
+    tx: '#1C1B1A', tm: '#55524E', td: '#8A8580', mu: '#B5B0AA',
+    ac: '#00A86B', acBg: 'rgba(0,168,107,.06)', acBd: 'rgba(0,168,107,.20)',
     pop: 'rgba(255,255,255,.97)', pan: 'rgba(255,255,255,.98)',
-    sh: '0 16px 48px rgba(0,0,0,.08)', shH: '0 8px 32px rgba(0,0,0,.1)',
-    ov: 'rgba(255,255,255,.85)',
+    sh: '0 12px 40px rgba(60,50,40,.08)', shH: '0 6px 24px rgba(60,50,40,.06)',
+    ov: 'rgba(242,240,237,.88)',
   } : {
     bg: '#0A1018', p: '#0D1520', c: '#101C28', b: '#0B1218', d: '#0A1420', a: '#0C1420',
     bd: '#1A2840', bs: '#14202C',
@@ -641,7 +641,7 @@ export default function Dashboard({ demo = false }) {
           <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
 
           {/* Upgrade card */}
-          <div style={{ background: lightMode ? 'linear-gradient(160deg, #FFFFFF 0%, #F2F2F7 50%, #F5F5FA 100%)' : 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: `1px solid ${T.bd}`, borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ background: lightMode ? 'linear-gradient(160deg, #FFFFFF 0%, #F2F0ED 50%, #FAF9F7 100%)' : 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: `1px solid ${T.bd}`, borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             {/* Subtle glow effect */}
             <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: `radial-gradient(ellipse, ${T.acBg} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
