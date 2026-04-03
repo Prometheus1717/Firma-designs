@@ -179,7 +179,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       }
 
       // Countries (pre-built GeoJSON features)
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .7 : .5;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .9 : .5;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
     } else {
@@ -222,7 +222,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
       // Countries — cream land on blue ocean
-      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .7 : .6;
+      ctx.fillStyle = land; ctx.strokeStyle = border; ctx.lineWidth = lt ? .9 : .6;
       CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
       if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); ctx.stroke(); });
 
