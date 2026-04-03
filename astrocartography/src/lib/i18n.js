@@ -387,6 +387,18 @@ const T = {
     calculatingChart: 'CALCULATING YOUR CHART...',
     generateChart: 'GENERATE MY NATAL CHART',
     back: '← Back',
+    // Planet names
+    pSun: 'Sun', pMoon: 'Moon', pMercury: 'Mercury', pVenus: 'Venus', pMars: 'Mars',
+    pJupiter: 'Jupiter', pSaturn: 'Saturn', pUranus: 'Uranus', pNeptune: 'Neptune', pPluto: 'Pluto',
+    // Sign names
+    sAries: 'Aries', sTaurus: 'Taurus', sGemini: 'Gemini', sCancer: 'Cancer', sLeo: 'Leo',
+    sVirgo: 'Virgo', sLibra: 'Libra', sScorpio: 'Scorpio', sSagittarius: 'Sagittarius',
+    sCapricorn: 'Capricorn', sAquarius: 'Aquarius', sPisces: 'Pisces',
+    // Modes
+    mCardinal: 'Cardinal', mFixed: 'Fixed', mMutable: 'Mutable',
+    // Angle effects
+    aeMC: 'Career & Public Life', aeIC: 'Home & Roots', aeASC: 'Self & Identity', aeDC: 'Partnerships',
+    aeMCshort: 'public sphere', aeICshort: 'private life', aeASCshort: 'self-expression', aeDCshort: 'relationships',
   },
 
   de: {
@@ -679,6 +691,18 @@ const T = {
     calculatingChart: 'DEIN HOROSKOP WIRD BERECHNET...',
     generateChart: 'MEIN GEBURTSHOROSKOP ERSTELLEN',
     back: '← Zurück',
+    // Planet names
+    pSun: 'Sonne', pMoon: 'Mond', pMercury: 'Merkur', pVenus: 'Venus', pMars: 'Mars',
+    pJupiter: 'Jupiter', pSaturn: 'Saturn', pUranus: 'Uranus', pNeptune: 'Neptun', pPluto: 'Pluto',
+    // Sign names
+    sAries: 'Widder', sTaurus: 'Stier', sGemini: 'Zwillinge', sCancer: 'Krebs', sLeo: 'Löwe',
+    sVirgo: 'Jungfrau', sLibra: 'Waage', sScorpio: 'Skorpion', sSagittarius: 'Schütze',
+    sCapricorn: 'Steinbock', sAquarius: 'Wassermann', sPisces: 'Fische',
+    // Modes
+    mCardinal: 'Kardinal', mFixed: 'Fix', mMutable: 'Veränderlich',
+    // Angle effects
+    aeMC: 'Karriere & Öffentlichkeit', aeIC: 'Zuhause & Wurzeln', aeASC: 'Selbst & Identität', aeDC: 'Partnerschaften',
+    aeMCshort: 'öffentliche Sphäre', aeICshort: 'Privatleben', aeASCshort: 'Selbstausdruck', aeDCshort: 'Beziehungen',
   },
 
   fr: {
@@ -965,6 +989,18 @@ const T = {
     calculatingChart: 'CALCUL DE VOTRE THÈME...',
     generateChart: 'GÉNÉRER MON THÈME NATAL',
     back: '← Retour',
+    // Planet names
+    pSun: 'Soleil', pMoon: 'Lune', pMercury: 'Mercure', pVenus: 'Vénus', pMars: 'Mars',
+    pJupiter: 'Jupiter', pSaturn: 'Saturne', pUranus: 'Uranus', pNeptune: 'Neptune', pPluto: 'Pluton',
+    // Sign names
+    sAries: 'Bélier', sTaurus: 'Taureau', sGemini: 'Gémeaux', sCancer: 'Cancer', sLeo: 'Lion',
+    sVirgo: 'Vierge', sLibra: 'Balance', sScorpio: 'Scorpion', sSagittarius: 'Sagittaire',
+    sCapricorn: 'Capricorne', sAquarius: 'Verseau', sPisces: 'Poissons',
+    // Modes
+    mCardinal: 'Cardinal', mFixed: 'Fixe', mMutable: 'Mutable',
+    // Angle effects
+    aeMC: 'Carrière & Vie publique', aeIC: 'Foyer & Racines', aeASC: 'Soi & Identité', aeDC: 'Partenariats',
+    aeMCshort: 'sphère publique', aeICshort: 'vie privée', aeASCshort: 'expression de soi', aeDCshort: 'relations',
   },
 
   it: {
@@ -1127,6 +1163,18 @@ const T = {
     calculatingChart: 'CALCOLO DEL TUO TEMA...',
     generateChart: 'GENERA IL MIO TEMA NATALE',
     back: '← Indietro',
+    // Planet names
+    pSun: 'Sole', pMoon: 'Luna', pMercury: 'Mercurio', pVenus: 'Venere', pMars: 'Marte',
+    pJupiter: 'Giove', pSaturn: 'Saturno', pUranus: 'Urano', pNeptune: 'Nettuno', pPluto: 'Plutone',
+    // Sign names
+    sAries: 'Ariete', sTaurus: 'Toro', sGemini: 'Gemelli', sCancer: 'Cancro', sLeo: 'Leone',
+    sVirgo: 'Vergine', sLibra: 'Bilancia', sScorpio: 'Scorpione', sSagittarius: 'Sagittario',
+    sCapricorn: 'Capricorno', sAquarius: 'Acquario', sPisces: 'Pesci',
+    // Modes
+    mCardinal: 'Cardinale', mFixed: 'Fisso', mMutable: 'Mutevole',
+    // Angle effects
+    aeMC: 'Carriera & Vita pubblica', aeIC: 'Casa & Radici', aeASC: 'Sé & Identità', aeDC: 'Partnership',
+    aeMCshort: 'sfera pubblica', aeICshort: 'vita privata', aeASCshort: 'espressione di sé', aeDCshort: 'relazioni',
   },
 
   es: {
@@ -1404,6 +1452,18 @@ const T = {
     calculatingChart: 'CALCULANDO TU CARTA...',
     generateChart: 'GENERAR MI CARTA NATAL',
     back: '← Atrás',
+    // Planet names
+    pSun: 'Sol', pMoon: 'Luna', pMercury: 'Mercurio', pVenus: 'Venus', pMars: 'Marte',
+    pJupiter: 'Júpiter', pSaturn: 'Saturno', pUranus: 'Urano', pNeptune: 'Neptuno', pPluto: 'Plutón',
+    // Sign names
+    sAries: 'Aries', sTaurus: 'Tauro', sGemini: 'Géminis', sCancer: 'Cáncer', sLeo: 'Leo',
+    sVirgo: 'Virgo', sLibra: 'Libra', sScorpio: 'Escorpio', sSagittarius: 'Sagitario',
+    sCapricorn: 'Capricornio', sAquarius: 'Acuario', sPisces: 'Piscis',
+    // Modes
+    mCardinal: 'Cardinal', mFixed: 'Fijo', mMutable: 'Mutable',
+    // Angle effects
+    aeMC: 'Carrera & Vida pública', aeIC: 'Hogar & Raíces', aeASC: 'Yo & Identidad', aeDC: 'Asociaciones',
+    aeMCshort: 'esfera pública', aeICshort: 'vida privada', aeASCshort: 'autoexpresión', aeDCshort: 'relaciones',
   },
 
   tr: {
@@ -1681,6 +1741,18 @@ const T = {
     calculatingChart: 'HARİTAN HESAPLANIYOR...',
     generateChart: 'DOĞUM HARİTAMI OLUŞTUR',
     back: '← Geri',
+    // Planet names
+    pSun: 'Güneş', pMoon: 'Ay', pMercury: 'Merkür', pVenus: 'Venüs', pMars: 'Mars',
+    pJupiter: 'Jüpiter', pSaturn: 'Satürn', pUranus: 'Uranüs', pNeptune: 'Neptün', pPluto: 'Plüton',
+    // Sign names
+    sAries: 'Koç', sTaurus: 'Boğa', sGemini: 'İkizler', sCancer: 'Yengeç', sLeo: 'Aslan',
+    sVirgo: 'Başak', sLibra: 'Terazi', sScorpio: 'Akrep', sSagittarius: 'Yay',
+    sCapricorn: 'Oğlak', sAquarius: 'Kova', sPisces: 'Balık',
+    // Modes
+    mCardinal: 'Öncü', mFixed: 'Sabit', mMutable: 'Değişken',
+    // Angle effects
+    aeMC: 'Kariyer & Kamusal Yaşam', aeIC: 'Ev & Kökler', aeASC: 'Benlik & Kimlik', aeDC: 'Ortaklıklar',
+    aeMCshort: 'kamusal alan', aeICshort: 'özel yaşam', aeASCshort: 'kendini ifade', aeDCshort: 'ilişkiler',
   },
 
   ru: {
@@ -2004,6 +2076,18 @@ const T = {
     calculatingChart: 'РАССЧИТЫВАЕМ ВАШУ КАРТУ...',
     generateChart: 'СОЗДАТЬ МОЮ НАТАЛЬНУЮ КАРТУ',
     back: '← Назад',
+    // Planet names
+    pSun: 'Солнце', pMoon: 'Луна', pMercury: 'Меркурий', pVenus: 'Венера', pMars: 'Марс',
+    pJupiter: 'Юпитер', pSaturn: 'Сатурн', pUranus: 'Уран', pNeptune: 'Нептун', pPluto: 'Плутон',
+    // Sign names
+    sAries: 'Овен', sTaurus: 'Телец', sGemini: 'Близнецы', sCancer: 'Рак', sLeo: 'Лев',
+    sVirgo: 'Дева', sLibra: 'Весы', sScorpio: 'Скорпион', sSagittarius: 'Стрелец',
+    sCapricorn: 'Козерог', sAquarius: 'Водолей', sPisces: 'Рыбы',
+    // Modes
+    mCardinal: 'Кардинальный', mFixed: 'Фиксированный', mMutable: 'Мутабельный',
+    // Angle effects
+    aeMC: 'Карьера & Публичная жизнь', aeIC: 'Дом & Корни', aeASC: 'Личность & Идентичность', aeDC: 'Партнёрства',
+    aeMCshort: 'публичная сфера', aeICshort: 'личная жизнь', aeASCshort: 'самовыражение', aeDCshort: 'отношения',
   },
 
   // Remaining languages fall back to English for missing keys
@@ -2358,6 +2442,17 @@ const T = {
     calculatingChart: 'CALCULANDO SEU MAPA...',
     generateChart: 'GERAR MEU MAPA NATAL',
     back: '← Voltar',
+    // Planet names
+    pSun: 'Sol', pMoon: 'Lua', pMercury: 'Mercúrio', pVenus: 'Vênus', pMars: 'Marte',
+    pJupiter: 'Júpiter', pSaturn: 'Saturno', pUranus: 'Urano', pNeptune: 'Netuno', pPluto: 'Plutão',
+    // Sign names
+    sAries: 'Áries', sTaurus: 'Touro', sGemini: 'Gêmeos', sCancer: 'Câncer', sLeo: 'Leão',
+    sVirgo: 'Virgem', sLibra: 'Libra', sScorpio: 'Escorpião', sSagittarius: 'Sagitário',
+    sCapricorn: 'Capricórnio', sAquarius: 'Aquário', sPisces: 'Peixes',
+    // Modes
+    mCardinal: 'Cardinal', mFixed: 'Fixo', mMutable: 'Mutável',
+    // Angle effects
+    aeMC: 'Carreira & Vida pública', aeIC: 'Lar & Raízes', aeASC: 'Eu & Identidade', aeDC: 'Parcerias',
   },
   ja: {
     // Topbar
@@ -2710,6 +2805,17 @@ const T = {
     calculatingChart: 'チャートを計算中...',
     generateChart: 'ネイタルチャートを生成',
     back: '← 戻る',
+    // Planet names
+    pSun: '太陽', pMoon: '月', pMercury: '水星', pVenus: '金星', pMars: '火星',
+    pJupiter: '木星', pSaturn: '土星', pUranus: '天王星', pNeptune: '海王星', pPluto: '冥王星',
+    // Sign names
+    sAries: '牡羊座', sTaurus: '牡牛座', sGemini: '双子座', sCancer: '蟹座', sLeo: '獅子座',
+    sVirgo: '乙女座', sLibra: '天秤座', sScorpio: '蠍座', sSagittarius: '射手座',
+    sCapricorn: '山羊座', sAquarius: '水瓶座', sPisces: '魚座',
+    // Modes
+    mCardinal: '活動宮', mFixed: '不動宮', mMutable: '柔軟宮',
+    // Angle effects
+    aeMC: 'キャリアと公的生活', aeIC: '家庭とルーツ', aeASC: '自己とアイデンティティ', aeDC: 'パートナーシップ',
   },
   zh: {
     // Topbar
@@ -3062,6 +3168,17 @@ const T = {
     calculatingChart: '正在计算您的星盘...',
     generateChart: '生成我的出生星盘',
     back: '← 返回',
+    // Planet names
+    pSun: '太阳', pMoon: '月亮', pMercury: '水星', pVenus: '金星', pMars: '火星',
+    pJupiter: '木星', pSaturn: '土星', pUranus: '天王星', pNeptune: '海王星', pPluto: '冥王星',
+    // Sign names
+    sAries: '白羊座', sTaurus: '金牛座', sGemini: '双子座', sCancer: '巨蟹座', sLeo: '狮子座',
+    sVirgo: '处女座', sLibra: '天秤座', sScorpio: '天蝎座', sSagittarius: '射手座',
+    sCapricorn: '摩羯座', sAquarius: '水瓶座', sPisces: '双鱼座',
+    // Modes
+    mCardinal: '本位', mFixed: '固定', mMutable: '变动',
+    // Angle effects
+    aeMC: '事业与公众生活', aeIC: '家庭与根源', aeASC: '自我与身份', aeDC: '合作关系',
   },
   ar: {
     // Topbar
@@ -3414,6 +3531,17 @@ const T = {
     calculatingChart: 'جارٍ حساب خريطتك...',
     generateChart: 'أنشئ خريطتي الفلكية',
     back: 'رجوع →',
+    // Planet names
+    pSun: 'الشمس', pMoon: 'القمر', pMercury: 'عطارد', pVenus: 'الزهرة', pMars: 'المريخ',
+    pJupiter: 'المشتري', pSaturn: 'زحل', pUranus: 'أورانوس', pNeptune: 'نبتون', pPluto: 'بلوتو',
+    // Sign names
+    sAries: 'الحمل', sTaurus: 'الثور', sGemini: 'الجوزاء', sCancer: 'السرطان', sLeo: 'الأسد',
+    sVirgo: 'العذراء', sLibra: 'الميزان', sScorpio: 'العقرب', sSagittarius: 'القوس',
+    sCapricorn: 'الجدي', sAquarius: 'الدلو', sPisces: 'الحوت',
+    // Modes
+    mCardinal: 'أساسي', mFixed: 'ثابت', mMutable: 'متحول',
+    // Angle effects
+    aeMC: 'المهنة والحياة العامة', aeIC: 'المنزل والجذور', aeASC: 'الذات والهوية', aeDC: 'الشراكات',
   },
   ko: {
     // Topbar
@@ -3766,6 +3894,17 @@ const T = {
     calculatingChart: '차트를 계산하는 중...',
     generateChart: '나의 출생 차트 생성',
     back: '← 뒤로',
+    // Planet names
+    pSun: '태양', pMoon: '달', pMercury: '수성', pVenus: '금성', pMars: '화성',
+    pJupiter: '목성', pSaturn: '토성', pUranus: '천왕성', pNeptune: '해왕성', pPluto: '명왕성',
+    // Sign names
+    sAries: '양자리', sTaurus: '황소자리', sGemini: '쌍둥이자리', sCancer: '게자리', sLeo: '사자자리',
+    sVirgo: '처녀자리', sLibra: '천칭자리', sScorpio: '전갈자리', sSagittarius: '궁수자리',
+    sCapricorn: '염소자리', sAquarius: '물병자리', sPisces: '물고기자리',
+    // Modes
+    mCardinal: '활동궁', mFixed: '고정궁', mMutable: '변통궁',
+    // Angle effects
+    aeMC: '경력과 공적 생활', aeIC: '가정과 뿌리', aeASC: '자아와 정체성', aeDC: '파트너십',
   },
   pl: {
     // Topbar
@@ -4118,6 +4257,17 @@ const T = {
     calculatingChart: 'OBLICZANIE TWOJEGO HOROSKOPU...',
     generateChart: 'WYGENERUJ MÓJ HOROSKOP URODZENIOWY',
     back: '← Wstecz',
+    // Planet names
+    pSun: 'Słońce', pMoon: 'Księżyc', pMercury: 'Merkury', pVenus: 'Wenus', pMars: 'Mars',
+    pJupiter: 'Jowisz', pSaturn: 'Saturn', pUranus: 'Uran', pNeptune: 'Neptun', pPluto: 'Pluton',
+    // Sign names
+    sAries: 'Baran', sTaurus: 'Byk', sGemini: 'Bliźnięta', sCancer: 'Rak', sLeo: 'Lew',
+    sVirgo: 'Panna', sLibra: 'Waga', sScorpio: 'Skorpion', sSagittarius: 'Strzelec',
+    sCapricorn: 'Koziorożec', sAquarius: 'Wodnik', sPisces: 'Ryby',
+    // Modes
+    mCardinal: 'Kardynalny', mFixed: 'Stały', mMutable: 'Zmienny',
+    // Angle effects
+    aeMC: 'Kariera i życie publiczne', aeIC: 'Dom i korzenie', aeASC: 'Ja i tożsamość', aeDC: 'Partnerstwa',
   },
   nl: {
     // Topbar
@@ -4470,5 +4620,16 @@ const T = {
     calculatingChart: 'JE HOROSCOOP BEREKENEN...',
     generateChart: 'GENEREER MIJN GEBOORTEHOROSCOOP',
     back: '← Terug',
+    // Planet names
+    pSun: 'Zon', pMoon: 'Maan', pMercury: 'Mercurius', pVenus: 'Venus', pMars: 'Mars',
+    pJupiter: 'Jupiter', pSaturn: 'Saturnus', pUranus: 'Uranus', pNeptune: 'Neptunus', pPluto: 'Pluto',
+    // Sign names
+    sAries: 'Ram', sTaurus: 'Stier', sGemini: 'Tweelingen', sCancer: 'Kreeft', sLeo: 'Leeuw',
+    sVirgo: 'Maagd', sLibra: 'Weegschaal', sScorpio: 'Schorpioen', sSagittarius: 'Boogschutter',
+    sCapricorn: 'Steenbok', sAquarius: 'Waterman', sPisces: 'Vissen',
+    // Modes
+    mCardinal: 'Kardinaal', mFixed: 'Vast', mMutable: 'Veranderlijk',
+    // Angle effects
+    aeMC: 'Carrière & Openbaar leven', aeIC: 'Thuis & Wortels', aeASC: 'Zelf & Identiteit', aeDC: 'Partnerschappen',
   },
 };

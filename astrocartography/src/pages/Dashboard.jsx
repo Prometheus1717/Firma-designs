@@ -18,6 +18,13 @@ const DEMO = {
 };
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
+
+// ── Translatable lookups ──
+const tPlanet = (name, lang) => t(`p${name}`, lang);
+const tSign = (name, lang) => t(`s${name}`, lang);
+const tMode = (mode, lang) => t(`m${mode}`, lang);
+const tElem = (elem, lang) => t(elem.toLowerCase(), lang); // fire/earth/air/water already in i18n
+const tLine = (line, lang) => { const [p, a] = (line || '').split(' '); return `${tPlanet(p, lang)} ${a || ''}`; };
 const COL = { thrive: '#00D88A', avoid: '#F04060', neutral: '#D8A030' };
 const PCOL = { Sun: '#E8A838', Moon: '#C0C0C0', Mercury: '#5BA8D4', Venus: '#D4729A', Mars: '#D45050', Jupiter: '#8068C0', Saturn: '#887058', Uranus: '#40B0A0', Neptune: '#4868B8', Pluto: '#7048A0' };
 const SIGN_SYMBOLS = { Aries: '♈\uFE0E', Taurus: '♉\uFE0E', Gemini: '♊\uFE0E', Cancer: '♋\uFE0E', Leo: '♌\uFE0E', Virgo: '♍\uFE0E', Libra: '♎\uFE0E', Scorpio: '♏\uFE0E', Sagittarius: '♐\uFE0E', Capricorn: '♑\uFE0E', Aquarius: '♒\uFE0E', Pisces: '♓\uFE0E' };
@@ -195,33 +202,18 @@ function cityReading(c) {
   return `${c.name} is near your ${c.line} line — a zone of subtle influence. The effects are moderate and depend on how you engage with the energy. Neither strongly positive nor negative, this placement offers nuance rather than extremes.`;
 }
 
-const PLANET_DOMAINS = {
-  Sun: { domain: 'Identity · Career · Vitality', icon: '☉' },
-  Moon: { domain: 'Emotions · Home · Intuition', icon: '☽' },
-  Mercury: { domain: 'Communication · Intellect · Trade', icon: '☿' },
-  Venus: { domain: 'Love · Beauty · Finance', icon: '♀' },
-  Mars: { domain: 'Drive · Ambition · Conflict', icon: '♂' },
-  Jupiter: { domain: 'Growth · Luck · Expansion', icon: '♃' },
-  Saturn: { domain: 'Discipline · Limits · Karma', icon: '♄' },
-  Uranus: { domain: 'Innovation · Disruption · Freedom', icon: '♅' },
-  Neptune: { domain: 'Spirituality · Illusion · Art', icon: '♆' },
-  Pluto: { domain: 'Transformation · Power · Depth', icon: '♇' },
-};
+const PLANET_ICONS = { Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇' };
+const getPlanetDomain = (name, lang) => ({ domain: t(`dom${name}`, lang), icon: PLANET_ICONS[name] || '' });
 
-const ANGLE_EFFECTS = {
-  MC: { area: 'Career & Public Life', short: 'public sphere' },
-  IC: { area: 'Home & Roots', short: 'private life' },
-  ASC: { area: 'Self & Identity', short: 'self-expression' },
-  DC: { area: 'Partnerships', short: 'relationships' },
-};
+const getAngleEffect = (angle, lang) => ({ area: t(`ae${angle}`, lang), short: t(`ae${angle}short`, lang) });
 
-function cityImpact(c) {
+function cityImpact(c, lang) {
   const parts = c.line.split(' ');
   const planet = parts[0];
   const angle = parts[1];
-  const pd = PLANET_DOMAINS[planet];
-  const ae = ANGLE_EFFECTS[angle];
-  if (!pd || !ae) return { planet, angle, domain: '', area: '', summary: c.desc || '' };
+  const pd = getPlanetDomain(planet, lang);
+  const ae = getAngleEffect(angle, lang);
+  if (!pd.domain || !ae.area) return { planet, angle, domain: '', area: '', summary: c.desc || '' };
   const strength = c.dist < 1 ? 'EXACT' : c.dist < 2 ? 'STRONG' : 'MODERATE';
   const strengthPct = Math.max(0, Math.round((1 - c.dist / 3.5) * 100));
   return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
@@ -523,7 +515,14 @@ export default function Dashboard({ demo = false }) {
 
   const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
-  const planetString = chartData?.planetString || '';
+  const planetString = useMemo(() => {
+    if (!chartData?.planets) return chartData?.planetString || '';
+    return chartData.planets.map(p => {
+      const sym = SIGN_SYMBOLS[p.sign] || '';
+      const retro = p.retrograde ? '℞' : '';
+      return `${sym} ${tSign(p.sign, lang)} ${p.deg}°${String(p.min).padStart(2,'0')}'${retro}`;
+    }).join('  ·  ');
+  }, [chartData, lang]);
 
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -804,21 +803,19 @@ export default function Dashboard({ demo = false }) {
           {showAngleInfo && <div style={{ margin: '0 8px 8px', background: T.d, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10 }}>
             <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm, marginBottom: 8 }}>{t('lineTypes', lang)}</div>
             {ANGLE_ORDER.map(a => {
-              const info = ANGLE_INFO[a];
               return (
                 <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${T.bs}` }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    {/* Visual dash preview */}
                     <svg width="22" height="6" style={{ flexShrink: 0 }}>
                       {a === 'MC' && <line x1="0" y1="3" x2="22" y2="3" stroke={T.tm} strokeWidth="2" />}
                       {a === 'IC' && <line x1="0" y1="3" x2="22" y2="3" stroke={T.tm} strokeWidth="2" strokeDasharray="4,3" />}
                       {a === 'ASC' && <line x1="0" y1="3" x2="22" y2="3" stroke={T.tm} strokeWidth="2" strokeDasharray="8,3" />}
                       {a === 'DC' && <line x1="0" y1="3" x2="22" y2="3" stroke={T.tm} strokeWidth="2" strokeDasharray="2,2" />}
                     </svg>
-                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tx }}>{info.label}</span>
-                    <span style={{ ...F, fontSize: 7, color: T.td }}>{info.full}</span>
+                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tx }}>{a}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.td }}>{t(`${a.toLowerCase()}Full`, lang)}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: T.tm, lineHeight: 1.5, marginLeft: 30 }}>{info.desc}</div>
+                  <div style={{ fontSize: 10, color: T.tm, lineHeight: 1.5, marginLeft: 30 }}>{t(`${a.toLowerCase()}AngleDesc`, lang)}</div>
                 </div>
               );
             })}
@@ -840,7 +837,7 @@ export default function Dashboard({ demo = false }) {
                   </div>
                   <div onClick={() => { setExpandedPlanet(isOpen ? null : g.planet); }} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
                     <span style={{ fontSize: 14, lineHeight: 1 }}>{g.symbol}</span>
-                    <span style={{ ...F, fontSize: 10, color: T.tm, flex: 1, fontWeight: 600 }}>{g.planet}</span>
+                    <span style={{ ...F, fontSize: 10, color: T.tm, flex: 1, fontWeight: 600 }}>{tPlanet(g.planet, lang)}</span>
                     <div style={{ display: 'flex', gap: 3 }}>
                       {g.lines.map(l => (
                         <span key={l.angle} style={{ ...F, fontSize: 7, color: l.quality === 'thrive' ? T.ac : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? T.ac : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 4px', borderRadius: 2 }}>{l.angle}</span>
@@ -890,7 +887,7 @@ export default function Dashboard({ demo = false }) {
             <div key={i} onClick={() => { flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: T.ac, fontWeight: 700, width: 14 }}>{i + 1}.</span>
               <span style={{ color: T.tm }}>{c.name}{CITY_COUNTRY[c.name] ? <span style={{ color: T.mu, fontSize: 7 }}>{' · '}{CITY_COUNTRY[c.name]}</span> : null}</span>
-              <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{c.line}</span>
+              <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{tLine(c.line, lang)}</span>
             </div>
           ))}
           <div style={{ ...F, fontSize: 8, color: T.bd, padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
@@ -925,8 +922,8 @@ export default function Dashboard({ demo = false }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: `1px solid ${T.bd}`, background: T.p, flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: T.td, marginRight: 4 }}>&larr;</span>}
-                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? t('ascendant', lang).toUpperCase() : selectedPlacement.type === 'mc' ? t('midheaven', lang).toUpperCase() : selectedPlacement.id?.toUpperCase()) : t('natalChartTab', lang)}</span>
-                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: T.mu }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? t('ascendant', lang).toUpperCase() : selectedPlacement.type === 'mc' ? t('midheaven', lang).toUpperCase() : tPlanet(selectedPlacement.id, lang).toUpperCase()) : t('natalChartTab', lang)}</span>
+                  {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: T.mu }}>ASC {tSign(chartData.natal.asc?.sign, lang)} {chartData.natal.asc?.deg}° · MC {tSign(chartData.natal.mc?.sign, lang)} {chartData.natal.mc?.deg}°</span>}
                 </div>
                 <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td }}>✕</span>
               </div>
@@ -950,7 +947,7 @@ export default function Dashboard({ demo = false }) {
                   const p = chartData.planets.find(pl => pl.id === sp.id);
                   if (!p) return null;
                   pc = PCOL[p.id] || T.tm;
-                  degStr = `${p.deg}° ${p.sign.slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' ℞' : ''}`;
+                  degStr = `${p.deg}° ${tSign(p.sign, lang).slice(0,3)} ${String(p.min).padStart(2,'0')}'${p.retrograde ? ' ℞' : ''}`;
                   houseNum = p.house;
                   signData = p;
                   const nR = window.__natalReadings;
@@ -959,7 +956,7 @@ export default function Dashboard({ demo = false }) {
                 } else if (sp.type === 'asc') {
                   const a = chartData.natal.asc;
                   pc = '#E8A838';
-                  degStr = `${a.deg}° ${a.sign.slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
+                  degStr = `${a.deg}° ${tSign(a.sign, lang).slice(0,3)} ${String(a.min).padStart(2,'0')}'`;
                   signData = a;
                   houseNum = null;
                   const nR = window.__natalReadings;
@@ -968,7 +965,7 @@ export default function Dashboard({ demo = false }) {
                 } else if (sp.type === 'mc') {
                   const m = chartData.natal.mc;
                   pc = '#E8A838';
-                  degStr = `${m.deg}° ${m.sign.slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
+                  degStr = `${m.deg}° ${tSign(m.sign, lang).slice(0,3)} ${String(m.min).padStart(2,'0')}'`;
                   signData = m;
                   houseNum = null;
                   const nR = window.__natalReadings;
@@ -976,7 +973,7 @@ export default function Dashboard({ demo = false }) {
                   houseReading = null;
                 }
                 const elem = SIGN_ELEMENTS[signData?.sign] || '';
-                const titleLabel = sp.type === 'asc' ? 'Ascendant' : sp.type === 'mc' ? 'Midheaven' : sp.id;
+                const titleLabel = sp.type === 'asc' ? t('ascendant', lang) : sp.type === 'mc' ? t('midheaven', lang) : tPlanet(sp.id, lang);
                 const nR = window.__natalReadings;
                 const houseInfo = houseNum ? nR?.HOUSE_INFO?.[houseNum] : null;
                 const planetInfo = sp.type === 'planet' ? nR?.PLANET_INFO?.[sp.id] : null;
@@ -988,7 +985,7 @@ export default function Dashboard({ demo = false }) {
                         <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '△' : sp.type === 'mc' ? '▽' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
                         <span style={{ fontSize: 28, color: ELEM_COL[elem] || T.td, lineHeight: 1 }}>{SIGN_SYMBOLS[signData?.sign] || ''}</span>
                       </div>
-                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.tx, letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} {t('inThe', lang).toLowerCase()} {signData?.sign}</div>
+                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.tx, letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} {t('inThe', lang).toLowerCase()} {tSign(signData?.sign, lang)}</div>
                       <div style={{ ...F, fontSize: 11, color: T.td }}>{degStr}</div>
                       {houseNum && <div style={{ ...F, fontSize: 11, color: pc, marginTop: 4 }}>{titleLabel} {t('inThe', lang).toLowerCase()} {t(`ord${houseNum}`, lang)} {t('houseWord', lang)}</div>}
                     </div>
@@ -1003,7 +1000,7 @@ export default function Dashboard({ demo = false }) {
                     {/* Sign reading */}
                     {signReading && (
                       <div style={{ padding: '18px 18px 14px' }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? t('yourRisingSn', lang) : sp.type === 'mc' ? t('yourMidheaven', lang) : `${sp.id?.toUpperCase()} ${t('inThe', lang)} ${signData?.sign?.toUpperCase()}`}</div>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? t('yourRisingSn', lang) : sp.type === 'mc' ? t('yourMidheaven', lang) : `${tPlanet(sp.id, lang).toUpperCase()} ${t('inThe', lang)} ${tSign(signData?.sign, lang).toUpperCase()}`}</div>
                         <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{signReading.text}</div>
                       </div>
                     )}
@@ -1011,7 +1008,7 @@ export default function Dashboard({ demo = false }) {
                     {/* House reading */}
                     {houseReading && (
                       <div style={{ padding: '14px 18px 18px', borderTop: `1px solid ${T.bs}` }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} {t('inThe', lang)} {t(`ord${houseNum}`, lang).toUpperCase()} {t('houseWord', lang)}</div>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{tPlanet(sp.id, lang).toUpperCase()} {t('inThe', lang)} {t(`ord${houseNum}`, lang).toUpperCase()} {t('houseWord', lang)}</div>
                         <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{houseReading.text}</div>
                       </div>
                     )}
@@ -1020,10 +1017,10 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ padding: '14px 18px 20px', borderTop: `1px solid ${T.bd}` }}>
                       <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{t('details', lang)}</div>
                       {[
-                        [t('position', lang), `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
+                        [t('position', lang), `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${tSign(signData?.sign, lang)}`],
                         houseNum ? [t('house', lang), `${t(`ord${houseNum}`, lang)} ${t('houseWord', lang)}${houseInfo ? ' — ' + houseInfo.keyword : ''}`] : null,
-                        [t('element', lang), elem],
-                        [t('mode', lang), SIGN_MODES[signData?.sign] || ''],
+                        [t('element', lang), tElem(elem, lang)],
+                        [t('mode', lang), tMode(SIGN_MODES[signData?.sign] || '', lang)],
                         sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? [t('motion', lang), t('retrograde', lang)] : null,
                         planetInfo?.rules ? [t('rules', lang), planetInfo.rules] : null,
                       ].filter(Boolean).map(([label, val]) => (
@@ -1053,30 +1050,30 @@ export default function Dashboard({ demo = false }) {
                       const elem = SIGN_ELEMENTS[p.sign] || '';
                       const mode = SIGN_MODES[p.sign] || '';
                       const pc = PCOL[p.id] || T.tm;
-                      const pd = PLANET_DOMAINS[p.id];
+                      const pd = getPlanetDomain(p.id, lang);
                       return (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: `1px solid ${T.bs}`, transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
                             <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1, width: 18, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                             <div>
-                              <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
+                              <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{tPlanet(p.id, lang)}</div>
                               {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>{t('retro', lang)}</div>}
                             </div>
                           </div>
                           <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
                             <span style={{ ...F, fontSize: 13, color: ELEM_COL[elem] || T.td, lineHeight: 1 }}>{SIGN_SYMBOLS[p.sign] || ''}</span>
-                            <span style={{ ...F, fontSize: 9, color: T.tm, fontWeight: 600 }}>{p.sign}</span>
+                            <span style={{ ...F, fontSize: 9, color: T.tm, fontWeight: 600 }}>{tSign(p.sign, lang)}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
                             <span style={{ ...F, fontSize: 10, color: T.tx, fontWeight: 600 }}>{p.deg}°</span>
                             <span style={{ ...F, fontSize: 8, color: T.td }}>{String(p.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
-                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || T.td, background: (ELEM_COL[elem] || T.td) + '18', padding: '2px 5px', borderRadius: 2 }}>{elem}</span>
+                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[elem] || T.td, background: (ELEM_COL[elem] || T.td) + '18', padding: '2px 5px', borderRadius: 2 }}>{tElem(elem, lang)}</span>
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ ...F, fontSize: 8, color: T.tm }}>{pd?.domain || ''}</div>
-                            <div style={{ ...F, fontSize: 7, color: T.mu }}>{mode}</div>
+                            <div style={{ ...F, fontSize: 7, color: T.mu }}>{tMode(mode, lang)}</div>
                           </div>
                         </div>
                       );
@@ -1097,14 +1094,14 @@ export default function Dashboard({ demo = false }) {
                           </div>
                           <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
                             <span style={{ ...F, fontSize: 13, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || T.td, lineHeight: 1 }}>{SIGN_SYMBOLS[a.data.sign] || ''}</span>
-                            <span style={{ ...F, fontSize: 9, color: T.tm, fontWeight: 600 }}>{a.data.sign}</span>
+                            <span style={{ ...F, fontSize: 9, color: T.tm, fontWeight: 600 }}>{tSign(a.data.sign, lang)}</span>
                           </div>
                           <div style={{ width: 60, textAlign: 'right' }}>
                             <span style={{ ...F, fontSize: 10, color: T.tx, fontWeight: 600 }}>{a.data.deg}°</span>
                             <span style={{ ...F, fontSize: 8, color: T.td }}>{String(a.data.min).padStart(2, '0')}'</span>
                           </div>
                           <div style={{ width: 50, textAlign: 'center' }}>
-                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || T.td, background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || T.td) + '18', padding: '2px 5px', borderRadius: 2 }}>{SIGN_ELEMENTS[a.data.sign]}</span>
+                            <span style={{ ...F, fontSize: 7, fontWeight: 700, color: ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || T.td, background: (ELEM_COL[SIGN_ELEMENTS[a.data.sign]] || T.td) + '18', padding: '2px 5px', borderRadius: 2 }}>{tElem(SIGN_ELEMENTS[a.data.sign] || '', lang)}</span>
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ ...F, fontSize: 8, color: T.tm }}>{a.desc}</div>
@@ -1214,12 +1211,12 @@ export default function Dashboard({ demo = false }) {
             <div style={{ position: 'absolute', top: mob ? 8 : 50, left: mob ? 8 : 8, right: mob ? 8 : 'auto', width: mob ? 'auto' : 320, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.sh }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <div style={{ width: 20, height: 3, borderRadius: 2, background: lines[popup].c }} />
-                <span style={{ ...F, fontSize: 13, fontWeight: 700, color: lines[popup].c }}>{lines[popup].n}</span>
+                <span style={{ ...F, fontSize: 13, fontWeight: 700, color: lines[popup].c }}>{tLine(lines[popup].n, lang)}</span>
                 <span style={{ ...F, fontSize: 9, color: T.td }}>{lines[popup].angle}</span>
                 <span onClick={() => setPopup(null)} style={{ marginLeft: 'auto', cursor: 'pointer', ...F, fontSize: 14, color: T.td }}>✕</span>
               </div>
               <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.8 }}>{lines[popup].desc}</div>
-              <div style={{ ...F, fontSize: 9, color: T.mu, marginTop: 10 }}>Cities: {onLines.filter(c => c.line === lines[popup].n).map(c => c.name).join(' · ')}</div>
+              <div style={{ ...F, fontSize: 9, color: T.mu, marginTop: 10 }}>{t('cities', lang)}: {onLines.filter(c => c.line === lines[popup].n).map(c => c.name).join(' · ')}</div>
             </div>
           </>)}
 
@@ -1235,7 +1232,7 @@ export default function Dashboard({ demo = false }) {
                 </span>
                 <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td, marginLeft: 8 }}>✕</span>
               </div>
-              <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° {t('fromLine', lang)}</div>
+              <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{tLine(cityPop.line, lang)} · {cityPop.dist.toFixed(1)}° {t('fromLine', lang)}</div>
               <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
             </div>
           </>)}
@@ -1523,15 +1520,18 @@ export default function Dashboard({ demo = false }) {
                       {t('planetaryEnergiesIntro', lang)}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 1, background: T.bs, borderRadius: 6, overflow: 'hidden', border: `1px solid ${T.bs}` }}>
-                      {Object.entries(PLANET_DOMAINS).map(([planet, { domain, icon }]) => (
+                      {Object.keys(PLANET_ICONS).map(planet => {
+                        const pd = getPlanetDomain(planet, lang);
+                        return (
                         <div key={planet} style={{ background: T.p, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <span style={{ fontSize: 18, color: PCOL[planet], lineHeight: 1, width: 24, textAlign: 'center' }}>{icon}</span>
+                          <span style={{ fontSize: 18, color: PCOL[planet], lineHeight: 1, width: 24, textAlign: 'center' }}>{pd.icon}</span>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ ...F, fontSize: 11, fontWeight: 700, color: PCOL[planet] }}>{planet}</div>
-                            <div style={{ ...F, fontSize: 8, color: T.td, marginTop: 1 }}>{domain}</div>
+                            <div style={{ ...F, fontSize: 11, fontWeight: 700, color: PCOL[planet] }}>{tPlanet(planet, lang)}</div>
+                            <div style={{ ...F, fontSize: 8, color: T.td, marginTop: 1 }}>{pd.domain}</div>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </>}
 
@@ -1672,7 +1672,7 @@ export default function Dashboard({ demo = false }) {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, cursor: 'pointer', opacity: isHid ? 0.4 : 1, transition: 'opacity .15s' }} onClick={e => { e.stopPropagation(); setExpandedPlanet(expandedPlanet === g.planet ? null : g.planet); }}>
                       <span style={{ fontSize: 14 }}>{g.symbol}</span>
-                      <span style={{ ...F, fontSize: 10, color: T.tm, fontWeight: 600 }}>{g.planet}</span>
+                      <span style={{ ...F, fontSize: 10, color: T.tm, fontWeight: 600 }}>{tPlanet(g.planet, lang)}</span>
                       <div style={{ display: 'flex', gap: 3, marginLeft: 'auto' }}>
                         {g.lines.map(l => (
                           <span key={l.angle} style={{ ...F, fontSize: 6, color: l.quality === 'thrive' ? T.ac : l.quality === 'avoid' ? '#F04060' : '#D8A030', background: (l.quality === 'thrive' ? T.ac : l.quality === 'avoid' ? '#F04060' : '#D8A030') + '15', padding: '1px 3px', borderRadius: 2 }}>{l.angle}</span>
@@ -1704,9 +1704,7 @@ export default function Dashboard({ demo = false }) {
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>{t('lineTypes', lang)}</span>
                 <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: T.td, cursor: 'pointer' }}>✕</span>
               </div>
-              {ANGLE_ORDER.map(a => {
-                const info = ANGLE_INFO[a];
-                return (
+              {ANGLE_ORDER.map(a => (
                   <div key={a} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${T.bs}` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <svg width="16" height="4">
@@ -1715,13 +1713,12 @@ export default function Dashboard({ demo = false }) {
                         {a === 'ASC' && <line x1="0" y1="2" x2="16" y2="2" stroke={T.tm} strokeWidth="2" strokeDasharray="8,3" />}
                         {a === 'DC' && <line x1="0" y1="2" x2="16" y2="2" stroke={T.tm} strokeWidth="2" strokeDasharray="2,2" />}
                       </svg>
-                      <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx }}>{info.label}</span>
-                      <span style={{ ...F, fontSize: 7, color: T.td }}>{info.full}</span>
+                      <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx }}>{a}</span>
+                      <span style={{ ...F, fontSize: 7, color: T.td }}>{t(`${a.toLowerCase()}Full`, lang)}</span>
                     </div>
-                    <div style={{ fontSize: 10, color: T.tm, lineHeight: 1.5, marginLeft: 22 }}>{info.desc}</div>
+                    <div style={{ fontSize: 10, color: T.tm, lineHeight: 1.5, marginLeft: 22 }}>{t(`${a.toLowerCase()}AngleDesc`, lang)}</div>
                   </div>
-                );
-              })}
+              ))}
             </div></>}
           </div>}
         </div>
@@ -1763,14 +1760,14 @@ export default function Dashboard({ demo = false }) {
           {/* City rows */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {filteredTab.map((c, i) => {
-              const imp = cityImpact(c);
+              const imp = cityImpact(c, lang);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
               return mob ? (
                 <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ padding: '6px 10px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, minWidth: 0 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <span style={{ fontSize: 11, fontWeight: 600, color: T.tx, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}{CITY_COUNTRY[c.name] ? <span style={{ fontWeight: 400, color: T.mu, fontSize: 9 }}>{' · '}{CITY_COUNTRY[c.name]}</span> : null}</span>
-                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2, flexShrink: 0, whiteSpace: 'nowrap' }}>{c.line}</span>
+                    <span style={{ ...F, fontSize: 7, color: c.lc, background: c.lc + '15', padding: '1px 5px', borderRadius: 2, flexShrink: 0, whiteSpace: 'nowrap' }}>{tLine(c.line, lang)}</span>
                     <span style={{ ...F, fontSize: 7, color: qCol, marginLeft: 'auto', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>{imp.strengthPct}%</span>
                   </div>
                   <div style={{ ...F, fontSize: 8, color: T.td, lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
@@ -1787,7 +1784,7 @@ export default function Dashboard({ demo = false }) {
                   </div>
                   {/* Line */}
                   <div style={{ width: 100, flexShrink: 0 }}>
-                    <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {c.line}</span>
+                    <span style={{ ...F, fontSize: 9, color: c.lc, fontWeight: 600 }}>{imp.icon} {tLine(c.line, lang)}</span>
                     <div style={{ ...F, fontSize: 7, color: T.mu }}>{c.dist.toFixed(1)}° orb</div>
                   </div>
                   {/* Signal strength */}
