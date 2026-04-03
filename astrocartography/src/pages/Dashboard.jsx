@@ -413,6 +413,7 @@ export default function Dashboard({ demo = false }) {
 
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
   const clockRef = useRef(null);
+  const langBtnRef = useRef(null);
   useEffect(() => {
     const fmt = () => {
       if (document.hidden) return; // skip work when not visible
@@ -734,23 +735,10 @@ export default function Dashboard({ demo = false }) {
           <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>
           {/* Language selector */}
           <div style={{ position: 'relative' }}>
-            <span onClick={() => { closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4 }}>
-              {LANGUAGES.find(l => l.code === lang)?.flag || '🌐'} {!mob && (LANGUAGES.find(l => l.code === lang)?.name?.slice(0, 3).toUpperCase() || 'EN')}
+            <span ref={langBtnRef} onClick={(e) => { e.stopPropagation(); closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4, userSelect: 'none' }}>
+              <svg width={mob ? 10 : 12} height={mob ? 10 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+              {!mob && lang.toUpperCase()}
             </span>
-            {showLangPicker && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 6, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: T.sh, zIndex: 9999, minWidth: 180, maxHeight: 320, overflowY: 'auto', padding: '4px 0' }}>
-                {LANGUAGES.map(l => (
-                  <div key={l.code} onClick={() => changeLang(l.code)} style={{ ...F, fontSize: 11, color: l.code === lang ? T.ac : T.tm, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, background: l.code === lang ? T.acBg : 'transparent', transition: 'background .15s' }}
-                    onMouseEnter={e => { if (l.code !== lang) e.currentTarget.style.background = T.c; }}
-                    onMouseLeave={e => { if (l.code !== lang) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <span style={{ fontSize: 14 }}>{l.flag}</span>
-                    <span>{l.name}</span>
-                    {l.code === lang && <span style={{ marginLeft: 'auto', fontSize: 9 }}>✓</span>}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
@@ -772,6 +760,25 @@ export default function Dashboard({ demo = false }) {
           </>}
         </div>
       </nav>
+
+      {/* Language dropdown — rendered outside overflow:hidden topbar */}
+      {showLangPicker && (() => {
+        const r = langBtnRef.current?.getBoundingClientRect();
+        return <>
+          <div onClick={() => setShowLangPicker(false)} style={{ position: 'fixed', inset: 0, zIndex: 9998 }} />
+          <div style={{ position: 'fixed', top: (r?.bottom || 38) + 4, left: r?.left || 200, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: T.sh, zIndex: 9999, minWidth: 180, maxHeight: 320, overflowY: 'auto', padding: '4px 0' }}>
+            {LANGUAGES.map(lg => (
+              <div key={lg.code} onClick={() => changeLang(lg.code)} style={{ ...F, fontSize: 11, color: lg.code === lang ? T.ac : T.tm, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, background: lg.code === lang ? T.acBg : 'transparent', transition: 'background .15s' }}
+                onMouseEnter={e => { if (lg.code !== lang) e.currentTarget.style.background = T.c; }}
+                onMouseLeave={e => { if (lg.code !== lang) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <span style={{ fontSize: 11 }}>{lg.name}</span>
+                {lg.code === lang && <span style={{ marginLeft: 'auto', fontSize: 9, color: T.ac }}>✓</span>}
+              </div>
+            ))}
+          </div>
+        </>;
+      })()}
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
