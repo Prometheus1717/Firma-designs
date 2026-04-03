@@ -7,6 +7,7 @@ import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY } from '../da
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
 import { redirectToCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
+import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
 
 // Demo chart: Elon Musk — public birth data
 const DEMO = {
@@ -303,8 +304,11 @@ export default function Dashboard({ demo = false }) {
   const [displayCurrency, setDisplayCurrency] = useState('EUR');
   const [priceLabel, setPriceLabel] = useState('ONE-TIME · LIFETIME ACCESS');
   const [announcement, setAnnouncement] = useState(null);
+  const [lang, setLangState] = useState(() => getLang());
+  const [showLangPicker, setShowLangPicker] = useState(false);
+  const changeLang = (code) => { persistLang(code); setLangState(code); setShowLangPicker(false); };
 
-  useEffect(() => { document.title = demo ? 'Astrocartography Globe Demo — Natal Navigator' : 'Your Astrocartography Dashboard — Natal Navigator'; }, [demo]);
+  useEffect(() => { document.title = demo ? t('titleDemo', lang) : t('titleDash', lang); }, [demo, lang]);
 
   // Handle ?payment=success|cancelled redirect from Stripe
   useEffect(() => {
@@ -404,6 +408,7 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'guide') setShowGuide(false);
     if (except !== 'demoGate') setShowDemoGate(false);
     if (except !== 'settings') setShowSettings(false);
+    if (except !== 'lang') setShowLangPicker(false);
   }, []);
 
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
@@ -528,10 +533,10 @@ export default function Dashboard({ demo = false }) {
     try {
       const nR = window.__natalReadings || await import('../data/natalReadings');
       const { generateNatalPDF } = await import('../lib/generatePDF');
-      await generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn: cityReading, natalReadings: nR });
+      await generateNatalPDF({ displayName, chartData, thriveC, avoidC, neutralC, cityReadingFn: cityReading, natalReadings: nR, lang });
     } catch (err) { console.error('PDF generation failed:', err); }
     finally { setPdfLoading(false); }
-  }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC]);
+  }, [pdfLoading, chartData, displayName, thriveC, avoidC, neutralC, lang]);
 
   const flyTo = useCallback((la, lo, name) => {
     Globe.flyTo?.(la, lo, name);
@@ -604,7 +609,7 @@ export default function Dashboard({ demo = false }) {
     return (
       <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.ac, letterSpacing: 6, marginBottom: 24 }}>NATAL NAVIGATOR</div>
-        <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20 }}>{demo ? 'Loading demo chart...' : !profile ? 'Connecting...' : 'Calculating your planetary lines...'}</div>
+        <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20 }}>{demo ? t('loadingDemo', lang) : !profile ? t('connecting', lang) : t('calculating', lang)}</div>
         <div style={{ width: 240, height: 3, background: T.bd, borderRadius: 2, overflow: 'hidden' }}>
           <div style={{ width: '100%', height: '100%', background: T.ac, borderRadius: 2, animation: 'loadbar 1.5s ease-in-out infinite' }} />
         </div>
@@ -618,7 +623,7 @@ export default function Dashboard({ demo = false }) {
       <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <div style={{ ...F, fontSize: 14, color: '#F04060', marginBottom: 16 }}>Error: {error}</div>
         <button onClick={() => navigate('/birth-data')} style={{ ...F, fontSize: 11, color: T.ac, background: 'transparent', border: `1px solid ${T.ac}`, borderRadius: 6, padding: '8px 20px', cursor: 'pointer' }}>
-          Re-enter birth data
+          {t('reEnterBirth', lang)}
         </button>
       </div>
     );
@@ -631,24 +636,24 @@ export default function Dashboard({ demo = false }) {
         {/* Payment success banner */}
         {paymentStatus === 'success' && (
           <div style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, border: `1px solid ${T.acBd}`, borderRadius: 8, padding: '12px 20px', marginBottom: 24, textAlign: 'center' }}>
-            Payment received! Activating your account...
+            {t('paymentReceived', lang)}
           </div>
         )}
 
         <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
           {/* Logo */}
           <div style={{ ...F, fontSize: 22, fontWeight: 700, color: T.ac, letterSpacing: 6, marginBottom: 8 }}>NATAL NAVIGATOR</div>
-          <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 3, marginBottom: 40 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</div>
+          <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 3, marginBottom: 40 }}>{t('yourMap', lang)}</div>
 
           {/* Upgrade card */}
           <div style={{ background: lightMode ? 'linear-gradient(160deg, #FFFFFF 0%, #F2F0ED 50%, #FAF9F7 100%)' : 'linear-gradient(160deg, #0F1A28 0%, #0A1018 50%, #10182A 100%)', border: `1px solid ${T.bd}`, borderRadius: 20, padding: mob ? 28 : 44, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             {/* Subtle glow effect */}
             <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 200, height: 120, background: `radial-gradient(ellipse, ${T.acBg} 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
-            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.ac, letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>Premium</div>
-            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: T.tx, marginBottom: 10, lineHeight: 1.3 }}>Your Personal<br />Astrocartography Map</div>
+            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.ac, letterSpacing: 3, marginBottom: 6, textTransform: 'uppercase' }}>{t('premium', lang)}</div>
+            <div style={{ ...F, fontSize: mob ? 20 : 24, fontWeight: 700, color: T.tx, marginBottom: 10, lineHeight: 1.3 }}>{t('yourPersonalMap', lang).split('\n').map((l, i) => <span key={i}>{l}{i === 0 && <br />}</span>)}</div>
             <div style={{ ...F, fontSize: 11, color: T.td, lineHeight: 1.7, marginBottom: 32, maxWidth: 340, margin: '0 auto 32px' }}>
-              Planetary lines, city analysis, and natal chart — calculated from your exact birth data.
+              {t('mapDescription', lang)}
             </div>
 
             {/* Price — centered, clean */}
@@ -668,16 +673,16 @@ export default function Dashboard({ demo = false }) {
               onClick={handleUpgrade}
               style={{ ...F, fontSize: 13, fontWeight: 700, color: T.bg, background: upgradeLoading ? T.td : T.ac, padding: '15px 0', borderRadius: 10, cursor: upgradeLoading ? 'default' : 'pointer', letterSpacing: 1.5, transition: 'all .2s', boxShadow: upgradeLoading ? 'none' : `0 0 20px ${T.acBg}` }}
             >
-              {upgradeLoading ? 'REDIRECTING...' : 'GET STARTED'}
+              {upgradeLoading ? t('redirecting', lang) : t('getStarted', lang)}
             </div>
 
             {/* What's included — compact */}
             <div style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', maxWidth: 260, margin: '28px auto 0', justifyItems: 'center' }}>
               {[
-                '3D Globe',
-                'City Analysis',
-                'Natal Chart',
-                'Flat Map View',
+                t('feat3d', lang),
+                t('featCity', lang),
+                t('featNatal', lang),
+                t('featFlat', lang),
               ].map((f, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, justifySelf: 'center' }}>
                   <span style={{ width: 4, height: 4, borderRadius: '50%', background: T.ac, flexShrink: 0 }} />
@@ -688,13 +693,13 @@ export default function Dashboard({ demo = false }) {
 
             {/* Security note */}
             <div style={{ ...F, fontSize: 8, color: T.mu, marginTop: 20, letterSpacing: 0.5 }}>
-              Secure checkout via Stripe &middot; No card data stored
+              {t('secureCheckout', lang)}
             </div>
           </div>
 
           {/* Sign out link */}
           <div onClick={signOut} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', marginTop: 20 }}>
-            Sign out
+            {t('signOut', lang)}
           </div>
         </div>
 
@@ -708,7 +713,7 @@ export default function Dashboard({ demo = false }) {
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, borderBottom: `1px solid ${T.acBd}`, padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
-          Premium activated! Welcome to NatalNavigator Premium. &#10003;
+          {t('premiumActivated', lang)}
         </div>
       )}
       {/* Announcement banner from admin settings */}
@@ -717,16 +722,36 @@ export default function Dashboard({ demo = false }) {
           {announcement.text}
         </div>
       )}
-      <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Natal Navigator — Astrocartography Dashboard</h1>
+      <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>{t('titleH1', lang)}</h1>
       {/* TOPBAR */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: T.p, borderBottom: `1px solid ${T.bd}`, zIndex: 300, flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12, minWidth: 0, overflow: 'hidden' }}>
-          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: T.ac, letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>NATAL NAVIGATOR</span>
+          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: T.ac, letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>{t('natalNavigator', lang)}</span>
           <span style={{ ...F, fontSize: 9, color: T.ac, display: 'flex', alignItems: 'center', gap: 4 }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: T.ac, boxShadow: `0 0 6px ${T.ac}` }} />
-            {!mob && 'LIVE'}
+            {!mob && t('live', lang)}
           </span>
-          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>HOW IT WORKS</span>
+          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>
+          {/* Language selector */}
+          <div style={{ position: 'relative' }}>
+            <span onClick={() => { closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4 }}>
+              {LANGUAGES.find(l => l.code === lang)?.flag || '🌐'} {!mob && (LANGUAGES.find(l => l.code === lang)?.name?.slice(0, 3).toUpperCase() || 'EN')}
+            </span>
+            {showLangPicker && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 6, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: T.sh, zIndex: 9999, minWidth: 180, maxHeight: 320, overflowY: 'auto', padding: '4px 0' }}>
+                {LANGUAGES.map(l => (
+                  <div key={l.code} onClick={() => changeLang(l.code)} style={{ ...F, fontSize: 11, color: l.code === lang ? T.ac : T.tm, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, background: l.code === lang ? T.acBg : 'transparent', transition: 'background .15s' }}
+                    onMouseEnter={e => { if (l.code !== lang) e.currentTarget.style.background = T.c; }}
+                    onMouseLeave={e => { if (l.code !== lang) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <span style={{ fontSize: 14 }}>{l.flag}</span>
+                    <span>{l.name}</span>
+                    {l.code === lang && <span style={{ marginLeft: 'auto', fontSize: 9 }}>✓</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
           {/* Sun/Moon theme toggle */}
@@ -737,8 +762,8 @@ export default function Dashboard({ demo = false }) {
           </div>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.td }} />}
           {demo ? <>
-            <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}` }}>DEMO: {DEMO.name}</span>
-            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>SIGN UP</span>
+            <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}` }}>{t('demo', lang)}: {DEMO.name}</span>
+            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>{t('signUp', lang)}</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
             <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? T.ac : T.tm, cursor: 'pointer', background: showSettings ? T.acBg : T.c, padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? T.acBd : T.bd}`, transition: 'all .2s' }}>
@@ -751,7 +776,7 @@ export default function Dashboard({ demo = false }) {
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
-          {[planetString, planetString].map((t, i) => <span key={i} style={{ color: '#E8A838', padding: '0 20px' }}>{t}</span>)}
+          {[planetString, planetString].map((ps, i) => <span key={i} style={{ color: '#E8A838', padding: '0 20px' }}>{ps}</span>)}
         </div>
       </div>
 
@@ -761,16 +786,16 @@ export default function Dashboard({ demo = false }) {
         {!mob && <div style={{ width: 220, minWidth: 220, background: T.p, borderRight: `1px solid ${T.bd}`, overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Header with info button */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 12px 6px' }}>
-            <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2 }}>PLANETS</span>
+            <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2 }}>{t('planets', lang)}</span>
             <div style={{ display: 'flex', gap: 4 }}>
-              {hiddenPlanets.size > 0 && <span onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg }}>All on</span>}
+              {hiddenPlanets.size > 0 && <span onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg }}>{t('allOn', lang)}</span>}
               <span onClick={() => setShowAngleInfo(!showAngleInfo)} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.mu, cursor: 'pointer', padding: '2px 6px', borderRadius: 3, border: `1px solid ${showAngleInfo ? T.acBd : T.bd}`, background: showAngleInfo ? T.acBg : 'transparent' }}>?</span>
             </div>
           </div>
 
           {/* Angle info panel (collapsible) */}
           {showAngleInfo && <div style={{ margin: '0 8px 8px', background: T.d, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10 }}>
-            <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm, marginBottom: 8 }}>LINE TYPES</div>
+            <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm, marginBottom: 8 }}>{t('lineTypes', lang)}</div>
             {ANGLE_ORDER.map(a => {
               const info = ANGLE_INFO[a];
               return (
@@ -791,8 +816,7 @@ export default function Dashboard({ demo = false }) {
               );
             })}
             <div style={{ ...F, fontSize: 8, color: T.mu, lineHeight: 1.5, borderTop: `1px solid ${T.bs}`, paddingTop: 6, marginTop: 2 }}>
-              MC & IC are vertical meridian lines (pole to pole).<br />
-              ASC & DC are curved lines that follow the horizon.
+              {t('lineFootnote', lang)}
             </div>
           </div>}
 
@@ -844,17 +868,17 @@ export default function Dashboard({ demo = false }) {
           })}
 
           {/* Zones */}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>ZONES</div>
-          {[['thrive', 'Thrive Zone', 'Strengths amplified'], ['avoid', 'Caution Zone', 'Challenges likely'], ['neutral', 'Neutral', 'Subtle influence']].map(([t, l, d]) => (
-            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 12px', ...F, fontSize: 9, color: T.tm }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: COL[t], flexShrink: 0 }} />
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>{t('zones', lang)}</div>
+          {[['thrive', t('thriveZone', lang), t('strengthsAmplified', lang)], ['avoid', t('cautionZone', lang), t('challengesLikely', lang)], ['neutral', t('neutral', lang), t('subtleInfluence', lang)]].map(([z, l, d]) => (
+            <div key={z} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '4px 12px', ...F, fontSize: 9, color: T.tm }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: COL[z], flexShrink: 0 }} />
               <span>{l}</span>
               <span style={{ fontSize: 7, color: T.mu, marginLeft: 'auto' }}>{d}</span>
             </div>
           ))}
 
           {/* Top Cities */}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>TOP CITIES</div>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>{t('topCities', lang)}</div>
           {bestCities.map((c, i) => (
             <div key={i} onClick={() => { flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
               <span style={{ color: T.ac, fontWeight: 700, width: 14 }}>{i + 1}.</span>
@@ -863,7 +887,7 @@ export default function Dashboard({ demo = false }) {
             </div>
           ))}
           <div style={{ ...F, fontSize: 8, color: T.bd, padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
-            Drag = Rotate · Scroll = Zoom<br />Double-click = Zoom to point<br />Click city = Reading
+            {t('dragRotate', lang)}<br />{t('dblClickZoom', lang)}<br />{t('clickCity', lang)}
           </div>
         </div>}
 
@@ -874,16 +898,16 @@ export default function Dashboard({ demo = false }) {
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
             <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? T.ac : T.td, background: !flatMap ? T.acBg : 'transparent', borderRight: `1px solid ${T.bd}`, flex: 1 }}>
-              ◉ Globe
+              ◉ {t('globe', lang)}
             </button>
             <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? T.ac : T.td, background: flatMap ? T.acBg : 'transparent', flex: 1 }}>
-              ▭ Map
+              ▭ {t('map', lang)}
             </button>
           </div>
 
           {/* Natal chart button — below map toggle */}
           <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.pop, border: `1px solid ${showNatal ? T.acBd : T.bd}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? T.ac : T.td, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
-            ☉ Natal Chart
+            ☉ {t('natalChart', lang)}
           </div>
 
           {/* Natal chart popup */}
@@ -894,7 +918,7 @@ export default function Dashboard({ demo = false }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: `1px solid ${T.bd}`, background: T.p, flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {selectedPlacement && <span onClick={() => setSelectedPlacement(null)} style={{ cursor: 'pointer', ...F, fontSize: 11, color: T.td, marginRight: 4 }}>&larr;</span>}
-                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? 'ASCENDANT' : selectedPlacement.type === 'mc' ? 'MIDHEAVEN' : selectedPlacement.id?.toUpperCase()) : 'NATAL CHART'}</span>
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{selectedPlacement ? (selectedPlacement.type === 'asc' ? t('ascendant', lang).toUpperCase() : selectedPlacement.type === 'mc' ? t('midheaven', lang).toUpperCase() : selectedPlacement.id?.toUpperCase()) : t('natalChartTab', lang)}</span>
                   {!selectedPlacement && chartData.natal && <span style={{ ...F, fontSize: 8, color: T.mu }}>ASC {chartData.natal.asc?.sign} {chartData.natal.asc?.deg}° · MC {chartData.natal.mc?.sign} {chartData.natal.mc?.deg}°</span>}
                 </div>
                 <span onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td }}>✕</span>
@@ -903,9 +927,9 @@ export default function Dashboard({ demo = false }) {
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
                 <div style={{ display: 'flex', borderBottom: `1px solid ${T.bd}`, background: T.b, flexShrink: 0 }}>
-                  {[{ key: 'chart', label: 'NATAL CHART' }, { key: 'planets', label: 'PERSONALITY' }, { key: 'pdf', label: '↓ PDF' }].map(t => (
-                    <div key={t.key} onClick={() => setNatalTab(t.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === t.key ? T.ac : T.td, borderBottom: natalTab === t.key ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
-                      {t.label}
+                  {[{ key: 'chart', label: t('natalChartTab', lang) }, { key: 'planets', label: t('personalityTab', lang) }, { key: 'pdf', label: t('pdfTab', lang) }].map(tb => (
+                    <div key={tb.key} onClick={() => setNatalTab(tb.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === tb.key ? T.ac : T.td, borderBottom: natalTab === tb.key ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
+                      {tb.label}
                     </div>
                   ))}
                 </div>
@@ -957,9 +981,9 @@ export default function Dashboard({ demo = false }) {
                         <span style={{ fontSize: 28, color: pc, lineHeight: 1 }}>{sp.type === 'asc' ? '△' : sp.type === 'mc' ? '▽' : (chartData.planets.find(pl => pl.id === sp.id)?.symbol || '')}</span>
                         <span style={{ fontSize: 28, color: ELEM_COL[elem] || T.td, lineHeight: 1 }}>{SIGN_SYMBOLS[signData?.sign] || ''}</span>
                       </div>
-                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.tx, letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} in {signData?.sign}</div>
+                      <div style={{ ...F, fontSize: 18, fontWeight: 700, color: T.tx, letterSpacing: 0.5, marginBottom: 4 }}>{titleLabel} {t('inThe', lang).toLowerCase()} {signData?.sign}</div>
                       <div style={{ ...F, fontSize: 11, color: T.td }}>{degStr}</div>
-                      {houseNum && <div style={{ ...F, fontSize: 11, color: pc, marginTop: 4 }}>{titleLabel} in the {['','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth'][houseNum]} House</div>}
+                      {houseNum && <div style={{ ...F, fontSize: 11, color: pc, marginTop: 4 }}>{titleLabel} {t('inThe', lang).toLowerCase()} {t(`ord${houseNum}`, lang)} {t('houseWord', lang)}</div>}
                     </div>
 
                     {/* Planet info badge */}
@@ -972,7 +996,7 @@ export default function Dashboard({ demo = false }) {
                     {/* Sign reading */}
                     {signReading && (
                       <div style={{ padding: '18px 18px 14px' }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? 'YOUR RISING SIGN' : sp.type === 'mc' ? 'YOUR MIDHEAVEN' : `${sp.id?.toUpperCase()} IN ${signData?.sign?.toUpperCase()}`}</div>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.type === 'asc' ? t('yourRisingSn', lang) : sp.type === 'mc' ? t('yourMidheaven', lang) : `${sp.id?.toUpperCase()} ${t('inThe', lang)} ${signData?.sign?.toUpperCase()}`}</div>
                         <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{signReading.text}</div>
                       </div>
                     )}
@@ -980,21 +1004,21 @@ export default function Dashboard({ demo = false }) {
                     {/* House reading */}
                     {houseReading && (
                       <div style={{ padding: '14px 18px 18px', borderTop: `1px solid ${T.bs}` }}>
-                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} IN THE {['','FIRST','SECOND','THIRD','FOURTH','FIFTH','SIXTH','SEVENTH','EIGHTH','NINTH','TENTH','ELEVENTH','TWELFTH'][houseNum]} HOUSE</div>
+                        <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{sp.id?.toUpperCase()} {t('inThe', lang)} {t(`ord${houseNum}`, lang).toUpperCase()} {t('houseWord', lang)}</div>
                         <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.85, fontFamily: 'system-ui, -apple-system, sans-serif' }}>{houseReading.text}</div>
                       </div>
                     )}
 
                     {/* Details section */}
                     <div style={{ padding: '14px 18px 20px', borderTop: `1px solid ${T.bd}` }}>
-                      <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>DETAILS</div>
+                      <div style={{ ...F, fontSize: 8, fontWeight: 700, color: T.mu, letterSpacing: 1.5, marginBottom: 10 }}>{t('details', lang)}</div>
                       {[
-                        ['Position', `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
-                        houseNum ? ['House', `${houseNum}${houseNum===1?'st':houseNum===2?'nd':houseNum===3?'rd':'th'} House${houseInfo ? ' — ' + houseInfo.keyword : ''}`] : null,
-                        ['Element', elem],
-                        ['Mode', SIGN_MODES[signData?.sign] || ''],
-                        sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? ['Motion', 'Retrograde ℞'] : null,
-                        planetInfo?.rules ? ['Rules', planetInfo.rules] : null,
+                        [t('position', lang), `${signData?.deg}° ${String(signData?.min || 0).padStart(2,'0')}' ${signData?.sign}`],
+                        houseNum ? [t('house', lang), `${t(`ord${houseNum}`, lang)} ${t('houseWord', lang)}${houseInfo ? ' — ' + houseInfo.keyword : ''}`] : null,
+                        [t('element', lang), elem],
+                        [t('mode', lang), SIGN_MODES[signData?.sign] || ''],
+                        sp.type === 'planet' && chartData.planets.find(pl => pl.id === sp.id)?.retrograde ? [t('motion', lang), t('retrograde', lang)] : null,
+                        planetInfo?.rules ? [t('rules', lang), planetInfo.rules] : null,
                       ].filter(Boolean).map(([label, val]) => (
                         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: `1px solid ${T.bs}` }}>
                           <span style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tm }}>{label}</span>
@@ -1011,11 +1035,11 @@ export default function Dashboard({ demo = false }) {
                 <>
                   {/* Column headers */}
                   <div style={{ display: 'flex', padding: '5px 14px', borderBottom: `1px solid ${T.bs}`, background: T.bg, flexShrink: 0 }}>
-                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 90, letterSpacing: 1 }}>PLANET</span>
-                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 80, letterSpacing: 1 }}>SIGN</span>
-                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>DEGREE</span>
-                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>ELEM</span>
-                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, flex: 1, letterSpacing: 1 }}>DOMAIN</span>
+                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 90, letterSpacing: 1 }}>{t('planet', lang)}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 80, letterSpacing: 1 }}>{t('sign', lang)}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'right' }}>{t('degree', lang)}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 50, letterSpacing: 1, textAlign: 'center' }}>{t('elem', lang)}</span>
+                    <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, flex: 1, letterSpacing: 1 }}>{t('domain', lang)}</span>
                   </div>
                   <div style={{ flex: 1, overflowY: 'auto' }}>
                     {chartData.planets.map((p, i) => {
@@ -1029,7 +1053,7 @@ export default function Dashboard({ demo = false }) {
                             <span style={{ ...F, fontSize: 15, color: pc, lineHeight: 1, width: 18, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                             <div>
                               <div style={{ ...F, fontSize: 10, color: pc, fontWeight: 600 }}>{p.id}</div>
-                              {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>R RETRO</div>}
+                              {p.retrograde && <div style={{ ...F, fontSize: 7, color: '#F04060', fontWeight: 700, letterSpacing: 0.5 }}>{t('retro', lang)}</div>}
                             </div>
                           </div>
                           <div style={{ width: 80, display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -1051,10 +1075,10 @@ export default function Dashboard({ demo = false }) {
                       );
                     })}
                     {chartData.natal && <>
-                      <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.mu, letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: `1px solid ${T.bd}` }}>ANGLES</div>
+                      <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.mu, letterSpacing: 1.5, padding: '8px 14px 4px', borderTop: `1px solid ${T.bd}` }}>{t('angles', lang)}</div>
                       {[
-                        { label: 'Ascendant', short: 'ASC', data: chartData.natal.asc, desc: 'Rising sign — your outward persona' },
-                        { label: 'Midheaven', short: 'MC', data: chartData.natal.mc, desc: 'Career & public reputation' },
+                        { label: t('ascendant', lang), short: 'ASC', data: chartData.natal.asc, desc: t('ascDesc', lang) },
+                        { label: t('midheaven', lang), short: 'MC', data: chartData.natal.mc, desc: t('mcDesc', lang) },
                       ].map((a, i) => a.data && (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 14px', borderBottom: `1px solid ${T.bs}` }}>
                           <div style={{ width: 90, display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -1082,12 +1106,12 @@ export default function Dashboard({ demo = false }) {
                       ))}
                     </>}
                     <div style={{ padding: '8px 14px', borderTop: `1px solid ${T.bd}`, background: T.p, display: 'flex', gap: 12 }}>
-                      {['Fire', 'Earth', 'Air', 'Water'].map(el => {
+                      {[['Fire', t('fire', lang)], ['Earth', t('earth', lang)], ['Air', t('air', lang)], ['Water', t('water', lang)]].map(([el, elLabel]) => {
                         const count = chartData.planets.filter(p => SIGN_ELEMENTS[p.sign] === el).length;
                         return (
                           <div key={el} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                             <div style={{ width: 6, height: 6, borderRadius: 1, background: ELEM_COL[el] }} />
-                            <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{el}</span>
+                            <span style={{ ...F, fontSize: 8, color: ELEM_COL[el], fontWeight: 600 }}>{elLabel}</span>
                             <span style={{ ...F, fontSize: 9, color: T.tx, fontWeight: 700 }}>{count}</span>
                           </div>
                         );
@@ -1108,8 +1132,8 @@ export default function Dashboard({ demo = false }) {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <span style={{ fontSize: 18, color: pc, lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{p.symbol}</span>
                           <div>
-                            <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.tx }}>{p.id} in {p.sign}</div>
-                            {p.house && <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 2 }}>{p.house}{p.house===1?'st':p.house===2?'nd':p.house===3?'rd':'th'} House{p.retrograde ? ' · Retrograde' : ''}</div>}
+                            <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.tx }}>{p.id} {t('inThe', lang).toLowerCase()} {p.sign}</div>
+                            {p.house && <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 2 }}>{t(`ord${p.house}`, lang)} {t('houseWord', lang)}{p.retrograde ? ' · ' + t('retrograde', lang) : ''}</div>}
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1121,15 +1145,15 @@ export default function Dashboard({ demo = false }) {
                   })}
 
                   {/* Angles */}
-                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.mu, letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: `1px solid ${T.bd}` }}>ANGLES</div>
+                  <div style={{ ...F, fontSize: 7, fontWeight: 700, color: T.mu, letterSpacing: 1.5, padding: '12px 18px 6px', borderTop: `1px solid ${T.bd}` }}>{t('angles', lang)}</div>
                   {[
-                    { label: 'Ascendant', type: 'asc', data: chartData.natal?.asc, symbol: '△' },
-                    { label: 'Midheaven', type: 'mc', data: chartData.natal?.mc, symbol: '▽' },
+                    { label: t('ascendant', lang), type: 'asc', data: chartData.natal?.asc, symbol: '△' },
+                    { label: t('midheaven', lang), type: 'mc', data: chartData.natal?.mc, symbol: '▽' },
                   ].map(a => a.data && (
                     <div key={a.type} onClick={() => setSelectedPlacement({ id: a.label, type: a.type })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span style={{ fontSize: 18, color: '#E8A838', lineHeight: 1, width: 22, textAlign: 'center', flexShrink: 0 }}>{a.symbol}</span>
-                        <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.tx }}>{a.label} in {a.data.sign}</div>
+                        <div style={{ ...F, fontSize: 12, fontWeight: 600, color: T.tx }}>{a.label} {t('inThe', lang).toLowerCase()} {a.data.sign}</div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ ...F, fontSize: 10, color: T.td }}>{a.data.deg}° {a.data.sign.slice(0,3)} {String(a.data.min).padStart(2,'0')}'</span>
@@ -1145,19 +1169,19 @@ export default function Dashboard({ demo = false }) {
                 <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '20px 18px' }}>
                   <div style={{ textAlign: 'center', marginBottom: 16 }}>
                     <span style={{ fontSize: 32, display: 'block', marginBottom: 8 }}>📄</span>
-                    <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>YOUR NATAL REPORT</div>
-                    <div style={{ ...F, fontSize: 10, color: T.td, marginTop: 4 }}>A personalized astrocartography PDF tailored to your birth chart</div>
+                    <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{t('yourNatalReport', lang)}</div>
+                    <div style={{ ...F, fontSize: 10, color: T.td, marginTop: 4 }}>{t('pdfSubtitle', lang)}</div>
                   </div>
                   <div style={{ background: T.c, borderRadius: 8, padding: '14px 16px', marginBottom: 12 }}>
-                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.ac, letterSpacing: 1, marginBottom: 10 }}>WHAT'S INCLUDED</div>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.ac, letterSpacing: 1, marginBottom: 10 }}>{t('whatsIncluded', lang)}</div>
                     {[
-                      ['☉', 'Full natal chart with all 10 planets, signs, degrees & houses'],
-                      ['♀', 'In-depth personality readings for each planetary placement'],
-                      ['△', 'Ascendant & Midheaven sign interpretations'],
-                      ['✦', 'Top thrive cities — your best locations worldwide'],
-                      ['⚠', 'Caution zones — places to approach with care'],
-                      ['◎', 'Neutral zones with subtle planetary influences'],
-                      ['✍', 'Personalized city-level readings with orb distances'],
+                      ['☉', t('pdfItem1', lang)],
+                      ['♀', t('pdfItem2', lang)],
+                      ['△', t('pdfItem3', lang)],
+                      ['✦', t('pdfItem4', lang)],
+                      ['⚠', t('pdfItem5', lang)],
+                      ['◎', t('pdfItem6', lang)],
+                      ['✍', t('pdfItem7', lang)],
                     ].map(([icon, text], i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
                         <span style={{ fontSize: 12, color: T.ac, flexShrink: 0, width: 16, textAlign: 'center', lineHeight: '18px' }}>{icon}</span>
@@ -1166,11 +1190,11 @@ export default function Dashboard({ demo = false }) {
                     ))}
                   </div>
                   <div style={{ background: T.c, borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
-                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D8A030', letterSpacing: 1, marginBottom: 6 }}>FORMAT</div>
-                    <div style={{ ...F, fontSize: 10, color: T.tm, lineHeight: 1.6 }}>Multi-page A4 PDF with dark theme design. Includes page numbers, section headers, and your personal birth data summary.</div>
+                    <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D8A030', letterSpacing: 1, marginBottom: 6 }}>{t('format', lang)}</div>
+                    <div style={{ ...F, fontSize: 10, color: T.tm, lineHeight: 1.6 }}>{t('pdfFormat', lang)}</div>
                   </div>
                   <button onClick={handleDownloadPDF} disabled={pdfLoading} style={{ ...F, width: '100%', fontSize: 12, fontWeight: 700, letterSpacing: 1, color: T.bg, background: pdfLoading ? T.td : T.ac, border: 'none', borderRadius: 8, padding: '14px 0', cursor: pdfLoading ? 'default' : 'pointer', transition: 'all .2s' }}>
-                    {pdfLoading ? '⏳ GENERATING...' : '↓ DOWNLOAD PDF'}
+                    {pdfLoading ? t('generating', lang) : t('downloadPdf', lang)}
                   </button>
                 </div>
               )}
@@ -1200,11 +1224,11 @@ export default function Dashboard({ demo = false }) {
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: cityPop.lc }} />
                 <span style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx }}>{cityPop.name}</span>
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: cityPop.q === 'thrive' ? COL.thrive : cityPop.q === 'avoid' ? COL.avoid : COL.neutral, marginLeft: 'auto' }}>
-                  {cityPop.q === 'thrive' ? 'THRIVE' : cityPop.q === 'avoid' ? 'CAUTION' : 'NEUTRAL'}
+                  {cityPop.q === 'thrive' ? t('thrive', lang) : cityPop.q === 'avoid' ? t('caution', lang) : t('neutralLabel', lang)}
                 </span>
                 <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td, marginLeft: 8 }}>✕</span>
               </div>
-              <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° from line</div>
+              <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{cityPop.line} · {cityPop.dist.toFixed(1)}° {t('fromLine', lang)}</div>
               <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7 }}>{cityReading(cityPop)}</div>
             </div>
           </>)}
@@ -1212,9 +1236,9 @@ export default function Dashboard({ demo = false }) {
           {/* SETTINGS PANEL */}
           {showSettings && !demo && (() => {
             const tabs = [
-              { id: 'profile', label: 'PROFILE', icon: '◉' },
-              { id: 'birth', label: 'BIRTH DATA', icon: '☿' },
-              { id: 'account', label: 'ACCOUNT', icon: '⛓' },
+              { id: 'profile', label: t('profileTab', lang).replace('◉ ', ''), icon: '◉' },
+              { id: 'birth', label: t('birthDataTab', lang).replace('☿ ', ''), icon: '☿' },
+              { id: 'account', label: t('accountTab', lang).replace('⛓ ', ''), icon: '⛓' },
             ];
             const [y, m, d] = (profile?.birth_date || '').split('-');
             const dateFmt = y ? `${d}.${m}.${y}` : '—';
@@ -1230,7 +1254,7 @@ export default function Dashboard({ demo = false }) {
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '14px 16px' : '18px 24px', borderBottom: `1px solid ${T.bd}`, flexShrink: 0 }}>
                   <div>
-                    <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.tx, letterSpacing: 2 }}>SETTINGS</div>
+                    <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.tx, letterSpacing: 2 }}>{t('settings', lang)}</div>
                     <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 2 }}>{user?.email}</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1241,9 +1265,9 @@ export default function Dashboard({ demo = false }) {
 
                 {/* Tab navigation */}
                 <div style={{ display: 'flex', padding: mob ? '0 12px' : '0 20px', gap: mob ? 0 : 4, borderBottom: `1px solid ${T.bd}`, flexShrink: 0, overflowX: 'auto' }}>
-                  {tabs.map(t => (
-                    <div key={t.id} onClick={() => { setSettingsTab(t.id); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: settingsTab === t.id ? T.ac : T.td, padding: mob ? '10px 8px' : '12px 14px', cursor: 'pointer', borderBottom: settingsTab === t.id ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
-                      <span style={{ marginRight: 5, fontSize: mob ? 9 : 10 }}>{t.icon}</span>{t.label}
+                  {tabs.map(tb => (
+                    <div key={tb.id} onClick={() => { setSettingsTab(tb.id); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: settingsTab === tb.id ? T.ac : T.td, padding: mob ? '10px 8px' : '12px 14px', cursor: 'pointer', borderBottom: settingsTab === tb.id ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', whiteSpace: 'nowrap', letterSpacing: 0.5 }}>
+                      <span style={{ marginRight: 5, fontSize: mob ? 9 : 10 }}>{tb.icon}</span>{tb.label}
                     </div>
                   ))}
                 </div>
@@ -1269,30 +1293,30 @@ export default function Dashboard({ demo = false }) {
 
                     {/* Display name */}
                     <div style={{ marginBottom: 20 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>DISPLAY NAME</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('displayName', lang)}</div>
                       {editingName ? (
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                           <input value={nameInput} onChange={e => setNameInput(e.target.value)} maxLength={40} autoFocus style={{ ...F, fontSize: 13, color: T.tx, background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, padding: '8px 12px', flex: 1, outline: 'none' }} onKeyDown={e => { if (e.key === 'Enter' && nameInput.trim()) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); } if (e.key === 'Escape') setEditingName(false); }} />
-                          <div onClick={() => { if (nameInput.trim() && !savingName) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); }}} style={{ ...F, fontSize: 9, color: savingName ? T.mu : T.ac, cursor: savingName ? 'default' : 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.acBd}`, background: T.acBg }}>{savingName ? 'SAVING...' : 'SAVE'}</div>
-                          <div onClick={() => setEditingName(false)} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 10px' }}>CANCEL</div>
+                          <div onClick={() => { if (nameInput.trim() && !savingName) { setSavingName(true); updateDisplayName(nameInput.trim()).then(() => { setEditingName(false); setSavingName(false); }).catch(() => setSavingName(false)); }}} style={{ ...F, fontSize: 9, color: savingName ? T.mu : T.ac, cursor: savingName ? 'default' : 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.acBd}`, background: T.acBg }}>{savingName ? t('saving', lang) : t('save', lang)}</div>
+                          <div onClick={() => setEditingName(false)} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 10px' }}>{t('cancel', lang)}</div>
                         </div>
                       ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ ...F, fontSize: 13, color: T.tx, background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 6, padding: '8px 12px', flex: 1 }}>{displayName || '—'}</div>
-                          <div onClick={() => { setNameInput(displayName || ''); setEditingName(true); }} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}` }}>EDIT</div>
+                          <div onClick={() => { setNameInput(displayName || ''); setEditingName(true); }} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}` }}>{t('edit', lang)}</div>
                         </div>
                       )}
                     </div>
 
                     {/* Email (read-only) */}
                     <div style={{ marginBottom: 20 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>EMAIL</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('email', lang)}</div>
                       <div style={{ ...F, fontSize: 13, color: T.tm, background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 6, padding: '8px 12px' }}>{user?.email}</div>
                     </div>
 
                     {/* Member since */}
                     <div>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>MEMBER SINCE</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('memberSince', lang)}</div>
                       <div style={{ ...F, fontSize: 13, color: T.tm, background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 6, padding: '8px 12px' }}>{user?.created_at ? new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}</div>
                     </div>
                   </div>)}
@@ -1300,23 +1324,23 @@ export default function Dashboard({ demo = false }) {
                   {/* ── BIRTH DATA TAB ── */}
                   {settingsTab === 'birth' && (<div>
                     <div style={{ ...F, fontSize: 10, color: T.tm, marginBottom: 20, lineHeight: 1.6 }}>
-                      Your birth data is the foundation of your astrocartography chart. All planetary line calculations depend on these values.
+                      {t('birthDataInfo', lang)}
                     </div>
 
                     <div style={{ display: 'grid', gap: 16 }}>
                       <div style={{ background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>DATE OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('dateOfBirth', lang)}</div>
                         <div style={{ ...F, fontSize: 15, color: T.tx, fontWeight: 600 }}>{dateFmt}</div>
                       </div>
 
                       <div style={{ background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>TIME OF BIRTH</div>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('timeOfBirth', lang)}</div>
                         <div style={{ ...F, fontSize: 15, color: T.tx, fontWeight: 600 }}>{timeFmt}</div>
-                        <div style={{ ...F, fontSize: 9, color: T.mu, marginTop: 4 }}>Precision matters — even 4 minutes shifts your ASC lines by ~1°</div>
+                        <div style={{ ...F, fontSize: 9, color: T.mu, marginTop: 4 }}>{t('timePrecision', lang)}</div>
                       </div>
 
                       <div style={{ background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>BIRTH LOCATION</div>
+                        <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, marginBottom: 8 }}>{t('birthLocation', lang)}</div>
                         <div style={{ ...F, fontSize: 15, color: T.tx, fontWeight: 600 }}>{profile?.birth_city || '—'}</div>
                         <div style={{ ...F, fontSize: 9, color: T.mu, marginTop: 4 }}>
                           {profile?.birth_lat != null ? `${Math.abs(profile.birth_lat).toFixed(4)}°${profile.birth_lat >= 0 ? 'N' : 'S'} · ${Math.abs(profile.birth_lng).toFixed(4)}°${profile.birth_lng >= 0 ? 'E' : 'W'}` : '—'}
@@ -1325,7 +1349,7 @@ export default function Dashboard({ demo = false }) {
                     </div>
 
                     <div onClick={() => { setShowSettings(false); navigate('/birth-data', { state: { edit: true } }); }} style={{ ...F, fontSize: 10, fontWeight: 600, color: T.ac, cursor: 'pointer', padding: '12px 0', marginTop: 20, textAlign: 'center', border: `1px solid ${T.acBd}`, borderRadius: 8, background: T.acBg, letterSpacing: 1 }}>
-                      EDIT BIRTH DATA
+                      {t('editBirthData', lang)}
                     </div>
                   </div>)}
 
@@ -1336,13 +1360,13 @@ export default function Dashboard({ demo = false }) {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx }}>Plan</div>
-                            <div style={{ ...F, fontSize: 8, fontWeight: 700, color: isPremium ? T.ac : '#E8A838', padding: '2px 8px', borderRadius: 4, background: isPremium ? T.acBg : '#E8A83818', border: `1px solid ${isPremium ? T.acBd : '#E8A83830'}`, letterSpacing: 1 }}>{isPremium ? 'PREMIUM' : 'FREE'}</div>
+                            <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx }}>{t('plan', lang)}</div>
+                            <div style={{ ...F, fontSize: 8, fontWeight: 700, color: isPremium ? T.ac : '#E8A838', padding: '2px 8px', borderRadius: 4, background: isPremium ? T.acBg : '#E8A83818', border: `1px solid ${isPremium ? T.acBd : '#E8A83830'}`, letterSpacing: 1 }}>{isPremium ? t('premiumBadge', lang) : t('freeBadge', lang)}</div>
                           </div>
-                          <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 3 }}>{isPremium ? 'Full access to all features' : 'Upgrade to unlock all features'}</div>
+                          <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 3 }}>{isPremium ? t('fullAccess', lang) : t('upgradeUnlock', lang)}</div>
                         </div>
                         {!isPremium && (
-                          <div onClick={handleUpgrade} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: upgradeLoading ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>{upgradeLoading ? '...' : 'UPGRADE'}</div>
+                          <div onClick={handleUpgrade} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#E8A838', cursor: upgradeLoading ? 'default' : 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #E8A83840', background: '#E8A83810', letterSpacing: 0.5 }}>{upgradeLoading ? '...' : t('upgrade', lang)}</div>
                         )}
                       </div>
                     </div>
@@ -1351,29 +1375,29 @@ export default function Dashboard({ demo = false }) {
                     <div style={{ background: T.bg, border: `1px solid ${T.bs}`, borderRadius: 10, padding: 16, marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
-                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx }}>Sign Out</div>
-                          <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 3 }}>Sign out of your account on this device</div>
+                          <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx }}>{t('signOutHeading', lang)}</div>
+                          <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 3 }}>{t('signOutDesc', lang)}</div>
                         </div>
-                        <div onClick={signOut} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: '#F0406010', letterSpacing: 0.5 }}>SIGN OUT</div>
+                        <div onClick={signOut} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: '#F0406010', letterSpacing: 0.5 }}>{t('signOutBtn', lang)}</div>
                       </div>
                     </div>
 
                     {/* Danger zone */}
                     <div style={{ borderTop: '1px solid #F0406020', paddingTop: 20, marginTop: 8 }}>
-                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', letterSpacing: 1.5, marginBottom: 12 }}>DANGER ZONE</div>
+                      <div style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', letterSpacing: 1.5, marginBottom: 12 }}>{t('dangerZone', lang)}</div>
                       <div style={{ background: '#F0406008', border: '1px solid #F0406020', borderRadius: 10, padding: 16 }}>
-                        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx, marginBottom: 4 }}>Delete Account</div>
+                        <div style={{ ...F, fontSize: 11, fontWeight: 600, color: T.tx, marginBottom: 4 }}>{t('deleteAccount', lang)}</div>
                         <div style={{ ...F, fontSize: 9, color: T.tm, lineHeight: 1.6, marginBottom: 14 }}>
-                          Permanently delete your profile and all associated data. This action cannot be undone.
+                          {t('deleteDesc', lang)}
                         </div>
                         {!confirmDelete ? (
-                          <div onClick={() => setConfirmDelete(true)} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: 'transparent', display: 'inline-block', letterSpacing: 0.5 }}>DELETE ACCOUNT</div>
+                          <div onClick={() => setConfirmDelete(true)} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#F04060', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, border: '1px solid #F0406040', background: 'transparent', display: 'inline-block', letterSpacing: 0.5 }}>{t('deleteBtn', lang)}</div>
                         ) : (
                           <div style={{ background: '#F0406010', border: '1px solid #F0406030', borderRadius: 8, padding: 14 }}>
-                            <div style={{ ...F, fontSize: 10, color: '#F04060', fontWeight: 600, marginBottom: 10 }}>Are you sure? This cannot be undone.</div>
+                            <div style={{ ...F, fontSize: 10, color: '#F04060', fontWeight: 600, marginBottom: 10 }}>{t('deleteConfirm', lang)}</div>
                             <div style={{ display: 'flex', gap: 10 }}>
-                              <div onClick={() => { deleteAccount(); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, background: '#F04060', letterSpacing: 0.5 }}>YES, DELETE</div>
-                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}` }}>CANCEL</div>
+                              <div onClick={() => { deleteAccount(); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, background: '#F04060', letterSpacing: 0.5 }}>{t('deleteYes', lang)}</div>
+                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}` }}>{t('cancel', lang)}</div>
                             </div>
                           </div>
                         )}
@@ -1389,12 +1413,12 @@ export default function Dashboard({ demo = false }) {
           {/* HOW IT WORKS guide */}
           {showGuide && (() => {
             const TABS = [
-              { id: 'overview', label: 'OVERVIEW', color: T.ac },
-              { id: 'lines', label: 'LINES', color: '#5BA8D4' },
-              { id: 'planets', label: 'PLANETS', color: '#D4729A' },
-              { id: 'zones', label: 'ZONES', color: '#E8A838' },
-              { id: 'usage', label: 'HOW TO USE', color: '#8068C0' },
-              { id: 'faq', label: 'FAQ', color: '#40B0A0' },
+              { id: 'overview', label: t('guideOverview', lang), color: T.ac },
+              { id: 'lines', label: t('guideLines', lang), color: '#5BA8D4' },
+              { id: 'planets', label: t('guidePlanets', lang), color: '#D4729A' },
+              { id: 'zones', label: t('guideZones', lang), color: '#E8A838' },
+              { id: 'usage', label: t('guideHowTo', lang), color: '#8068C0' },
+              { id: 'faq', label: t('guideFaq', lang), color: '#40B0A0' },
             ];
             const gt = guideTab;
             const cur = TABS[gt];
@@ -1406,7 +1430,7 @@ export default function Dashboard({ demo = false }) {
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: `1px solid ${T.bd}`, background: T.bg, flexShrink: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.ac, letterSpacing: 2 }}>SYSTEM GUIDE</span>
+                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.ac, letterSpacing: 2 }}>{t('systemGuide', lang)}</span>
                     <span style={{ ...F, fontSize: 8, color: T.mu }}>{gt + 1}/{TABS.length}</span>
                   </div>
                   <span onClick={() => setShowGuide(false)} style={{ cursor: 'pointer', ...F, fontSize: 16, color: T.td, lineHeight: 1 }}>✕</span>
@@ -1414,15 +1438,15 @@ export default function Dashboard({ demo = false }) {
 
                 {/* Tab bar */}
                 <div style={{ display: 'flex', borderBottom: `1px solid ${T.bd}`, background: T.b, flexShrink: 0, overflowX: 'auto' }}>
-                  {TABS.map((t, i) => (
-                    <button key={t.id} onClick={() => setGuideTab(i)} style={{
+                  {TABS.map((tb, i) => (
+                    <button key={tb.id} onClick={() => setGuideTab(i)} style={{
                       ...F, fontSize: mob ? 7 : 8, fontWeight: 700, letterSpacing: 1,
                       padding: mob ? '8px 8px' : '9px 14px', border: 'none', cursor: 'pointer',
-                      color: i === gt ? t.color : T.mu,
-                      background: i === gt ? t.color + '12' : 'transparent',
-                      borderBottom: i === gt ? `2px solid ${t.color}` : '2px solid transparent',
+                      color: i === gt ? tb.color : T.mu,
+                      background: i === gt ? tb.color + '12' : 'transparent',
+                      borderBottom: i === gt ? `2px solid ${tb.color}` : '2px solid transparent',
                       whiteSpace: 'nowrap', flex: mob ? 1 : 'none',
-                    }}>{t.label}</button>
+                    }}>{tb.label}</button>
                   ))}
                 </div>
 
@@ -1433,22 +1457,22 @@ export default function Dashboard({ demo = false }) {
                   {gt === 0 && <>
                     <div style={{ marginBottom: 24 }}>
                       <div style={{ ...F, fontSize: 9, fontWeight: 700, color: T.ac, letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ width: 16, height: 1, background: T.ac }} />WHAT IS NATAL NAVIGATOR
+                        <span style={{ width: 16, height: 1, background: T.ac }} />{t('whatIsNN', lang)}
                       </div>
                       <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.8 }}>
-                        Natal Navigator is an <strong style={{ color: T.tx }}>astrocartography tool</strong> that maps your birth chart onto the globe. It reveals which cities and regions of the world are energetically aligned with your planetary positions — showing you where your strengths are amplified and where challenges may arise.
+                        {t('whatIsNNBody', lang)}
                       </div>
                     </div>
                     <div style={{ width: '100%', height: 1, background: T.bd, marginBottom: 24 }} />
                     <div>
                       <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#E8A838', letterSpacing: 2, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ width: 16, height: 1, background: '#E8A838' }} />WHAT IS ASTROCARTOGRAPHY
+                        <span style={{ width: 16, height: 1, background: '#E8A838' }} />{t('whatIsAstro', lang)}
                       </div>
                       <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.8, marginBottom: 12 }}>
-                        Astrocartography (or locational astrology) calculates where each planet in your birth chart was rising, setting, culminating, or at its lowest point — and projects those positions as <strong style={{ color: T.tx }}>lines across the globe</strong>. Living near or traveling to these lines activates the planet's energy in your life.
+                        {t('whatIsAstroBody1', lang)}
                       </div>
                       <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.8 }}>
-                        Your birth chart is a snapshot of the sky at the exact moment you were born. The positions of the Sun, Moon, and planets at that time define your personality traits, strengths, and life themes. Astrocartography extends this by asking: <em style={{ color: T.tm }}>where on Earth were these planetary energies strongest?</em>
+                        {t('whatIsAstroBody2', lang)}
                       </div>
                     </div>
                   </>}
@@ -1456,17 +1480,17 @@ export default function Dashboard({ demo = false }) {
                   {/* TAB 1: Lines */}
                   {gt === 1 && <>
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#5BA8D4', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 16, height: 1, background: '#5BA8D4' }} />THE FOUR LINE TYPES
+                      <span style={{ width: 16, height: 1, background: '#5BA8D4' }} />{t('fourLineTypes', lang)}
                     </div>
                     <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7, marginBottom: 16 }}>
-                      Each planet produces four lines on the globe — one for each angle. The line type determines <em style={{ color: T.tm }}>which area of life</em> the planet's energy activates at that location.
+                      {t('fourLineTypesIntro', lang)}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 10 }}>
                       {[
-                        { angle: 'MC', label: 'Midheaven', dash: '', desc: 'Where a planet culminates — its highest point. Activates career, public reputation, and ambition. The most visible and outward-facing energy.' },
-                        { angle: 'IC', label: 'Nadir', dash: '4,3', desc: 'Where a planet is at its lowest point below the horizon. Activates home life, emotional roots, and inner security. Deep, private energy.' },
-                        { angle: 'ASC', label: 'Ascendant', dash: '8,3', desc: 'Where a planet was rising on the eastern horizon. Activates identity, self-expression, and first impressions. Personal and physical energy.' },
-                        { angle: 'DC', label: 'Descendant', dash: '2,2', desc: 'Where a planet was setting on the western horizon. Activates partnerships, relationships, and collaboration. Interpersonal energy.' },
+                        { angle: 'MC', label: t('mcLine', lang), dash: '', desc: t('mcLineDesc', lang) },
+                        { angle: 'IC', label: t('icLine', lang), dash: '4,3', desc: t('icLineDesc', lang) },
+                        { angle: 'ASC', label: t('ascLine', lang), dash: '8,3', desc: t('ascLineDesc', lang) },
+                        { angle: 'DC', label: t('dcLine', lang), dash: '2,2', desc: t('dcLineDesc', lang) },
                       ].map(a => (
                         <div key={a.angle} style={{ background: T.d, border: `1px solid ${T.bs}`, borderRadius: 6, padding: 14 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -1479,17 +1503,17 @@ export default function Dashboard({ demo = false }) {
                       ))}
                     </div>
                     <div style={{ ...F, fontSize: 8, color: T.mu, lineHeight: 1.6, marginTop: 14, padding: '10px 12px', background: T.d, borderRadius: 5, border: `1px solid ${T.bs}` }}>
-                      MC & IC are vertical meridian lines (pole to pole). ASC & DC are curved lines that follow the horizon.
+                      {t('lineFootnote', lang)}
                     </div>
                   </>}
 
                   {/* TAB 2: Planets */}
                   {gt === 2 && <>
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#D4729A', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 16, height: 1, background: '#D4729A' }} />PLANETARY ENERGIES
+                      <span style={{ width: 16, height: 1, background: '#D4729A' }} />{t('planetaryEnergies', lang)}
                     </div>
                     <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7, marginBottom: 16 }}>
-                      Each planet governs specific life themes. When you live near or visit a planetary line, that planet's energy is amplified in the corresponding area of your life.
+                      {t('planetaryEnergiesIntro', lang)}
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: mob ? '1fr' : '1fr 1fr', gap: 1, background: T.bs, borderRadius: 6, overflow: 'hidden', border: `1px solid ${T.bs}` }}>
                       {Object.entries(PLANET_DOMAINS).map(([planet, { domain, icon }]) => (
@@ -1507,16 +1531,16 @@ export default function Dashboard({ demo = false }) {
                   {/* TAB 3: Zones */}
                   {gt === 3 && <>
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#E8A838', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 16, height: 1, background: '#E8A838' }} />ZONE CLASSIFICATION
+                      <span style={{ width: 16, height: 1, background: '#E8A838' }} />{t('zoneClassification', lang)}
                     </div>
                     <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7, marginBottom: 16 }}>
-                      Cities near your lines are classified into three zones based on the planet's traditional nature. Use these as guidance, not absolute rules.
+                      {t('zoneClassificationIntro', lang)}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {[
-                        { zone: 'THRIVE', color: T.ac, sym: '▲', desc: 'Benefic planetary lines — Sun (vitality, recognition), Moon (emotional belonging), Venus (love, beauty), and Jupiter (luck, expansion). Each planet activates different strengths depending on the angle: MC amplifies career, IC deepens roots, ASC enhances identity, DC enriches partnerships.' },
-                        { zone: 'NEUTRAL', color: '#D8A030', sym: '◆', desc: 'Mixed-energy lines — Mercury (communication, intellect) and some Mars/Saturn/Uranus angles. Effects are subtle and depend on conscious engagement. These placements offer both opportunity and challenge — how you work with the energy determines the outcome.' },
-                        { zone: 'CAUTION', color: '#F04060', sym: '▼', desc: 'Challenging planetary lines — Saturn (restriction, heaviness), Mars (conflict, aggression), Neptune (confusion, deception), Pluto (power struggles, intensity), and certain Uranus angles (instability). Each planet brings specific difficulties: Saturn isolates, Mars provokes, Neptune confuses, Pluto overwhelms. Short visits can teach lessons; long-term stays require awareness.' },
+                        { zone: t('thriveZone', lang).toUpperCase(), color: T.ac, sym: '▲', desc: t('thriveZoneDesc', lang) },
+                        { zone: t('neutral', lang).toUpperCase(), color: '#D8A030', sym: '◆', desc: t('neutralZoneDesc', lang) },
+                        { zone: t('cautionZone', lang).toUpperCase(), color: '#F04060', sym: '▼', desc: t('cautionZoneDesc', lang) },
                       ].map(z => (
                         <div key={z.zone} style={{ background: T.d, border: `1px solid ${z.color}20`, borderRadius: 6, padding: 14, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <div style={{ ...F, fontSize: 16, color: z.color, lineHeight: 1, flexShrink: 0, marginTop: 2 }}>{z.sym}</div>
@@ -1532,15 +1556,15 @@ export default function Dashboard({ demo = false }) {
                   {/* TAB 4: How to Use */}
                   {gt === 4 && <>
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#8068C0', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 16, height: 1, background: '#8068C0' }} />HOW TO USE
+                      <span style={{ width: 16, height: 1, background: '#8068C0' }} />{t('howToUse', lang)}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: T.bs, borderRadius: 6, overflow: 'hidden', border: `1px solid ${T.bs}` }}>
                       {[
-                        { step: '01', title: 'Create your chart', desc: 'Sign up and enter your exact birth date, time, and location. Accuracy matters — even 15 minutes can shift your lines.' },
-                        { step: '02', title: 'Explore the globe', desc: 'Drag to rotate, scroll to zoom. Your planetary lines are projected across the globe. Each colored line represents a planet-angle combination.' },
-                        { step: '03', title: 'Click on cities', desc: 'Cities near your lines appear in the bottom panel. Click any city to get a detailed reading of what that planetary energy means for you there.' },
-                        { step: '04', title: 'Filter by planet', desc: 'Use the left sidebar to toggle planets on/off, expand them to see their individual lines, and filter by thrive/neutral/caution zones.' },
-                        { step: '05', title: 'Read your natal chart', desc: 'Click "Natal Chart" to see your planetary positions. Switch to "Your Birth Chart" for detailed readings — tap any planet to see what it means in your sign and house.' },
+                        { step: '01', title: t('step1', lang), desc: t('step1Desc', lang) },
+                        { step: '02', title: t('step2', lang), desc: t('step2Desc', lang) },
+                        { step: '03', title: t('step3', lang), desc: t('step3Desc', lang) },
+                        { step: '04', title: t('step4', lang), desc: t('step4Desc', lang) },
+                        { step: '05', title: t('step5', lang), desc: t('step5Desc', lang) },
                       ].map(s => (
                         <div key={s.step} style={{ background: T.p, padding: '14px 16px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                           <span style={{ ...F, fontSize: 20, fontWeight: 700, color: '#8068C040', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{s.step}</span>
@@ -1556,15 +1580,15 @@ export default function Dashboard({ demo = false }) {
                   {/* TAB 5: FAQ */}
                   {gt === 5 && <>
                     <div style={{ ...F, fontSize: 9, fontWeight: 700, color: '#40B0A0', letterSpacing: 2, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ width: 16, height: 1, background: '#40B0A0' }} />FREQUENTLY ASKED QUESTIONS
+                      <span style={{ width: 16, height: 1, background: '#40B0A0' }} />{t('faqTitle', lang)}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: T.bs, borderRadius: 6, overflow: 'hidden', border: `1px solid ${T.bs}` }}>
                       {[
-                        { q: 'Do I need to know my exact birth time?', a: 'Yes. Your birth time determines the Ascendant and house cusps, which shift your lines significantly. If you don\'t know your exact time, check your birth certificate or contact the hospital of birth.' },
-                        { q: 'How close to a line do I need to be?', a: 'The influence is strongest within 1-2° of a line (roughly 100-200 km). We show cities up to 3.5° away, with signal strength decreasing with distance.' },
-                        { q: 'Can I live on a "caution" line?', a: 'It depends on the planet. Saturn lines bring heaviness, isolation, and slow progress — manageable for disciplined people, but draining over years. Mars IC/DC lines create domestic conflict and relationship battles — not ideal for family life. Neptune lines dissolve clarity and attract deception — risky for practical decisions. Pluto lines force intense psychological transformation — powerful but overwhelming. Short visits can teach valuable lessons; long stays require deep self-awareness.' },
-                        { q: 'What\'s the difference between globe and map view?', a: 'Globe view shows Earth in 3D for spatial context. Map view unfolds the projection flat, making it easier to trace lines across continents and compare regions.' },
-                        { q: 'Is this based on real astronomy?', a: 'Yes. Planetary positions are calculated using high-precision astronomical algorithms (astronomy-engine), comparable to research-grade ephemeris data. Astrocartography then applies astrological interpretation to these positions.' },
+                        { q: t('faq1Q', lang), a: t('faq1A', lang) },
+                        { q: t('faq2Q', lang), a: t('faq2A', lang) },
+                        { q: t('faq3Q', lang), a: t('faq3A', lang) },
+                        { q: t('faq4Q', lang), a: t('faq4A', lang) },
+                        { q: t('faq5Q', lang), a: t('faq5A', lang) },
                       ].map((faq, i) => (
                         <div key={i} style={{ background: T.p, padding: '14px 16px' }}>
                           <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.tm, marginBottom: 6, display: 'flex', gap: 8 }}>
@@ -1592,7 +1616,7 @@ export default function Dashboard({ demo = false }) {
                     </div>
                   ) : (
                     <div onClick={() => setShowGuide(false)} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: T.acBg, border: `1px solid ${T.acBd}`, borderRadius: 5, padding: '6px 14px' }}>
-                      <span style={{ ...F, fontSize: 9, color: T.ac, fontWeight: 600 }}>START EXPLORING</span>
+                      <span style={{ ...F, fontSize: 9, color: T.ac, fontWeight: 600 }}>{t('startExploring', lang)}</span>
                       <span style={{ ...F, fontSize: 12, color: T.ac }}>→</span>
                     </div>
                   )}
@@ -1606,17 +1630,17 @@ export default function Dashboard({ demo = false }) {
             <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.ov, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }} onClick={() => setShowDemoGate(false)}>
               <div onClick={e => e.stopPropagation()} style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: T.sh, textAlign: 'center', position: 'relative' }}>
                 <span onClick={() => setShowDemoGate(false)} style={{ position: 'absolute', top: 12, right: 14, cursor: 'pointer', ...F, fontSize: 16, color: T.td, lineHeight: 1, zIndex: 1 }}>✕</span>
-                <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.ac, letterSpacing: 2, marginBottom: 12 }}>DISCOVER YOUR CHART</div>
+                <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.ac, letterSpacing: 2, marginBottom: 12 }}>{t('discoverChart', lang)}</div>
                 <div style={{ fontSize: 13, color: T.tm, lineHeight: 1.7, marginBottom: 24 }}>
-                  You're viewing <strong style={{ color: T.tx }}>{DEMO.name}'s</strong> chart as a demo.<br />
-                  Sign up to see <strong style={{ color: T.ac }}>your own</strong> planetary lines, city readings, and natal chart.
+                  {t('demoViewing', lang).replace('{name}', DEMO.name)}<br />
+                  {t('demoSignup', lang)}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
-                    CREATE MY CHART
+                    {t('createMyChart', lang)}
                   </button>
                   <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: T.tm, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
-                    I already have an account
+                    {t('alreadyAccount', lang)}
                   </button>
                 </div>
               </div>
@@ -1626,11 +1650,11 @@ export default function Dashboard({ demo = false }) {
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
             <div style={{ display: 'flex', gap: 4 }}>
-              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ PLANETS</div>
+              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
               <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
             </div>
             {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
-              {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>Show all planets</div>}
+              {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>{t('allOn', lang)}</div>}
               {planetGroups.map(g => {
                 const isHid = hiddenPlanets.has(g.planet);
                 return (
@@ -1670,7 +1694,7 @@ export default function Dashboard({ demo = false }) {
             {/* Mobile angle info */}
             {showAngleInfo && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>LINE TYPES</span>
+                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>{t('lineTypes', lang)}</span>
                 <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: T.td, cursor: 'pointer' }}>✕</span>
               </div>
               {ANGLE_ORDER.map(a => {
@@ -1703,30 +1727,30 @@ export default function Dashboard({ demo = false }) {
           {/* Tabs */}
           <div style={{ display: 'flex', borderBottom: `1px solid ${T.bs}`, flexShrink: 0 }}>
             {[
-              { id: 'thrive', label: '▲ THRIVE', count: thriveC.length, col: COL.thrive },
-              { id: 'neutral', label: '◆ NEUTRAL', count: neutralC.length, col: COL.neutral },
-              { id: 'avoid', label: '▼ AVOID', count: avoidC.length, col: COL.avoid },
-              { id: 'all', label: 'ALL', count: onLines.length, col: T.tm },
-            ].map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)} style={{
-                flex: 1, background: tab === t.id ? T.c : 'transparent', border: 'none',
-                borderBottom: tab === t.id ? `2px solid ${t.col}` : '2px solid transparent',
-                color: tab === t.id ? t.col : T.mu,
+              { id: 'thrive', label: t('thriveTab', lang), count: thriveC.length, col: COL.thrive },
+              { id: 'neutral', label: t('neutralTab', lang), count: neutralC.length, col: COL.neutral },
+              { id: 'avoid', label: t('avoidTab', lang), count: avoidC.length, col: COL.avoid },
+              { id: 'all', label: t('allTab', lang), count: onLines.length, col: T.tm },
+            ].map(tb => (
+              <button key={tb.id} onClick={() => setTab(tb.id)} style={{
+                flex: 1, background: tab === tb.id ? T.c : 'transparent', border: 'none',
+                borderBottom: tab === tb.id ? `2px solid ${tb.col}` : '2px solid transparent',
+                color: tab === tb.id ? tb.col : T.mu,
                 cursor: 'pointer', padding: mob ? '5px 0' : '6px 0', ...F, fontSize: mob ? 8 : 9, fontWeight: 700, letterSpacing: 1
               }}>
-                {t.label} ({t.count})
+                {tb.label} ({tb.count})
               </button>
             ))}
           </div>
 
           {/* Column headers */}
           {!mob && <div style={{ display: 'flex', padding: '4px 12px', borderBottom: `1px solid ${T.bs}`, flexShrink: 0, background: T.bg }}>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 130, letterSpacing: 1 }}>CITY</span>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 100, letterSpacing: 1 }}>LINE</span>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>SIGNAL</span>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 130, letterSpacing: 1 }}>DOMAIN</span>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 110, letterSpacing: 1 }}>LIFE AREA</span>
-            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, flex: 1, letterSpacing: 1 }}>READING</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 130, letterSpacing: 1 }}>{t('city', lang)}</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 100, letterSpacing: 1 }}>{t('line', lang)}</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 60, letterSpacing: 1, textAlign: 'center' }}>{t('signal', lang)}</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 130, letterSpacing: 1 }}>{t('domain', lang)}</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 110, letterSpacing: 1 }}>{t('lifeArea', lang)}</span>
+            <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, flex: 1, letterSpacing: 1 }}>{t('reading', lang)}</span>
           </div>}
 
           {/* City rows */}
@@ -1788,7 +1812,7 @@ export default function Dashboard({ demo = false }) {
         {/* Right: Lines summary — desktop only */}
         {!mob && <div style={{ width: 260, minWidth: 260, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderLeft: `1px solid ${T.bd}` }}>
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 1.5, padding: '8px 12px', borderBottom: `1px solid ${T.bs}`, background: T.bg }}>
-            ON YOUR LINES — {onLines.length} CITIES
+            {t('onYourLines', lang)} — {onLines.length} {t('cities', lang)}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '2px 0' }}>
             {visibleLines.map((l, i) => {
@@ -1814,13 +1838,13 @@ export default function Dashboard({ demo = false }) {
       <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
         <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[...Array(2)].flatMap(() => [
-            bestCities[0] ? `★ Best city: ${bestCities[0].name} (${bestCities[0].line})` : '★ Your personalized chart',
-            `▲ ${thriveC.length} thrive`,
-            `◆ ${neutralC.length} neutral`,
-            `▼ ${avoidC.length} caution`,
-            `◉ ${onLines.length} total cities on your natal lines`,
-          ]).map((t, i) => (
-            <span key={i} style={{ color: t.startsWith('▼') ? '#F04060' : t.startsWith('▲') ? T.ac : T.td, padding: '0 4px' }}>{t}</span>
+            bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`,
+            `▲ ${thriveC.length} ${t('thriveZone', lang).toLowerCase()}`,
+            `◆ ${neutralC.length} ${t('neutral', lang).toLowerCase()}`,
+            `▼ ${avoidC.length} ${t('cautionZone', lang).toLowerCase()}`,
+            `◉ ${onLines.length} ${t('total', lang)}`,
+          ]).map((s, i) => (
+            <span key={i} style={{ color: s.startsWith('▼') ? '#F04060' : s.startsWith('▲') ? T.ac : T.td, padding: '0 4px' }}>{s}</span>
           ))}
         </div>
       </div>

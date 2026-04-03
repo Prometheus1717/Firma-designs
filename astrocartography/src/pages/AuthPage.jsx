@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isLightMode, getTheme } from '../lib/theme';
+import { t, getLang } from '../lib/i18n';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -17,6 +18,7 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
+  const lang = getLang();
 
   useEffect(() => {
     document.title = mode === 'login' ? 'Sign In \u2014 Natal Navigator' : mode === 'signup' ? 'Create Account \u2014 Natal Navigator' : 'Reset Password \u2014 Natal Navigator';
@@ -34,15 +36,15 @@ export default function AuthPage() {
       } else if (mode === 'signup') {
         const data = await signUp(email, password);
         if (data?.user && !data?.session) {
-          setMessage('Account created! Check your email and click the confirmation link, then come back and sign in.');
+          setMessage(t('accountCreated', lang));
         }
       } else {
         await resetPassword(email);
-        setMessage('Password reset link sent to your email.');
+        setMessage(t('resetLinkSent', lang));
       }
     } catch (err) {
       if (mode === 'login' && /invalid.*credentials/i.test(err.message)) {
-        setError('No account found with these credentials. Check your email and password, or sign up to create a new account.');
+        setError(t('invalidCredentials', lang));
       } else {
         setError(err.message);
       }
@@ -63,17 +65,17 @@ export default function AuthPage() {
       <div style={{ width: '100%', maxWidth: 400, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, position: 'relative' }}>
         <span onClick={() => { window.location.href = '/'; }} style={{ position: 'absolute', top: 14, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: T.td, lineHeight: 1, zIndex: 1 }}>\u2715</span>
         <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, marginBottom: 20, textAlign: 'center' }}>
-          {mode === 'login' ? 'Welcome Back' : mode === 'signup' ? 'Create Your Account' : 'Reset Password'}
+          {mode === 'login' ? t('welcomeBack', lang) : mode === 'signup' ? t('createAccount', lang) : t('resetPassword', lang)}
         </div>
 
         {mode === 'signup' && !message && (
           <div style={{ ...F, fontSize: 10, color: T.td, marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
-            Discover which cities on Earth align with your stars.
+            {t('discoverCities', lang)}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>EMAIL</label>
+          <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>{t('emailLabel', lang)}</label>
           <input
             type="email"
             required
@@ -84,12 +86,12 @@ export default function AuthPage() {
               borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 16, outline: 'none',
               boxSizing: 'border-box',
             }}
-            placeholder="you@example.com"
+            placeholder={t('emailPlaceholder', lang)}
           />
 
           {mode !== 'reset' && (
             <>
-              <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>PASSWORD</label>
+              <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>{t('passwordLabel', lang)}</label>
               <input
                 type="password"
                 required
@@ -101,7 +103,7 @@ export default function AuthPage() {
                   borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 20, outline: 'none',
                   boxSizing: 'border-box',
                 }}
-                placeholder="Min. 6 characters"
+                placeholder={t('passwordPlaceholder', lang)}
               />
             </>
           )}
@@ -130,10 +132,10 @@ export default function AuthPage() {
               {submitting ? (
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                   <span style={{ display: 'inline-block', width: 12, height: 12, border: `2px solid ${btnTx}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin .6s linear infinite' }} />
-                  {mode === 'login' ? 'SIGNING IN...' : 'CREATING ACCOUNT...'}
+                  {mode === 'login' ? t('signingIn', lang) : t('creatingAccount', lang)}
                 </span>
               ) : (
-                mode === 'login' ? 'SIGN IN' : mode === 'signup' ? 'CREATE ACCOUNT' : 'SEND RESET LINK'
+                mode === 'login' ? t('signInBtn', lang) : mode === 'signup' ? t('createAccountBtn', lang) : t('sendResetLink', lang)
               )}
             </button>
           )}
@@ -148,7 +150,7 @@ export default function AuthPage() {
                 letterSpacing: 1, cursor: 'pointer',
               }}
             >
-              GO TO SIGN IN
+              {t('goToSignIn', lang)}
             </button>
           )}
         </form>
@@ -160,21 +162,21 @@ export default function AuthPage() {
                 onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
                 style={{ display: 'inline-block', padding: '10px 24px', border: `1px solid ${T.ac}`, borderRadius: 6, color: T.ac, cursor: 'pointer', marginBottom: 12, fontWeight: 600, letterSpacing: 1 }}
               >
-                NEW HERE? CREATE ACCOUNT
+                {t('newHere', lang)}
               </div>
               <div>
-                <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: T.td, cursor: 'pointer' }}>Forgot password?</span>
+                <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: T.td, cursor: 'pointer' }}>{t('forgotPassword', lang)}</span>
               </div>
             </>
           )}
           {mode === 'signup' && !message && (
             <>
-              <span style={{ color: T.td }}>Already have an account? </span>
-              <span onClick={() => { setMode('login'); setError(''); setMessage(''); }} style={{ color: T.ac, cursor: 'pointer' }}>Sign in</span>
+              <span style={{ color: T.td }}>{t('alreadyHaveAccount', lang)} </span>
+              <span onClick={() => { setMode('login'); setError(''); setMessage(''); }} style={{ color: T.ac, cursor: 'pointer' }}>{t('signInLink', lang)}</span>
             </>
           )}
           {mode === 'reset' && (
-            <span onClick={() => { setMode('login'); setError(''); setMessage(''); }} style={{ color: T.ac, cursor: 'pointer' }}>\u2190 Back to sign in</span>
+            <span onClick={() => { setMode('login'); setError(''); setMessage(''); }} style={{ color: T.ac, cursor: 'pointer' }}>{t('backToSignIn', lang)}</span>
           )}
         </div>
       </div>

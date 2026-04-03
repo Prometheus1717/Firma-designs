@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { isLightMode, getTheme } from '../lib/theme';
+import { t, getLang } from '../lib/i18n';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -11,6 +12,7 @@ export default function BirthDataModal({ onComplete }) {
   const light = isLightMode();
   const T = getTheme(light);
   const btnTx = light ? '#FFFFFF' : '#0A1018';
+  const lang = getLang();
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
@@ -68,8 +70,8 @@ export default function BirthDataModal({ onComplete }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (!selectedCity) { setError('Please search and select your birth city.'); return; }
-    if (!date || !time) { setError('Please enter your birth date and exact time.'); return; }
+    if (!selectedCity) { setError(t('selectCityError', lang)); return; }
+    if (!date || !time) { setError(t('dateTimeError', lang)); return; }
 
     setSubmitting(true);
     try {
@@ -157,14 +159,14 @@ export default function BirthDataModal({ onComplete }) {
               </div>
 
               <div style={{ ...F, fontSize: 11, color: T.ac, letterSpacing: 3, marginBottom: 12 }}>
-                EMAIL VERIFIED
+                {t('emailVerified', lang)}
               </div>
 
               <h2 style={{
                 ...F, fontSize: 22, fontWeight: 700, color: T.tx,
                 margin: '0 0 12px', lineHeight: 1.3,
               }}>
-                Welcome to NatalNavigator
+                {t('welcomeToNN', lang)}
               </h2>
 
               <p style={{
@@ -172,7 +174,7 @@ export default function BirthDataModal({ onComplete }) {
                 fontSize: 14, color: T.tm, lineHeight: 1.7,
                 margin: '0 0 8px', padding: '0 8px',
               }}>
-                Your account is ready. To generate your personalized astrocartography globe, we need your exact birth details.
+                {t('welcomeReady', lang)}
               </p>
 
               <p style={{
@@ -180,7 +182,7 @@ export default function BirthDataModal({ onComplete }) {
                 fontSize: 12, color: T.td, lineHeight: 1.6,
                 margin: '0 0 32px', padding: '0 8px',
               }}>
-                The more precise your data, the more accurate your planetary lines will be.
+                {t('precisionNote', lang)}
               </p>
 
               <button
@@ -193,42 +195,42 @@ export default function BirthDataModal({ onComplete }) {
                   transition: 'background 0.2s, transform 0.1s',
                 }}
               >
-                ENTER BIRTH DATA
+                {t('enterBirthDataBtn', lang)}
               </button>
 
               <div style={{
                 ...F, fontSize: 9, color: T.mu, marginTop: 16,
               }}>
-                Takes less than a minute
+                {t('takesLess', lang)}
               </div>
             </div>
           ) : (
             <div>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
                 <div style={{ ...F, fontSize: 11, color: T.ac, letterSpacing: 3, marginBottom: 8 }}>
-                  BIRTH DATA
+                  {t('birthDataHeading', lang)}
                 </div>
                 <div style={{
                   fontFamily: 'system-ui, -apple-system, sans-serif',
                   fontSize: 13, color: T.td, lineHeight: 1.5,
                 }}>
-                  Enter your details for an accurate natal chart
+                  {t('enterDetailsFor', lang)}
                 </div>
               </div>
 
               <form onSubmit={handleSubmit}>
-                <label style={labelStyle}>Your Name</label>
+                <label style={labelStyle}>{t('yourName', lang)}</label>
                 <input
                   type="text"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   style={{ ...inputStyle, marginBottom: 16 }}
-                  placeholder="Optional"
+                  placeholder={t('optionalPlaceholder', lang)}
                 />
 
                 <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>Birth Date *</label>
+                    <label style={labelStyle}>{t('birthDateLabel', lang)}</label>
                     <input
                       type="text"
                       required
@@ -247,7 +249,7 @@ export default function BirthDataModal({ onComplete }) {
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>Birth Time *</label>
+                    <label style={labelStyle}>{t('birthTimeLabel', lang)}</label>
                     <input
                       type="text"
                       required
@@ -271,18 +273,18 @@ export default function BirthDataModal({ onComplete }) {
                   </div>
                 </div>
 
-                <label style={labelStyle}>Birth City *</label>
+                <label style={labelStyle}>{t('birthCityLabel', lang)}</label>
                 <div style={{ position: 'relative' }}>
                   <input
                     type="text"
                     value={citySearch}
                     onChange={e => { setCitySearch(e.target.value); setSelectedCity(null); }}
                     style={inputStyle}
-                    placeholder="London, New York, Sydney..."
+                    placeholder={t('cityPlaceholder', lang)}
                   />
                   {searching && (
                     <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', ...F, fontSize: 9, color: T.td }}>
-                      searching...
+                      {t('searchingCity', lang)}
                     </div>
                   )}
                 </div>
@@ -317,7 +319,7 @@ export default function BirthDataModal({ onComplete }) {
 
                 {!selectedCity && !searching && citySearch.length >= 2 && results.length === 0 && (
                   <div style={{ ...F, fontSize: 9, color: T.td, padding: '8px 0', marginBottom: 8 }}>
-                    No results. Try a different spelling or a nearby larger city.
+                    {t('noResults', lang)}
                   </div>
                 )}
 
@@ -332,7 +334,7 @@ export default function BirthDataModal({ onComplete }) {
                     <span
                       onClick={() => { setSelectedCity(null); setCitySearch(''); setResults([]); }}
                       style={{ color: T.td, cursor: 'pointer', marginLeft: 12, textDecoration: 'underline' }}
-                    >change</span>
+                    >{t('changeCity', lang)}</span>
                   </div>
                 )}
 
@@ -367,9 +369,9 @@ export default function BirthDataModal({ onComplete }) {
                         border: `2px solid ${btnTx}`, borderTopColor: 'transparent',
                         borderRadius: '50%', animation: 'nn-spin .6s linear infinite',
                       }} />
-                      CALCULATING YOUR CHART...
+                      {t('calculatingChart', lang)}
                     </span>
-                  ) : 'GENERATE MY NATAL CHART'}
+                  ) : t('generateChart', lang)}
                 </button>
 
                 <div
@@ -379,7 +381,7 @@ export default function BirthDataModal({ onComplete }) {
                     marginTop: 16, cursor: 'pointer',
                   }}
                 >
-                  \u2190 Back
+                  {t('back', lang)}
                 </div>
               </form>
             </div>
