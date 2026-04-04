@@ -105,8 +105,8 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     pinchDist: 0,
     // Double-tap tracking
     lastTap: 0, lastTapX: 0, lastTapY: 0,
-    // Mobile: throttle redraws to ~15fps (66ms) for battery; desktop: 60fps
-    frameInterval: isMobile ? 66 : 16,
+    // Mobile: ~30fps (33ms) for smooth rotation; desktop: 60fps
+    frameInterval: isMobile ? 33 : 16,
     // Cached atmosphere gradient — avoid per-frame allocation (Chrome/Firefox GC pressure)
     _atmosGrad: null, _atmosScale: 0, _atmosCx: 0, _atmosCy: 0,
     // Fly-to animation state
@@ -709,13 +709,11 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     };
     document.addEventListener('visibilitychange', onVis);
 
-    // Stop auto-rotation after 10 seconds of initial presentation
-    const autoStopTimer = setTimeout(() => { s.auto = false; }, 10000);
+    // No auto-stop timer — rotation continues until user drags/zooms in
 
     return () => {
       cancelAnimationFrame(s.raf);
       cancelAnimationFrame(_mvRaf);
-      clearTimeout(autoStopTimer);
       document.removeEventListener('visibilitychange', onVis);
       c.removeEventListener('mousedown', dn); window.removeEventListener('mousemove', mvThrottled); window.removeEventListener('mouseup', up);
       c.removeEventListener('touchstart', dn); c.removeEventListener('touchmove', mv); c.removeEventListener('touchend', up);
