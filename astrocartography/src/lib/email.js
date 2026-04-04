@@ -1,14 +1,22 @@
+import { supabase } from './supabase';
+
 /**
  * Send an email via the server-side Resend API.
  * The API key never leaves the server — this calls /api/send-email which
  * runs as a Vercel Serverless Function.
+ * Auth token is included so the server can verify the sender.
  */
-export async function sendEmail({ to, subject, html, from }) {
+export async function sendEmail({ to, subject, html }) {
   try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const headers = { 'Content-Type': 'application/json' };
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
     const response = await fetch('/api/send-email', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to, subject, html, from }),
+      headers,
+      body: JSON.stringify({ to, subject, html }),
     });
 
     const result = await response.json();

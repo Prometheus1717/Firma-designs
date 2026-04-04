@@ -332,7 +332,7 @@ export default function Dashboard({ demo = false }) {
     setUpgradeLoading(true);
     setUpgradeError('');
     try {
-      await redirectToCheckout(user.email, user.id);
+      await redirectToCheckout();
     } catch (err) {
       const msg = err.message || '';
       if (msg.includes('Stripe not configured') || msg.includes('Failed to create checkout')) {

@@ -1,88 +1,66 @@
 import { supabase } from './supabase';
 
-export async function fetchAllProfiles({ search = '', sortField = 'updated_at', sortAsc = false, page = 1, pageSize = 25 } = {}) {
-  let query = supabase
-    .from('profiles')
-    .select('*', { count: 'exact' });
-
-  if (search) {
-    // Escape special PostgREST filter characters to prevent filter injection
-    const safe = search.replace(/[%_\\(),."']/g, c => '\\' + c);
-    query = query.or(`display_name.ilike.%${safe}%,birth_city.ilike.%${safe}%,email.ilike.%${safe}%`);
+// ─── Helper: call the server-side admin endpoint ───
+async function adminFetch(action, params = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Not authenticated');
   }
 
-  query = query
-    .order(sortField, { ascending: sortAsc })
-    .range((page - 1) * pageSize, page * pageSize - 1);
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ action, ...params }),
+  });
 
-  const { data, count, error } = await query;
-  if (error) throw error;
-  return { data: data || [], total: count || 0 };
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Admin API error (${res.status})`);
+  }
+
+  return res.json();
 }
 
-export async function fetchAdminStats() {
-  const { count: totalUsers } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true });
+// ─── Profiles ───
 
-  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-  const { count: recentSignups } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .gte('updated_at', weekAgo);
-
-  const { count: withBirthData } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .not('birth_date', 'is', null);
-
-  const { count: premiumUsers } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_premium', true);
-
-  return { totalUsers: totalUsers || 0, recentSignups: recentSignups || 0, withBirthData: withBirthData || 0, premiumUsers: premiumUsers || 0 };
-}
-
-export async function fetchPaywallSetting() {
-  const { data } = await supabase
-    .from('app_settings')
-    .select('value')
-    .eq('key', 'paywall_enabled')
-    .single();
-  return data?.value === 'true';
-}
-
-export async function updatePaywallSetting(enabled) {
-  const { error } = await supabase
-    .from('app_settings')
-    .upsert({ key: 'paywall_enabled', value: enabled ? 'true' : 'false', updated_at: new Date().toISOString() });
-  if (error) throw error;
+export async function fetchAllProfiles({ search = '', sortField = 'updated_at', sortAsc = false, page = 1, pageSize = 25 } = {}) {
+  const result = await adminFetch('fetchProfiles', { search, sortField, sortAsc, page, pageSize });
+  // result is { data: [...], total: N }
+  return result;
 }
 
 export async function toggleUserPremium(userId, isPremium) {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_premium: isPremium, updated_at: new Date().toISOString() })
-    .eq('id', userId);
-  if (error) throw error;
+  await adminFetch('togglePremium', { userId, isPremium });
+}
+
+// ─── Stats ───
+
+export async function fetchAdminStats() {
+  // result is { totalUsers, recentSignups, withBirthData, premiumUsers }
+  return adminFetch('fetchStats');
+}
+
+// ─── Paywall ───
+
+export async function fetchPaywallSetting() {
+  const settings = await adminFetch('fetchSettings');
+  return settings.paywall_enabled === 'true';
+}
+
+export async function updatePaywallSetting(enabled) {
+  await adminFetch('updatePaywall', { enabled });
 }
 
 // ─── App Settings (generic key-value) ───
 
 export async function fetchAllAppSettings() {
-  const { data, error } = await supabase
-    .from('app_settings')
-    .select('key, value, updated_at');
-  if (error) throw error;
-  const map = {};
-  (data || []).forEach(r => { map[r.key] = r.value; });
-  return map;
+  // result is { key1: value1, key2: value2, ... }
+  return adminFetch('fetchSettings');
 }
 
 export async function updateAppSetting(key, value) {
-  const { error } = await supabase
-    .from('app_settings')
-    .upsert({ key, value: String(value), updated_at: new Date().toISOString() });
-  if (error) throw error;
+  await adminFetch('updateSetting', { key, value });
 }

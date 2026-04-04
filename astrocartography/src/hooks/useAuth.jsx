@@ -22,18 +22,19 @@ function checkRateLimit(action, maxAttempts = 5, windowMs = 60000) {
   _rateLimits[action].push(now);
 }
 
-// ─── localStorage profile cache ───
-// Eliminates the Supabase profile round-trip for returning users.
-// On mobile networks this saves 300ms-2s of blocking wait time.
+// ─── sessionStorage profile cache ───
+// Eliminates the Supabase profile round-trip within a browser session.
+// Uses sessionStorage (not localStorage) so sensitive birth data doesn't persist
+// across sessions — reduces XSS blast radius.
 const PROFILE_CACHE_KEY = 'nn_profile';
 
 function getCachedProfile() {
   try {
-    const raw = localStorage.getItem(PROFILE_CACHE_KEY);
+    const raw = sessionStorage.getItem(PROFILE_CACHE_KEY);
     if (!raw) return null;
     const cached = JSON.parse(raw);
-    // Expire after 24h — forces a fresh fetch once a day
-    if (Date.now() - (cached.ts || 0) > 86400000) return null;
+    // Expire after 1h within session
+    if (Date.now() - (cached.ts || 0) > 3600000) return null;
     return cached.data;
   } catch { return null; }
 }
@@ -41,12 +42,15 @@ function getCachedProfile() {
 function setCachedProfile(data) {
   try {
     if (data) {
-      localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+      sessionStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
     } else {
-      localStorage.removeItem(PROFILE_CACHE_KEY);
+      sessionStorage.removeItem(PROFILE_CACHE_KEY);
     }
-  } catch { /* localStorage full or disabled */ }
+  } catch { /* sessionStorage full or disabled */ }
 }
+
+// Clean up old localStorage cache from previous versions
+try { localStorage.removeItem(PROFILE_CACHE_KEY); } catch {}
 
 // Read cached profile once at module level — avoids minifier TDZ issues
 // with useRef().current pattern inside component body

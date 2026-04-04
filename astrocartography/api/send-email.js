@@ -1,6 +1,10 @@
 import { Resend } from 'resend';
+import { createClient } from '@supabase/supabase-js';
 
 const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
+
+// Only these templates can be sent from the client
+const ALLOWED_TEMPLATES = ['welcome', 'verification', 'passwordReset', 'notification'];
 
 function getCorsHeaders(req) {
   const origin = req.headers.origin || '';
@@ -9,13 +13,13 @@ function getCorsHeaders(req) {
   return {
     'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
-const RATE_LIMIT = 10;       // max requests
+const RATE_LIMIT = 5;        // max requests
 const RATE_WINDOW = 60_000;  // per 60 seconds
 
 function isRateLimited(key) {
@@ -29,6 +33,25 @@ function isRateLimited(key) {
   entry.count++;
   if (entry.count > RATE_LIMIT) return true;
   return false;
+}
+
+// Validate email format
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length < 255;
+}
+
+// Verify Supabase JWT and return user
+async function verifyAuth(req) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return null;
+  const token = auth.slice(7);
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  const supabase = createClient(url, key);
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return null;
+  return user;
 }
 
 export default async function handler(req, res) {
@@ -59,18 +82,49 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Email service not configured' });
   }
 
-  const { to, subject, html, from } = req.body || {};
+  const { to, subject, html } = req.body || {};
 
   if (!to || !subject || !html) {
     return res.status(400).json({ error: 'Missing required fields: to, subject, html' });
   }
 
+  // Validate recipient email
+  const recipient = Array.isArray(to) ? to[0] : to;
+  if (!isValidEmail(recipient)) {
+    return res.status(400).json({ error: 'Invalid recipient email' });
+  }
+
+  // Only allow sending to a single recipient
+  if (Array.isArray(to) && to.length > 1) {
+    return res.status(400).json({ error: 'Only single recipient allowed' });
+  }
+
+  // Verify auth — email can only be sent to the authenticated user's own email
+  const user = await verifyAuth(req);
+  if (user && user.email !== recipient) {
+    // Allow server-to-server calls (webhook) without auth, but if auth present, must match
+    return res.status(403).json({ error: 'Can only send emails to your own address' });
+  }
+
+  // Sanitize: never allow client to override the from address
+  const from = 'NatalNavigator <info@natalnavigator.com>';
+
+  // Limit HTML size to prevent abuse (50KB max)
+  if (typeof html === 'string' && html.length > 50_000) {
+    return res.status(400).json({ error: 'Email content too large' });
+  }
+
+  // Limit subject length
+  if (typeof subject === 'string' && subject.length > 200) {
+    return res.status(400).json({ error: 'Subject too long' });
+  }
+
   try {
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
-      from: from || 'NatalNavigator <info@natalnavigator.com>',
-      to: Array.isArray(to) ? to : [to],
-      subject,
+      from,
+      to: [recipient],
+      subject: subject.slice(0, 200),
       html,
     });
 

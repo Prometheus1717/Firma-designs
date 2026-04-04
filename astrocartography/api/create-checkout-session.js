@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 
 const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
 
@@ -31,6 +32,20 @@ function isRateLimited(key) {
   return false;
 }
 
+// Verify Supabase JWT and return authenticated user
+async function verifyAuth(req) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return null;
+  const token = auth.slice(7);
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  const supabase = createClient(url, key);
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return null;
+  return user;
+}
+
 export default async function handler(req, res) {
   const CORS_HEADERS = getCorsHeaders(req);
 
@@ -59,22 +74,30 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Stripe not configured' });
   }
 
-  const { email, userId } = req.body || {};
+  // ── Authenticate: derive identity from JWT, not client body ──
+  const user = await verifyAuth(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  // Use server-verified identity — ignore any client-supplied email/userId
+  const email = user.email;
+  const userId = user.id;
 
   if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
+    return res.status(400).json({ error: 'No email associated with account' });
   }
 
   try {
     const stripe = new Stripe(stripeSecretKey);
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment', // Use 'subscription' for recurring
+      mode: 'payment',
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${req.headers.origin || 'https://natalnavigator.com'}/dashboard?payment=success`,
       cancel_url: `${req.headers.origin || 'https://natalnavigator.com'}/dashboard?payment=cancelled`,
-      metadata: { userId: userId || '' },
+      metadata: { userId },
     });
 
     return res.status(200).json({ url: session.url });

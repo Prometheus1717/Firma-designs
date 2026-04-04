@@ -1,5 +1,5 @@
 // Chart result cache — avoids recalculating for the same birth data
-// Uses localStorage so returning users skip the expensive astronomy-engine computation entirely
+// Uses sessionStorage so returning users skip the expensive astronomy-engine computation entirely
 
 const CACHE_KEY = 'nn_chart_cache';
 const CACHE_VERSION = 5; // v5: fixed ASC formula (was returning DSC) + obliquity calculation
@@ -10,7 +10,7 @@ function cacheId({ date, time, lat, lng }) {
 
 export function getCachedChart(birthData) {
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
+    const raw = sessionStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const cache = JSON.parse(raw);
     if (cache.v !== CACHE_VERSION) return null;
@@ -23,13 +23,13 @@ export function getCachedChart(birthData) {
 
 export function setCachedChart(birthData, chartData) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({
       v: CACHE_VERSION,
       id: cacheId(birthData),
       data: chartData,
       ts: Date.now(),
     }));
   } catch {
-    // localStorage full or disabled — no-op
+    // sessionStorage full or disabled — no-op
   }
 }

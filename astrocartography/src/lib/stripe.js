@@ -1,12 +1,22 @@
+import { supabase } from './supabase';
+
 /**
  * Creates a Stripe Checkout session and redirects the user to the payment page.
- * Called from the frontend when user clicks "Upgrade" / "Buy" button.
+ * Identity is derived from the JWT server-side — no client-supplied email/userId trusted.
  */
-export async function redirectToCheckout(email, userId) {
+export async function redirectToCheckout() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Not authenticated');
+  }
+
   const res = await fetch('/api/create-checkout-session', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, userId }),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({}), // no client-supplied identity data
   });
 
   const data = await res.json();
