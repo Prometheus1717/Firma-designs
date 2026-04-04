@@ -179,19 +179,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         ctx.beginPath(); path(GRAT_10); ctx.stroke();
       }
 
-      // Countries — clip-based fill (winding-independent)
-      ctx.save();
-      ctx.beginPath();
-      CP_FEATURES.forEach(f => path(f));
-      if (s.wg) s.wg.forEach(f => path(f));
-      ctx.clip('evenodd');
+      // Countries — fill each individually, then stroke borders
       ctx.fillStyle = land;
-      ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-      // Borders — stroke only (no fill)
+      const flatFeatures = s.wg || CP_FEATURES;
+      flatFeatures.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); });
       ctx.strokeStyle = border; ctx.lineWidth = lt ? .6 : .5;
-      if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
-      else CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
+      flatFeatures.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
     } else {
       // Globe — Orthographic projection
       proj = geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
@@ -231,19 +224,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       ctx.strokeStyle = grat3; ctx.lineWidth = lt ? .2 : .3;
       ctx.beginPath(); path(GRAT_20); ctx.stroke();
 
-      // Countries — clip-based fill (winding-independent)
-      ctx.save();
-      ctx.beginPath();
-      CP_FEATURES.forEach(f => path(f));
-      if (s.wg) s.wg.forEach(f => path(f));
-      ctx.clip('evenodd');
+      // Countries — fill each individually, then stroke borders
       ctx.fillStyle = land;
-      ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-      // Borders — stroke only (no fill)
+      const globeFeatures = s.wg || CP_FEATURES;
+      globeFeatures.forEach(f => { ctx.beginPath(); path(f); ctx.fill(); });
       ctx.strokeStyle = border; ctx.lineWidth = lt ? .6 : .6;
-      if (s.wg) s.wg.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
-      else CP_FEATURES.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
+      globeFeatures.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
 
       // Inner edge vignette — subtle spherical depth
       if (lt) {
