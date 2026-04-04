@@ -151,10 +151,11 @@ function cityImpact(c, lang) {
   const angle = parts[1];
   const pd = getPlanetDomain(planet, lang);
   const ae = getAngleEffect(angle, lang);
-  if (!pd.domain || !ae.area) return { planet, angle, domain: '', area: '', summary: c.desc || '' };
+  const summary = getCityReading(c, lang, getAngleEffect) || c.desc || '';
+  if (!pd.domain || !ae.area) return { planet, angle, domain: '', area: '', summary };
   const strength = c.dist < 1 ? 'EXACT' : c.dist < 2 ? 'STRONG' : 'MODERATE';
   const strengthPct = Math.max(0, Math.round((1 - c.dist / 3.5) * 100));
-  return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
+  return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary };
 }
 
 function getAllLinesForCity(city, lines, threshold = 5) {
