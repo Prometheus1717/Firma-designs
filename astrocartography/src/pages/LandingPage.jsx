@@ -107,8 +107,16 @@ export default function LandingPage() {
   const navRef = useRef(null);
   const rootRef = useRef(null);
 
-  // A/B variant: /landing?v=light for light mode, default dark
-  const variant = new URLSearchParams(window.location.search).get('v') === 'light' ? 'light' : 'dark';
+  // Preview gate — remove this block when ready to go live
+  const params = new URLSearchParams(window.location.search);
+  const isPreview = params.get('preview') === '1';
+  if (!isPreview) {
+    window.location.href = '/';
+    return null;
+  }
+
+  // A/B variant: /landing?v=light&preview=1 for light mode, default dark
+  const variant = params.get('v') === 'light' ? 'light' : 'dark';
   const isLight = variant === 'light';
   const imgs = IMAGES[variant];
 
