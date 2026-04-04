@@ -421,6 +421,8 @@ const T = {
     overallScore: 'Overall Score',
     betterFor: 'Better for',
     compareHint: 'Click two cities to compare',
+    searchCities: 'Search cities...',
+    noSearchResults: 'No cities found',
   },
 
   de: {
@@ -747,6 +749,8 @@ const T = {
     overallScore: 'Gesamtwertung',
     betterFor: 'Besser für',
     compareHint: 'Zwei Städte anklicken zum Vergleichen',
+    searchCities: 'Städte suchen...',
+    noSearchResults: 'Keine Städte gefunden',
   },
 
   fr: {
@@ -1067,6 +1071,8 @@ const T = {
     overallScore: 'Score global',
     betterFor: 'Meilleur pour',
     compareHint: 'Cliquez sur deux villes pour comparer',
+    searchCities: 'Rechercher des villes...',
+    noSearchResults: 'Aucune ville trouvée',
   },
 
   it: {
@@ -1263,6 +1269,8 @@ const T = {
     overallScore: 'Punteggio complessivo',
     betterFor: 'Migliore per',
     compareHint: 'Clicca due città per confrontare',
+    searchCities: 'Cerca città...',
+    noSearchResults: 'Nessuna città trovata',
   },
 
   es: {
@@ -1574,6 +1582,8 @@ const T = {
     overallScore: 'Puntuación general',
     betterFor: 'Mejor para',
     compareHint: 'Haz clic en dos ciudades para comparar',
+    searchCities: 'Buscar ciudades...',
+    noSearchResults: 'No se encontraron ciudades',
   },
 
   tr: {
@@ -1885,6 +1895,8 @@ const T = {
     overallScore: 'Genel Puan',
     betterFor: 'Şunun için daha iyi',
     compareHint: 'Karşılaştırmak için iki şehre tıklayın',
+    searchCities: 'Şehir ara...',
+    noSearchResults: 'Şehir bulunamadı',
   },
 
   ru: {
@@ -2242,6 +2254,8 @@ const T = {
     overallScore: 'Общий балл',
     betterFor: 'Лучше для',
     compareHint: 'Нажмите на два города для сравнения',
+    searchCities: 'Поиск городов...',
+    noSearchResults: 'Города не найдены',
   },
 
   // Remaining languages fall back to English for missing keys
@@ -2629,6 +2643,8 @@ const T = {
     overallScore: 'Pontuação geral',
     betterFor: 'Melhor para',
     compareHint: 'Clique em duas cidades para comparar',
+    searchCities: 'Pesquisar cidades...',
+    noSearchResults: 'Nenhuma cidade encontrada',
   },
   ja: {
     // Topbar
@@ -3014,6 +3030,8 @@ const T = {
     overallScore: '総合スコア',
     betterFor: '向いている点',
     compareHint: '2つの都市をクリックして比較',
+    searchCities: '都市を検索...',
+    noSearchResults: '都市が見つかりません',
   },
   zh: {
     // Topbar
@@ -3399,6 +3417,8 @@ const T = {
     overallScore: '综合评分',
     betterFor: '更适合',
     compareHint: '点击两个城市进行比较',
+    searchCities: '搜索城市...',
+    noSearchResults: '未找到城市',
   },
   ar: {
     // Topbar
@@ -3784,6 +3804,8 @@ const T = {
     overallScore: 'النتيجة الإجمالية',
     betterFor: 'أفضل لـ',
     compareHint: 'انقر على مدينتين للمقارنة',
+    searchCities: 'البحث عن مدن...',
+    noSearchResults: 'لم يتم العثور على مدن',
   },
   ko: {
     // Topbar
@@ -4169,6 +4191,8 @@ const T = {
     overallScore: '종합 점수',
     betterFor: '더 좋은 점',
     compareHint: '두 도시를 클릭하여 비교',
+    searchCities: '도시 검색...',
+    noSearchResults: '도시를 찾을 수 없습니다',
   },
   pl: {
     // Topbar
@@ -4554,6 +4578,8 @@ const T = {
     overallScore: 'Wynik ogólny',
     betterFor: 'Lepsze dla',
     compareHint: 'Kliknij dwa miasta, aby porównać',
+    searchCities: 'Szukaj miast...',
+    noSearchResults: 'Nie znaleziono miast',
   },
   nl: {
     // Topbar
@@ -4939,5 +4965,7 @@ const T = {
     overallScore: 'Totaalscore',
     betterFor: 'Beter voor',
     compareHint: 'Klik op twee steden om te vergelijken',
+    searchCities: 'Steden zoeken...',
+    noSearchResults: 'Geen steden gevonden',
   },
 };

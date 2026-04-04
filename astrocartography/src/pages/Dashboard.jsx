@@ -263,6 +263,11 @@ export default function Dashboard({ demo = false }) {
   const [compareMode, setCompareMode] = useState(false);
   const [compareCities, setCompareCities] = useState([]);
   const [showCompare, setShowCompare] = useState(false);
+  // City search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchedCity, setSearchedCity] = useState(null);
+  const searchRef = useRef(null);
 
   useEffect(() => { document.title = demo ? t('titleDemo', lang) : t('titleDash', lang); }, [demo, lang]);
 
@@ -367,6 +372,7 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'lang') setShowLangPicker(false);
     if (except !== 'continent') setShowContinentFilter(false);
     if (except !== 'compare') { setShowCompare(false); setCompareMode(false); }
+    if (except !== 'search') { setSearchActive(false); setSearchQuery(''); setSearchedCity(null); }
   }, []);
 
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
@@ -488,7 +494,13 @@ export default function Dashboard({ demo = false }) {
     }
     return { thriveC: t, avoidC: a, neutralC: n, bestCities: t.slice(0, 5) };
   }, [onLines]);
-  const filteredTab = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : tab === 'neutral' ? neutralC : onLines;
+  const filteredTabBase = tab === 'thrive' ? thriveC : tab === 'avoid' ? avoidC : tab === 'neutral' ? neutralC : onLines;
+  const filteredTab = useMemo(() => {
+    if (!searchedCity) return filteredTabBase;
+    // Put searched city at top, remove duplicate
+    const rest = filteredTabBase.filter(c => c.name !== searchedCity.name);
+    return [searchedCity, ...rest];
+  }, [filteredTabBase, searchedCity]);
 
   const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
@@ -517,6 +529,56 @@ export default function Dashboard({ demo = false }) {
 
   const flyTo = useCallback((la, lo, name) => {
     Globe.flyTo?.(la, lo, name);
+  }, []);
+
+  // City search — filter ALL_CITIES by typed query
+  const searchResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    const matches = [];
+    for (const c of ALL_CITIES) {
+      if (c[2].toLowerCase().includes(q)) matches.push(c);
+      if (matches.length >= 12) break;
+    }
+    return matches;
+  }, [searchQuery]);
+
+  const handleSearchSelect = useCallback((city) => {
+    // city is [lat, lon, name, tier] tuple from ALL_CITIES
+    const name = city[2], la = city[0], lo = city[1];
+    // Find this city in onLines (already computed nearby cities)
+    let match = onLines.find(c => c.name === name);
+    if (!match) {
+      // City might not be on a line — find closest line anyway
+      let bestDist = Infinity, bestLine = null;
+      for (const l of visibleLines) {
+        if (l.type === 'curve') {
+          const pts = [];
+          for (const seg of (l.segments || [l.points])) { if (seg) pts.push(...seg); }
+          for (const pt of pts) {
+            const d = gcDist(la, lo, pt[1], pt[0]);
+            if (d < bestDist) { bestDist = d; bestLine = l; }
+          }
+        }
+      }
+      if (bestLine) {
+        match = { la, lo, name, line: `${bestLine.planet} ${bestLine.angle}`, lc: bestLine.c, q: bestLine.quality, dist: Math.round(bestDist * 10) / 10 };
+      } else {
+        match = { la, lo, name, line: '', lc: T.tm, q: 'neutral', dist: 99 };
+      }
+    }
+    setSearchedCity(match);
+    setSearchQuery('');
+    setSearchActive(false);
+    flyTo(la, lo, name);
+    setCityPop(match);
+  }, [onLines, visibleLines, flyTo, T.tm]);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+    setSearchActive(false);
+    setSearchedCity(null);
+    setCityPop(null);
   }, []);
 
   const toggleContinent = useCallback((cont) => {
@@ -887,22 +949,20 @@ export default function Dashboard({ demo = false }) {
             </div>
           ))}
           {/* Continent filter — desktop */}
-          <div style={{ padding: '8px 12px', borderTop: `1px solid ${T.bs}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2 }}>🌍 {t('continents', lang)}</span>
-              {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-              {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
-                const active = selectedContinents.has(val);
-                return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 7, color: active ? '#fff' : T.td, background: active ? T.ac : 'transparent', border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 3, padding: '3px 6px', cursor: 'pointer', transition: 'all .15s' }}>{t(key, lang)}</div>;
-              })}
-            </div>
+          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {t('continents', lang)}
+            {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ fontSize: 7, letterSpacing: 0, color: T.ac, cursor: 'pointer', fontWeight: 400 }}>{t('allContinents', lang)}</span>}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3, padding: '4px 12px 8px' }}>
+            {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
+              const active = selectedContinents.has(val);
+              return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.tm, background: active ? T.ac : T.c, border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 3, padding: '4px 8px', cursor: 'pointer', transition: 'all .15s', fontWeight: active ? 600 : 400 }}>{t(key, lang)}</div>;
+            })}
           </div>
 
           {/* Compare button — desktop */}
           <div style={{ padding: '6px 12px', borderTop: `1px solid ${T.bs}` }}>
-            <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 8, fontWeight: 600, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : 'transparent', border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 0', cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
+            <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 8, fontWeight: 600, color: compareMode ? '#fff' : T.tm, background: compareMode ? T.ac : T.c, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 0', cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
               ⚖ {compareMode ? `${t('compare', lang)} (${compareCities.length}/2)` : t('compare', lang)}
             </div>
             {compareMode && compareCities.length > 0 && <div style={{ ...F, fontSize: 7, color: T.td, marginTop: 4, lineHeight: 1.5 }}>
@@ -919,6 +979,31 @@ export default function Dashboard({ demo = false }) {
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
           <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
+
+          {/* City search — desktop top-left */}
+          {!mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>
+            <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${searchActive ? T.acBd : T.bd}`, borderRadius: 6, overflow: 'hidden', width: searchActive ? 240 : 180, transition: 'width .2s' }}>
+                <span style={{ ...F, fontSize: 10, color: T.td, padding: '0 0 0 10px', flexShrink: 0 }}>⌕</span>
+                <input ref={searchRef} type="text" value={searchQuery} placeholder={t('searchCities', lang)}
+                  onFocus={() => setSearchActive(true)}
+                  onChange={e => { setSearchQuery(e.target.value); if (!searchActive) setSearchActive(true); }}
+                  onKeyDown={e => { if (e.key === 'Escape') { clearSearch(); searchRef.current?.blur(); } }}
+                  style={{ ...F, fontSize: 10, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '8px 8px', flex: 1, width: '100%' }}
+                />
+                {(searchQuery || searchedCity) && <span onClick={clearSearch} style={{ ...F, fontSize: 12, color: T.td, cursor: 'pointer', padding: '0 10px 0 0', flexShrink: 0 }}>✕</span>}
+              </div>
+              {searchActive && searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 2, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, maxHeight: 240, overflowY: 'auto', boxShadow: T.sh }}>
+                {searchResults.length === 0 && <div style={{ ...F, fontSize: 9, color: T.td, padding: '10px 12px' }}>{t('noSearchResults', lang)}</div>}
+                {searchResults.map((c, i) => (
+                  <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 10, color: T.tx, padding: '7px 12px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, transition: 'background .1s', display: 'flex', alignItems: 'center', gap: 6 }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <span style={{ fontWeight: 600 }}>{c[2]}</span>
+                    {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 8, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
+                  </div>
+                ))}
+              </div>}
+            </div>
+          </div>}
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
@@ -1243,7 +1328,7 @@ export default function Dashboard({ demo = false }) {
 
           {/* City reading popup */}
           {cityPop && (<>
-            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setCityPop(null)} />
+            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => { setCityPop(null); setSearchedCity(null); }} />
             <div style={{ position: 'absolute', bottom: mob ? 8 : 16, right: mob ? 8 : 16, left: mob ? 8 : 'auto', width: mob ? 'auto' : 340, background: T.pop, border: `1px solid ${cityPop.lc}30`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.sh }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: cityPop.lc }} />
@@ -1251,7 +1336,7 @@ export default function Dashboard({ demo = false }) {
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: cityPop.q === 'thrive' ? COL.thrive : cityPop.q === 'avoid' ? COL.avoid : COL.neutral, marginLeft: 'auto' }}>
                   {cityPop.q === 'thrive' ? t('thrive', lang) : cityPop.q === 'avoid' ? t('caution', lang) : t('neutralLabel', lang)}
                 </span>
-                <span onClick={() => setCityPop(null)} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td, marginLeft: 8 }}>✕</span>
+                <span onClick={() => { setCityPop(null); setSearchedCity(null); }} style={{ cursor: 'pointer', ...F, fontSize: 14, color: T.td, marginLeft: 8 }}>✕</span>
               </div>
               <div style={{ ...F, fontSize: 9, color: cityPop.lc, marginBottom: 6 }}>{tLine(cityPop.line, lang)} · {cityPop.dist.toFixed(1)}° {t('fromLine', lang)}</div>
               <div style={{ fontSize: 12, color: T.tm, lineHeight: 1.7 }}>{getCityReading(cityPop, lang, getAngleEffect)}</div>
@@ -1680,10 +1765,32 @@ export default function Dashboard({ demo = false }) {
             <div style={{ display: 'flex', gap: 4 }}>
               <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
               <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
-              <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.td, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
-                🌍{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
+              <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.tm, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
+                {t('continents', lang)}{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
               </div>
               <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
+            </div>
+            {/* Mobile search bar */}
+            <div style={{ position: 'relative', marginTop: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${searchActive ? T.acBd : T.bd}`, borderRadius: 4, overflow: 'hidden' }}>
+                <span style={{ ...F, fontSize: 9, color: T.td, padding: '0 0 0 8px', flexShrink: 0 }}>⌕</span>
+                <input type="text" value={searchQuery} placeholder={t('searchCities', lang)}
+                  onFocus={() => setSearchActive(true)}
+                  onChange={e => { setSearchQuery(e.target.value); if (!searchActive) setSearchActive(true); }}
+                  onKeyDown={e => { if (e.key === 'Escape') clearSearch(); }}
+                  style={{ ...F, fontSize: 9, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '6px 6px', flex: 1, width: 0, minWidth: 0 }}
+                />
+                {(searchQuery || searchedCity) && <span onClick={clearSearch} style={{ ...F, fontSize: 11, color: T.td, cursor: 'pointer', padding: '0 8px 0 0', flexShrink: 0 }}>✕</span>}
+              </div>
+              {searchActive && searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 2, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, maxHeight: 200, overflowY: 'auto', boxShadow: T.sh, zIndex: 60 }}>
+                {searchResults.length === 0 && <div style={{ ...F, fontSize: 8, color: T.td, padding: '8px 10px' }}>{t('noSearchResults', lang)}</div>}
+                {searchResults.map((c, i) => (
+                  <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 9, color: T.tx, padding: '6px 10px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontWeight: 600 }}>{c[2]}</span>
+                    {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 7, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
+                  </div>
+                ))}
+              </div>}
             </div>
             {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
               {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>{t('allOn', lang)}</div>}
@@ -1748,13 +1855,13 @@ export default function Dashboard({ demo = false }) {
             {/* Mobile continent filter dropdown */}
             {showContinentFilter && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowContinentFilter(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>{t('continents', lang)}</span>
+                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{t('continents', lang)}</span>
                 {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                 {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
                   const active = selectedContinents.has(val);
-                  return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.td, background: active ? T.ac : 'transparent', border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 4, padding: '5px 8px', cursor: 'pointer', transition: 'all .15s' }}>{t(key, lang)}</div>;
+                  return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.tm, background: active ? T.ac : T.c, border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 4, padding: '5px 8px', cursor: 'pointer', transition: 'all .15s', fontWeight: active ? 600 : 400 }}>{t(key, lang)}</div>;
                 })}
               </div>
             </div></>}
@@ -1882,8 +1989,9 @@ export default function Dashboard({ demo = false }) {
             {filteredTab.map((c, i) => {
               const imp = cityImpact(c, lang);
               const qCol = c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral;
+              const isSearched = searchedCity && c.name === searchedCity.name;
               return mob ? (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ padding: '6px 10px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', overflow: 'hidden' }}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ padding: '6px 10px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', overflow: 'hidden', background: isSearched ? T.acBg : 'transparent', borderLeft: isSearched ? `3px solid ${T.ac}` : '3px solid transparent' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, minWidth: 0 }}>
                     <div style={{ width: 3, height: 18, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
                     <span style={{ fontSize: 11, fontWeight: 600, color: T.tx, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flexShrink: 1 }}>{c.name}{CITY_COUNTRY[c.name] ? <span style={{ fontWeight: 400, color: T.mu, fontSize: 9 }}>{' · '}{CITY_COUNTRY[c.name]}</span> : null}</span>
@@ -1893,7 +2001,7 @@ export default function Dashboard({ demo = false }) {
                   <div style={{ ...F, fontSize: 8, color: T.td, lineHeight: 1.4, marginLeft: 9, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{imp.domain} → {imp.area}</div>
                 </div>
               ) : (
-                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', transition: 'background .1s' }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <div key={i} onClick={() => { handleCityClick(c); flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', padding: '5px 12px', borderBottom: `1px solid ${T.bs}`, cursor: 'pointer', transition: 'background .1s', background: isSearched ? T.acBg : 'transparent', borderLeft: isSearched ? `3px solid ${T.ac}` : '3px solid transparent' }} onMouseEnter={e => { if (!isSearched) e.currentTarget.style.background = T.c; }} onMouseLeave={e => { e.currentTarget.style.background = isSearched ? T.acBg : 'transparent'; }}>
                   {/* City */}
                   <div style={{ width: 130, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                     <div style={{ width: 3, height: 24, borderRadius: 1, background: c.lc, flexShrink: 0 }} />
