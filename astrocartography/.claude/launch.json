@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "landing-example",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8000"],
+      "port": 8000
     }
   ]
 }

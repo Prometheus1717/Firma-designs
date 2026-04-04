@@ -20,6 +20,7 @@ const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 const ResetPasswordPage = lazyRetry(() => import('./pages/ResetPasswordPage'));
+const LandingPage = lazyRetry(() => import('./pages/LandingPage'));
 
 setTimeout(() => import('./pages/Dashboard').catch(() => {}), 1);
 
@@ -198,6 +199,7 @@ export default function App() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
               <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="*" element={<SmartRedirect />} />
             </Routes>
           </Suspense>
