@@ -66,6 +66,17 @@ function fetchWorldGeo(callback) {
     .catch(() => { _worldGeoFetching = false; });
 }
 
+// Ensure ring has correct GeoJSON winding: CCW for exterior (idx 0), CW for holes
+function fixWinding(ring, isExterior) {
+  let area = 0;
+  for (let i = 0; i < ring.length - 1; i++) {
+    area += (ring[i+1][0] - ring[i][0]) * (ring[i+1][1] + ring[i][1]);
+  }
+  // Exterior rings: need negative area (CCW). Holes: need positive area (CW).
+  if (isExterior ? area > 0 : area < 0) ring.reverse();
+  return ring;
+}
+
 function topoF(t, n) {
   try {
     const o = t.objects[n];
@@ -80,8 +91,8 @@ function topoF(t, n) {
     }
     function dr(r) { let c = []; r.forEach(i => c = c.concat(da(i))); return c; }
     return o.geometries.map(g => {
-      if (g.type === 'Polygon') return { type: 'Feature', geometry: { type: 'Polygon', coordinates: g.arcs.map(dr) } };
-      if (g.type === 'MultiPolygon') return { type: 'Feature', geometry: { type: 'MultiPolygon', coordinates: g.arcs.map(p => p.map(dr)) } };
+      if (g.type === 'Polygon') return { type: 'Feature', geometry: { type: 'Polygon', coordinates: g.arcs.map((r, i) => fixWinding(dr(r), i === 0)) } };
+      if (g.type === 'MultiPolygon') return { type: 'Feature', geometry: { type: 'MultiPolygon', coordinates: g.arcs.map(p => p.map((r, i) => fixWinding(dr(r), i === 0))) } };
       return null;
     }).filter(Boolean);
   } catch (e) { return null; }
