@@ -857,11 +857,18 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
-          {[planetString, planetString].flatMap((ps, i) => [
-            <span key={`p${i}`} style={{ color: '#E8A838', padding: '0 20px' }}>{ps}</span>,
-            <span key={`bt${i}`} style={{ color: '#FFD700', fontWeight: 700, padding: '0 20px' }}>{t('tickerBirthTime', lang)}</span>,
-          ])}
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 160s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+          {[0, 1].flatMap(i => {
+            const tips = [
+              { key: 'bt', text: t('tickerBirthTime', lang) },
+              { key: 't1', text: t('tickerTip1', lang) },
+              { key: 't2', text: t('tickerTip2', lang) },
+            ];
+            return tips.flatMap((tip, j) => [
+              <span key={`p${i}${j}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
+              <span key={`${tip.key}${i}`} style={{ color: '#5BC4F7', fontWeight: 700, padding: '0 30px' }}>{tip.text}</span>,
+            ]);
+          })}
         </div>
       </div>
 
@@ -2101,20 +2108,26 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
-          {[...Array(2)].flatMap(() => {
-            const items = [
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 140s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+          {(() => {
+            const stats = [
               { text: bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`, color: T.td },
               { text: `▲ ${thriveC.length} ${t('thriveZone', lang).toLowerCase()}`, color: T.ac },
               { text: `◆ ${neutralC.length} ${t('neutral', lang).toLowerCase()}`, color: T.td },
               { text: `▼ ${avoidC.length} ${t('cautionZone', lang).toLowerCase()}`, color: '#F04060' },
               { text: `◉ ${onLines.length} ${t('total', lang)}`, color: T.td },
-              { text: t('tickerBirthTime', lang), color: '#FFD700', bold: true },
             ];
-            return items;
-          }).map((item, i) => (
-            <span key={i} style={{ color: item.color, fontWeight: item.bold ? 700 : 400, padding: '0 4px' }}>{item.text}</span>
-          ))}
+            const tips = [
+              { text: t('tickerBirthTime', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip1', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip2', lang), color: '#5BC4F7', bold: true },
+            ];
+            // Each tip separated by a full stats block — ensures only one tip visible at a time
+            const unit = tips.flatMap(tip => [...stats, tip]);
+            return [...unit, ...unit].map((item, i) => (
+              <span key={i} style={{ color: item.color, fontWeight: item.bold ? 700 : 400, padding: item.bold ? '0 16px' : '0 4px' }}>{item.text}</span>
+            ));
+          })()}
         </div>
       </div>
     </div>
