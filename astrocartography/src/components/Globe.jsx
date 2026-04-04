@@ -381,9 +381,12 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
             ctx.beginPath();
             const pad = 5, rad = 4;
             const bx = lx - pad, by = ly - 12 - pad, bw = tw + pad * 2, bh = 16 + pad * 2;
-            ctx.roundRect(bx, by, bw, bh, rad); ctx.fill();
+            if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, rad); else ctx.rect(bx, by, bw, bh);
+            ctx.fill();
             ctx.strokeStyle = hlC; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
-            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, rad); ctx.stroke();
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, rad); else ctx.rect(bx, by, bw, bh);
+            ctx.stroke();
             ctx.globalAlpha = 1; ctx.fillStyle = hlC;
             ctx.fillText(hl.name, lx, ly);
             s.dirty = true; // keep redrawing for pulse animation

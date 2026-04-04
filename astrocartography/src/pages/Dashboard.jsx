@@ -611,6 +611,8 @@ export default function Dashboard({ demo = false }) {
     } else {
       setCityPop(city);
       setSearchedCity(city);
+      // Show pulsing highlight ring on globe
+      if (Globe.highlight) Globe.highlight(city.la, city.lo, city.name);
       // Auto-switch tab to match the city's quality
       if (city.q === 'thrive') setTab('thrive');
       else if (city.q === 'avoid') setTab('avoid');
