@@ -399,6 +399,28 @@ const T = {
     // Angle effects
     aeMC: 'Career & Public Life', aeIC: 'Home & Roots', aeASC: 'Self & Identity', aeDC: 'Partnerships',
     aeMCshort: 'public sphere', aeICshort: 'private life', aeASCshort: 'self-expression', aeDCshort: 'relationships',
+    // Continent filter
+    continents: 'Continents',
+    africa: 'Africa',
+    asia: 'Asia',
+    europe: 'Europe',
+    northAmerica: 'N. America',
+    southAmerica: 'S. America',
+    oceania: 'Oceania',
+    allContinents: 'All',
+    filterActive: 'Filter active',
+    // City compare
+    compare: 'Compare',
+    compareTitle: 'City Comparison',
+    selectCities: 'Select 2 cities',
+    tapToSelect: 'Tap cities to compare',
+    vs: 'vs',
+    closeLine: 'Closest line',
+    allLines: 'All lines nearby',
+    strengths: 'Strengths',
+    overallScore: 'Overall Score',
+    betterFor: 'Better for',
+    compareHint: 'Click two cities to compare',
   },
 
   de: {
@@ -703,6 +725,28 @@ const T = {
     // Angle effects
     aeMC: 'Karriere & Öffentlichkeit', aeIC: 'Zuhause & Wurzeln', aeASC: 'Selbst & Identität', aeDC: 'Partnerschaften',
     aeMCshort: 'öffentliche Sphäre', aeICshort: 'Privatleben', aeASCshort: 'Selbstausdruck', aeDCshort: 'Beziehungen',
+    // Continent filter
+    continents: 'Kontinente',
+    africa: 'Afrika',
+    asia: 'Asien',
+    europe: 'Europa',
+    northAmerica: 'N. Amerika',
+    southAmerica: 'S. Amerika',
+    oceania: 'Ozeanien',
+    allContinents: 'Alle',
+    filterActive: 'Filter aktiv',
+    // City compare
+    compare: 'Vergleichen',
+    compareTitle: 'Städtevergleich',
+    selectCities: '2 Städte auswählen',
+    tapToSelect: 'Städte antippen zum Vergleichen',
+    vs: 'vs',
+    closeLine: 'Nächste Linie',
+    allLines: 'Alle Linien in der Nähe',
+    strengths: 'Stärken',
+    overallScore: 'Gesamtwertung',
+    betterFor: 'Besser für',
+    compareHint: 'Zwei Städte anklicken zum Vergleichen',
   },
 
   fr: {
@@ -1001,6 +1045,28 @@ const T = {
     // Angle effects
     aeMC: 'Carrière & Vie publique', aeIC: 'Foyer & Racines', aeASC: 'Soi & Identité', aeDC: 'Partenariats',
     aeMCshort: 'sphère publique', aeICshort: 'vie privée', aeASCshort: 'expression de soi', aeDCshort: 'relations',
+    // Continent filter
+    continents: 'Continents',
+    africa: 'Afrique',
+    asia: 'Asie',
+    europe: 'Europe',
+    northAmerica: 'Am. du Nord',
+    southAmerica: 'Am. du Sud',
+    oceania: 'Océanie',
+    allContinents: 'Tous',
+    filterActive: 'Filtre actif',
+    // City compare
+    compare: 'Comparer',
+    compareTitle: 'Comparaison de villes',
+    selectCities: 'Sélectionnez 2 villes',
+    tapToSelect: 'Appuyez sur des villes pour comparer',
+    vs: 'vs',
+    closeLine: 'Ligne la plus proche',
+    allLines: 'Toutes les lignes proches',
+    strengths: 'Points forts',
+    overallScore: 'Score global',
+    betterFor: 'Meilleur pour',
+    compareHint: 'Cliquez sur deux villes pour comparer',
   },
 
   it: {
@@ -1175,6 +1241,28 @@ const T = {
     // Angle effects
     aeMC: 'Carriera & Vita pubblica', aeIC: 'Casa & Radici', aeASC: 'Sé & Identità', aeDC: 'Partnership',
     aeMCshort: 'sfera pubblica', aeICshort: 'vita privata', aeASCshort: 'espressione di sé', aeDCshort: 'relazioni',
+    // Continent filter
+    continents: 'Continenti',
+    africa: 'Africa',
+    asia: 'Asia',
+    europe: 'Europa',
+    northAmerica: 'N. America',
+    southAmerica: 'S. America',
+    oceania: 'Oceania',
+    allContinents: 'Tutti',
+    filterActive: 'Filtro attivo',
+    // City compare
+    compare: 'Confronta',
+    compareTitle: 'Confronto città',
+    selectCities: 'Seleziona 2 città',
+    tapToSelect: 'Tocca le città per confrontare',
+    vs: 'vs',
+    closeLine: 'Linea più vicina',
+    allLines: 'Tutte le linee vicine',
+    strengths: 'Punti di forza',
+    overallScore: 'Punteggio complessivo',
+    betterFor: 'Migliore per',
+    compareHint: 'Clicca due città per confrontare',
   },
 
   es: {
@@ -1464,6 +1552,28 @@ const T = {
     // Angle effects
     aeMC: 'Carrera & Vida pública', aeIC: 'Hogar & Raíces', aeASC: 'Yo & Identidad', aeDC: 'Asociaciones',
     aeMCshort: 'esfera pública', aeICshort: 'vida privada', aeASCshort: 'autoexpresión', aeDCshort: 'relaciones',
+    // Continent filter
+    continents: 'Continentes',
+    africa: 'África',
+    asia: 'Asia',
+    europe: 'Europa',
+    northAmerica: 'N. América',
+    southAmerica: 'S. América',
+    oceania: 'Oceanía',
+    allContinents: 'Todos',
+    filterActive: 'Filtro activo',
+    // City compare
+    compare: 'Comparar',
+    compareTitle: 'Comparación de ciudades',
+    selectCities: 'Selecciona 2 ciudades',
+    tapToSelect: 'Toca ciudades para comparar',
+    vs: 'vs',
+    closeLine: 'Línea más cercana',
+    allLines: 'Todas las líneas cercanas',
+    strengths: 'Fortalezas',
+    overallScore: 'Puntuación general',
+    betterFor: 'Mejor para',
+    compareHint: 'Haz clic en dos ciudades para comparar',
   },
 
   tr: {
@@ -1753,6 +1863,28 @@ const T = {
     // Angle effects
     aeMC: 'Kariyer & Kamusal Yaşam', aeIC: 'Ev & Kökler', aeASC: 'Benlik & Kimlik', aeDC: 'Ortaklıklar',
     aeMCshort: 'kamusal alan', aeICshort: 'özel yaşam', aeASCshort: 'kendini ifade', aeDCshort: 'ilişkiler',
+    // Continent filter
+    continents: 'Kıtalar',
+    africa: 'Afrika',
+    asia: 'Asya',
+    europe: 'Avrupa',
+    northAmerica: 'K. Amerika',
+    southAmerica: 'G. Amerika',
+    oceania: 'Okyanusya',
+    allContinents: 'Tümü',
+    filterActive: 'Filtre aktif',
+    // City compare
+    compare: 'Karşılaştır',
+    compareTitle: 'Şehir Karşılaştırması',
+    selectCities: '2 şehir seçin',
+    tapToSelect: 'Karşılaştırmak için şehirlere dokunun',
+    vs: 'vs',
+    closeLine: 'En yakın çizgi',
+    allLines: 'Yakındaki tüm çizgiler',
+    strengths: 'Güçlü yönler',
+    overallScore: 'Genel Puan',
+    betterFor: 'Şunun için daha iyi',
+    compareHint: 'Karşılaştırmak için iki şehre tıklayın',
   },
 
   ru: {
@@ -2088,6 +2220,28 @@ const T = {
     // Angle effects
     aeMC: 'Карьера & Публичная жизнь', aeIC: 'Дом & Корни', aeASC: 'Личность & Идентичность', aeDC: 'Партнёрства',
     aeMCshort: 'публичная сфера', aeICshort: 'личная жизнь', aeASCshort: 'самовыражение', aeDCshort: 'отношения',
+    // Continent filter
+    continents: 'Континенты',
+    africa: 'Африка',
+    asia: 'Азия',
+    europe: 'Европа',
+    northAmerica: 'С. Америка',
+    southAmerica: 'Ю. Америка',
+    oceania: 'Океания',
+    allContinents: 'Все',
+    filterActive: 'Фильтр активен',
+    // City compare
+    compare: 'Сравнить',
+    compareTitle: 'Сравнение городов',
+    selectCities: 'Выберите 2 города',
+    tapToSelect: 'Нажмите на города для сравнения',
+    vs: 'vs',
+    closeLine: 'Ближайшая линия',
+    allLines: 'Все линии поблизости',
+    strengths: 'Сильные стороны',
+    overallScore: 'Общий балл',
+    betterFor: 'Лучше для',
+    compareHint: 'Нажмите на два города для сравнения',
   },
 
   // Remaining languages fall back to English for missing keys
@@ -2453,6 +2607,28 @@ const T = {
     mCardinal: 'Cardinal', mFixed: 'Fixo', mMutable: 'Mutável',
     // Angle effects
     aeMC: 'Carreira & Vida pública', aeIC: 'Lar & Raízes', aeASC: 'Eu & Identidade', aeDC: 'Parcerias',
+    // Continent filter
+    continents: 'Continentes',
+    africa: 'África',
+    asia: 'Ásia',
+    europe: 'Europa',
+    northAmerica: 'Am. do Norte',
+    southAmerica: 'Am. do Sul',
+    oceania: 'Oceania',
+    allContinents: 'Todos',
+    filterActive: 'Filtro ativo',
+    // City compare
+    compare: 'Comparar',
+    compareTitle: 'Comparação de cidades',
+    selectCities: 'Selecione 2 cidades',
+    tapToSelect: 'Toque nas cidades para comparar',
+    vs: 'vs',
+    closeLine: 'Linha mais próxima',
+    allLines: 'Todas as linhas próximas',
+    strengths: 'Pontos fortes',
+    overallScore: 'Pontuação geral',
+    betterFor: 'Melhor para',
+    compareHint: 'Clique em duas cidades para comparar',
   },
   ja: {
     // Topbar
@@ -2816,6 +2992,28 @@ const T = {
     mCardinal: '活動宮', mFixed: '不動宮', mMutable: '柔軟宮',
     // Angle effects
     aeMC: 'キャリアと公的生活', aeIC: '家庭とルーツ', aeASC: '自己とアイデンティティ', aeDC: 'パートナーシップ',
+    // Continent filter
+    continents: '大陸',
+    africa: 'アフリカ',
+    asia: 'アジア',
+    europe: 'ヨーロッパ',
+    northAmerica: '北米',
+    southAmerica: '南米',
+    oceania: 'オセアニア',
+    allContinents: 'すべて',
+    filterActive: 'フィルター適用中',
+    // City compare
+    compare: '比較',
+    compareTitle: '都市比較',
+    selectCities: '2つの都市を選択',
+    tapToSelect: '都市をタップして比較',
+    vs: 'vs',
+    closeLine: '最も近いライン',
+    allLines: '近くのすべてのライン',
+    strengths: '強み',
+    overallScore: '総合スコア',
+    betterFor: '向いている点',
+    compareHint: '2つの都市をクリックして比較',
   },
   zh: {
     // Topbar
@@ -3179,6 +3377,28 @@ const T = {
     mCardinal: '本位', mFixed: '固定', mMutable: '变动',
     // Angle effects
     aeMC: '事业与公众生活', aeIC: '家庭与根源', aeASC: '自我与身份', aeDC: '合作关系',
+    // Continent filter
+    continents: '大洲',
+    africa: '非洲',
+    asia: '亚洲',
+    europe: '欧洲',
+    northAmerica: '北美',
+    southAmerica: '南美',
+    oceania: '大洋洲',
+    allContinents: '全部',
+    filterActive: '筛选已启用',
+    // City compare
+    compare: '比较',
+    compareTitle: '城市比较',
+    selectCities: '选择2个城市',
+    tapToSelect: '点击城市进行比较',
+    vs: 'vs',
+    closeLine: '最近的线',
+    allLines: '附近所有线',
+    strengths: '优势',
+    overallScore: '综合评分',
+    betterFor: '更适合',
+    compareHint: '点击两个城市进行比较',
   },
   ar: {
     // Topbar
@@ -3542,6 +3762,28 @@ const T = {
     mCardinal: 'أساسي', mFixed: 'ثابت', mMutable: 'متحول',
     // Angle effects
     aeMC: 'المهنة والحياة العامة', aeIC: 'المنزل والجذور', aeASC: 'الذات والهوية', aeDC: 'الشراكات',
+    // Continent filter
+    continents: 'القارات',
+    africa: 'أفريقيا',
+    asia: 'آسيا',
+    europe: 'أوروبا',
+    northAmerica: 'أم. الشمالية',
+    southAmerica: 'أم. الجنوبية',
+    oceania: 'أوقيانوسيا',
+    allContinents: 'الكل',
+    filterActive: 'الفلتر نشط',
+    // City compare
+    compare: 'مقارنة',
+    compareTitle: 'مقارنة المدن',
+    selectCities: 'اختر مدينتين',
+    tapToSelect: 'انقر على المدن للمقارنة',
+    vs: 'ضد',
+    closeLine: 'أقرب خط',
+    allLines: 'جميع الخطوط القريبة',
+    strengths: 'نقاط القوة',
+    overallScore: 'النتيجة الإجمالية',
+    betterFor: 'أفضل لـ',
+    compareHint: 'انقر على مدينتين للمقارنة',
   },
   ko: {
     // Topbar
@@ -3905,6 +4147,28 @@ const T = {
     mCardinal: '활동궁', mFixed: '고정궁', mMutable: '변통궁',
     // Angle effects
     aeMC: '경력과 공적 생활', aeIC: '가정과 뿌리', aeASC: '자아와 정체성', aeDC: '파트너십',
+    // Continent filter
+    continents: '대륙',
+    africa: '아프리카',
+    asia: '아시아',
+    europe: '유럽',
+    northAmerica: '북미',
+    southAmerica: '남미',
+    oceania: '오세아니아',
+    allContinents: '전체',
+    filterActive: '필터 적용 중',
+    // City compare
+    compare: '비교',
+    compareTitle: '도시 비교',
+    selectCities: '2개 도시 선택',
+    tapToSelect: '도시를 탭하여 비교',
+    vs: 'vs',
+    closeLine: '가장 가까운 라인',
+    allLines: '근처의 모든 라인',
+    strengths: '강점',
+    overallScore: '종합 점수',
+    betterFor: '더 좋은 점',
+    compareHint: '두 도시를 클릭하여 비교',
   },
   pl: {
     // Topbar
@@ -4268,6 +4532,28 @@ const T = {
     mCardinal: 'Kardynalny', mFixed: 'Stały', mMutable: 'Zmienny',
     // Angle effects
     aeMC: 'Kariera i życie publiczne', aeIC: 'Dom i korzenie', aeASC: 'Ja i tożsamość', aeDC: 'Partnerstwa',
+    // Continent filter
+    continents: 'Kontynenty',
+    africa: 'Afryka',
+    asia: 'Azja',
+    europe: 'Europa',
+    northAmerica: 'Am. Płn.',
+    southAmerica: 'Am. Płd.',
+    oceania: 'Oceania',
+    allContinents: 'Wszystkie',
+    filterActive: 'Filtr aktywny',
+    // City compare
+    compare: 'Porównaj',
+    compareTitle: 'Porównanie miast',
+    selectCities: 'Wybierz 2 miasta',
+    tapToSelect: 'Dotknij miast, aby porównać',
+    vs: 'vs',
+    closeLine: 'Najbliższa linia',
+    allLines: 'Wszystkie linie w pobliżu',
+    strengths: 'Mocne strony',
+    overallScore: 'Wynik ogólny',
+    betterFor: 'Lepsze dla',
+    compareHint: 'Kliknij dwa miasta, aby porównać',
   },
   nl: {
     // Topbar
@@ -4631,5 +4917,27 @@ const T = {
     mCardinal: 'Kardinaal', mFixed: 'Vast', mMutable: 'Veranderlijk',
     // Angle effects
     aeMC: 'Carrière & Openbaar leven', aeIC: 'Thuis & Wortels', aeASC: 'Zelf & Identiteit', aeDC: 'Partnerschappen',
+    // Continent filter
+    continents: 'Continenten',
+    africa: 'Afrika',
+    asia: 'Azië',
+    europe: 'Europa',
+    northAmerica: 'N. Amerika',
+    southAmerica: 'Z. Amerika',
+    oceania: 'Oceanië',
+    allContinents: 'Alle',
+    filterActive: 'Filter actief',
+    // City compare
+    compare: 'Vergelijken',
+    compareTitle: 'Stadsvergelijking',
+    selectCities: 'Selecteer 2 steden',
+    tapToSelect: 'Tik op steden om te vergelijken',
+    vs: 'vs',
+    closeLine: 'Dichtstbijzijnde lijn',
+    allLines: 'Alle lijnen in de buurt',
+    strengths: 'Sterke punten',
+    overallScore: 'Totaalscore',
+    betterFor: 'Beter voor',
+    compareHint: 'Klik op twee steden om te vergelijken',
   },
 };

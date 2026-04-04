@@ -424,7 +424,7 @@
     <!-- Force-clear stale service worker caches for existing users -->
     <script>
     (function(){
-      var V='nn-sw-v16';
+      var V='nn-sw-v17';
       if('serviceWorker' in navigator){
         // Always register SW with no HTTP cache — browser byte-checks on every navigation
         navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});

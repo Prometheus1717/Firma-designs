@@ -423,13 +423,23 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     // Efficient rendering: only run RAF when needed, stop when idle
     let loopRunning = false;
+    let lastLoopTs = 0;
     function loop(ts) {
       const isFlat = flatRef.current;
-      // Auto-rotation (only globe, only when idle)
+      // Delta time for smooth time-based rotation (avoids jitter from variable frame rates)
+      const dt = lastLoopTs ? Math.min(ts - lastLoopTs, 100) : 16; // cap at 100ms to avoid jumps after tab switch
+      lastLoopTs = ts;
+
+      // Auto-rotation (only globe, only when idle) — time-based for consistent speed
       const cv = canvasRef.current;
       const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) * 1.5;
       const shouldRotate = !isFlat && s.auto && !s.drag && !globeFills;
-      if (shouldRotate) { const rotSpeed = isMobile ? .06 : .03; s.rot = [s.rot[0] - rotSpeed, s.rot[1]]; s.dirty = true; }
+      if (shouldRotate) {
+        // degrees per millisecond — consistent regardless of frame rate
+        const degPerMs = isMobile ? 0.0036 : 0.0018;
+        s.rot = [s.rot[0] - degPerMs * dt, s.rot[1]];
+        s.dirty = true;
+      }
 
       // Fly-to animation interpolation
       if (s.anim) {
@@ -455,6 +465,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         s.raf = requestAnimationFrame(loop);
       } else {
         loopRunning = false;
+        lastLoopTs = 0; // reset so next start doesn't have stale timestamp
       }
     }
     function scheduleRedraw() {

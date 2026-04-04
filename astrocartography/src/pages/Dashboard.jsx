@@ -3,7 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
 import { calculateChart } from '../lib/calculateChart';
-import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY } from '../data/cities';
+import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
 import { redirectToCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
@@ -157,6 +157,25 @@ function cityImpact(c, lang) {
   return { planet, angle, domain: pd.domain, area: ae.area, icon: pd.icon, strength, strengthPct, summary: c.desc || '' };
 }
 
+function getAllLinesForCity(city, lines, threshold = 5) {
+  const results = [];
+  for (const l of lines) {
+    let minD = Infinity;
+    if (l.type === 'curve') {
+      const pts = [];
+      for (const seg of (l.segments || [l.points])) { if (seg) pts.push(...seg); }
+      for (let i = 0; i < pts.length; i += 4) {
+        const d = gcDist(city.la, city.lo, pts[i][1], pts[i][0]);
+        if (d < minD) minD = d;
+      }
+    } else {
+      minD = Math.min(Math.abs(city.lo - l.lo), 360 - Math.abs(city.lo - l.lo));
+    }
+    if (minD <= threshold) results.push({ line: l.n, lc: l.c, q: l.quality, dist: Math.round(minD * 10) / 10, desc: l.desc });
+  }
+  return results.sort((a, b) => a.dist - b.dist);
+}
+
 // Try to hydrate chart from cache synchronously — avoids flash of loading screen
 function getInitialChart(demo, profile) {
   try {
@@ -237,6 +256,13 @@ export default function Dashboard({ demo = false }) {
   const [lang, setLangState] = useState(() => getLang());
   const [showLangPicker, setShowLangPicker] = useState(false);
   const changeLang = (code) => { persistLang(code); setLangState(code); setShowLangPicker(false); };
+  // Continent filter
+  const [selectedContinents, setSelectedContinents] = useState(new Set());
+  const [showContinentFilter, setShowContinentFilter] = useState(false);
+  // City compare
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareCities, setCompareCities] = useState([]);
+  const [showCompare, setShowCompare] = useState(false);
 
   useEffect(() => { document.title = demo ? t('titleDemo', lang) : t('titleDash', lang); }, [demo, lang]);
 
@@ -339,6 +365,8 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'demoGate') setShowDemoGate(false);
     if (except !== 'settings') setShowSettings(false);
     if (except !== 'lang') setShowLangPicker(false);
+    if (except !== 'continent') setShowContinentFilter(false);
+    if (except !== 'compare') { setShowCompare(false); setCompareMode(false); }
   }, []);
 
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
@@ -415,7 +443,21 @@ export default function Dashboard({ demo = false }) {
 
   const lines = chartData?.lines || [];
   const visibleLines = useMemo(() => lines.filter(l => !hiddenPlanets.has(l.planet)), [lines, hiddenPlanets]);
-  const onLines = useMemo(() => getCitiesOnLines(visibleLines, ALL_CITIES, 3.5), [visibleLines]);
+  const onLinesAll = useMemo(() => getCitiesOnLines(visibleLines, ALL_CITIES, 3.5), [visibleLines]);
+  const onLines = useMemo(() => {
+    if (selectedContinents.size === 0) return onLinesAll;
+    return onLinesAll.filter(c => selectedContinents.has(CITY_CONTINENT[c.name]));
+  }, [onLinesAll, selectedContinents]);
+  // Filtered city arrays for Globe based on continent filter
+  const filteredAllCities = useMemo(() => {
+    if (selectedContinents.size === 0) return ALL_CITIES;
+    return ALL_CITIES.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
+  }, [selectedContinents]);
+  const filteredCitiesTiers = useMemo(() => {
+    if (selectedContinents.size === 0) return [CITIES_T1, CITIES_T2, CITIES_T3];
+    const f = tier => tier.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
+    return [f(CITIES_T1), f(CITIES_T2), f(CITIES_T3)];
+  }, [selectedContinents]);
 
   const togglePlanet = useCallback((planet) => {
     setHiddenPlanets(prev => {
@@ -477,9 +519,27 @@ export default function Dashboard({ demo = false }) {
     Globe.flyTo?.(la, lo, name);
   }, []);
 
-  const handleCityClick = useCallback((city) => {
-    setCityPop(city);
+  const toggleContinent = useCallback((cont) => {
+    setSelectedContinents(prev => {
+      const next = new Set(prev);
+      if (next.has(cont)) next.delete(cont); else next.add(cont);
+      return next;
+    });
   }, []);
+
+  const handleCityClick = useCallback((city) => {
+    if (compareMode) {
+      setCompareCities(prev => {
+        if (prev.find(c => c.name === city.name)) return prev.filter(c => c.name !== city.name);
+        if (prev.length >= 2) return [prev[1], city];
+        const next = [...prev, city];
+        if (next.length === 2) setShowCompare(true);
+        return next;
+      });
+    } else {
+      setCityPop(city);
+    }
+  }, [compareMode]);
 
   // Safety timeout: if stuck loading for too long (e.g. profile never arrives),
   // reload the page once rather than showing "Connecting..." forever.
@@ -826,6 +886,31 @@ export default function Dashboard({ demo = false }) {
               <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{tLine(c.line, lang)}</span>
             </div>
           ))}
+          {/* Continent filter — desktop */}
+          <div style={{ padding: '8px 12px', borderTop: `1px solid ${T.bs}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2 }}>🌍 {t('continents', lang)}</span>
+              {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
+                const active = selectedContinents.has(val);
+                return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 7, color: active ? '#fff' : T.td, background: active ? T.ac : 'transparent', border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 3, padding: '3px 6px', cursor: 'pointer', transition: 'all .15s' }}>{t(key, lang)}</div>;
+              })}
+            </div>
+          </div>
+
+          {/* Compare button — desktop */}
+          <div style={{ padding: '6px 12px', borderTop: `1px solid ${T.bs}` }}>
+            <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 8, fontWeight: 600, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : 'transparent', border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 0', cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
+              ⚖ {compareMode ? `${t('compare', lang)} (${compareCities.length}/2)` : t('compare', lang)}
+            </div>
+            {compareMode && compareCities.length > 0 && <div style={{ ...F, fontSize: 7, color: T.td, marginTop: 4, lineHeight: 1.5 }}>
+              {compareCities.map((c, i) => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ color: T.ac }}>{i + 1}.</span> {c.name}{i === 0 && compareCities.length === 1 && <span style={{ color: T.mu }}> — {t('tapToSelect', lang)}</span>}</div>)}
+              {compareCities.length === 2 && <div onClick={() => setShowCompare(true)} style={{ ...F, fontSize: 8, color: '#fff', background: T.ac, borderRadius: 4, padding: '5px 0', cursor: 'pointer', textAlign: 'center', marginTop: 4 }}>{t('compareTitle', lang)} →</div>}
+            </div>}
+          </div>
+
           <div style={{ ...F, fontSize: 8, color: T.bd, padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
             {t('dragRotate', lang)}<br />{t('dblClickZoom', lang)}<br />{t('clickCity', lang)}
           </div>
@@ -833,7 +918,7 @@ export default function Dashboard({ demo = false }) {
 
         {/* GLOBE */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={ALL_CITIES} citiesTiers={[CITIES_T1, CITIES_T2, CITIES_T3]} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* Map mode toggle — top right */}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
@@ -1595,6 +1680,10 @@ export default function Dashboard({ demo = false }) {
             <div style={{ display: 'flex', gap: 4 }}>
               <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
               <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
+              <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.td, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
+                🌍{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
+              </div>
+              <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
             </div>
             {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
               {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>{t('allOn', lang)}</div>}
@@ -1656,7 +1745,102 @@ export default function Dashboard({ demo = false }) {
                   </div>
               ))}
             </div></>}
+            {/* Mobile continent filter dropdown */}
+            {showContinentFilter && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowContinentFilter(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>{t('continents', lang)}</span>
+                {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
+                  const active = selectedContinents.has(val);
+                  return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.td, background: active ? T.ac : 'transparent', border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 4, padding: '5px 8px', cursor: 'pointer', transition: 'all .15s' }}>{t(key, lang)}</div>;
+                })}
+              </div>
+            </div></>}
           </div>}
+
+          {/* Compare mode banner */}
+          {compareMode && <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, zIndex: 50, background: T.pop, border: `1px solid ${T.acBd}`, borderRadius: 6, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ ...F, fontSize: 9, color: T.ac, fontWeight: 700 }}>⚖ {t('compare', lang)}</span>
+            <span style={{ ...F, fontSize: 8, color: T.td, flex: 1 }}>
+              {compareCities.length === 0 ? t('selectCities', lang) : compareCities.length === 1 ? `${compareCities[0].name} — ${t('tapToSelect', lang)}` : `${compareCities[0].name} ${t('vs', lang)} ${compareCities[1].name}`}
+            </span>
+            {compareCities.length === 2 && <span onClick={() => setShowCompare(true)} style={{ ...F, fontSize: 8, color: '#fff', background: T.ac, borderRadius: 4, padding: '4px 10px', cursor: 'pointer' }}>→</span>}
+            <span onClick={() => { setCompareMode(false); setCompareCities([]); setShowCompare(false); }} style={{ ...F, fontSize: 12, color: T.td, cursor: 'pointer' }}>✕</span>
+          </div>}
+
+          {/* Compare modal */}
+          {showCompare && compareCities.length === 2 && (() => {
+            const c1 = compareCities[0], c2 = compareCities[1];
+            const imp1 = cityImpact(c1, lang), imp2 = cityImpact(c2, lang);
+            const lines1 = getAllLinesForCity(c1, visibleLines), lines2 = getAllLinesForCity(c2, visibleLines);
+            const score1 = lines1.reduce((s, l) => s + (l.q === 'thrive' ? 2 : l.q === 'avoid' ? -1 : 0.5) * (1 - l.dist / 5), 0);
+            const score2 = lines2.reduce((s, l) => s + (l.q === 'thrive' ? 2 : l.q === 'avoid' ? -1 : 0.5) * (1 - l.dist / 5), 0);
+            const maxS = Math.max(Math.abs(score1), Math.abs(score2), 1);
+            const pct1 = Math.round(50 + (score1 / maxS) * 50), pct2 = Math.round(50 + (score2 / maxS) * 50);
+            const renderCity = (c, imp, lns, pct) => (
+              <div style={{ flex: 1, minWidth: mob ? '100%' : 0 }}>
+                <div style={{ ...F, fontSize: 12, fontWeight: 700, color: T.tx, marginBottom: 2 }}>{c.name}</div>
+                <div style={{ ...F, fontSize: 8, color: T.mu, marginBottom: 8 }}>{CITY_COUNTRY[c.name] || ''}</div>
+                {/* Score bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                  <div style={{ flex: 1, height: 6, background: T.bs, borderRadius: 3 }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: pct >= 50 ? COL.thrive : COL.avoid, borderRadius: 3, transition: 'width .3s' }} />
+                  </div>
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: pct >= 50 ? COL.thrive : COL.avoid }}>{pct}</span>
+                </div>
+                {/* Closest line */}
+                <div style={{ ...F, fontSize: 8, color: T.td, marginBottom: 4 }}>{t('closeLine', lang)}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 8px', background: T.c, borderRadius: 4, marginBottom: 8 }}>
+                  <div style={{ width: 3, height: 20, borderRadius: 1, background: c.lc }} />
+                  <div>
+                    <span style={{ ...F, fontSize: 10, color: c.lc, fontWeight: 600 }}>{imp.icon} {tLine(c.line, lang)}</span>
+                    <div style={{ ...F, fontSize: 7, color: T.mu }}>{c.dist}° orb · {imp.strengthPct}%</div>
+                  </div>
+                  <span style={{ ...F, fontSize: 7, marginLeft: 'auto', color: c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral, fontWeight: 700 }}>{c.q === 'thrive' ? '▲ THRIVE' : c.q === 'avoid' ? '▼ CAUTION' : '◆ NEUTRAL'}</span>
+                </div>
+                {/* Domain + Area */}
+                <div style={{ ...F, fontSize: 8, color: T.tm, marginBottom: 2 }}>{imp.domain}</div>
+                <div style={{ ...F, fontSize: 8, color: c.q === 'thrive' ? COL.thrive : c.q === 'avoid' ? COL.avoid : COL.neutral, fontWeight: 600, marginBottom: 8 }}>{imp.area}</div>
+                {/* All nearby lines */}
+                {lns.length > 1 && <>
+                  <div style={{ ...F, fontSize: 8, color: T.td, marginBottom: 4 }}>{t('allLines', lang)} ({lns.length})</div>
+                  {lns.slice(0, 6).map((l, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 0', borderBottom: `1px solid ${T.bs}` }}>
+                      <div style={{ width: 3, height: 12, borderRadius: 1, background: l.lc }} />
+                      <span style={{ ...F, fontSize: 8, color: l.lc }}>{tLine(l.line, lang)}</span>
+                      <span style={{ ...F, fontSize: 7, color: T.mu, marginLeft: 'auto' }}>{l.dist}°</span>
+                      <span style={{ ...F, fontSize: 7, color: l.q === 'thrive' ? COL.thrive : l.q === 'avoid' ? COL.avoid : COL.neutral }}>{l.q === 'thrive' ? '▲' : l.q === 'avoid' ? '▼' : '◆'}</span>
+                    </div>
+                  ))}
+                </>}
+              </div>
+            );
+            return <><div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowCompare(false)} />
+              <div style={{ position: 'fixed', top: mob ? 10 : '50%', left: mob ? 10 : '50%', right: mob ? 10 : 'auto', bottom: mob ? 10 : 'auto', transform: mob ? 'none' : 'translate(-50%,-50%)', zIndex: 201, background: T.pan, border: `1px solid ${T.bd}`, borderRadius: 10, boxShadow: '0 20px 60px rgba(0,0,0,.5)', overflow: 'auto', maxHeight: mob ? 'auto' : '80vh', width: mob ? 'auto' : 560, display: 'flex', flexDirection: 'column' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: `1px solid ${T.bd}`, background: T.p, flexShrink: 0 }}>
+                  <span style={{ ...F, fontSize: 10, fontWeight: 700, color: T.tm, letterSpacing: 1 }}>⚖ {t('compareTitle', lang)}</span>
+                  <span onClick={() => setShowCompare(false)} style={{ ...F, fontSize: 14, color: T.td, cursor: 'pointer' }}>✕</span>
+                </div>
+                {/* Body */}
+                <div style={{ padding: 16, display: 'flex', gap: 16, flexWrap: mob ? 'wrap' : 'nowrap' }}>
+                  {renderCity(c1, imp1, lines1, pct1)}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: mob ? '4px 0' : '0 8px' }}>
+                    <span style={{ ...F, fontSize: 12, fontWeight: 700, color: T.mu }}>{t('vs', lang)}</span>
+                  </div>
+                  {renderCity(c2, imp2, lines2, pct2)}
+                </div>
+                {/* Summary */}
+                <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.bd}`, background: T.c }}>
+                  <div style={{ ...F, fontSize: 9, fontWeight: 700, color: score1 > score2 ? COL.thrive : score2 > score1 ? COL.thrive : COL.neutral, textAlign: 'center' }}>
+                    {score1 > score2 ? `${c1.name} ${t('betterFor', lang)} ${imp1.area}` : score2 > score1 ? `${c2.name} ${t('betterFor', lang)} ${imp2.area}` : `${c1.name} ≈ ${c2.name}`}
+                  </div>
+                </div>
+              </div>
+            </>;
+          })()}
         </div>
       </div>
 
