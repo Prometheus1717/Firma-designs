@@ -590,6 +590,12 @@ export default function Dashboard({ demo = false }) {
   }, []);
 
   const handleCityClick = useCallback((city) => {
+    if (!city) {
+      // Clicked empty space — clear pin and popup
+      setSearchedCity(null);
+      setCityPop(null);
+      return;
+    }
     if (compareMode) {
       setCompareCities(prev => {
         if (prev.find(c => c.name === city.name)) return prev.filter(c => c.name !== city.name);
@@ -600,6 +606,7 @@ export default function Dashboard({ demo = false }) {
       });
     } else {
       setCityPop(city);
+      setSearchedCity(city);
     }
   }, [compareMode]);
 
@@ -1768,14 +1775,18 @@ export default function Dashboard({ demo = false }) {
 
           {/* Mobile legend toggle */}
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
-            <div style={{ display: 'flex', gap: 4 }}>
-              <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
-              <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
-              <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.tm, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
-                {t('continents', lang)}{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
+                <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
+                <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
+                <div onClick={() => { if (!searchActive) { closeAllPopups('search'); setSearchActive(true); } else clearSearch(); }} style={{ ...F, fontSize: 9, color: searchActive || searchedCity ? T.ac : T.td, background: T.pop, border: `1px solid ${searchActive || searchedCity ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⌕</div>
               </div>
-              <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
-              <div onClick={() => { if (!searchActive) { closeAllPopups('search'); setSearchActive(true); } else clearSearch(); }} style={{ ...F, fontSize: 9, color: searchActive || searchedCity ? T.ac : T.td, background: T.pop, border: `1px solid ${searchActive || searchedCity ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⌕</div>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.tm, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
+                  {t('continents', lang)}{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
+                </div>
+              </div>
             </div>
             {/* Mobile search — compact, expands inline */}
             {searchActive ? (
