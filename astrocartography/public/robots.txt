@@ -3,6 +3,9 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /birth-data
 Disallow: /reset-password
 
 # Sitemap
