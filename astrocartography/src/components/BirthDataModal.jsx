@@ -7,8 +7,8 @@ import { t, getLang } from '../lib/i18n';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
-export default function BirthDataModal({ onComplete }) {
-  const { saveBirthData } = useAuth();
+export default function BirthDataModal({ onComplete, onDismiss }) {
+  const { saveBirthData, signOut } = useAuth();
   const light = isLightMode();
   const T = getTheme(light);
   const btnTx = light ? '#FFFFFF' : '#0A1018';
@@ -145,7 +145,12 @@ export default function BirthDataModal({ onComplete }) {
           borderRadius: '16px 16px 0 0',
         }} />
 
-        <div style={{ padding: '32px 28px' }}>
+        {/* Close button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 16px 0' }}>
+          <span onClick={() => { if (onDismiss) onDismiss(); else signOut(); }} style={{ ...F, fontSize: 13, color: T.td, cursor: 'pointer', padding: '4px 8px', borderRadius: 4 }}>✕</span>
+        </div>
+
+        <div style={{ padding: '0 28px 32px' }}>
           {step === 0 ? (
             <div style={{ textAlign: 'center' }}>
               <div style={{
@@ -202,6 +207,13 @@ export default function BirthDataModal({ onComplete }) {
                 ...F, fontSize: 9, color: T.mu, marginTop: 16,
               }}>
                 {t('takesLess', lang)}
+              </div>
+
+              <div onClick={() => signOut()} style={{
+                ...F, fontSize: 9, color: T.td, marginTop: 20, cursor: 'pointer',
+                textDecoration: 'underline', textUnderlineOffset: 3,
+              }}>
+                {t('signOut', lang) || 'Sign out'}
               </div>
             </div>
           ) : (
