@@ -141,7 +141,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
 
     const lt = lightRef.current;
     // Theme colors — ceramic globe light / deep dark
-    const ocean = lt ? '#8BA4B8' : '#060D16';
+    const ocean = lt ? '#6B8EA8' : '#060D16';
     const land = lt ? '#EDE5DA' : '#0F1C28';
     const border = lt ? '#9E9488' : '#3A5A72';
     const grat1 = lt ? 'rgba(160,175,190,.14)' : '#182838';
