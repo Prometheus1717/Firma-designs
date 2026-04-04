@@ -857,12 +857,16 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 300s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 600s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[0, 1].flatMap(i => {
             const tips = [
               { key: 'bt', text: t('tickerBirthTime', lang) },
               { key: 't1', text: t('tickerTip1', lang) },
               { key: 't2', text: t('tickerTip2', lang) },
+              { key: 't3', text: t('tickerTip3', lang) },
+              { key: 't4', text: t('tickerTip4', lang) },
+              { key: 't5', text: t('tickerTip5', lang) },
+              { key: 't6', text: t('tickerTip6', lang) },
             ];
             return tips.flatMap((tip, j) => [
               <span key={`p${i}${j}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
@@ -2108,7 +2112,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 260s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 550s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {(() => {
             const stats = [
               { text: bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`, color: T.td },
@@ -2121,6 +2125,10 @@ export default function Dashboard({ demo = false }) {
               { text: t('tickerBirthTime', lang), color: '#5BC4F7', bold: true },
               { text: t('tickerTip1', lang), color: '#5BC4F7', bold: true },
               { text: t('tickerTip2', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip3', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip4', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip5', lang), color: '#5BC4F7', bold: true },
+              { text: t('tickerTip6', lang), color: '#5BC4F7', bold: true },
             ];
             // Each tip separated by a full stats block — ensures only one tip visible at a time
             const unit = tips.flatMap(tip => [...stats, tip]);
