@@ -858,7 +858,10 @@ export default function Dashboard({ demo = false }) {
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
         <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
-          {[planetString, planetString].map((ps, i) => <span key={i} style={{ color: '#E8A838', padding: '0 20px' }}>{ps}</span>)}
+          {[planetString, planetString].flatMap((ps, i) => [
+            <span key={`p${i}`} style={{ color: '#E8A838', padding: '0 20px' }}>{ps}</span>,
+            <span key={`bt${i}`} style={{ color: '#FFD700', fontWeight: 700, padding: '0 20px' }}>{t('tickerBirthTime', lang)}</span>,
+          ])}
         </div>
       </div>
 
@@ -2099,14 +2102,18 @@ export default function Dashboard({ demo = false }) {
       {/* BOTTOM TICKER */}
       <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
         <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
-          {[...Array(2)].flatMap(() => [
-            bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`,
-            `▲ ${thriveC.length} ${t('thriveZone', lang).toLowerCase()}`,
-            `◆ ${neutralC.length} ${t('neutral', lang).toLowerCase()}`,
-            `▼ ${avoidC.length} ${t('cautionZone', lang).toLowerCase()}`,
-            `◉ ${onLines.length} ${t('total', lang)}`,
-          ]).map((s, i) => (
-            <span key={i} style={{ color: s.startsWith('▼') ? '#F04060' : s.startsWith('▲') ? T.ac : T.td, padding: '0 4px' }}>{s}</span>
+          {[...Array(2)].flatMap(() => {
+            const items = [
+              { text: bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`, color: T.td },
+              { text: `▲ ${thriveC.length} ${t('thriveZone', lang).toLowerCase()}`, color: T.ac },
+              { text: `◆ ${neutralC.length} ${t('neutral', lang).toLowerCase()}`, color: T.td },
+              { text: `▼ ${avoidC.length} ${t('cautionZone', lang).toLowerCase()}`, color: '#F04060' },
+              { text: `◉ ${onLines.length} ${t('total', lang)}`, color: T.td },
+              { text: t('tickerBirthTime', lang), color: '#FFD700', bold: true },
+            ];
+            return items;
+          }).map((item, i) => (
+            <span key={i} style={{ color: item.color, fontWeight: item.bold ? 700 : 400, padding: '0 4px' }}>{item.text}</span>
           ))}
         </div>
       </div>
