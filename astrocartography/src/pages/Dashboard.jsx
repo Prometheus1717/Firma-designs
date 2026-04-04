@@ -980,25 +980,31 @@ export default function Dashboard({ demo = false }) {
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
           <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
-          {/* City search — desktop top-left */}
+          {/* City search — desktop top-left (compact icon, expands on click) */}
           {!mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>
             <div style={{ position: 'relative' }}>
-              <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${searchActive ? T.acBd : T.bd}`, borderRadius: 6, overflow: 'hidden', width: searchActive ? 240 : 180, transition: 'width .2s' }}>
-                <span style={{ ...F, fontSize: 10, color: T.td, padding: '0 0 0 10px', flexShrink: 0 }}>⌕</span>
-                <input ref={searchRef} type="text" value={searchQuery} placeholder={t('searchCities', lang)}
-                  onFocus={() => setSearchActive(true)}
-                  onChange={e => { setSearchQuery(e.target.value); if (!searchActive) setSearchActive(true); }}
-                  onKeyDown={e => { if (e.key === 'Escape') { clearSearch(); searchRef.current?.blur(); } }}
-                  style={{ ...F, fontSize: 10, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '8px 8px', flex: 1, width: '100%' }}
-                />
-                {(searchQuery || searchedCity) && <span onClick={clearSearch} style={{ ...F, fontSize: 12, color: T.td, cursor: 'pointer', padding: '0 10px 0 0', flexShrink: 0 }}>✕</span>}
-              </div>
-              {searchActive && searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 2, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, maxHeight: 240, overflowY: 'auto', boxShadow: T.sh }}>
-                {searchResults.length === 0 && <div style={{ ...F, fontSize: 9, color: T.td, padding: '10px 12px' }}>{t('noSearchResults', lang)}</div>}
+              {!searchActive ? (
+                <div onClick={() => { setSearchActive(true); setTimeout(() => searchRef.current?.focus(), 50); }} style={{ ...F, fontSize: 9, color: T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ fontSize: 10 }}>⌕</span>{searchedCity ? searchedCity.name : t('searchCities', lang)}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${T.acBd}`, borderRadius: 4, overflow: 'hidden', width: 200 }}>
+                  <span style={{ ...F, fontSize: 9, color: T.td, padding: '0 0 0 8px', flexShrink: 0 }}>⌕</span>
+                  <input ref={searchRef} type="text" value={searchQuery} placeholder={t('searchCities', lang)}
+                    onBlur={() => { if (!searchQuery) setTimeout(() => setSearchActive(false), 150); }}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Escape') { clearSearch(); searchRef.current?.blur(); } }}
+                    style={{ ...F, fontSize: 9, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '6px 6px', flex: 1, width: '100%' }}
+                  />
+                  <span onClick={clearSearch} style={{ ...F, fontSize: 10, color: T.td, cursor: 'pointer', padding: '0 8px 0 0', flexShrink: 0 }}>✕</span>
+                </div>
+              )}
+              {searchActive && searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 2, width: 200, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, maxHeight: 220, overflowY: 'auto', boxShadow: T.sh }}>
+                {searchResults.length === 0 && <div style={{ ...F, fontSize: 8, color: T.td, padding: '8px 10px' }}>{t('noSearchResults', lang)}</div>}
                 {searchResults.map((c, i) => (
-                  <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 10, color: T.tx, padding: '7px 12px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, transition: 'background .1s', display: 'flex', alignItems: 'center', gap: 6 }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 9, color: T.tx, padding: '5px 10px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, transition: 'background .1s', display: 'flex', alignItems: 'center', gap: 5 }} onMouseEnter={e => e.currentTarget.style.background = T.c} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <span style={{ fontWeight: 600 }}>{c[2]}</span>
-                    {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 8, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
+                    {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 7, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
                   </div>
                 ))}
               </div>}
@@ -1769,29 +1775,31 @@ export default function Dashboard({ demo = false }) {
                 {t('continents', lang)}{selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginLeft: 3, verticalAlign: 'middle' }}>{selectedContinents.size}</span>}
               </div>
               <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
+              <div onClick={() => { if (!searchActive) { closeAllPopups('search'); setSearchActive(true); } else clearSearch(); }} style={{ ...F, fontSize: 9, color: searchActive || searchedCity ? T.ac : T.td, background: T.pop, border: `1px solid ${searchActive || searchedCity ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⌕</div>
             </div>
-            {/* Mobile search bar */}
-            <div style={{ position: 'relative', marginTop: 4 }}>
-              <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${searchActive ? T.acBd : T.bd}`, borderRadius: 4, overflow: 'hidden' }}>
-                <span style={{ ...F, fontSize: 9, color: T.td, padding: '0 0 0 8px', flexShrink: 0 }}>⌕</span>
-                <input type="text" value={searchQuery} placeholder={t('searchCities', lang)}
-                  onFocus={() => setSearchActive(true)}
-                  onChange={e => { setSearchQuery(e.target.value); if (!searchActive) setSearchActive(true); }}
-                  onKeyDown={e => { if (e.key === 'Escape') clearSearch(); }}
-                  style={{ ...F, fontSize: 9, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '6px 6px', flex: 1, width: 0, minWidth: 0 }}
-                />
-                {(searchQuery || searchedCity) && <span onClick={clearSearch} style={{ ...F, fontSize: 11, color: T.td, cursor: 'pointer', padding: '0 8px 0 0', flexShrink: 0 }}>✕</span>}
+            {/* Mobile search — compact, expands inline */}
+            {searchActive ? (
+              <div style={{ position: 'relative', marginTop: 4 }}>
+                <div style={{ display: 'flex', alignItems: 'center', background: T.pop, border: `1px solid ${T.acBd}`, borderRadius: 4, overflow: 'hidden' }}>
+                  <span style={{ ...F, fontSize: 9, color: T.td, padding: '0 0 0 8px', flexShrink: 0 }}>⌕</span>
+                  <input autoFocus type="text" value={searchQuery} placeholder={t('searchCities', lang)}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Escape') clearSearch(); }}
+                    style={{ ...F, fontSize: 9, color: T.tx, background: 'transparent', border: 'none', outline: 'none', padding: '5px 6px', flex: 1, width: 0, minWidth: 0 }}
+                  />
+                  <span onClick={clearSearch} style={{ ...F, fontSize: 10, color: T.td, cursor: 'pointer', padding: '0 8px 0 0', flexShrink: 0 }}>✕</span>
+                </div>
+                {searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 2, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, maxHeight: 180, overflowY: 'auto', boxShadow: T.sh, zIndex: 60 }}>
+                  {searchResults.length === 0 && <div style={{ ...F, fontSize: 8, color: T.td, padding: '8px 10px' }}>{t('noSearchResults', lang)}</div>}
+                  {searchResults.map((c, i) => (
+                    <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 9, color: T.tx, padding: '5px 10px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ fontWeight: 600 }}>{c[2]}</span>
+                      {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 7, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
+                    </div>
+                  ))}
+                </div>}
               </div>
-              {searchActive && searchQuery.length >= 2 && <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 2, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, maxHeight: 200, overflowY: 'auto', boxShadow: T.sh, zIndex: 60 }}>
-                {searchResults.length === 0 && <div style={{ ...F, fontSize: 8, color: T.td, padding: '8px 10px' }}>{t('noSearchResults', lang)}</div>}
-                {searchResults.map((c, i) => (
-                  <div key={i} onClick={() => handleSearchSelect(c)} style={{ ...F, fontSize: 9, color: T.tx, padding: '6px 10px', cursor: 'pointer', borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ fontWeight: 600 }}>{c[2]}</span>
-                    {CITY_COUNTRY[c[2]] && <span style={{ fontSize: 7, color: T.mu }}>{CITY_COUNTRY[c[2]]}</span>}
-                  </div>
-                ))}
-              </div>}
-            </div>
+            ) : null}
             {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
               {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>{t('allOn', lang)}</div>}
               {planetGroups.map(g => {

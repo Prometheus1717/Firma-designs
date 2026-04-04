@@ -435,8 +435,10 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
       const globeFills = cv && s.scale >= Math.min(cv.parentElement.clientWidth, cv.parentElement.clientHeight) * 1.5;
       const shouldRotate = !isFlat && s.auto && !s.drag && !globeFills;
       if (shouldRotate) {
-        // degrees per millisecond — consistent regardless of frame rate
-        const degPerMs = isMobile ? 0.0036 : 0.0018;
+        // degrees per millisecond — scale-aware so zoomed-in rotation is slower
+        const baseDeg = isMobile ? 0.0036 : 0.0018;
+        const zoomRatio = Math.min(1, s.baseScale / Math.max(s.scale, 80));
+        const degPerMs = baseDeg * zoomRatio;
         s.rot = [s.rot[0] - degPerMs * dt, s.rot[1]];
         s.dirty = true;
       }
