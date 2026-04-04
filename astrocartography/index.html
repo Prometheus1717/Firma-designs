@@ -424,21 +424,27 @@
     <!-- Force-clear stale service worker caches for existing users -->
     <script>
     (function(){
-      var V='nn-sw-v13';
-      if(localStorage.getItem('nn_sw_ver')===V)return;
-      localStorage.setItem('nn_sw_ver',V);
+      var V='nn-sw-v14';
       if('serviceWorker' in navigator){
-        var hadSW=false;
-        navigator.serviceWorker.getRegistrations().then(function(regs){
-          hadSW=regs.length>0;
-          return Promise.all(regs.map(function(r){return r.unregister();}));
-        }).then(function(){
-          return caches.keys();
-        }).then(function(keys){
-          return Promise.all(keys.map(function(k){return caches.delete(k);}));
-        }).then(function(){
-          if(hadSW)location.reload();
-        });
+        // Always register SW with no HTTP cache — browser byte-checks on every navigation
+        navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});
+        // If version changed, purge all caches and reload
+        if(localStorage.getItem('nn_sw_ver')!==V){
+          localStorage.setItem('nn_sw_ver',V);
+          var hadSW=false;
+          navigator.serviceWorker.getRegistrations().then(function(regs){
+            hadSW=regs.length>0;
+            return Promise.all(regs.map(function(r){return r.unregister();}));
+          }).then(function(){
+            return caches.keys();
+          }).then(function(keys){
+            return Promise.all(keys.map(function(k){return caches.delete(k);}));
+          }).then(function(){
+            return navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});
+          }).then(function(){
+            if(hadSW)location.reload();
+          });
+        }
       }
     })();
     </script>
