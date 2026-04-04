@@ -63,7 +63,7 @@ export default function AuthPage() {
 
       {/* Card */}
       <div style={{ width: '100%', maxWidth: 400, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, position: 'relative' }}>
-        <span onClick={() => { window.location.href = '/'; }} style={{ position: 'absolute', top: 14, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: T.td, lineHeight: 1, zIndex: 1 }}>\u2715</span>
+        <span onClick={() => navigate('/')} style={{ position: 'absolute', top: 14, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: T.td, lineHeight: 1, zIndex: 1 }}>{'✕'}</span>
         <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, marginBottom: 20, textAlign: 'center' }}>
           {mode === 'login' ? t('welcomeBack', lang) : mode === 'signup' ? t('createAccount', lang) : t('resetPassword', lang)}
         </div>
@@ -181,7 +181,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <div style={{ ...F, fontSize: 8, color: T.bd, marginTop: 32 }}>NATAL NAVIGATOR \u00A9 2026</div>
+      <div style={{ ...F, fontSize: 8, color: T.bd, marginTop: 32 }}>NATAL NAVIGATOR {'©'} 2026</div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </main>
   );

@@ -166,7 +166,6 @@ export function AuthProvider({ children }) {
           setReady(true);
           setShowBirthDataModal(true);
         }
-        // Send welcome email (fire-and-forget — don't block the signup flow)
         sendWelcomeEmail(data.user.email).catch(() => {});
         identifyUser(data.user.id, { email: data.user.email });
         trackEvent('user_signed_up', { email: data.user.email });

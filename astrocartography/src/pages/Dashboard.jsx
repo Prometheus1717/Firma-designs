@@ -660,22 +660,23 @@ export default function Dashboard({ demo = false }) {
       <h1 style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>{t('titleH1', lang)}</h1>
       {/* TOPBAR */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '0 8px' : '0 16px', height: 38, minHeight: 38, background: T.p, borderBottom: `1px solid ${T.bd}`, zIndex: 300, flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12, minWidth: 0, overflow: 'hidden' }}>
-          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: T.ac, letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap' }}>{t('natalNavigator', lang)}</span>
-          <span style={{ ...F, fontSize: 9, color: T.ac, display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 4 : 12, minWidth: 0 }}>
+          <span style={{ ...F, fontSize: mob ? 10 : 12, fontWeight: 700, color: T.ac, letterSpacing: mob ? 1.5 : 3, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('natalNavigator', lang)}</span>
+          <span style={{ ...F, fontSize: 9, color: T.ac, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: T.ac, boxShadow: `0 0 6px ${T.ac}` }} />
             {!mob && t('live', lang)}
           </span>
-          <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>
+          {!mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>}
           {/* Language selector */}
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             <span ref={langBtnRef} onClick={(e) => { e.stopPropagation(); closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4, userSelect: 'none' }}>
               <svg width={mob ? 10 : 12} height={mob ? 10 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
-              {!mob && lang.toUpperCase()}
+              {lang.toUpperCase()}
             </span>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 8 : 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12 }}>
+          {mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 7, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '3px 6px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>?</span>}
           {/* Sun/Moon theme toggle */}
           <div onClick={() => setLightMode(!lightMode)} style={{ width: mob ? 36 : 44, height: mob ? 20 : 22, borderRadius: 11, background: lightMode ? '#FFD60A' : '#1A2840', border: `1px solid ${lightMode ? '#F0C800' : '#2A3A50'}`, cursor: 'pointer', position: 'relative', transition: 'all .3s ease', display: 'flex', alignItems: 'center', padding: '0 3px', flexShrink: 0 }}>
             <div style={{ width: mob ? 14 : 16, height: mob ? 14 : 16, borderRadius: '50%', background: lightMode ? '#FFF' : '#D0DDE8', position: 'absolute', left: lightMode ? (mob ? 19 : 25) : 3, transition: 'all .3s cubic-bezier(.4,0,.2,1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: mob ? 8 : 9, boxShadow: lightMode ? '0 1px 3px rgba(0,0,0,.15)' : 'none' }}>
@@ -684,8 +685,8 @@ export default function Dashboard({ demo = false }) {
           </div>
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.td }} />}
           {demo ? <>
-            <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 6px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}` }}>{t('demo', lang)}: {DEMO.name}</span>
-            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 10px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1 }}>{t('signUp', lang)}</span>
+            <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 5px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: mob ? 90 : 'none' }}>{t('demo', lang)}{mob ? '' : ':'} {DEMO.name}</span>
+            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
             <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? T.ac : T.tm, cursor: 'pointer', background: showSettings ? T.acBg : T.c, padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? T.acBd : T.bd}`, transition: 'all .2s' }}>
@@ -1660,7 +1661,7 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 200 : 240, maxHeight: mob ? 200 : 240, background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+      <div style={{ minHeight: mob ? 160 : 240, maxHeight: mob ? 160 : 240, background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
