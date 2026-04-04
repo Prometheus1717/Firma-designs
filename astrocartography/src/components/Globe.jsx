@@ -30,10 +30,10 @@ const CP = [
 // Pre-built GeoJSON features for hardcoded country polygons — avoids creating objects every frame
 const CP_FEATURES = CP.map(p => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: [p] } }));
 
-// Pre-built graticule geometries — avoids geoGraticule() constructor + step() + call on every draw
-const GRAT_20 = geoGraticule().step([20, 20])();
-const GRAT_30 = geoGraticule().step([30, 30])();
-const GRAT_10 = geoGraticule().step([10, 10])();
+// Pre-built graticule geometries — lines only, no outer frame (extent prevents the border rectangle)
+const GRAT_20 = geoGraticule().step([20, 20]).extent([[-179.99, -89.99], [179.99, 89.99]])();
+const GRAT_30 = geoGraticule().step([30, 30]).extent([[-179.99, -89.99], [179.99, 89.99]])();
+const GRAT_10 = geoGraticule().step([10, 10]).extent([[-179.99, -89.99], [179.99, 89.99]])();
 
 // Cache meridian line geometries per longitude — avoid Array.from(181) allocation per frame per line
 const _meridianCache = new Map();
@@ -465,8 +465,9 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         if (elapsed >= s.frameInterval) { draw(); s.dirty = false; s.lastDraw = ts; }
       }
 
-      // Keep loop alive only if auto-rotating or still dirty or animating
-      if (shouldRotate || s.dirty || s.drag || s.anim) {
+      // Keep loop alive only if auto-rotating, dirty, animating, or highlight is pulsing
+      const hlActive = s.highlight && (ts - s.highlight.time) < 8000;
+      if (shouldRotate || s.dirty || s.drag || s.anim || hlActive) {
         s.raf = requestAnimationFrame(loop);
       } else {
         loopRunning = false;
