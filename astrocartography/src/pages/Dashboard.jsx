@@ -857,21 +857,24 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 600s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 240s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[0, 1].flatMap(i => {
-            const tips = [
-              { key: 'bt', text: t('tickerBirthTime', lang) },
-              { key: 't1', text: t('tickerTip1', lang) },
-              { key: 't2', text: t('tickerTip2', lang) },
-              { key: 't3', text: t('tickerTip3', lang) },
-              { key: 't4', text: t('tickerTip4', lang) },
-              { key: 't5', text: t('tickerTip5', lang) },
-              { key: 't6', text: t('tickerTip6', lang) },
+            const sun = chartData?.planets?.find(p => p.id === 'Sun');
+            const moon = chartData?.planets?.find(p => p.id === 'Moon');
+            const venus = chartData?.planets?.find(p => p.id === 'Venus');
+            const mars = chartData?.planets?.find(p => p.id === 'Mars');
+            const asc = chartData?.natal?.asc;
+            const natalSummary = sun && moon ? `☉ ${tSign(sun.sign, lang)} ${sun.deg}°  ·  ☽ ${tSign(moon.sign, lang)} ${moon.deg}°${asc ? `  ·  ASC ${tSign(asc.sign, lang)} ${asc.deg}°` : ''}` : '';
+            const loveCareer = venus && mars ? `♀ ${tSign(venus.sign, lang)} ${venus.deg}°  ·  ♂ ${tSign(mars.sign, lang)} ${mars.deg}°` : '';
+            const items = [
+              <span key={`p0${i}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
+              ...(natalSummary ? [<span key={`ns${i}`} style={{ color: '#A78BFA', fontWeight: 600, padding: '0 24px' }}>{natalSummary}</span>] : []),
+              <span key={`p1${i}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
+              <span key={`bt${i}`} style={{ color: '#5BC4F7', fontWeight: 700, padding: '0 30px' }}>{t('tickerBirthTime', lang)}</span>,
+              <span key={`p2${i}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
+              ...(loveCareer ? [<span key={`lc${i}`} style={{ color: '#A78BFA', fontWeight: 600, padding: '0 24px' }}>{loveCareer}</span>] : []),
             ];
-            return tips.flatMap((tip, j) => [
-              <span key={`p${i}${j}`} style={{ color: '#E8A838', padding: '0 20px' }}>{planetString}</span>,
-              <span key={`${tip.key}${i}`} style={{ color: '#5BC4F7', fontWeight: 700, padding: '0 30px' }}>{tip.text}</span>,
-            ]);
+            return items;
           })}
         </div>
       </div>
@@ -2112,26 +2115,22 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 550s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {(() => {
-            const stats = [
+            const topThrive = thriveC.slice(0, 3).map(c => c.name).join(' · ');
+            const topAvoid = avoidC.slice(0, 3).map(c => c.name).join(' · ');
+            const topNeutral = neutralC.slice(0, 3).map(c => c.name).join(' · ');
+            const unit = [
               { text: bestCities[0] ? `★ ${t('bestCity', lang)}: ${bestCities[0].name} (${bestCities[0].line})` : `★ ${t('yourChart', lang)}`, color: T.td },
               { text: `▲ ${thriveC.length} ${t('thriveZone', lang).toLowerCase()}`, color: T.ac },
+              ...(topThrive ? [{ text: `▲ Top: ${topThrive}`, color: '#A78BFA', bold: true }] : []),
               { text: `◆ ${neutralC.length} ${t('neutral', lang).toLowerCase()}`, color: T.td },
               { text: `▼ ${avoidC.length} ${t('cautionZone', lang).toLowerCase()}`, color: '#F04060' },
+              ...(topAvoid ? [{ text: `▼ Top: ${topAvoid}`, color: '#A78BFA', bold: true }] : []),
               { text: `◉ ${onLines.length} ${t('total', lang)}`, color: T.td },
-            ];
-            const tips = [
+              ...(topNeutral ? [{ text: `◆ Top: ${topNeutral}`, color: '#A78BFA', bold: true }] : []),
               { text: t('tickerBirthTime', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip1', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip2', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip3', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip4', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip5', lang), color: '#5BC4F7', bold: true },
-              { text: t('tickerTip6', lang), color: '#5BC4F7', bold: true },
             ];
-            // Each tip separated by a full stats block — ensures only one tip visible at a time
-            const unit = tips.flatMap(tip => [...stats, tip]);
             return [...unit, ...unit].map((item, i) => (
               <span key={i} style={{ color: item.color, fontWeight: item.bold ? 700 : 400, padding: item.bold ? '0 16px' : '0 4px' }}>{item.text}</span>
             ));
