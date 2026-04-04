@@ -572,6 +572,10 @@ export default function Dashboard({ demo = false }) {
     setSearchActive(false);
     flyTo(la, lo, name);
     setCityPop(match);
+    // Auto-switch tab to match the city's quality
+    if (match.q === 'thrive') setTab('thrive');
+    else if (match.q === 'avoid') setTab('avoid');
+    else setTab('neutral');
   }, [onLines, visibleLines, flyTo, T.tm]);
 
   const clearSearch = useCallback(() => {
@@ -607,6 +611,10 @@ export default function Dashboard({ demo = false }) {
     } else {
       setCityPop(city);
       setSearchedCity(city);
+      // Auto-switch tab to match the city's quality
+      if (city.q === 'thrive') setTab('thrive');
+      else if (city.q === 'avoid') setTab('avoid');
+      else setTab('neutral');
     }
   }, [compareMode]);
 
