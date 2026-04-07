@@ -441,7 +441,7 @@ const landingCSS = `
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     position: fixed;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     z-index: 9999;
   }
   .lp-root *, .lp-root *::before, .lp-root *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -516,7 +516,7 @@ const landingCSS = `
     position: relative; min-height: 100vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; overflow: hidden;
   }
-  .lp-hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .lp-hero-bg { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 0; }
   .lp-hero-placeholder {
     width: 100%; height: 100%;
     background: linear-gradient(135deg, #0A1018 0%, #0D1822 30%, #0A1220 60%, #000 100%);

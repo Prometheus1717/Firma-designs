@@ -784,7 +784,7 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', inset: 0, background: T.bg, color: T.tx, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', transition: 'background .3s, color .3s' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, background: T.bg, color: T.tx, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', transition: 'background .3s, color .3s' }}>
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, borderBottom: `1px solid ${T.acBd}`, padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
@@ -840,7 +840,7 @@ export default function Dashboard({ demo = false }) {
       {showLangPicker && (() => {
         const r = langBtnRef.current?.getBoundingClientRect();
         return <>
-          <div onClick={() => setShowLangPicker(false)} style={{ position: 'fixed', inset: 0, zIndex: 9998 }} />
+          <div onClick={() => setShowLangPicker(false)} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 9998 }} />
           <div style={{ position: 'fixed', top: (r?.bottom || 38) + 4, left: r?.left || 200, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: T.sh, zIndex: 9999, minWidth: 180, maxHeight: 320, overflowY: 'auto', padding: '4px 0' }}>
             {LANGUAGES.map(lg => (
               <div key={lg.code} onClick={() => changeLang(lg.code)} style={{ ...F, fontSize: 11, color: lg.code === lang ? T.ac : T.tm, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, background: lg.code === lang ? T.acBg : 'transparent', transition: 'background .15s' }}
@@ -1063,7 +1063,7 @@ export default function Dashboard({ demo = false }) {
 
           {/* Natal chart popup */}
           {showNatal && chartData?.planets && (
-            <><div style={{ position: 'absolute', inset: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
+            <><div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 105 }} onClick={() => { setShowNatal(false); setSelectedPlacement(null); setNatalTab('chart'); }} />
             <div style={{ position: 'absolute', top: mob ? 4 : 76, right: mob ? 4 : 8, left: mob ? 4 : 'auto', bottom: mob ? 4 : 'auto', zIndex: 110, width: mob ? 'auto' : 420, maxHeight: mob ? 'auto' : 'calc(100% - 84px)', background: T.pan, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: '0 16px 48px rgba(0,0,0,.6)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: `1px solid ${T.bd}`, background: T.p, flexShrink: 0 }}>
@@ -1354,7 +1354,7 @@ export default function Dashboard({ demo = false }) {
 
           {/* Line info popup */}
           {typeof popup === 'number' && lines[popup] && (<>
-            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => setPopup(null)} />
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 95 }} onClick={() => setPopup(null)} />
             <div style={{ position: 'absolute', top: mob ? 8 : 50, left: mob ? 8 : 8, right: mob ? 8 : 'auto', width: mob ? 'auto' : 320, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.sh }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <div style={{ width: 20, height: 3, borderRadius: 2, background: lines[popup].c }} />
@@ -1369,7 +1369,7 @@ export default function Dashboard({ demo = false }) {
 
           {/* City reading popup */}
           {cityPop && (<>
-            <div style={{ position: 'absolute', inset: 0, zIndex: 95 }} onClick={() => { setCityPop(null); setSearchedCity(null); }} />
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 95 }} onClick={() => { setCityPop(null); setSearchedCity(null); }} />
             <div style={{ position: 'absolute', bottom: mob ? 8 : 16, right: mob ? 8 : 16, left: mob ? 8 : 'auto', width: mob ? 'auto' : 340, background: T.pop, border: `1px solid ${cityPop.lc}30`, borderRadius: 8, padding: 16, zIndex: 100, boxShadow: T.sh }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: cityPop.lc }} />
@@ -1400,7 +1400,7 @@ export default function Dashboard({ demo = false }) {
             const timeFmt = bt ? `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')} (${h12}:${String(mi).padStart(2, '0')} ${ampm})` : '—';
 
             return (<>
-              <div onClick={() => setShowSettings(false)} style={{ position: 'fixed', inset: 0, background: T.ov, backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 700, animation: 'fadeIn .2s ease-out' }} />
+              <div onClick={() => setShowSettings(false)} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, background: T.ov, backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 700, animation: 'fadeIn .2s ease-out' }} />
               <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: mob ? 'calc(100% - 24px)' : 520, maxHeight: mob ? 'calc(100% - 48px)' : '80vh', background: T.p, border: `1px solid ${T.bd}`, borderRadius: 16, zIndex: 710, display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: `${T.sh}, 0 0 0 1px rgba(0,216,138,.05)`, animation: 'fadeIn .25s ease-out' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '14px 16px' : '18px 24px', borderBottom: `1px solid ${T.bd}`, flexShrink: 0 }}>
@@ -1576,7 +1576,7 @@ export default function Dashboard({ demo = false }) {
             const hasNext = gt < TABS.length - 1;
             const hasPrev = gt > 0;
             return (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.ov, backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }} onClick={() => setShowGuide(false)}>
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.ov, backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }} onClick={() => setShowGuide(false)}>
               <div onClick={e => e.stopPropagation()} style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, width: mob ? 'calc(100% - 24px)' : 620, maxWidth: 660, maxHeight: mob ? 'calc(100% - 24px)' : 'calc(100% - 48px)', boxShadow: T.sh, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: `1px solid ${T.bd}`, background: T.bg, flexShrink: 0 }}>
@@ -1781,7 +1781,7 @@ export default function Dashboard({ demo = false }) {
 
           {/* Demo gate popup */}
           {showDemoGate && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.ov, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }} onClick={() => setShowDemoGate(false)}>
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.ov, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }} onClick={() => setShowDemoGate(false)}>
               <div onClick={e => e.stopPropagation()} style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: mob ? 24 : 32, width: mob ? 'calc(100% - 40px)' : 380, maxWidth: 380, boxShadow: T.sh, textAlign: 'center', position: 'relative' }}>
                 <span onClick={() => setShowDemoGate(false)} style={{ position: 'absolute', top: 12, right: 14, cursor: 'pointer', ...F, fontSize: 16, color: T.td, lineHeight: 1, zIndex: 1 }}>✕</span>
                 <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.ac, letterSpacing: 2, marginBottom: 12 }}>{t('discoverChart', lang)}</div>
@@ -1839,7 +1839,7 @@ export default function Dashboard({ demo = false }) {
                 </div>}
               </div>
             ) : null}
-            {popup === 'leg' && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
+            {popup === 'leg' && <><div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 55 }} onClick={() => setPopup(null)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 220, maxHeight: '60vh', overflowY: 'auto' }}>
               {hiddenPlanets.size > 0 && <div onClick={() => setHiddenPlanets(new Set())} style={{ ...F, fontSize: 8, color: T.ac, cursor: 'pointer', padding: '4px 8px', marginBottom: 6, borderRadius: 3, border: `1px solid ${T.acBd}`, background: T.acBg, textAlign: 'center' }}>{t('allOn', lang)}</div>}
               {planetGroups.map(g => {
                 const isHid = hiddenPlanets.has(g.planet);
@@ -1878,7 +1878,7 @@ export default function Dashboard({ demo = false }) {
               )})}
             </div></>}
             {/* Mobile angle info */}
-            {showAngleInfo && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
+            {showAngleInfo && <><div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 55 }} onClick={() => setShowAngleInfo(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 12, marginTop: 4, minWidth: 260, maxHeight: '60vh', overflowY: 'auto' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tm }}>{t('lineTypes', lang)}</span>
                 <span onClick={() => setShowAngleInfo(false)} style={{ ...F, fontSize: 14, color: T.td, cursor: 'pointer' }}>✕</span>
@@ -1900,7 +1900,7 @@ export default function Dashboard({ demo = false }) {
               ))}
             </div></>}
             {/* Mobile continent filter dropdown */}
-            {showContinentFilter && <><div style={{ position: 'fixed', inset: 0, zIndex: 55 }} onClick={() => setShowContinentFilter(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200 }}>
+            {showContinentFilter && <><div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 55 }} onClick={() => setShowContinentFilter(false)} /><div style={{ position: 'relative', zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, marginTop: 4, minWidth: 200 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{t('continents', lang)}</span>
                 {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
@@ -1971,7 +1971,7 @@ export default function Dashboard({ demo = false }) {
                 </>}
               </div>
             );
-            return <><div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowCompare(false)} />
+            return <><div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 200, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowCompare(false)} />
               <div style={{ position: 'fixed', top: mob ? 10 : '50%', left: mob ? 10 : '50%', right: mob ? 10 : 'auto', bottom: mob ? 10 : 'auto', transform: mob ? 'none' : 'translate(-50%,-50%)', zIndex: 201, background: T.pan, border: `1px solid ${T.bd}`, borderRadius: 10, boxShadow: '0 20px 60px rgba(0,0,0,.5)', overflow: 'auto', maxHeight: mob ? 'auto' : '80vh', width: mob ? 'auto' : 560, display: 'flex', flexDirection: 'column' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: `1px solid ${T.bd}`, background: T.p, flexShrink: 0 }}>

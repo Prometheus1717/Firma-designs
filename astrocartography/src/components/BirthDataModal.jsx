@@ -81,20 +81,20 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
         new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Check your connection and try again.')), ms)),
       ]);
 
-      const [, chartData] = await Promise.all([
-        withTimeout(saveBirthData({
-          name: name.trim(), date, time,
-          city: selectedCity.name,
-          lat: selectedCity.lat, lng: selectedCity.lng,
-        }), 15000),
-        new Promise((resolve) => {
-          try { resolve(calculateChart(birthInput)); }
-          catch { resolve(null); }
-        }),
-      ]);
-
+      // Calculate chart synchronously — instant (~200ms)
+      let chartData = null;
+      try { chartData = calculateChart(birthInput); } catch {}
       if (chartData) setCachedChart(birthInput, chartData);
+
+      // Transition to dashboard immediately — don't wait for DB save
       onComplete?.();
+
+      // Save to DB in background (fire-and-forget)
+      withTimeout(saveBirthData({
+        name: name.trim(), date, time,
+        city: selectedCity.name,
+        lat: selectedCity.lat, lng: selectedCity.lng,
+      }), 15000).catch(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
@@ -116,7 +116,7 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
+      position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: light ? 'rgba(242,240,237,0.85)' : 'rgba(5, 8, 12, 0.85)',
       backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
