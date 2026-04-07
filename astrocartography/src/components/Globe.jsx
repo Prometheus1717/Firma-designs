@@ -133,6 +133,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; }
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const s = S.current, cx = W / 2, cy = H / 2;
@@ -415,7 +416,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         }
       }
     }
-  }, [lines, citiesOnLines, allCities, homeLocation]);
+  }, [lines, citiesOnLines, allCities, citiesTiers, homeLocation]);
 
   useEffect(() => {
     const s = S.current;

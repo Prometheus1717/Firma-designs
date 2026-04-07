@@ -91,8 +91,8 @@ export function AuthProvider({ children }) {
     // 3s absolute max — on very slow mobile networks, better to show app than hang.
     const authTimeout = setTimeout(() => {
       if (gotAuthRef.done) markReady();
-    }, hasCached ? 0 : 2000);
-    const absoluteTimeout = setTimeout(markReady, 3000);
+    }, hasCached ? 0 : 500);
+    const absoluteTimeout = setTimeout(markReady, 1500);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       gotAuthRef.done = true;

@@ -3,11 +3,15 @@ import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase admin client (service role — bypasses RLS)
+// Singleton: reuse across warm function invocations to avoid connection pool exhaustion
+let _supabaseAdmin = null;
 function getSupabaseAdmin() {
+  if (_supabaseAdmin) return _supabaseAdmin;
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
-  return createClient(url, key);
+  _supabaseAdmin = createClient(url, key);
+  return _supabaseAdmin;
 }
 
 export const config = {

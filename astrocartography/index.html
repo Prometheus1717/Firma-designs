@@ -27,9 +27,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#00D88A" />
-    <!-- General Sans for landing page -->
+    <!-- General Sans for landing page (non-blocking) -->
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Natal Navigator" />
     <meta name="application-name" content="Natal Navigator" />
@@ -208,6 +208,8 @@
     <link rel="dns-prefetch" href="https://kbwjxtvqdkcicaydtixp.supabase.co" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <!-- Prefetch globe world data — starts download before JS needs it -->
+    <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json" as="fetch" crossorigin />
 
     <!-- ─── Fonts (non-blocking) ─── -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Instrument+Sans:wght@400;600;700&display=swap" as="style" />
@@ -427,7 +429,7 @@
     <!-- Force-clear stale service worker caches for existing users -->
     <script>
     (function(){
-      var V='nn-sw-v18';
+      var V='nn-sw-v19';
       if('serviceWorker' in navigator){
         // Always register SW with no HTTP cache — browser byte-checks on every navigation
         navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});

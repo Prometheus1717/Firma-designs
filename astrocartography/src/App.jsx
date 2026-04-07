@@ -170,7 +170,7 @@ function DemoOrDashboard() {
       <BirthDataModal onComplete={() => {
         dismissBirthDataModal();
         if (user) loadProfile(user.id);
-      }} />
+      }} onDismiss={dismissBirthDataModal} />
     </>
   );
 }

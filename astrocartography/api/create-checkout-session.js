@@ -32,15 +32,24 @@ function isRateLimited(key) {
   return false;
 }
 
+// Singleton Supabase admin client — reuse across warm function invocations
+let _supabase = null;
+function getSupabase() {
+  if (_supabase) return _supabase;
+  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  _supabase = createClient(url, key);
+  return _supabase;
+}
+
 // Verify Supabase JWT and return authenticated user
 async function verifyAuth(req) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) return null;
   const token = auth.slice(7);
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  const supabase = createClient(url, key);
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data: { user }, error } = await supabase.auth.getUser(token);
   if (error || !user) return null;
   return user;

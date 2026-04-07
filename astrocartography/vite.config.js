@@ -25,6 +25,12 @@ export default defineConfig({
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
           }
+          if (id.includes('/lib/i18n') || id.includes('/lib/cityReadingsI18n')) {
+            return 'i18n';
+          }
+          if (id.includes('/data/cities')) {
+            return 'cities';
+          }
         },
       },
     },
