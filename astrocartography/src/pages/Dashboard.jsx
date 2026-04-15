@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
+import Tutorial from '../components/Tutorial';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
@@ -242,6 +243,7 @@ export default function Dashboard({ demo = false }) {
   const [selectedPlacement, setSelectedPlacement] = useState(null); // { id, type } for detail view
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [guideTab, _setGuideTab] = useState(0);
   const guideContentRef = useRef(null);
   const setGuideTab = (i) => { _setGuideTab(i); if (guideContentRef.current) guideContentRef.current.scrollTop = 0; };
@@ -358,6 +360,23 @@ export default function Dashboard({ demo = false }) {
     const t = setTimeout(() => setShowDemoGate(true), 25000);
     return () => clearTimeout(t);
   }, [demo]);
+
+  // First-visit tutorial — show once for new signed-in users with chart loaded.
+  // Uses localStorage flag (per browser/device).
+  // QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0 suppresses.
+  useEffect(() => {
+    if (demo) return;                          // don't bother demo viewers
+    if (!chartData?.planets?.length) return;   // wait until dashboard is populated
+    const force = searchParams.get('tutorial');
+    if (force === '0') return;
+    if (force !== '1') {
+      let seen = false;
+      try { seen = localStorage.getItem('nn_tutorial_seen') === '1'; } catch { /* storage unavailable */ }
+      if (seen) return;
+    }
+    const t = setTimeout(() => setShowTutorial(true), 600);
+    return () => clearTimeout(t);
+  }, [demo, chartData, searchParams]);
 
   const mob = w < 900;
 
@@ -808,7 +827,7 @@ export default function Dashboard({ demo = false }) {
           </span>
           {!mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>}
           {/* Language selector */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div data-tutorial="language" style={{ position: 'relative', flexShrink: 0 }}>
             <span ref={langBtnRef} onClick={(e) => { e.stopPropagation(); closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4, userSelect: 'none' }}>
               <svg width={mob ? 10 : 12} height={mob ? 10 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
               {lang.toUpperCase()}
@@ -882,7 +901,7 @@ export default function Dashboard({ demo = false }) {
       {/* MAIN */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minWidth: 0 }}>
         {/* LEFT SIDEBAR */}
-        {!mob && <div style={{ width: 220, minWidth: 220, background: T.p, borderRight: `1px solid ${T.bd}`, overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+        {!mob && <div data-tutorial="planets" style={{ width: 220, minWidth: 220, background: T.p, borderRight: `1px solid ${T.bd}`, overflowY: 'auto', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Header with info button */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 12px 6px' }}>
             <span style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2 }}>{t('planets', lang)}</span>
@@ -975,6 +994,7 @@ export default function Dashboard({ demo = false }) {
           ))}
 
           {/* Top Cities */}
+          <div data-tutorial="topCities">
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2 }}>{t('topCities', lang)}</div>
           {bestCities.map((c, i) => (
             <div key={i} onClick={() => { flyTo(c.la, c.lo, c.name); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px', cursor: 'pointer', ...F, fontSize: 9 }}>
@@ -983,6 +1003,7 @@ export default function Dashboard({ demo = false }) {
               <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{tLine(c.line, lang)}</span>
             </div>
           ))}
+          </div>
           {/* Continent filter — desktop */}
           <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {t('continents', lang)}
@@ -996,7 +1017,7 @@ export default function Dashboard({ demo = false }) {
           </div>
 
           {/* Compare button — desktop */}
-          <div style={{ padding: '6px 12px', borderTop: `1px solid ${T.bs}` }}>
+          <div data-tutorial="compare" style={{ padding: '6px 12px', borderTop: `1px solid ${T.bs}` }}>
             <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 8, fontWeight: 600, color: compareMode ? '#fff' : T.tm, background: compareMode ? T.ac : T.c, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 0', cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
               ⚖ {compareMode ? `${t('compare', lang)} (${compareCities.length}/2)` : t('compare', lang)}
             </div>
@@ -1012,11 +1033,11 @@ export default function Dashboard({ demo = false }) {
         </div>}
 
         {/* GLOBE */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
+        <div data-tutorial="globe" style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
           <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* City search — desktop top-left (compact icon, expands on click) */}
-          {!mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>
+          {!mob && <div data-tutorial="search" style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>
             <div style={{ position: 'relative' }}>
               {!searchActive ? (
                 <div onClick={() => { setSearchActive(true); setTimeout(() => searchRef.current?.focus(), 50); }} style={{ ...F, fontSize: 9, color: T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -1047,7 +1068,7 @@ export default function Dashboard({ demo = false }) {
           </div>}
 
           {/* Map mode toggle — top right */}
-          <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
+          <div data-tutorial="mapToggle" style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
             <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? T.ac : T.td, background: !flatMap ? T.acBg : 'transparent', borderRight: `1px solid ${T.bd}`, flex: 1 }}>
               ◉ {t('globe', lang)}
             </button>
@@ -1057,7 +1078,7 @@ export default function Dashboard({ demo = false }) {
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.pop, border: `1px solid ${showNatal ? T.acBd : T.bd}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? T.ac : T.td, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div data-tutorial="natal" onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.pop, border: `1px solid ${showNatal ? T.acBd : T.bd}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? T.ac : T.td, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
             ☉ {t('natalChart', lang)}
           </div>
 
@@ -2137,6 +2158,20 @@ export default function Dashboard({ demo = false }) {
           })()}
         </div>
       </div>
+
+      {/* First-visit tutorial overlay */}
+      {showTutorial && (
+        <Tutorial
+          lang={lang}
+          onClose={(persist) => {
+            setShowTutorial(false);
+            if (persist) {
+              try { localStorage.setItem('nn_tutorial_seen', '1'); } catch { /* storage unavailable */ }
+              try { trackEvent('tutorial_completed'); } catch { /* analytics optional */ }
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

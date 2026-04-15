@@ -37,6 +37,30 @@ export function t(key, lang) {
 // ── All UI strings ──
 const T = {
   en: {
+    // Tutorial (first-visit walkthrough)
+    tutorialAriaLabel: 'Welcome tour',
+    tutorialBadge: 'TOUR',
+    tutorialNext: 'NEXT',
+    tutorialBack: 'BACK',
+    tutorialSkip: 'SKIP',
+    tutorialDone: 'GOT IT',
+    tutGlobeTitle: 'Your astrocartography globe',
+    tutGlobeBody: 'This 3D globe shows your personal planetary lines projected onto the Earth. Drag to rotate, double-click or scroll to zoom, and click any city to read its energetic profile.',
+    tutPlanetsTitle: 'Planets & lines',
+    tutPlanetsBody: 'Each planet creates four lines (MC, IC, ASC, DC). Click a planet to expand its lines, click the colored dot to hide it from the map, and tap "?" to learn what each line type means.',
+    tutTopCitiesTitle: 'Your top cities',
+    tutTopCitiesBody: 'These are the cities most strongly aligned with your chart. Click any city to fly there on the globe and see why it matters for you.',
+    tutNatalTitle: 'Your natal chart',
+    tutNatalBody: 'Open your full natal chart with planets, signs, houses and personalized readings — plus a downloadable PDF of your complete reading.',
+    tutMapToggleTitle: 'Globe or flat map',
+    tutMapToggleBody: 'Switch between the 3D globe and a flat world map view. The flat map is great for comparing distances and seeing all your lines at once.',
+    tutSearchTitle: 'Search any city',
+    tutSearchBody: 'Quickly find a city by name to see how your planetary lines pass through it. The globe will fly there and show its zone classification.',
+    tutCompareTitle: 'Compare two cities',
+    tutCompareBody: 'Select two cities and compare them side-by-side — perfect for deciding between potential travel or relocation destinations.',
+    tutLanguageTitle: 'Change language',
+    tutLanguageBody: 'NatalNavigator is available in 14 languages. Pick yours here — your readings and interface update instantly.',
+
     // Topbar
     live: 'LIVE',
     howItWorks: 'HOW IT WORKS',
@@ -433,6 +457,30 @@ const T = {
   },
 
   de: {
+    // Tutorial (Erste-Besuch-Tour)
+    tutorialAriaLabel: 'Willkommens-Tour',
+    tutorialBadge: 'TOUR',
+    tutorialNext: 'WEITER',
+    tutorialBack: 'ZURÜCK',
+    tutorialSkip: 'ÜBERSPRINGEN',
+    tutorialDone: 'VERSTANDEN',
+    tutGlobeTitle: 'Dein Astrokartografie-Globus',
+    tutGlobeBody: 'Dieser 3D-Globus zeigt deine persönlichen Planetenlinien auf der Erde. Ziehen zum Drehen, Doppelklick oder Scrollen zum Zoomen, und klicke eine Stadt, um ihr energetisches Profil zu lesen.',
+    tutPlanetsTitle: 'Planeten & Linien',
+    tutPlanetsBody: 'Jeder Planet erzeugt vier Linien (MC, IC, ASC, DC). Klicke einen Planeten, um seine Linien zu öffnen, klicke den farbigen Punkt, um ihn auszublenden, und tippe "?", um die Linientypen zu verstehen.',
+    tutTopCitiesTitle: 'Deine Top-Städte',
+    tutTopCitiesBody: 'Das sind die Städte, die am stärksten mit deinem Horoskop verbunden sind. Klicke eine Stadt, um auf dem Globus dorthin zu fliegen und zu sehen, warum sie für dich relevant ist.',
+    tutNatalTitle: 'Dein Geburtshoroskop',
+    tutNatalBody: 'Öffne dein vollständiges Geburtshoroskop mit Planeten, Zeichen, Häusern und persönlichen Deutungen — inklusive PDF-Download deiner gesamten Auswertung.',
+    tutMapToggleTitle: 'Globus oder Karte',
+    tutMapToggleBody: 'Wechsle zwischen 3D-Globus und flacher Weltkarte. Die Karte eignet sich gut, um Distanzen zu vergleichen und alle Linien auf einmal zu sehen.',
+    tutSearchTitle: 'Stadt suchen',
+    tutSearchBody: 'Finde schnell eine Stadt nach Namen und sieh, wie deine Planetenlinien durch sie verlaufen. Der Globus fliegt dorthin und zeigt die Zonenklassifikation.',
+    tutCompareTitle: 'Zwei Städte vergleichen',
+    tutCompareBody: 'Wähle zwei Städte und vergleiche sie nebeneinander — perfekt für Entscheidungen zwischen Reise- oder Umzugszielen.',
+    tutLanguageTitle: 'Sprache wechseln',
+    tutLanguageBody: 'NatalNavigator ist in 14 Sprachen verfügbar. Wähle hier deine Sprache — Deutungen und Oberfläche werden sofort angepasst.',
+
     live: 'LIVE',
     howItWorks: 'SO FUNKTIONIERT\'S',
     signUp: 'REGISTRIEREN',
