@@ -363,13 +363,13 @@ export default function Dashboard({ demo = false }) {
 
   // First-visit tutorial — show once for new signed-in users with chart loaded.
   // Uses localStorage flag (per browser/device).
-  // QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0 suppresses.
+  // QA overrides via URL: ?tutorial=1 forces show (also in demo), ?tutorial=0 suppresses.
   useEffect(() => {
-    if (demo) return;                          // don't bother demo viewers
     if (!chartData?.planets?.length) return;   // wait until dashboard is populated
     const force = searchParams.get('tutorial');
     if (force === '0') return;
     if (force !== '1') {
+      if (demo) return;                        // demo viewers don't auto-see the tour
       let seen = false;
       try { seen = localStorage.getItem('nn_tutorial_seen') === '1'; } catch { /* storage unavailable */ }
       if (seen) return;
