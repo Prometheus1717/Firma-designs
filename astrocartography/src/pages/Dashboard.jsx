@@ -244,6 +244,13 @@ export default function Dashboard({ demo = false }) {
   const [showDemoGate, setShowDemoGate] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialDismissedAt, setTutorialDismissedAt] = useState(null); // timestamp when tour ended
+  // Snapshot "first-time visitor" once at mount so timing logic stays stable
+  const firstTimeRef = useRef(null);
+  if (firstTimeRef.current === null) {
+    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen') !== '1'; }
+    catch { firstTimeRef.current = true; }
+  }
   const [guideTab, _setGuideTab] = useState(0);
   const guideContentRef = useRef(null);
   const setGuideTab = (i) => { _setGuideTab(i); if (guideContentRef.current) guideContentRef.current.scrollTop = 0; };
@@ -354,29 +361,35 @@ export default function Dashboard({ demo = false }) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  // Demo: show sign-up prompt after 25 seconds
+  // First-visit tutorial — opens 15 s after the dashboard is populated.
+  // Shown only once per browser (localStorage flag). Applies to both demo
+  // visitors and signed-in users; returning users never see it again.
+  // QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0 suppresses.
   useEffect(() => {
-    if (!demo) return;
-    const t = setTimeout(() => setShowDemoGate(true), 25000);
-    return () => clearTimeout(t);
-  }, [demo]);
-
-  // First-visit tutorial — show once for new signed-in users with chart loaded.
-  // Uses localStorage flag (per browser/device).
-  // QA overrides via URL: ?tutorial=1 forces show (also in demo), ?tutorial=0 suppresses.
-  useEffect(() => {
-    if (!chartData?.planets?.length) return;   // wait until dashboard is populated
+    if (!chartData?.planets?.length) return;
     const force = searchParams.get('tutorial');
     if (force === '0') return;
-    if (force !== '1') {
-      if (demo) return;                        // demo viewers don't auto-see the tour
-      let seen = false;
-      try { seen = localStorage.getItem('nn_tutorial_seen') === '1'; } catch { /* storage unavailable */ }
-      if (seen) return;
-    }
-    const t = setTimeout(() => setShowTutorial(true), 600);
+    if (force !== '1' && !firstTimeRef.current) return;
+    // 15s delay for real first-time visitors; immediate when forced via ?tutorial=1 for QA
+    const delay = force === '1' ? 300 : 15000;
+    const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
-  }, [demo, chartData, searchParams]);
+  }, [chartData, searchParams]);
+
+  // Demo sign-up gate timing:
+  //  • First-time visitors: fires 30 s AFTER the tutorial was dismissed,
+  //    so the tour isn't interrupted by the paywall.
+  //  • Returning visitors: fires 25 s after page load (original behavior).
+  useEffect(() => {
+    if (!demo) return;
+    if (firstTimeRef.current) {
+      if (tutorialDismissedAt === null) return;   // wait for the tour to end
+      const t = setTimeout(() => setShowDemoGate(true), 30000);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setShowDemoGate(true), 25000);
+    return () => clearTimeout(t);
+  }, [demo, tutorialDismissedAt]);
 
   const mob = w < 900;
 
@@ -2135,7 +2148,7 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM TICKER */}
-      <div style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
+      <div data-tutorial="bottomTicker" style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
         <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {(() => {
             const topThrive = thriveC.slice(0, 3).map(c => c.name).join(' · ');
@@ -2165,6 +2178,7 @@ export default function Dashboard({ demo = false }) {
           lang={lang}
           onClose={(persist) => {
             setShowTutorial(false);
+            setTutorialDismissedAt(Date.now());
             if (persist) {
               try { localStorage.setItem('nn_tutorial_seen', '1'); } catch { /* storage unavailable */ }
               try { trackEvent('tutorial_completed'); } catch { /* analytics optional */ }
