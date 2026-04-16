@@ -484,7 +484,7 @@ const T = {
     tutSearchLayersBody: 'Oben links: eine beliebige Stadt der Welt suchen, hinfliegen und ihre Zone sehen. Unten links: alle Planetenlinien ein-/ausblenden und alle Stadtpunkte ein-/ausblenden — praktisch zum Aufräumen der Ansicht beim Erkunden.',
 
     live: 'LIVE',
-    howItWorks: 'SO FUNKTIONIERT\'S',
+    howItWorks: 'SO GEHT\'S',
     signUp: 'REGISTRIEREN',
     admin: 'ADMIN',
     demo: 'DEMO',
@@ -546,7 +546,7 @@ const T = {
     domain: 'BEREICH',
     angles: 'ACHSEN',
     ascendant: 'Aszendent',
-    midheaven: 'Medium Coeli',
+    midheaven: 'Himmelsmitte',
     ascDesc: 'Aszendent — deine äußere Persönlichkeit',
     mcDesc: 'Karriere & öffentliches Ansehen',
     details: 'DETAILS',
@@ -612,7 +612,7 @@ const T = {
     birthDataInfo: 'Deine Geburtsdaten sind die Grundlage deiner Astrokartografie. Alle Planetenlinien-Berechnungen hängen von diesen Werten ab.',
     dateOfBirth: 'GEBURTSDATUM',
     timeOfBirth: 'GEBURTSZEIT',
-    timePrecision: 'Präzision ist wichtig — schon 4 Minuten verschieben deine ASZ-Linien um ~1°',
+    timePrecision: 'Präzision ist wichtig — schon 4 Minuten verschieben deine Aszendenten-Linien um ~1°',
     birthLocation: 'GEBURTSORT',
     editBirthData: 'GEBURTSDATEN BEARBEITEN',
     plan: 'Tarif',
@@ -687,7 +687,7 @@ const T = {
     faq4Q: 'Was ist der Unterschied zwischen Globus- und Kartenansicht?',
     faq4A: 'Die Globusansicht zeigt die Erde in 3D für räumlichen Kontext. Die Kartenansicht entfaltet die Projektion flach, was es einfacher macht, Linien über Kontinente zu verfolgen und Regionen zu vergleichen.',
     faq5Q: 'Basiert das auf echter Astronomie?',
-    faq5A: 'Ja. Planetenpositionen werden mit hochpräzisen astronomischen Algorithmen (astronomy-engine) berechnet, vergleichbar mit forschungsqualifizierten Ephemeridendaten. Astrokartografie wendet dann astrologische Interpretation auf diese Positionen an.',
+    faq5A: 'Ja. Planetenpositionen werden mit hochpräzisen astronomischen Algorithmen (astronomy-engine) berechnet, vergleichbar mit Ephemeridendaten auf Forschungsniveau. Astrokartografie wendet dann astrologische Interpretation auf diese Positionen an.',
     mcFull: 'Medium Coeli (Himmelsmitte)',
     mcAngleDesc: 'Der höchste Punkt am Himmel bei deiner Geburt. Repräsentiert Karriere, öffentliches Ansehen und wie die Welt deine Errungenschaften sieht. Auf deiner MC-Linie fühlst du dich beruflich ermächtigt und öffentlich anerkannt.',
     icFull: 'Imum Coeli (Nadir)',
@@ -1005,7 +1005,7 @@ const T = {
     faq2Q: 'À quelle distance d\'une ligne dois-je me trouver ?',
     faq2A: 'L\'influence est la plus forte dans un rayon de 1 à 2° d\'une ligne (environ 100 à 200 km). Nous affichons les villes jusqu\'à 3,5° de distance, avec une force de signal décroissante.',
     faq3Q: 'Puis-je vivre sur une ligne de « prudence » ?',
-    faq3A: 'Cela dépend de la planète. Les lignes de Saturne apportent lourdeur et progression lente. Les lignes de Mars créent des conflits. Les lignes de Neptune dissolvent la clarté. Les lignes de Pluton forcent une transformation intense. Les visites courtes enseignent des leçons précieuses ; les séjours longs exigent une profonde conscience de soi.',
+    faq3A: 'Cela dépend de la planète. Les lignes de Saturne apportent de la lourdeur et une progression lente. Les lignes de Mars créent des conflits. Les lignes de Neptune dissolvent la clarté. Les lignes de Pluton forcent une transformation intense. Les visites courtes enseignent des leçons précieuses ; les séjours longs exigent une profonde conscience de soi.',
     faq4Q: 'Quelle est la différence entre vue globe et carte ?',
     faq4A: 'La vue globe montre la Terre en 3D pour le contexte spatial. La vue carte déplie la projection à plat, facilitant le suivi des lignes à travers les continents et la comparaison des régions.',
     faq5Q: 'Est-ce basé sur une vraie astronomie ?',
@@ -1153,7 +1153,7 @@ const T = {
     titleDemo: 'Demo del globo astrocartografico — Natal Navigator',
     titleDash: 'La tua dashboard astrocartografica — Natal Navigator',
     titleH1: 'Natal Navigator — Dashboard astrocartografica',
-    paymentReceived: 'Pagamento ricevuto! Attivazione del tuo account...', premiumActivated: 'Premium attivato! Benvenuto su NatalNavigator Premium. ✓',
+    paymentReceived: 'Pagamento ricevuto! Attivazione del tuo account...', premiumActivated: 'Premium attivato! Benvenuto in NatalNavigator Premium. ✓',
     natalNavigator: 'NATAL NAVIGATOR', yourMap: 'LA TUA MAPPA ASTROCARTOGRAFICA PERSONALE',
     premium: 'Premium', yourPersonalMap: 'La tua mappa\nastrocartografica personale',
     mapDescription: 'Linee planetarie, analisi delle città e tema natale — calcolati dai tuoi dati di nascita esatti.',
@@ -1232,7 +1232,7 @@ const T = {
     sendResetLink: 'INVIA LINK', goToSignIn: 'VAI ALL\'ACCESSO', newHere: 'NUOVO? CREA ACCOUNT',
     forgotPassword: 'Password dimenticata?', alreadyHaveAccount: 'Hai già un account?', signInLink: 'Accedi',
     backToSignIn: '← Torna all\'accesso',
-    accountCreated: 'Account creato! Controlla la tua e-mail e clicca il link di conferma, poi torna e accedi.',
+    accountCreated: 'Account creato! Controlla la tua e-mail e clicca sul link di conferma, poi torna e accedi.',
     resetLinkSent: 'Link di reimpostazione inviato alla tua e-mail.',
     invalidCredentials: 'Nessun account trovato con queste credenziali. Controlla e-mail e password, o registrati.',
     enterBirthData: 'Inserisci i tuoi dati di nascita', birthDataSubtitle: 'I tuoi dati di nascita sono il fondamento della tua astrocartografia.',
@@ -1321,7 +1321,7 @@ const T = {
     sVirgo: 'Vergine', sLibra: 'Bilancia', sScorpio: 'Scorpione', sSagittarius: 'Sagittario',
     sCapricorn: 'Capricorno', sAquarius: 'Acquario', sPisces: 'Pesci',
     // Modes
-    mCardinal: 'Cardinale', mFixed: 'Fisso', mMutable: 'Mutevole',
+    mCardinal: 'Cardinale', mFixed: 'Fisso', mMutable: 'Mobile',
     // Angle effects
     aeMC: 'Carriera & Vita pubblica', aeIC: 'Casa & Radici', aeASC: 'Sé & Identità', aeDC: 'Partnership',
     aeMCshort: 'sfera pubblica', aeICshort: 'vita privata', aeASCshort: 'espressione di sé', aeDCshort: 'relazioni',
@@ -1558,7 +1558,7 @@ const T = {
     domNeptune: 'Espiritualidad · Ilusión · Arte', domPluto: 'Transformación · Poder · Profundidad',
 
     // Auth page
-    welcomeBack: 'Bienvenido de vuelta', createAccount: 'Crea tu cuenta', resetPassword: 'Restablecer contraseña',
+    welcomeBack: 'Bienvenido de nuevo', createAccount: 'Crea tu cuenta', resetPassword: 'Restablecer contraseña',
     discoverCities: 'Descubre qué ciudades de la Tierra se alinean con tus estrellas.',
     emailLabel: 'CORREO', passwordLabel: 'CONTRASEÑA',
     emailPlaceholder: 'tu@ejemplo.com',
@@ -1586,7 +1586,7 @@ const T = {
     birthDataSaving: 'GUARDANDO...',
 
     // PDF section headers
-    pdfTitle: 'NATAL NAVIGATOR', pdfSubtitleReport: 'Tu informe de astrocartografía personalizado',
+    pdfTitle: 'NATAL NAVIGATOR', pdfSubtitleReport: 'Tu informe personalizado de astrocartografía',
     pdfYourChart: 'TU CARTA NATAL',
     pdfPlanetCol: 'PLANETA',
     pdfSignCol: 'SIGNO',
@@ -1689,7 +1689,7 @@ const T = {
     premiumActivated: 'Premium etkinleştirildi! NatalNavigator Premium\'a hoş geldin. ✓',
     natalNavigator: 'NATAL NAVIGATOR', yourMap: 'KİŞİSEL ASTROKARTOGRAFİ HARİTAN',
     premium: 'Premium', yourPersonalMap: 'Kişisel\nastrokartografi haritan',
-    mapDescription: 'Gezegen çizgileri, şehir analizi ve doğum haritası — doğum verilerinden hesaplanmış.',
+    mapDescription: 'Gezegen çizgileri, şehir analizi ve doğum haritası — tam doğum verilerine göre hesaplanmıştır.',
     oneTime: 'TEK ÖDEME · ÖMÜR BOYU ERİŞİM', redirecting: 'YÖNLENDİRİLİYOR...', getStarted: 'BAŞLA',
     feat3d: '3D Küre', featCity: 'Şehir Analizi', featNatal: 'Doğum Haritası', featFlat: 'Düz Harita',
     secureCheckout: 'Stripe ile güvenli ödeme · Kart bilgisi saklanmaz', signOut: 'Çıkış yap',
@@ -1735,7 +1735,7 @@ const T = {
 
     // Natal detail headers
     yourRisingSn: 'YÜKSELEN BURCUN',
-    yourMidheaven: 'GÖKYÜZÜ ORTANIZ',
+    yourMidheaven: 'GÖKYÜZÜ ORTAN',
     inThe: 'İÇİNDE',
     houseWord: 'EV',
 
@@ -1762,7 +1762,7 @@ const T = {
     fromLine: 'çizgiden',
 
     // Bottom panel
-    thriveTab: '▲ GÜÇ', neutralTab: '◆ NÖTR', avoidTab: '▼ DİKKAT', allTab: 'TÜM',
+    thriveTab: '▲ GÜÇ', neutralTab: '◆ NÖTR', avoidTab: '▼ KAÇIN', allTab: 'TÜMÜ',
     city: 'ŞEHİR', line: 'ÇİZGİ', signal: 'SİNYAL', lifeArea: 'YAŞAM ALANI', reading: 'OKUMA',
     onYourLines: 'ÇİZGİLERİNDE', cities: 'ŞEHİRLER',
     bestCity: 'En iyi şehir',
@@ -1865,16 +1865,16 @@ const T = {
     mcAngleDesc: 'Doğumunda gökyüzündeki en yüksek nokta. Kariyer, kamusal itibar ve dünyanın başarılarını nasıl gördüğünü temsil eder. MC çizginde profesyonel olarak güçlenmiş ve kamusal olarak tanınmış hissedersin.',
     icFull: 'Imum Coeli (Nadir)',
     icAngleDesc: 'Ufkun altındaki en derin nokta. Ev, kökler, aile ve iç duygusal yaşamı temsil eder. IC çizginde derin bir aidiyet ve duygusal köklenme hissedersin.',
-    ascFull: 'Yükselen (Rising)',
+    ascFull: 'Yükselen Burç',
     ascAngleDesc: 'Doğumundaki doğu ufku. Kimliğini, kendini ifadeni ve ilk izlenimlerini temsil eder. ASC çizginde kişiliğin parlar ve diğerleri gerçek benliğini görür.',
-    dcFull: 'Alçalan (Setting)',
+    dcFull: 'Alçalan Burç',
     dcAngleDesc: 'Yükselenin karşısındaki batı ufku. Ortaklıkları, ilişkileri ve başkalarıyla nasıl bağlantı kurduğunu temsil eder. DC çizginde anlamlı ilişkiler ve ittifaklar doğal olarak oluşur.',
 
     // Planet domains
     domSun: 'Kimlik · Kariyer · Canlılık', domMoon: 'Duygular · Ev · Sezgi',
     domMercury: 'İletişim · Zeka · Ticaret', domVenus: 'Aşk · Güzellik · Finans',
     domMars: 'Dürtü · Hırs · Çatışma', domJupiter: 'Büyüme · Şans · Genişleme',
-    domSaturn: 'Disiplin · Sınırlar · Karma', domUranus: 'Yenilik · Bozulma · Özgürlük',
+    domSaturn: 'Disiplin · Sınırlar · Karma', domUranus: 'Yenilik · Sarsıntı · Özgürlük',
     domNeptune: 'Maneviyat · İllüzyon · Sanat', domPluto: 'Dönüşüm · Güç · Derinlik',
 
     // Auth page
@@ -2032,7 +2032,7 @@ const T = {
     topCities: 'ЛУЧШИЕ ГОРОДА',
     dragRotate: 'Перетаскивание = Вращение · Прокрутка = Масштаб',
     dblClickZoom: 'Двойной клик = Приблизить к точке',
-    clickCity: 'Клик по городу = Толкование',
+    clickCity: 'Нажмите на город = Толкование',
     // Zones
     thriveZone: 'Зона силы',
     strengthsAmplified: 'Усиление сильных сторон',
@@ -2060,7 +2060,7 @@ const T = {
     planet: 'ПЛАНЕТА',
     sign: 'ЗНАК',
     degree: 'ГРАДУС',
-    elem: 'СТИХ',
+    elem: 'СТИХИЯ',
     domain: 'ОБЛАСТЬ',
     angles: 'УГЛЫ',
     ascendant: 'Асцендент',
@@ -2074,7 +2074,7 @@ const T = {
     mode: 'Модальность',
     motion: 'Движение',
     rules: 'Управляет',
-    retrograde: 'Ретроградность ℞',
+    retrograde: 'Ретроградный ℞',
     retro: 'R РЕТРО',
     // Natal detail headers
     yourRisingSn: 'ВАШ ВОСХОДЯЩИЙ ЗНАК',
@@ -2115,7 +2115,7 @@ const T = {
     line: 'ЛИНИЯ',
     signal: 'СИГНАЛ',
     lifeArea: 'СФЕРА ЖИЗНИ',
-    reading: 'ЧТЕНИЕ',
+    reading: 'ТОЛКОВАНИЕ',
     onYourLines: 'НА ВАШИХ ЛИНИЯХ',
     cities: 'ГОРОДОВ',
     bestCity: 'Лучший город',
@@ -2132,7 +2132,7 @@ const T = {
     cancel: 'ОТМЕНА',
     edit: 'ИЗМЕНИТЬ',
     email: 'ПОЧТА',
-    memberSince: 'УЧАСТНИК С',
+    memberSince: 'С НАМИ С',
     birthDataInfo: 'Ваши данные рождения — основа вашей астрокартографической карты. Все расчёты планетарных линий зависят от этих значений.',
     dateOfBirth: 'ДАТА РОЖДЕНИЯ',
     timeOfBirth: 'ВРЕМЯ РОЖДЕНИЯ',
@@ -2167,7 +2167,7 @@ const T = {
     guidePlanets: 'ПЛАНЕТЫ',
     guideZones: 'ЗОНЫ',
     guideHowTo: 'КАК ПОЛЬЗОВАТЬСЯ',
-    guideFaq: 'ЧАВО',
+    guideFaq: 'ВОПРОСЫ',
     startExploring: 'НАЧАТЬ ИЗУЧЕНИЕ',
     // Guide - Overview
     whatIsNN: 'ЧТО ТАКОЕ NATAL NAVIGATOR',
@@ -2234,10 +2234,10 @@ const T = {
     domMoon: 'Эмоции · Дом · Интуиция',
     domMercury: 'Общение · Интеллект · Торговля',
     domVenus: 'Любовь · Красота · Финансы',
-    domMars: 'Энергия · Амбиции · Конфликт',
+    domMars: 'Напор · Амбиции · Конфликт',
     domJupiter: 'Рост · Удача · Расширение',
     domSaturn: 'Дисциплина · Границы · Карма',
-    domUranus: 'Инновации · Перемены · Свобода',
+    domUranus: 'Инновации · Потрясения · Свобода',
     domNeptune: 'Духовность · Иллюзия · Искусство',
     domPluto: 'Трансформация · Власть · Глубина',
     // Auth page
@@ -2288,7 +2288,7 @@ const T = {
     pdfNeutralZones: 'НЕЙТРАЛЬНЫЕ ЗОНЫ — ТОНКИЕ ВЛИЯНИЯ',
     pdfNoCities: 'Города в этой зоне не найдены.',
     pdfGenerated: 'Сгенерировано',
-    pdfFindStars: 'Найдите, где ваши звёзды совпадают',
+    pdfFindStars: 'Найдите, где сходятся ваши звёзды',
     pdfAscendantIn: 'Асцендент в',
     pdfMidheavenIn: 'Середина неба в',
     // Ordinals (for house names)
@@ -2633,7 +2633,7 @@ const T = {
     domPluto: 'Transformação · Poder · Profundidade',
 
     // Auth page
-    welcomeBack: 'Bem-vindo de Volta',
+    welcomeBack: 'Bem-vindo de novo',
     createAccount: 'Crie Sua Conta',
     resetPassword: 'Redefinir Senha',
     discoverCities: 'Descubra quais cidades na Terra se alinham com suas estrelas.',
