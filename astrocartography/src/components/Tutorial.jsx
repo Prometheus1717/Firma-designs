@@ -19,7 +19,7 @@ const ACCENT = '#00D88A';
 const STEPS = [
   { keys: ['globe'],                         i18n: 'tutGlobe' },
   { keys: ['planets'],                       i18n: 'tutPlanets' },
-  { keys: ['bottomTicker'],                  i18n: 'tutBottomTicker' },
+  { keys: ['zoneTabs'],                      i18n: 'tutZoneTabs' },
   { keys: ['natalTabs'],                     i18n: 'tutNatal' },
   { keys: ['mapToggle'],                     i18n: 'tutMapToggle' },
   { keys: ['search', 'layerToggles'],        i18n: 'tutSearchLayers' },
