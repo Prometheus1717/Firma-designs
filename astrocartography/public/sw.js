@@ -32,9 +32,15 @@ self.addEventListener('fetch', (event) => {
         cache.match(event.request).then(cached => {
           if (cached) return cached;
           return fetch(event.request).then(response => {
-            if (response.ok) cache.put(event.request, response.clone());
+            // Only cache a fully successful CORS JSON response. A corporate
+            // proxy / captive portal returning HTML 200 would otherwise get
+            // pinned forever and break the globe for that client.
+            const ct = response.headers.get('content-type') || '';
+            if (response.ok && response.type === 'cors' && ct.includes('json')) {
+              cache.put(event.request, response.clone());
+            }
             return response;
-          });
+          }).catch(() => cached || new Response('', { status: 504 }));
         })
       )
     );

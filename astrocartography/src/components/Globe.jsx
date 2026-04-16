@@ -87,7 +87,7 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
+export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
   const canvasRef = useRef(null);
   const lightRef = useRef(lightMode);
   lightRef.current = lightMode;
@@ -416,7 +416,7 @@ export default function Globe({ lines, citiesOnLines, allCities, citiesTiers, ho
         }
       }
     }
-  }, [lines, citiesOnLines, allCities, citiesTiers, homeLocation]);
+  }, [lines, citiesOnLines, citiesTiers, homeLocation]);
 
   useEffect(() => {
     const s = S.current;

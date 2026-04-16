@@ -497,10 +497,6 @@ export default function Dashboard({ demo = false }) {
     return onLinesAll.filter(c => selectedContinents.has(CITY_CONTINENT[c.name]));
   }, [onLinesAll, selectedContinents]);
   // Filtered city arrays for Globe based on continent filter
-  const filteredAllCities = useMemo(() => {
-    if (selectedContinents.size === 0) return ALL_CITIES;
-    return ALL_CITIES.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
-  }, [selectedContinents]);
   const filteredCitiesTiers = useMemo(() => {
     if (selectedContinents.size === 0) return [CITIES_T1, CITIES_T2, CITIES_T3];
     const f = tier => tier.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
@@ -1034,7 +1030,7 @@ export default function Dashboard({ demo = false }) {
 
         {/* GLOBE */}
         <div data-tutorial="globe" style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* City search — desktop top-left (compact icon, expands on click) */}
           {!mob && <div data-tutorial="search" style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>

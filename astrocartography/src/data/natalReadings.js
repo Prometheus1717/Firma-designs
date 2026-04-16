@@ -471,11 +471,7 @@ export function getNatalReadings(lang) {
   return result;
 }
 
-// ── Backward-compatible exports (English only, for any code that imports directly) ──
-const _en = getNatalReadings('en');
-export const PLANET_IN_SIGN = _en.PLANET_IN_SIGN;
-export const PLANET_IN_HOUSE = _en.PLANET_IN_HOUSE;
-export const ASC_IN_SIGN = _en.ASC_IN_SIGN;
-export const MC_IN_SIGN = _en.MC_IN_SIGN;
-export const PLANET_INFO = _en.PLANET_INFO;
-export const HOUSE_INFO = _en.HOUSE_INFO;
+// Per-language readings are obtained via getNatalReadings(lang). The caller-side
+// access pattern is `const nR = getNatalReadings(lang); nR.PLANET_IN_SIGN[...]`,
+// so no module-level precomputation is needed. Building 432 English entries
+// eagerly at import time just to satisfy unused named exports was pure cost.

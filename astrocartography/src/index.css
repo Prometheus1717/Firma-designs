@@ -24,19 +24,8 @@ html[data-theme="light"] body {
 }
 
 @keyframes ts {
-  0% { transform: translateX(0) translateZ(0); }
-  100% { transform: translateX(-50%) translateZ(0); }
-}
-
-[style*="animation: ts"] {
-  will-change: transform;
-  backface-visibility: hidden;
-  contain: layout style;
-}
-
-canvas {
-  will-change: contents;
-  contain: strict;
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 input, select, textarea {

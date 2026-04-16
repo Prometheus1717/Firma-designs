@@ -10,9 +10,13 @@ export function initPostHog() {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     capture_pageview: false, // we handle this manually for SPA
-    capture_pageleave: true,
-    autocapture: true,
-    persistence: 'localStorage+cookie',
+    capture_pageleave: false, // SPA captures pageviews manually; pageleave adds unload-time work
+    autocapture: false, // we track events via trackEvent() — autocapture adds a global listener overhead
+    disable_session_recording: true,
+    disable_surveys: true,
+    advanced_disable_decide: true, // skip the /decide POST on init (feature flags not used)
+    rageclick: false,
+    persistence: 'localStorage',
   });
   initialized = true;
 }
