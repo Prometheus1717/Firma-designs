@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { t } from '../lib/i18n';
 
 // ── Tutorial overlay with spotlight, arrow(s), popup ──
@@ -45,9 +45,8 @@ function unionRect(rects) {
   return { left, top, right, bottom, width: right - left, height: bottom - top };
 }
 
-function computePlacement(rect) {
+function computePlacement(rect, popupH) {
   const vw = window.innerWidth, vh = window.innerHeight;
-  const popupH = 220;
 
   const spaceRight  = vw - rect.right;
   const spaceLeft   = rect.left;
@@ -69,10 +68,11 @@ function computePlacement(rect) {
     left = rect.left - POPUP_W - POPUP_GAP;
     top  = Math.max(VP_MARGIN, Math.min(vh - popupH - VP_MARGIN, rect.top + rect.height / 2 - popupH / 2));
   } else if (side === 'bottom') {
-    top  = rect.bottom + POPUP_GAP;
+    top  = Math.min(vh - popupH - VP_MARGIN, rect.bottom + POPUP_GAP);
+    top  = Math.max(VP_MARGIN, top);
     left = Math.max(VP_MARGIN, Math.min(vw - POPUP_W - VP_MARGIN, rect.left + rect.width / 2 - POPUP_W / 2));
   } else {
-    top  = rect.top - popupH - POPUP_GAP;
+    top  = Math.max(VP_MARGIN, rect.top - popupH - POPUP_GAP);
     left = Math.max(VP_MARGIN, Math.min(vw - POPUP_W - VP_MARGIN, rect.left + rect.width / 2 - POPUP_W / 2));
   }
   return { side, top, left, popupH };
@@ -114,17 +114,22 @@ function arrowGeometry(targetRect, place) {
 }
 
 export default function Tutorial({ lang, onClose, onStep }) {
+  // 'intro' → Yes/No dialog before the tour starts
+  // 'running' → live tour overlay with spotlight
+  const [phase, setPhase] = useState('intro');
   const [stepIdx, setStepIdx] = useState(0);
   const [rects, setRects] = useState([]);
   const [tick, setTick] = useState(0);
+  const [popupH, setPopupH] = useState(340);
+  const popupRef = useRef(null);
 
   const activeSteps = useMemo(() => STEPS, []);
 
   const step = activeSteps[stepIdx];
 
   useEffect(() => {
-    if (onStep && step) onStep(step.keys);
-  }, [stepIdx, step, onStep]);
+    if (phase === 'running' && onStep && step) onStep(step.keys);
+  }, [phase, stepIdx, step, onStep]);
 
   useLayoutEffect(() => {
     if (!step) return;
@@ -149,29 +154,69 @@ export default function Tutorial({ lang, onClose, onStep }) {
 
   const next = useCallback(() => {
     if (stepIdx < activeSteps.length - 1) setStepIdx(i => i + 1);
-    else onClose(true);
+    else onClose(true, true); // completed the tour
   }, [stepIdx, activeSteps.length, onClose]);
 
   const prev = useCallback(() => {
     if (stepIdx > 0) setStepIdx(i => i - 1);
   }, [stepIdx]);
 
+  const dismiss = useCallback(() => onClose(true, false), [onClose]);
+
   useEffect(() => {
+    if (phase !== 'running') return;
     const onKey = (e) => {
-      if (e.key === 'Escape') onClose(true);
+      if (e.key === 'Escape') dismiss();
       else if (e.key === 'ArrowRight' || e.key === 'Enter') next();
       else if (e.key === 'ArrowLeft') prev();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [next, prev, onClose]);
+  }, [phase, next, prev, dismiss]);
+
+  // Measure the popup so placement + clamping use its real height
+  useLayoutEffect(() => {
+    if (phase !== 'running' || !popupRef.current) return;
+    const h = popupRef.current.offsetHeight;
+    if (h && Math.abs(h - popupH) > 4) setPopupH(h);
+  }, [phase, step, rects, popupH]);
+
+  // ── Intro "do you want a tour?" dialog ─────────────────────────────
+  if (phase === 'intro') {
+    return (
+      <div
+        role="dialog"
+        aria-label={t('tutorialIntroTitle', lang)}
+        style={{ position: 'fixed', inset: 0, zIndex: 99990, background: 'rgba(2,8,18,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+      >
+        <div style={{ width: 360, maxWidth: '100%', background: '#0A1222', border: `1px solid ${ACCENT}`, borderRadius: 10, boxShadow: '0 18px 50px rgba(0,0,0,.65), 0 0 0 1px rgba(0,216,138,.18)', color: '#E4ECF5', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828' }}>
+            <span style={{ ...F, fontSize: 9, fontWeight: 700, color: ACCENT, letterSpacing: 2 }}>{t('tutorialIntroBadge', lang)}</span>
+            <span onClick={dismiss} style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }} title={t('tutorialIntroNo', lang)}>✕</span>
+          </div>
+          <div style={{ padding: '18px 18px 6px' }}>
+            <div style={{ ...F, fontSize: 15, fontWeight: 700, color: '#FFFFFF', marginBottom: 10, letterSpacing: 0.3 }}>{t('tutorialIntroTitle', lang)}</div>
+            <div style={{ fontSize: 13, lineHeight: 1.6, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('tutorialIntroBody', lang)}</div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '16px 16px 16px' }}>
+            <span onClick={dismiss} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#B6C2D2', background: 'transparent', border: '1px solid #2A3A50', borderRadius: 5, padding: '7px 14px', cursor: 'pointer', letterSpacing: 1 }}>
+              {t('tutorialIntroNo', lang)}
+            </span>
+            <span onClick={() => setPhase('running')} style={{ ...F, fontSize: 10, fontWeight: 700, color: '#02101E', background: ACCENT, border: `1px solid ${ACCENT}`, borderRadius: 5, padding: '7px 16px', cursor: 'pointer', letterSpacing: 1 }}>
+              {t('tutorialIntroYes', lang)}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!step) return null;
 
   const union = rects.length ? unionRect(rects) : null;
   const place = union
-    ? computePlacement(union)
-    : { side: 'center', top: window.innerHeight / 2 - 110, left: window.innerWidth / 2 - POPUP_W / 2, popupH: 220 };
+    ? computePlacement(union, popupH)
+    : { side: 'center', top: Math.max(VP_MARGIN, window.innerHeight / 2 - popupH / 2), left: window.innerWidth / 2 - POPUP_W / 2, popupH };
 
   const vw = window.innerWidth, vh = window.innerHeight;
   const cuts = rects.map(r => ({
@@ -191,7 +236,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
       aria-label={t('tutorialAriaLabel', lang)}
       style={{ position: 'fixed', inset: 0, zIndex: 99990, pointerEvents: 'none' }}
     >
-      <svg width={vw} height={vh} style={{ position: 'fixed', inset: 0, pointerEvents: 'auto' }} onClick={() => onClose(true)}>
+      <svg width={vw} height={vh} style={{ position: 'fixed', inset: 0, pointerEvents: 'auto' }} onClick={dismiss}>
         <defs>
           <mask id="nn-tut-mask">
             <rect x="0" y="0" width={vw} height={vh} fill="white" />
@@ -227,11 +272,13 @@ export default function Tutorial({ lang, onClose, onStep }) {
       </svg>
 
       <div
+        ref={popupRef}
         style={{
           position: 'fixed',
           top: place.top,
           left: place.left,
           width: POPUP_W,
+          maxHeight: `calc(100vh - ${VP_MARGIN * 2}px)`,
           background: '#0A1222',
           border: `1px solid ${ACCENT}`,
           borderRadius: 10,
@@ -239,14 +286,16 @@ export default function Tutorial({ lang, onClose, onStep }) {
           color: '#E4ECF5',
           pointerEvents: 'auto',
           overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
           <span style={{ ...F, fontSize: 9, fontWeight: 700, color: ACCENT, letterSpacing: 2 }}>
             {t('tutorialBadge', lang)} · {stepIdx + 1}/{activeSteps.length}
           </span>
           <span
-            onClick={() => onClose(true)}
+            onClick={dismiss}
             style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }}
             title={t('tutorialSkip', lang)}
           >
@@ -254,12 +303,12 @@ export default function Tutorial({ lang, onClose, onStep }) {
           </span>
         </div>
 
-        <div style={{ padding: '14px 16px 4px' }}>
+        <div style={{ padding: '14px 16px 4px', overflowY: 'auto', flex: '1 1 auto', minHeight: 0 }}>
           <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#FFFFFF', marginBottom: 8, letterSpacing: 0.3 }}>{title}</div>
           <div style={{ fontSize: 12.5, lineHeight: 1.65, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{body}</div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, padding: '12px 0 6px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, padding: '12px 0 6px', flexShrink: 0 }}>
           {activeSteps.map((_, i) => (
             <span
               key={i}
@@ -276,9 +325,9 @@ export default function Tutorial({ lang, onClose, onStep }) {
           ))}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 12px', borderTop: '1px solid #1A2840', background: '#0E1828' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 12px', borderTop: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
           <span
-            onClick={() => onClose(true)}
+            onClick={dismiss}
             style={{ ...F, fontSize: 9, color: '#7B8AA0', cursor: 'pointer', letterSpacing: 1 }}
           >
             {t('tutorialSkip', lang)}
