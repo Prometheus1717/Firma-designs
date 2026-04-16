@@ -4,8 +4,61 @@
 
 import { NATAL_I18N } from './natalReadingsI18n.js';
 import { NATAL_I18N_2 } from './natalReadingsI18n2.js';
+import { t as tUI } from '../lib/i18n.js';
 
 const ALL_I18N = { ...(NATAL_I18N || {}), ...(NATAL_I18N_2 || {}) };
+
+// ── Localized names for planets, signs, elements, modalities ──
+// Planet + sign names are translated via the main i18n table (pSun, sAries, mCardinal).
+// Element names are only used in readings, so we keep them inline here.
+const ELEMENT_I18N = {
+  en: { Fire:'fire', Earth:'earth', Air:'air', Water:'water' },
+  de: { Fire:'Feuer', Earth:'Erde', Air:'Luft', Water:'Wasser' },
+  fr: { Fire:'feu', Earth:'terre', Air:'air', Water:'eau' },
+  es: { Fire:'fuego', Earth:'tierra', Air:'aire', Water:'agua' },
+  it: { Fire:'fuoco', Earth:'terra', Air:'aria', Water:'acqua' },
+  pt: { Fire:'fogo', Earth:'terra', Air:'ar', Water:'água' },
+  tr: { Fire:'ateş', Earth:'toprak', Air:'hava', Water:'su' },
+  ru: { Fire:'огонь', Earth:'земля', Air:'воздух', Water:'вода' },
+  ja: { Fire:'火', Earth:'地', Air:'風', Water:'水' },
+  zh: { Fire:'火', Earth:'土', Air:'风', Water:'水' },
+  ar: { Fire:'نار', Earth:'تراب', Air:'هواء', Water:'ماء' },
+  ko: { Fire:'불', Earth:'땅', Air:'공기', Water:'물' },
+  pl: { Fire:'ogień', Earth:'ziemia', Air:'powietrze', Water:'woda' },
+  nl: { Fire:'vuur', Earth:'aarde', Air:'lucht', Water:'water' },
+};
+
+const MODALITY_I18N = {
+  en: { Cardinal:'cardinal', Fixed:'fixed', Mutable:'mutable' },
+  de: { Cardinal:'kardinal', Fixed:'fix', Mutable:'veränderlich' },
+  fr: { Cardinal:'cardinal', Fixed:'fixe', Mutable:'mutable' },
+  es: { Cardinal:'cardinal', Fixed:'fijo', Mutable:'mutable' },
+  it: { Cardinal:'cardinale', Fixed:'fisso', Mutable:'mobile' },
+  pt: { Cardinal:'cardeal', Fixed:'fixo', Mutable:'mutável' },
+  tr: { Cardinal:'öncü', Fixed:'sabit', Mutable:'değişken' },
+  ru: { Cardinal:'кардинальный', Fixed:'фиксированный', Mutable:'мутабельный' },
+  ja: { Cardinal:'活動', Fixed:'不動', Mutable:'柔軟' },
+  zh: { Cardinal:'基本', Fixed:'固定', Mutable:'变动' },
+  ar: { Cardinal:'أصلي', Fixed:'ثابت', Mutable:'متحول' },
+  ko: { Cardinal:'활동', Fixed:'고정', Mutable:'변통' },
+  pl: { Cardinal:'kardynalne', Fixed:'stałe', Mutable:'zmienne' },
+  nl: { Cardinal:'hoofdteken', Fixed:'vast', Mutable:'beweeglijk' },
+};
+
+function locPlanet(planet, lang) {
+  return tUI('p' + planet, lang) || planet;
+}
+function locSign(sign, lang) {
+  return tUI('s' + sign, lang) || sign;
+}
+function locElement(element, lang) {
+  const table = ELEMENT_I18N[lang] || ELEMENT_I18N.en;
+  return (table[element] || element).toLowerCase();
+}
+function locModality(modality, lang) {
+  const table = MODALITY_I18N[lang] || MODALITY_I18N.en;
+  return (table[modality] || modality).toLowerCase();
+}
 
 const PLANETS = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
 const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
@@ -206,17 +259,20 @@ const EN_TEMPLATES = {
 
 // ── Helper: get data for a language, falling back to English ──
 function getData(lang) {
-  if (!lang || lang === 'en') return {
+  const l = lang || 'en';
+  if (l === 'en') return {
+    lang: 'en',
     ordinals: EN_ORDINALS, signData: EN_SIGN_DATA, planetRole: EN_PLANET_ROLE,
     houseData: EN_HOUSE_DATA, houseEffect: EN_HOUSE_EFFECT, ascData: EN_ASC_DATA,
     mcData: EN_MC_DATA, planetInfo: EN_PLANET_INFO, houseInfo: EN_HOUSE_INFO,
     templates: EN_TEMPLATES,
   };
 
-  const i = ALL_I18N[lang];
+  const i = ALL_I18N[l];
   if (!i) return getData('en');
 
   return {
+    lang: l,
     ordinals: i.ORDINALS || EN_ORDINALS,
     signData: mergeSignData(i.SIGN_DATA),
     planetRole: i.PLANET_ROLE || EN_PLANET_ROLE,
@@ -291,6 +347,7 @@ function buildPlanetInSign(planet, sign, d) {
   const role = d.planetRole[planet] || EN_PLANET_ROLE[planet];
   const signInfo = d.signData[sign] || EN_SIGN_DATA[sign];
   const t = d.templates || EN_TEMPLATES;
+  const signLoc = locSign(sign, d.lang);
 
   const line1Tpl = t.planetSignLine1?.[planet] || EN_TEMPLATES.planetSignLine1[planet];
   const line2Tpl = t.planetSignLine2?.[planet] || EN_TEMPLATES.planetSignLine2[planet];
@@ -299,7 +356,7 @@ function buildPlanetInSign(planet, sign, d) {
   const gen = t.generational?.[planet] || EN_TEMPLATES.generational?.[planet] || '';
 
   return (
-    tpl(line1Tpl, { rep: role.rep, sign, style: signInfo.style }) + ' ' +
+    tpl(line1Tpl, { rep: role.rep, sign: signLoc, style: signInfo.style }) + ' ' +
     tpl(line2Tpl, { behavior: signInfo.behavior }) + ' ' +
     tpl(scTpl, { planetStrength: role.strength, signStrength: signInfo.strength, planetChallenge: role.challenge, signChallenge: signInfo.challenge }) + ' ' +
     line5 + (gen || '')
@@ -312,8 +369,9 @@ function buildPlanetInHouse(planet, house, d) {
   const effect = (d.houseEffect || EN_HOUSE_EFFECT)[planet];
   const t = d.templates || EN_TEMPLATES;
   const pih = t.planetInHouse || EN_TEMPLATES.planetInHouse;
+  const planetLoc = locPlanet(planet, d.lang);
 
-  const opening = tpl(pih.opening || EN_TEMPLATES.planetInHouse.opening, { planet, houseTitle: houseInfo.title, houseShort: houseInfo.short, rep: role.rep });
+  const opening = tpl(pih.opening || EN_TEMPLATES.planetInHouse.opening, { planet: planetLoc, houseTitle: houseInfo.title, houseShort: houseInfo.short, rep: role.rep });
   const middle = tpl(pih.middle || EN_TEMPLATES.planetInHouse.middle, { houseLong: houseInfo.long });
   const ending = pih.endings?.[planet] || EN_TEMPLATES.planetInHouse.endings[planet];
 
@@ -324,11 +382,14 @@ function buildAsc(sign, d) {
   const signInfo = d.signData[sign] || EN_SIGN_DATA[sign];
   const asc = (d.ascData || EN_ASC_DATA)[sign];
   const t = (d.templates || EN_TEMPLATES).asc || EN_TEMPLATES.asc;
+  const signLoc = locSign(sign, d.lang);
+  const elementLoc = locElement(signInfo.element, d.lang);
+  const modalityLoc = locModality(signInfo.modality, d.lang);
 
   return (
-    tpl(t.line1, { sign, outer: asc.outer }) + ' ' +
+    tpl(t.line1, { sign: signLoc, outer: asc.outer }) + ' ' +
     tpl(t.line2, { first: asc.first }) + ' ' +
-    tpl(t.line3, { persona: asc.persona, element: signInfo.element.toLowerCase(), modality: signInfo.modality.toLowerCase(), sign }) + ' ' +
+    tpl(t.line3, { persona: asc.persona, element: elementLoc, modality: modalityLoc, sign: signLoc }) + ' ' +
     tpl(t.line4, { signStrength: signInfo.strength, ascChallenge: asc.challenge }) + ' ' +
     t.line5
   );
@@ -338,9 +399,10 @@ function buildMc(sign, d) {
   const signInfo = d.signData[sign] || EN_SIGN_DATA[sign];
   const mc = (d.mcData || EN_MC_DATA)[sign];
   const t = (d.templates || EN_TEMPLATES).mc || EN_TEMPLATES.mc;
+  const signLoc = locSign(sign, d.lang);
 
   return (
-    tpl(t.line1, { sign, fields: mc.fields }) + ' ' +
+    tpl(t.line1, { sign: signLoc, fields: mc.fields }) + ' ' +
     tpl(t.line2, { image: mc.image }) + ' ' +
     tpl(t.line3, { style: signInfo.style }) + ' ' +
     tpl(t.line4, { mcChallenge: mc.challenge })
