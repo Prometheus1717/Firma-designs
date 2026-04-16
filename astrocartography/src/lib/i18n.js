@@ -37,6 +37,26 @@ export function t(key, lang) {
 // ── All UI strings ──
 const T = {
   en: {
+    // Tutorial (first-visit walkthrough)
+    tutorialAriaLabel: 'Welcome tour',
+    tutorialBadge: 'TOUR',
+    tutorialNext: 'NEXT',
+    tutorialBack: 'BACK',
+    tutorialSkip: 'SKIP',
+    tutorialDone: 'GOT IT',
+    tutGlobeTitle: 'Globe & map — your cosmic blueprint',
+    tutGlobeBody: 'Each colored dot is a city on one of your planetary lines. The lines themselves are the paths where a planet sat exactly on the horizon or meridian at your birth — standing on that line activates that planet\'s energy in your life. Drag to rotate, scroll to zoom, click any city for its personal reading.',
+    tutPlanetsTitle: 'Planets & line types',
+    tutPlanetsBody: 'Every planet has four lines: MC (career & visibility), IC (home & roots), ASC (identity), DC (relationships). Click a planet to expand its lines, click the colored dot to hide it on the map, or tap "?" to read what each line type means.',
+    tutBottomTickerTitle: 'Live summary ticker',
+    tutBottomTickerBody: 'At a glance: your best city, your thrive / neutral / caution zone counts, and the top cities in each category — scrolling continuously. Your whole astrocartography picture in one line.',
+    tutNatalTitle: 'Natal chart & personality',
+    tutNatalBody: 'Opens your full natal chart with all planets, signs and houses, plus a personality tab with in-depth readings for every placement. Includes a one-click PDF export of your complete reading.',
+    tutMapToggleTitle: 'Globe or flat map',
+    tutMapToggleBody: 'Switch between the 3D globe and a flat world map. The flat view is great for comparing distances and seeing all your lines at once; the globe gives you depth and rotation.',
+    tutSearchLayersTitle: 'Search & layer controls',
+    tutSearchLayersBody: 'Top-left: search any city in the world to fly there and see its zone. Bottom-left: toggle all planetary lines on/off, and toggle the city dots on/off — useful to declutter the view while you explore.',
+
     // Topbar
     live: 'LIVE',
     howItWorks: 'HOW IT WORKS',
@@ -433,6 +453,26 @@ const T = {
   },
 
   de: {
+    // Tutorial (Erste-Besuch-Tour)
+    tutorialAriaLabel: 'Willkommens-Tour',
+    tutorialBadge: 'TOUR',
+    tutorialNext: 'WEITER',
+    tutorialBack: 'ZURÜCK',
+    tutorialSkip: 'ÜBERSPRINGEN',
+    tutorialDone: 'VERSTANDEN',
+    tutGlobeTitle: 'Globus & Karte — deine kosmische Landkarte',
+    tutGlobeBody: 'Jeder farbige Punkt ist eine Stadt auf einer deiner Planetenlinien. Die Linien selbst markieren die Orte, an denen ein Planet bei deiner Geburt exakt auf dem Horizont oder Meridian stand — stehst du auf der Linie, wirkt die Energie dieses Planeten verstärkt in deinem Leben. Ziehen zum Drehen, Scrollen zum Zoomen, Klick auf eine Stadt für ihre persönliche Deutung.',
+    tutPlanetsTitle: 'Planeten & Linientypen',
+    tutPlanetsBody: 'Jeder Planet hat vier Linien: MC (Karriere & Sichtbarkeit), IC (Zuhause & Wurzeln), ASC (Identität), DC (Beziehungen). Klicke einen Planeten für seine Linien, klicke den farbigen Punkt zum Ausblenden, oder tippe "?" für die Erklärung der Linientypen.',
+    tutBottomTickerTitle: 'Live-Zusammenfassung',
+    tutBottomTickerBody: 'Auf einen Blick: deine beste Stadt, die Anzahl deiner Thrive-/Neutral-/Caution-Zonen und die Top-Städte jeder Kategorie — kontinuierlich durchlaufend. Deine gesamte Astrokartografie in einer Zeile.',
+    tutNatalTitle: 'Geburtshoroskop & Persönlichkeit',
+    tutNatalBody: 'Öffnet dein komplettes Geburtshoroskop mit allen Planeten, Zeichen und Häusern, plus einem Persönlichkeits-Tab mit tiefgehenden Deutungen zu jeder Stellung. Inklusive Ein-Klick-PDF-Export deiner gesamten Auswertung.',
+    tutMapToggleTitle: 'Globus oder Karte',
+    tutMapToggleBody: 'Wechsle zwischen 3D-Globus und flacher Weltkarte. Die Karte eignet sich gut, um Distanzen zu vergleichen und alle Linien auf einmal zu sehen — der Globus bietet Tiefe und Rotation.',
+    tutSearchLayersTitle: 'Suche & Ebenen-Steuerung',
+    tutSearchLayersBody: 'Oben links: eine beliebige Stadt der Welt suchen, hinfliegen und ihre Zone sehen. Unten links: alle Planetenlinien ein-/ausblenden und alle Stadtpunkte ein-/ausblenden — praktisch zum Aufräumen der Ansicht beim Erkunden.',
+
     live: 'LIVE',
     howItWorks: 'SO FUNKTIONIERT\'S',
     signUp: 'REGISTRIEREN',
