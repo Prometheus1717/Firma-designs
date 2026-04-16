@@ -2062,7 +2062,7 @@ export default function Dashboard({ demo = false }) {
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
-          <div style={{ display: 'flex', borderBottom: `1px solid ${T.bs}`, flexShrink: 0 }}>
+          <div data-tutorial="zoneTabs" style={{ display: 'flex', borderBottom: `1px solid ${T.bs}`, flexShrink: 0 }}>
             {[
               { id: 'thrive', label: t('thriveTab', lang), count: thriveC.length, col: COL.thrive },
               { id: 'neutral', label: t('neutralTab', lang), count: neutralC.length, col: COL.neutral },
