@@ -252,7 +252,7 @@ export default function Dashboard({ demo = false }) {
   // re-launched, faster tour.
   const firstTimeRef = useRef(null);
   if (firstTimeRef.current === null) {
-    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v2') !== '1'; }
+    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v3') !== '1'; }
     catch { firstTimeRef.current = true; }
   }
   const [guideTab, _setGuideTab] = useState(0);
@@ -898,7 +898,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 240s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 80s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {[0, 1].flatMap(i => {
             const sun = chartData?.planets?.find(p => p.id === 'Sun');
             const moon = chartData?.planets?.find(p => p.id === 'Moon');
@@ -2170,7 +2170,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div data-tutorial="bottomTicker" style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 55s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
           {(() => {
             const topThrive = thriveC.slice(0, 3).map(c => c.name).join(' · ');
             const topAvoid = avoidC.slice(0, 3).map(c => c.name).join(' · ');
@@ -2213,7 +2213,7 @@ export default function Dashboard({ demo = false }) {
             setTutorialDismissedAt(Date.now());
             if (showNatal) setShowNatal(false);
             if (persist) {
-              try { localStorage.setItem('nn_tutorial_seen_v2', '1'); } catch { /* storage unavailable */ }
+              try { localStorage.setItem('nn_tutorial_seen_v3', '1'); } catch { /* storage unavailable */ }
               try { trackEvent(completed ? 'tutorial_completed' : 'tutorial_dismissed'); } catch { /* analytics optional */ }
             }
           }}
