@@ -846,6 +846,7 @@ export default function Dashboard({ demo = false }) {
             {!mob && t('live', lang)}
           </span>
           {!mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>{t('howItWorks', lang)}</span>}
+          {!mob && <span onClick={() => { closeAllPopups(); setTutorialDismissedAt(null); setTutorialCompleted(false); setShowTutorial(true); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: T.ac, cursor: 'pointer', padding: '4px 10px', borderRadius: 4, border: `1px solid ${T.acBd}`, background: T.acBg, letterSpacing: 0.5 }}>{t('tutorialBadge', lang)}</span>}
           {/* Language selector */}
           <div data-tutorial="language" style={{ position: 'relative', flexShrink: 0 }}>
             <span ref={langBtnRef} onClick={(e) => { e.stopPropagation(); closeAllPopups('lang'); setShowLangPicker(!showLangPicker); }} style={{ ...F, fontSize: mob ? 7 : 9, fontWeight: 600, color: showLangPicker ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 7px' : '4px 10px', borderRadius: 4, border: `1px solid ${showLangPicker ? T.acBd : T.bd}`, background: showLangPicker ? T.acBg : 'transparent', letterSpacing: 0.5, display: 'flex', alignItems: 'center', gap: 4, userSelect: 'none' }}>
@@ -855,6 +856,7 @@ export default function Dashboard({ demo = false }) {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12 }}>
+          {mob && <span onClick={() => { closeAllPopups(); setTutorialDismissedAt(null); setTutorialCompleted(false); setShowTutorial(true); }} style={{ ...F, fontSize: 7, fontWeight: 600, color: T.ac, cursor: 'pointer', padding: '3px 6px', borderRadius: 4, border: `1px solid ${T.acBd}`, background: T.acBg, letterSpacing: 0.5 }}>{t('tutorialBadge', lang)}</span>}
           {mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 7, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '3px 6px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>?</span>}
           {/* Sun/Moon theme toggle */}
           <div onClick={() => setLightMode(!lightMode)} style={{ width: mob ? 36 : 44, height: mob ? 20 : 22, borderRadius: 11, background: lightMode ? '#FFD60A' : '#1A2840', border: `1px solid ${lightMode ? '#F0C800' : '#2A3A50'}`, cursor: 'pointer', position: 'relative', transition: 'all .3s ease', display: 'flex', alignItems: 'center', padding: '0 3px', flexShrink: 0 }}>
