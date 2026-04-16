@@ -4754,9 +4754,9 @@ const T = {
     demo: 'DEMO',
 
     // Page titles
-    titleDemo: 'Astrocartografie Globe Demo — Natal Navigator',
-    titleDash: 'Jouw Astrocartografie Dashboard — Natal Navigator',
-    titleH1: 'Natal Navigator — Astrocartografie Dashboard',
+    titleDemo: 'Astrocartografie-globedemo — Natal Navigator',
+    titleDash: 'Jouw astrocartografiedashboard — Natal Navigator',
+    titleH1: 'Natal Navigator — Astrocartografiedashboard',
 
     // Loading
     loadingDemo: 'Demokaart laden...',
@@ -4768,9 +4768,9 @@ const T = {
     paymentReceived: 'Betaling ontvangen! Je account wordt geactiveerd...',
     premiumActivated: 'Premium geactiveerd! Welkom bij NatalNavigator Premium. ✓',
     natalNavigator: 'NATAL NAVIGATOR',
-    yourMap: 'JOUW PERSOONLIJKE ASTROCARTOGRAFIE KAART',
+    yourMap: 'JOUW PERSOONLIJKE ASTROCARTOGRAFIEKAART',
     premium: 'Premium',
-    yourPersonalMap: 'Jouw Persoonlijke\nAstrocartografie Kaart',
+    yourPersonalMap: 'Jouw persoonlijke\nastrocartografiekaart',
     mapDescription: 'Planetaire lijnen, stadsanalyse en geboortehoroscoop — berekend op basis van je exacte geboortegegevens.',
     oneTime: 'EENMALIG · LEVENSLANGE TOEGANG',
     redirecting: 'DOORVERWIJZEN...',
@@ -4827,7 +4827,7 @@ const T = {
     angles: 'HOEKEN',
     ascendant: 'Ascendant',
     midheaven: 'Medium Coeli',
-    ascDesc: 'Stijgend teken — je uiterlijke persona',
+    ascDesc: 'Ascendant — hoe je overkomt op anderen',
     mcDesc: 'Carrière en publieke reputatie',
     details: 'DETAILS',
     position: 'Positie',
@@ -4840,7 +4840,7 @@ const T = {
     retro: 'R RETRO',
 
     // Natal detail headers
-    yourRisingSn: 'JOUW STIJGEND TEKEN',
+    yourRisingSn: 'JOUW ASCENDANT',
     yourMidheaven: 'JOUW MEDIUM COELI',
     inThe: 'IN HET',
     houseWord: 'HUIS',
@@ -4852,8 +4852,8 @@ const T = {
     water: 'Water',
 
     // PDF info panel
-    yourNatalReport: 'JOUW GEBOORTE RAPPORT',
-    pdfSubtitle: 'Een gepersonaliseerde astrocartografie PDF op basis van je geboortehoroscoop',
+    yourNatalReport: 'JOUW GEBOORTERAPPORT',
+    pdfSubtitle: 'Een gepersonaliseerde astrocartografie-PDF op basis van je geboortehoroscoop',
     whatsIncluded: 'WAT IS INBEGREPEN',
     pdfItem1: 'Volledige geboortehoroscoop met alle 10 planeten, tekens, graden en huizen',
     pdfItem2: 'Diepgaande persoonlijkheidslezingen voor elke planetaire plaatsing',
@@ -4876,7 +4876,7 @@ const T = {
     // Bottom panel
     thriveTab: '▲ KRACHT',
     neutralTab: '◆ NEUTRAAL',
-    avoidTab: '▼ VERMIJDEN',
+    avoidTab: '▼ VOORZICHTIG',
     allTab: 'ALLE',
     city: 'STAD',
     line: 'LIJN',
@@ -4887,7 +4887,7 @@ const T = {
     cities: 'STEDEN',
     bestCity: 'Beste stad',
     yourChart: 'Jouw gepersonaliseerde horoscoop',
-    total: 'totaal steden op je geboortelijnen',
+    total: 'steden in totaal op je geboortelijnen',
 
     // Settings
     settings: 'INSTELLINGEN',
@@ -4901,7 +4901,7 @@ const T = {
     edit: 'BEWERKEN',
     email: 'E-MAIL',
     memberSince: 'LID SINDS',
-    birthDataInfo: 'Je geboortegegevens vormen de basis van je astrocartografie kaart. Alle berekeningen van planetaire lijnen zijn afhankelijk van deze waarden.',
+    birthDataInfo: 'Je geboortegegevens vormen de basis van je astrocartografiekaart. Alle berekeningen van planetaire lijnen zijn afhankelijk van deze waarden.',
     dateOfBirth: 'GEBOORTEDATUM',
     timeOfBirth: 'GEBOORTETIJD',
     timePrecision: 'Nauwkeurigheid is belangrijk — zelfs 4 minuten verschuiven je ASC-lijnen met ~1°',
@@ -4961,15 +4961,15 @@ const T = {
     lineFootnote: 'MC en IC zijn verticale meridiaan lijnen (pool tot pool). ASC en DC zijn gebogen lijnen die de horizon volgen.',
 
     // Guide - Planets
-    planetaryEnergies: 'PLANETAIRE ENERGIEEN',
-    planetaryEnergiesIntro: 'Elke planeet beheerst specifieke levensthema\'s. Wanneer je nabij een planetaire lijn woont of deze bezoekt, wordt de energie van die planeet versterkt in het overeenkomstige levensgebied.',
+    planetaryEnergies: 'PLANETAIRE ENERGIEËN',
+    planetaryEnergiesIntro: 'Elke planeet beheerst specifieke levensthema\'s. Als je nabij een planetaire lijn woont of deze bezoekt, wordt de energie van die planeet versterkt in het overeenkomstige levensgebied.',
 
     // Guide - Zones
     zoneClassification: 'ZONECLASSIFICATIE',
     zoneClassificationIntro: 'Steden nabij je lijnen worden ingedeeld in drie zones op basis van de traditionele aard van de planeet. Gebruik ze als richtlijn, niet als absolute regels.',
     thriveZoneDesc: 'Weldadige planetaire lijnen — Zon (vitaliteit, erkenning), Maan (emotioneel thuishoren), Venus (liefde, schoonheid) en Jupiter (geluk, expansie). Elke planeet activeert verschillende sterke punten afhankelijk van de hoek.',
-    neutralZoneDesc: 'Lijnen met gemengde energie — Mercurius (communicatie, intellect) en sommige Mars/Saturnus/Uranus hoeken. Effecten zijn subtiel en afhankelijk van bewuste betrokkenheid.',
-    cautionZoneDesc: 'Uitdagende planetaire lijnen — Saturnus (beperking), Mars (conflict), Neptunus (verwarring), Pluto (machtsstrijd) en bepaalde Uranus hoeken (instabiliteit). Korte bezoeken kunnen lessen leren; langere verblijven vereisen bewustzijn.',
+    neutralZoneDesc: 'Lijnen met gemengde energie — Mercurius (communicatie, intellect) en sommige Mars-/Saturnus-/Uranushoeken. Effecten zijn subtiel en afhankelijk van bewuste betrokkenheid.',
+    cautionZoneDesc: 'Uitdagende planetaire lijnen — Saturnus (beperking), Mars (conflict), Neptunus (verwarring), Pluto (machtsstrijd) en bepaalde Uranushoeken (instabiliteit). Korte bezoeken kunnen lessen leren; langere verblijven vereisen bewustzijn.',
 
     // Guide - How to use
     howToUse: 'HOE TE GEBRUIKEN',
@@ -4991,15 +4991,15 @@ const T = {
     faq2Q: 'Hoe dicht bij een lijn moet ik zijn?',
     faq2A: 'De invloed is het sterkst binnen 1-2° van een lijn (ongeveer 100-200 km). We tonen steden tot 3,5° afstand, waarbij de signaalsterkte afneemt met de afstand.',
     faq3Q: 'Kan ik op een "voorzichtigheidslijn" wonen?',
-    faq3A: 'Het hangt af van de planeet. Saturnuslijnen brengen zwaarte en traag voortgang. Marslijnen creeren conflict. Neptunuslijnen lossen helderheid op. Plutolijnen dwingen intense transformatie af. Korte bezoeken kunnen waardevolle lessen leren; langere verblijven vereisen diep zelfbewustzijn.',
+    faq3A: 'Het hangt af van de planeet. Saturnuslijnen brengen zwaarte en trage voortgang. Marslijnen veroorzaken conflicten. Neptunuslijnen lossen helderheid op. Plutolijnen dwingen intense transformatie af. Korte bezoeken kunnen waardevolle lessen leren; langere verblijven vereisen diep zelfbewustzijn.',
     faq4Q: 'Wat is het verschil tussen globe- en kaartweergave?',
     faq4A: 'Globeweergave toont de Aarde in 3D voor ruimtelijke context. Kaartweergave vouwt de projectie plat open, waardoor het makkelijker is om lijnen over continenten te volgen en regio\'s te vergelijken.',
     faq5Q: 'Is dit gebaseerd op echte astronomie?',
     faq5A: 'Ja. Planetaire posities worden berekend met astronomische algoritmen van hoge precisie (astronomy-engine), vergelijkbaar met ephemeridegegevens van onderzoekskwaliteit. Astrocartografie past vervolgens astrologische interpretatie toe op deze posities.',
 
     // Angle info
-    mcFull: 'Medium Coeli (Hemelshoogte)',
-    mcAngleDesc: 'Het hoogste punt aan de hemel bij je geboorte. Vertegenwoordigt carriere, publieke reputatie en hoe de wereld je prestaties ziet. Op je MC-lijn voel je je professioneel bekrachtigd en publiekelijk erkend.',
+    mcFull: 'Medium Coeli (MC)',
+    mcAngleDesc: 'Het hoogste punt aan de hemel bij je geboorte. Vertegenwoordigt carrière, publieke reputatie en hoe de wereld je prestaties ziet. Op je MC-lijn voel je je professioneel bekrachtigd en publiekelijk erkend.',
     icFull: 'Imum Coeli (Nadir)',
     icAngleDesc: 'Het diepste punt onder de horizon. Vertegenwoordigt thuis, wortels, familie en innerlijk emotioneel leven. Op je IC-lijn voel je een diep gevoel van verbondenheid en emotionele verankering.',
     ascFull: 'Ascendant (Rijzend)',
@@ -5008,10 +5008,10 @@ const T = {
     dcAngleDesc: 'De westelijke horizon, tegenover de Ascendant. Vertegenwoordigt partnerschappen, relaties en hoe je met anderen verbindt. Op je DC-lijn vormen betekenisvolle relaties en allianties zich op natuurlijke wijze.',
 
     // Planet domains
-    domSun: 'Identiteit · Carriere · Vitaliteit',
-    domMoon: 'Emoties · Thuis · Intuitie',
+    domSun: 'Identiteit · Carrière · Vitaliteit',
+    domMoon: 'Emoties · Thuis · Intuïtie',
     domMercury: 'Communicatie · Intellect · Handel',
-    domVenus: 'Liefde · Schoonheid · Financien',
+    domVenus: 'Liefde · Schoonheid · Financiën',
     domMars: 'Drijfkracht · Ambitie · Conflict',
     domJupiter: 'Groei · Geluk · Expansie',
     domSaturn: 'Discipline · Grenzen · Karma',
@@ -5045,7 +5045,7 @@ const T = {
 
     // Birth data
     enterBirthData: 'Voer je geboortegegevens in',
-    birthDataSubtitle: 'Je geboortegegevens vormen de basis van je astrocartografie kaart.',
+    birthDataSubtitle: 'Je geboortegegevens vormen de basis van je astrocartografiekaart.',
     name: 'NAAM',
     namePlaceholder: 'Je naam',
     datePlaceholder: 'DD.MM.JJJJ',
@@ -5056,7 +5056,7 @@ const T = {
 
     // PDF section headers
     pdfTitle: 'NATAL NAVIGATOR',
-    pdfSubtitleReport: 'Je persoonlijk astrocartografie rapport',
+    pdfSubtitleReport: 'Je persoonlijk astrocartografierapport',
     pdfYourChart: 'JOUW GEBOORTEHOROSCOOP',
     pdfPlanetCol: 'PLANEET',
     pdfSignCol: 'TEKEN',
@@ -5083,7 +5083,7 @@ const T = {
     // Birth data modal
     emailVerified: 'E-MAIL GEVERIFIEERD',
     welcomeToNN: 'Welkom bij NatalNavigator',
-    welcomeReady: 'Je account is klaar. Om je gepersonaliseerde astrocartografie globe te genereren, hebben we je exacte geboortegegevens nodig.',
+    welcomeReady: 'Je account is klaar. Om je gepersonaliseerde astrocartografieglobe te genereren, hebben we je exacte geboortegegevens nodig.',
     precisionNote: 'Hoe nauwkeuriger je gegevens, hoe preciezer je planetaire lijnen zullen zijn.',
     enterBirthDataBtn: 'GEBOORTEGEGEVENS INVOEREN',
     takesLess: 'Duurt minder dan een minuut',
@@ -5114,6 +5114,7 @@ const T = {
     mCardinal: 'Kardinaal', mFixed: 'Vast', mMutable: 'Veranderlijk',
     // Angle effects
     aeMC: 'Carrière & Openbaar leven', aeIC: 'Thuis & Wortels', aeASC: 'Zelf & Identiteit', aeDC: 'Partnerschappen',
+    aeMCshort: 'openbare sfeer', aeICshort: 'privéleven', aeASCshort: 'zelfexpressie', aeDCshort: 'relaties',
     // Continent filter
     continents: 'Continenten',
     africa: 'Afrika',
