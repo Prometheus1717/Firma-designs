@@ -472,7 +472,7 @@ export const NATAL_I18N = {
       Sagittarius: { fields:'el mundo académico, la edición, los viajes, la filosofía o carreras visionarias', image:'inspirador, aventurero y franco', challenge:'el exceso de promesas o la inquietud profesional' },
       Capricorn: { fields:'la administración, la gestión, el gobierno, el liderazgo a largo plazo o caminos que requieren perseverancia', image:'autoritario, disciplinado y creíble', challenge:'el exceso de trabajo o definirse solo por los logros' },
       Aquarius: { fields:'la tecnología, la reforma, la ciencia, los sistemas sociales, la innovación o caminos profesionales no convencionales', image:'original, progresista y de principios', challenge:'la alienación o la resistencia a las estructuras ordinarias' },
-      Pisces: { fields:'el arte, el cine, la música, la sanación, el servicio espiritual o vocaciones fluidas', image:'compasivo, inspirado e inaprensible', challenge:'la confusión, la desorientación o fronteras profesionales débiles' },
+      Pisces: { fields:'el arte, el cine, la música, la sanación, el servicio espiritual o vocaciones fluidas', image:'compasivo, inspirado y esquivo', challenge:'la confusión, la desorientación o fronteras profesionales débiles' },
     },
 
     PLANET_INFO: {
@@ -505,16 +505,16 @@ export const NATAL_I18N = {
 
     TEMPLATES: {
       planetSignLine1: {
-        Sun: 'Tu Sol describe {rep}, y en el signo {sign} se vuelve {style}.',
-        Moon: 'Tu Luna describe {rep}, y en el signo {sign} tu vida interior se vuelve {style}.',
-        Mercury: 'Tu Mercurio describe {rep}, y en el signo {sign} tu mente se vuelve {style}.',
-        Venus: 'Tu Venus describe {rep}, y en el signo {sign} tu forma de amar se vuelve {style}.',
-        Mars: 'Tu Marte describe {rep}, y en el signo {sign} tu impulso se vuelve {style}.',
-        Jupiter: 'Tu Júpiter describe {rep}, y en el signo {sign} tu instinto de crecimiento se vuelve {style}.',
-        Saturn: 'Tu Saturno describe {rep}, y en el signo {sign} tu lado disciplinado se vuelve {style}.',
-        Uranus: 'Tu Urano describe {rep}, y en el signo {sign} tu deseo de libertad se vuelve {style}.',
-        Neptune: 'Tu Neptuno describe {rep}, y en el signo {sign} tu imaginación se vuelve {style}.',
-        Pluto: 'Tu Plutón describe {rep}, y en el signo {sign} tu fuerza transformadora se vuelve {style}.',
+        Sun: 'Tu Sol describe {rep}, y en {sign} se vuelve {style}.',
+        Moon: 'Tu Luna describe {rep}, y en {sign} tu vida interior se vuelve {style}.',
+        Mercury: 'Tu Mercurio describe {rep}, y en {sign} tu mente se vuelve {style}.',
+        Venus: 'Tu Venus describe {rep}, y en {sign} tu forma de amar se vuelve {style}.',
+        Mars: 'Tu Marte describe {rep}, y en {sign} tu impulso se vuelve {style}.',
+        Jupiter: 'Tu Júpiter describe {rep}, y en {sign} tu instinto de crecimiento se vuelve {style}.',
+        Saturn: 'Tu Saturno describe {rep}, y en {sign} tu lado disciplinado se vuelve {style}.',
+        Uranus: 'Tu Urano describe {rep}, y en {sign} tu deseo de libertad se vuelve {style}.',
+        Neptune: 'Tu Neptuno describe {rep}, y en {sign} tu imaginación se vuelve {style}.',
+        Pluto: 'Tu Plutón describe {rep}, y en {sign} tu fuerza transformadora se vuelve {style}.',
       },
       planetSignLine2: {
         Sun: 'Tiendes a {behavior}, y esto se manifiesta claramente en la forma en que forjas tu identidad y propósito.',
@@ -564,7 +564,7 @@ export const NATAL_I18N = {
       },
       asc: {
         line1: 'Tu Ascendente describe tu estilo exterior, primera impresión y la forma en que abordas instintivamente nuevas situaciones, y en el signo {sign} te da una presencia que parece {outer}.',
-        line2: 'Los demás a menudo te perciben como {first}, antes de conocer tu ser más profundo, porque este signo ascendente moldea tu postura, ritmo, tono y señal social.',
+        line2: 'Los demás a menudo te perciben como {first}, antes de conocer tu ser más profundo, porque este signo ascendente moldea tu postura, tu ritmo, tu tono de voz y tus señales sociales.',
         line3: 'Tiendes a {persona}, lo que significa que tu persona a menudo se construye alrededor de las cualidades {element} y {modality} de {sign}.',
         line4: 'En tu mejor momento, esto te da {signStrength} en cómo enfrentas el mundo. Un desafío es {ascChallenge}.',
         line5: 'Usas bien este Ascendente cuando tu estilo exterior se convierte en un acceso honesto a la persona más profunda detrás, en lugar de una máscara que habla por ti.',
@@ -572,7 +572,7 @@ export const NATAL_I18N = {
       mc: {
         line1: 'Tu Medium Coeli describe la dirección de carrera, imagen pública, logros visibles y el tipo de vocación en la que quieres crecer, y en el signo {sign} apunta hacia un trabajo marcado por {fields}.',
         line2: 'A menudo eres percibido públicamente como {image}, porque este signo colorea la forma en que la ambición y la responsabilidad se expresan.',
-        line3: 'Generalmente hay una necesidad de construir una vocación que se sienta {style}, de modo que tu camino funciona mejor cuando refleja tu forma natural de contribuir.',
+        line3: 'Suele existir la necesidad de construir una vocación que resulte {style}, de modo que tu camino funcione mejor cuando refleje tu forma natural de contribuir.',
         line4: 'Un desafío puede ser {mcChallenge}. Tu realización crece cuando la vida profesional se convierte en una expresión auténtica del carácter y el sentido a largo plazo.',
       },
     },
