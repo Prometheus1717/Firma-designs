@@ -366,16 +366,21 @@ export default function Dashboard({ demo = false }) {
   // Shown only once per browser (localStorage flag). Applies to both demo
   // visitors and signed-in users; returning users never see it again.
   // QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0 suppresses.
+  // First-visit tutorial trigger — fires once per mount:
+  //  • 15 s for genuine first-time visitors
+  //  • ~0.3 s when forced via ?tutorial=1 for QA
+  //  • skipped entirely when ?tutorial=0 or when localStorage flag is set
+  // We read URL params at mount time (not via the React Router hook)
+  // to avoid resetting the timer on unrelated query-string changes.
   useEffect(() => {
-    if (!chartData?.planets?.length) return;
-    const force = searchParams.get('tutorial');
+    const params = new URLSearchParams(window.location.search);
+    const force = params.get('tutorial');
     if (force === '0') return;
     if (force !== '1' && !firstTimeRef.current) return;
-    // 15s delay for real first-time visitors; immediate when forced via ?tutorial=1 for QA
     const delay = force === '1' ? 300 : 15000;
     const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
-  }, [chartData, searchParams]);
+  }, []);
 
   // Demo sign-up gate timing:
   //  • First-time visitors who COMPLETED the tour: fires immediately
@@ -1020,28 +1025,6 @@ export default function Dashboard({ demo = false }) {
               <span style={{ color: T.mu, marginLeft: 'auto', fontSize: 8 }}>{tLine(c.line, lang)}</span>
             </div>
           ))}
-          </div>
-          {/* Continent filter — desktop */}
-          <div style={{ ...F, fontSize: 9, fontWeight: 600, color: T.td, letterSpacing: 2, padding: '12px 12px 6px', borderTop: `1px solid ${T.bd}`, marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            {t('continents', lang)}
-            {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ fontSize: 7, letterSpacing: 0, color: T.ac, cursor: 'pointer', fontWeight: 400 }}>{t('allContinents', lang)}</span>}
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3, padding: '4px 12px 8px' }}>
-            {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
-              const active = selectedContinents.has(val);
-              return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.tm, background: active ? T.ac : T.c, border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 3, padding: '4px 8px', cursor: 'pointer', transition: 'all .15s', fontWeight: active ? 600 : 400 }}>{t(key, lang)}</div>;
-            })}
-          </div>
-
-          {/* Compare button — desktop */}
-          <div data-tutorial="compare" style={{ padding: '6px 12px', borderTop: `1px solid ${T.bs}` }}>
-            <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 8, fontWeight: 600, color: compareMode ? '#fff' : T.tm, background: compareMode ? T.ac : T.c, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 0', cursor: 'pointer', textAlign: 'center', transition: 'all .15s' }}>
-              ⚖ {compareMode ? `${t('compare', lang)} (${compareCities.length}/2)` : t('compare', lang)}
-            </div>
-            {compareMode && compareCities.length > 0 && <div style={{ ...F, fontSize: 7, color: T.td, marginTop: 4, lineHeight: 1.5 }}>
-              {compareCities.map((c, i) => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ color: T.ac }}>{i + 1}.</span> {c.name}{i === 0 && compareCities.length === 1 && <span style={{ color: T.mu }}> — {t('tapToSelect', lang)}</span>}</div>)}
-              {compareCities.length === 2 && <div onClick={() => setShowCompare(true)} style={{ ...F, fontSize: 8, color: '#fff', background: T.ac, borderRadius: 4, padding: '5px 0', cursor: 'pointer', textAlign: 'center', marginTop: 4 }}>{t('compareTitle', lang)} →</div>}
-            </div>}
           </div>
 
           <div style={{ ...F, fontSize: 8, color: T.bd, padding: '12px', marginTop: 'auto', lineHeight: 1.6 }}>
@@ -1952,8 +1935,42 @@ export default function Dashboard({ demo = false }) {
             </div></>}
           </div>}
 
+          {/* Desktop-only floating controls — compare + continents next to
+              the "only lines" / "only cities" layer toggles at bottom-left */}
+          {!mob && (
+            <div style={{ position: 'absolute', bottom: 12, left: 56, zIndex: 50, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div
+                onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }}
+                title={t('compare', lang)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${compareMode ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 15, color: compareMode ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: compareMode ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)') }}
+              >⚖</div>
+              <div style={{ position: 'relative' }}>
+                <div
+                  onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }}
+                  title={t('continents', lang)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 7, fontWeight: 700, letterSpacing: 0.5, color: showContinentFilter || selectedContinents.size > 0 ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: selectedContinents.size > 0 ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'), position: 'relative' }}
+                >
+                  CONT
+                  {selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -5, right: -5 }}>{selectedContinents.size}</span>}
+                </div>
+                {showContinentFilter && <><div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 55 }} onClick={() => setShowContinentFilter(false)} /><div style={{ position: 'absolute', bottom: 0, left: 40, zIndex: 56, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, padding: 10, minWidth: 200, boxShadow: T.sh }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ ...F, fontSize: 9, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>{t('continents', lang)}</span>
+                    {selectedContinents.size > 0 && <span onClick={() => setSelectedContinents(new Set())} style={{ ...F, fontSize: 7, color: T.ac, cursor: 'pointer' }}>{t('allContinents', lang)}</span>}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                    {[['europe','Europe'],['asia','Asia'],['northAmerica','North America'],['southAmerica','South America'],['africa','Africa'],['oceania','Oceania']].map(([key, val]) => {
+                      const active = selectedContinents.has(val);
+                      return <div key={key} onClick={() => toggleContinent(val)} style={{ ...F, fontSize: 8, color: active ? '#fff' : T.tm, background: active ? T.ac : T.c, border: `1px solid ${active ? T.acBd : T.bd}`, borderRadius: 4, padding: '5px 8px', cursor: 'pointer', transition: 'all .15s', fontWeight: active ? 600 : 400 }}>{t(key, lang)}</div>;
+                    })}
+                  </div>
+                </div></>}
+              </div>
+            </div>
+          )}
+
           {/* Compare mode banner */}
-          {compareMode && <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, zIndex: 50, background: T.pop, border: `1px solid ${T.acBd}`, borderRadius: 6, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          {compareMode && <div style={{ position: 'absolute', bottom: 8, left: mob ? 8 : 100, right: 8, zIndex: 50, background: T.pop, border: `1px solid ${T.acBd}`, borderRadius: 6, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ ...F, fontSize: 9, color: T.ac, fontWeight: 700 }}>⚖ {t('compare', lang)}</span>
             <span style={{ ...F, fontSize: 8, color: T.td, flex: 1 }}>
               {compareCities.length === 0 ? t('selectCities', lang) : compareCities.length === 1 ? `${compareCities[0].name} — ${t('tapToSelect', lang)}` : `${compareCities[0].name} ${t('vs', lang)} ${compareCities[1].name}`}
