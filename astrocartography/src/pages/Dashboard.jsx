@@ -1942,13 +1942,13 @@ export default function Dashboard({ demo = false }) {
               <div
                 onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }}
                 title={t('compare', lang)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${compareMode ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 15, color: compareMode ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: compareMode ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)') }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${compareMode ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 20, lineHeight: 1, color: compareMode ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: compareMode ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)') }}
               >⚖</div>
               <div style={{ position: 'relative' }}>
                 <div
                   onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }}
                   title={t('continents', lang)}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 7, fontWeight: 700, letterSpacing: 0.5, color: showContinentFilter || selectedContinents.size > 0 ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: selectedContinents.size > 0 ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'), position: 'relative' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 6, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : '#1A2840'}`, cursor: 'pointer', ...F, fontSize: 9, fontWeight: 700, letterSpacing: 0.5, color: showContinentFilter || selectedContinents.size > 0 ? (lightMode ? '#00A86B' : '#00D88A') : (lightMode ? '#5A5148' : '#B6C2D2'), background: selectedContinents.size > 0 ? 'rgba(0,168,107,.12)' : (lightMode ? 'rgba(255,255,255,.85)' : 'rgba(13,21,32,.85)'), position: 'relative' }}
                 >
                   CONT
                   {selectedContinents.size > 0 && <span style={{ ...F, fontSize: 7, color: '#fff', background: T.ac, borderRadius: '50%', width: 13, height: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -5, right: -5 }}>{selectedContinents.size}</span>}
