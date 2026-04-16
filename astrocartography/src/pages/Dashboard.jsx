@@ -245,6 +245,7 @@ export default function Dashboard({ demo = false }) {
   const [showGuide, setShowGuide] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialDismissedAt, setTutorialDismissedAt] = useState(null); // timestamp when tour ended
+  const [tutorialCompleted, setTutorialCompleted] = useState(false); // true if user finished all steps
   // Snapshot "first-time visitor" once at mount so timing logic stays stable
   const firstTimeRef = useRef(null);
   if (firstTimeRef.current === null) {
@@ -377,19 +378,22 @@ export default function Dashboard({ demo = false }) {
   }, [chartData, searchParams]);
 
   // Demo sign-up gate timing:
-  //  • First-time visitors: fires 30 s AFTER the tutorial was dismissed,
-  //    so the tour isn't interrupted by the paywall.
+  //  • First-time visitors who COMPLETED the tour: fires immediately
+  //    (the "Discover your chart" prompt is the natural next step).
+  //  • First-time visitors who said No / skipped: fires 30 s after the
+  //    tour was dismissed, so the paywall doesn't steamroll the UX.
   //  • Returning visitors: fires 25 s after page load (original behavior).
   useEffect(() => {
     if (!demo) return;
     if (firstTimeRef.current) {
       if (tutorialDismissedAt === null) return;   // wait for the tour to end
-      const t = setTimeout(() => setShowDemoGate(true), 30000);
+      const delay = tutorialCompleted ? 300 : 30000;
+      const t = setTimeout(() => setShowDemoGate(true), delay);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setShowDemoGate(true), 25000);
     return () => clearTimeout(t);
-  }, [demo, tutorialDismissedAt]);
+  }, [demo, tutorialDismissedAt, tutorialCompleted]);
 
   const mob = w < 900;
 
@@ -2187,13 +2191,14 @@ export default function Dashboard({ demo = false }) {
               setShowNatal(false);
             }
           }}
-          onClose={(persist) => {
+          onClose={(persist, completed) => {
             setShowTutorial(false);
             setTutorialDismissedAt(Date.now());
+            setTutorialCompleted(Boolean(completed));
             if (showNatal) setShowNatal(false);
             if (persist) {
               try { localStorage.setItem('nn_tutorial_seen', '1'); } catch { /* storage unavailable */ }
-              try { trackEvent('tutorial_completed'); } catch { /* analytics optional */ }
+              try { trackEvent(completed ? 'tutorial_completed' : 'tutorial_dismissed'); } catch { /* analytics optional */ }
             }
           }}
         />
