@@ -362,22 +362,20 @@ export default function Dashboard({ demo = false }) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  // First-visit tutorial — opens 15 s after the dashboard is populated.
-  // Shown only once per browser (localStorage flag). Applies to both demo
-  // visitors and signed-in users; returning users never see it again.
-  // QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0 suppresses.
-  // First-visit tutorial trigger — fires once per mount:
-  //  • 15 s for genuine first-time visitors
-  //  • ~0.3 s when forced via ?tutorial=1 for QA
-  //  • skipped entirely when ?tutorial=0 or when localStorage flag is set
-  // We read URL params at mount time (not via the React Router hook)
-  // to avoid resetting the timer on unrelated query-string changes.
+  // First-visit tutorial — opens ~2 s after the dashboard mounts so new
+  // users notice the intro dialog right away instead of leaving before it
+  // appears. Shown only once per browser (localStorage flag). Applies to
+  // both demo visitors and signed-in users; returning users never see it
+  // again. QA overrides via URL: ?tutorial=1 forces show, ?tutorial=0
+  // suppresses. We read URL params at mount time (not via the React
+  // Router hook) to avoid resetting the timer on unrelated query-string
+  // changes.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const force = params.get('tutorial');
     if (force === '0') return;
     if (force !== '1' && !firstTimeRef.current) return;
-    const delay = force === '1' ? 300 : 15000;
+    const delay = force === '1' ? 300 : 2000;
     const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
   }, []);
