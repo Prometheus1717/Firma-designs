@@ -2810,7 +2810,7 @@ const T = {
     tickerTip4: '⚖ 2つの都市を並べて比較できます — 比較モードで理想の場所を見つけましょう ⚖',
     tickerTip5: '↻ 地域をズームして近くの都市とラインまでの正確な距離を確認できます ↻',
     tickerTip6: '★ サンMCラインはキャリアの成功と社会的評価が最も自然に訪れる場所を示します ★',
-    challengesLikely: '課題が生じやすい',
+    challengesLikely: '課題が生じやすい場所',
     neutral: 'ニュートラル',
     subtleInfluence: '微細な影響',
 
@@ -2862,7 +2862,7 @@ const T = {
     yourNatalReport: 'あなたのネイタルレポート',
     pdfSubtitle: 'あなたの出生チャートに基づくパーソナライズされたアストロカートグラフィーPDF',
     whatsIncluded: '内容',
-    pdfItem1: '全10惑星のネイタルチャート（サイン、度数、ハウス付き）',
+    pdfItem1: '10天体すべての配置を含む完全なネイタルチャート（サイン、度数、ハウス付き）',
     pdfItem2: '各惑星配置の詳細なパーソナリティリーディング',
     pdfItem3: 'アセンダントとミッドヘブンのサイン解釈',
     pdfItem4: '活力都市トップ — 世界中のあなたに最適な場所',
@@ -2974,7 +2974,7 @@ const T = {
     // Guide - Zones
     zoneClassification: 'ゾーン分類',
     zoneClassificationIntro: 'あなたのライン付近の都市は、惑星の伝統的な性質に基づいて3つのゾーンに分類されます。絶対的な法則ではなく、ガイダンスとしてお使いください。',
-    thriveZoneDesc: '吉星の惑星ライン — 太陽（活力、認知）、月（感情的な帰属感）、金星（愛、美）、木星（幸運、拡大）。各惑星はアングルに応じて異なる強みを活性化します。',
+    thriveZoneDesc: '吉星の惑星ライン — 太陽（活力、評価）、月（感情的な帰属感）、金星（愛、美）、木星（幸運、拡大）。各惑星はアングルに応じて異なる強みを活性化します。',
     neutralZoneDesc: '混合エネルギーのライン — 水星（コミュニケーション、知性）および一部の火星/土星/天王星のアングル。効果は微妙で、意識的な関与に依存します。',
     cautionZoneDesc: '挑戦的な惑星ライン — 土星（制限）、火星（葛藤）、海王星（混乱）、冥王星（権力闘争）、および特定の天王星アングル（不安定性）。短期訪問は学びになりますが、長期滞在には自覚が必要です。',
 
@@ -3148,7 +3148,7 @@ const T = {
   },
   zh: {
     // Topbar
-    live: '直播',
+    live: '实时',
     howItWorks: '使用方法',
     signUp: '注册',
     admin: '管理',
@@ -3156,23 +3156,23 @@ const T = {
 
     // Page titles
     titleDemo: '星图地球仪演示 — Natal Navigator',
-    titleDash: '您的星图仪表盘 — Natal Navigator',
+    titleDash: '你的星图仪表盘 — Natal Navigator',
     titleH1: 'Natal Navigator — 星图仪表盘',
 
     // Loading
     loadingDemo: '正在加载演示图表...',
     connecting: '连接中...',
-    calculating: '正在计算您的行星线...',
+    calculating: '正在计算你的行星线...',
     reEnterBirth: '重新输入出生数据',
 
     // Paywall
-    paymentReceived: '已收到付款！正在激活您的账户...',
+    paymentReceived: '已收到付款！正在激活你的账户...',
     premiumActivated: '高级版已激活！欢迎使用NatalNavigator高级版。✓',
     natalNavigator: 'NATAL NAVIGATOR',
-    yourMap: '您的个人星图地图',
+    yourMap: '你的个人星图地图',
     premium: '高级版',
-    yourPersonalMap: '您的个人\n星图地图',
-    mapDescription: '行星线、城市分析和出生星盘 — 根据您的精确出生数据计算。',
+    yourPersonalMap: '你的个人\n星图地图',
+    mapDescription: '行星线、城市分析和出生星盘 — 根据你的精确出生数据计算。',
     oneTime: '一次付费 · 终身使用',
     redirecting: '跳转中...',
     getStarted: '立即开始',
@@ -3199,7 +3199,7 @@ const T = {
     cautionZone: '谨慎区',
     tickerBirthTime: '⏱ 准确的出生时间至关重要——15分钟就能改变你的线 ⏱',
     tickerTip1: '✦ 点击城市查看你的个人解读——发现行星在那里为你激活了什么 ✦',
-    tickerTip2: '◈ 住在力量线附近会放大你的才能——即使几周的访问也能改变你的能量 ◈',
+    tickerTip2: '◈ 住在兴旺线附近会放大你的才能——即使几周的访问也能改变你的能量 ◈',
     tickerTip3: '☽ 你的月亮线揭示了你情感上感到归属的地方——你的灵魂认识的地方 ☽',
     tickerTip4: '⚖ 并排比较两个城市——使用比较模式找到你的理想之地 ⚖',
     tickerTip5: '↻ 放大区域查看附近城市及其与你线的精确距离 ↻',
@@ -3228,7 +3228,7 @@ const T = {
     angles: '角度',
     ascendant: '上升点',
     midheaven: '天顶',
-    ascDesc: '上升星座 — 您的外在人格',
+    ascDesc: '上升星座 — 你的外在人格',
     mcDesc: '事业与公众声誉',
     details: '详情',
     position: '位置',
@@ -3241,8 +3241,8 @@ const T = {
     retro: 'R 逆行',
 
     // Natal detail headers
-    yourRisingSn: '您的上升星座',
-    yourMidheaven: '您的天顶',
+    yourRisingSn: '你的上升星座',
+    yourMidheaven: '你的天顶',
     inThe: '在',
     houseWord: '宫',
 
@@ -3253,23 +3253,23 @@ const T = {
     water: '水',
 
     // PDF info panel
-    yourNatalReport: '您的出生报告',
-    pdfSubtitle: '根据您的出生星盘定制的个人星图PDF',
+    yourNatalReport: '你的出生报告',
+    pdfSubtitle: '根据你的出生星盘定制的个人星图PDF',
     whatsIncluded: '包含内容',
     pdfItem1: '包含全部10颗行星的完整出生星盘（星座、度数和宫位）',
     pdfItem2: '每个行星位置的深度性格解读',
     pdfItem3: '上升点和天顶星座解读',
-    pdfItem4: '兴旺城市排名 — 全球最适合您的地点',
+    pdfItem4: '兴旺城市排名 — 全球最适合你的地点',
     pdfItem5: '谨慎区域 — 需要小心对待的地点',
     pdfItem6: '具有微妙行星影响的中性区域',
     pdfItem7: '带有容许度距离的个性化城市解读',
     format: '格式',
-    pdfFormat: '多页A4暗色主题设计PDF。包含页码、章节标题和您的个人出生数据摘要。',
+    pdfFormat: '多页A4暗色主题设计PDF。包含页码、章节标题和你的个人出生数据摘要。',
     generating: '⏳ 生成中...',
     downloadPdf: '↓ 下载PDF',
 
     // City popup
-    thrive: '繁荣',
+    thrive: '兴旺',
     caution: '谨慎',
     neutralLabel: '中性',
     fromLine: '距线',
@@ -3284,10 +3284,10 @@ const T = {
     signal: '信号',
     lifeArea: '生活领域',
     reading: '解读',
-    onYourLines: '在您的线上',
+    onYourLines: '在你的线上',
     cities: '城市',
     bestCity: '最佳城市',
-    yourChart: '您的个性化星盘',
+    yourChart: '你的个性化星盘',
     total: '出生线上的城市总数',
 
     // Settings
@@ -3302,7 +3302,7 @@ const T = {
     edit: '编辑',
     email: '邮箱',
     memberSince: '注册日期',
-    birthDataInfo: '您的出生数据是星图的基础。所有行星线计算都依赖于这些数据。',
+    birthDataInfo: '你的出生数据是星图的基础。所有行星线计算都依赖于这些数据。',
     dateOfBirth: '出生日期',
     timeOfBirth: '出生时间',
     timePrecision: '精度很重要 — 即使4分钟的偏差也会使ASC线偏移约1°',
@@ -3315,19 +3315,19 @@ const T = {
     upgradeUnlock: '升级以解锁所有功能',
     upgrade: '升级',
     signOutHeading: '退出登录',
-    signOutDesc: '从此设备上退出您的账户',
+    signOutDesc: '从此设备上退出你的账户',
     signOutBtn: '退出登录',
     dangerZone: '危险区域',
     deleteAccount: '删除账户',
-    deleteDesc: '永久删除您的个人资料和所有相关数据。此操作不可撤销。',
+    deleteDesc: '永久删除你的个人资料和所有相关数据。此操作不可撤销。',
     deleteBtn: '删除账户',
     deleteConfirm: '确定要删除吗？此操作不可撤销。',
     deleteYes: '是的，删除',
 
     // Demo gate
-    discoverChart: '发现您的星盘',
-    demoViewing: '您正在查看{name}的演示星盘。',
-    demoSignup: '注册查看您自己的行星线、城市解读和出生星盘。',
+    discoverChart: '发现你的星盘',
+    demoViewing: '你正在查看{name}的演示星盘。',
+    demoSignup: '注册查看你自己的行星线、城市解读和出生星盘。',
     createMyChart: '创建我的星盘',
     alreadyAccount: '我已有账户',
 
@@ -3343,10 +3343,10 @@ const T = {
 
     // Guide - Overview
     whatIsNN: '什么是NATAL NAVIGATOR',
-    whatIsNNBody: 'Natal Navigator是一个星图工具，将您的出生星盘映射到地球上。它揭示了与您的行星位置能量相一致的城市和地区 — 向您展示哪里会放大您的优势，哪里可能出现挑战。',
+    whatIsNNBody: 'Natal Navigator是一个星图工具，将你的出生星盘映射到地球上。它揭示了与你的行星位置能量相一致的城市和地区 — 向你展示哪里会放大你的优势，哪里可能出现挑战。',
     whatIsAstro: '什么是星图学',
-    whatIsAstroBody1: '星图学（也叫定位占星术）计算您出生星盘中每颗行星在上升、下降、南中天或最低点的位置，并将这些位置作为线条投射到地球上。在这些线条附近生活或旅行会激活该行星在您生活中的能量。',
-    whatIsAstroBody2: '您的出生星盘是您出生那一刻天空的快照。太阳、月亮和行星在那一刻的位置定义了您的性格特征、优势和人生主题。星图学通过追问这些行星能量在地球上哪里最强来扩展这一概念。',
+    whatIsAstroBody1: '星图学（也叫定位占星术）计算你出生星盘中每颗行星在上升、下降、南中天或最低点的位置，并将这些位置作为线条投射到地球上。在这些线条附近生活或旅行会激活该行星在你生活中的能量。',
+    whatIsAstroBody2: '你的出生星盘是你出生那一刻天空的快照。太阳、月亮和行星在那一刻的位置定义了你的性格特征、优势和人生主题。星图学通过追问这些行星能量在地球上哪里最强来扩展这一概念。',
 
     // Guide - Lines
     fourLineTypes: '四种线条类型',
@@ -3363,33 +3363,33 @@ const T = {
 
     // Guide - Planets
     planetaryEnergies: '行星能量',
-    planetaryEnergiesIntro: '每颗行星掌管特定的生活主题。当您在行星线附近生活或访问时，该行星的能量会在相应的生活领域得到放大。',
+    planetaryEnergiesIntro: '每颗行星掌管特定的生活主题。当你在行星线附近生活或访问时，该行星的能量会在相应的生活领域得到放大。',
 
     // Guide - Zones
     zoneClassification: '区域分类',
-    zoneClassificationIntro: '您的线条附近的城市根据行星的传统属性被分为三个区域。请将其作为参考，而非绝对规则。',
+    zoneClassificationIntro: '你的线条附近的城市根据行星的传统属性被分为三个区域。请将其作为参考，而非绝对规则。',
     thriveZoneDesc: '吉星行星线 — 太阳（活力、认可）、月亮（情感归属）、金星（爱、美）和木星（幸运、扩展）。每颗行星根据角度激活不同的优势。',
     neutralZoneDesc: '混合能量线 — 水星（沟通、智慧）以及部分火星/土星/天王星角度。效果微妙，取决于有意识的参与。',
     cautionZoneDesc: '挑战性行星线 — 土星（限制）、火星（冲突）、海王星（混乱）、冥王星（权力斗争）和某些天王星角度（不稳定）。短期访问可以带来教训；长期停留需要自我觉察。',
 
     // Guide - How to use
     howToUse: '使用方法',
-    step1: '创建您的星盘',
-    step1Desc: '注册并输入您的精确出生日期、时间和地点。精确度很重要 — 即使15分钟也会移动您的线条。',
+    step1: '创建你的星盘',
+    step1Desc: '注册并输入你的精确出生日期、时间和地点。精确度很重要 — 即使15分钟也会移动你的线条。',
     step2: '探索地球仪',
-    step2Desc: '拖动旋转，滚动缩放。您的行星线被投射到地球上。每条彩色线代表一个行星-角度组合。',
+    step2Desc: '拖动旋转，滚动缩放。你的行星线被投射到地球上。每条彩色线代表一个行星-角度组合。',
     step3: '点击城市',
-    step3Desc: '您的线条附近的城市显示在底部面板中。点击任何城市可获得该行星能量在该地的详细解读。',
+    step3Desc: '你的线条附近的城市显示在底部面板中。点击任何城市可获得该行星能量在该地的详细解读。',
     step4: '按行星筛选',
     step4Desc: '使用左侧栏切换行星的显示/隐藏，展开查看各条线，并按兴旺/中性/谨慎区域进行筛选。',
-    step5: '查看您的出生星盘',
-    step5Desc: '点击"出生星盘"查看您的行星位置。切换到"您的出生星盘"获取详细解读 — 点击任何行星查看其在您的星座和宫位中的含义。',
+    step5: '查看你的出生星盘',
+    step5Desc: '点击"出生星盘"查看你的行星位置。切换到"你的出生星盘"获取详细解读 — 点击任何行星查看其在你的星座和宫位中的含义。',
 
     // Guide - FAQ
     faqTitle: '常见问题',
     faq1Q: '我需要知道确切的出生时间吗？',
-    faq1A: '是的。您的出生时间决定了上升点和宫头，这会显著移动您的线条。如果您不知道确切时间，请查看出生证明或联系出生医院。',
-    faq2Q: '我需要离线多近？',
+    faq1A: '是的。你的出生时间决定了上升点和宫头，这会显著移动你的线条。如果你不知道确切时间，请查看出生证明或联系出生医院。',
+    faq2Q: '我需要离行星线多近？',
     faq2A: '影响在线条1-2°以内（约100-200公里）最强。我们显示最远3.5°的城市，信号强度随距离递减。',
     faq3Q: '我能住在"谨慎"线上吗？',
     faq3A: '取决于行星。土星线带来沉重和缓慢进展。火星线制造冲突。海王星线消解清晰度。冥王星线强迫深层转变。短期访问可以带来宝贵教训；长期停留需要深刻的自我觉察。',
@@ -3400,13 +3400,13 @@ const T = {
 
     // Angle info
     mcFull: '中天（天顶）',
-    mcAngleDesc: '您出生时天空的最高点。代表事业、公众声誉以及世界如何看待您的成就。在MC线上，您会感到职业上的力量和公众的认可。',
+    mcAngleDesc: '你出生时天空的最高点。代表事业、公众声誉以及世界如何看待你的成就。在MC线上，你会感到职业上的力量和公众的认可。',
     icFull: '天底',
-    icAngleDesc: '地平线下的最深点。代表家庭、根源、家人和内在情感生活。在IC线上，您会感到深深的归属感和情感安定。',
-    ascFull: '上升点（东方）',
-    ascAngleDesc: '您出生时的东方地平线。代表身份认同、自我表达和第一印象。在ASC线上，您的个性闪耀，他人看到真实的您。',
+    icAngleDesc: '地平线下的最深点。代表家庭、根源、家人和内在情感生活。在IC线上，你会感到深深的归属感和情感安定。',
+    ascFull: '上升点（上升星座）',
+    ascAngleDesc: '你出生时的东方地平线。代表身份认同、自我表达和第一印象。在ASC线上，你的个性闪耀，他人看到真实的你。',
     dcFull: '下降点（西方）',
-    dcAngleDesc: '西方地平线，上升点的对面。代表伙伴关系、人际关系以及您如何与他人连接。在DC线上，有意义的关系和联盟自然形成。',
+    dcAngleDesc: '西方地平线，上升点的对面。代表伙伴关系、人际关系以及你如何与他人连接。在DC线上，有意义的关系和联盟自然形成。',
 
     // Planet domains
     domSun: '身份 · 事业 · 活力',
@@ -3422,9 +3422,9 @@ const T = {
 
     // Auth page
     welcomeBack: '欢迎回来',
-    createAccount: '创建您的账户',
+    createAccount: '创建你的账户',
     resetPassword: '重置密码',
-    discoverCities: '发现地球上与您的星象相匹配的城市。',
+    discoverCities: '发现地球上与你的星象相匹配的城市。',
     emailLabel: '邮箱',
     passwordLabel: '密码',
     emailPlaceholder: 'you@example.com',
@@ -3441,14 +3441,14 @@ const T = {
     signInLink: '登录',
     backToSignIn: '← 返回登录',
     accountCreated: '账户已创建！请查收邮件并点击确认链接，然后返回登录。',
-    resetLinkSent: '密码重置链接已发送到您的邮箱。',
+    resetLinkSent: '密码重置链接已发送到你的邮箱。',
     invalidCredentials: '未找到匹配这些凭据的账户。请检查邮箱和密码，或注册创建新账户。',
 
     // Birth data
-    enterBirthData: '输入您的出生数据',
-    birthDataSubtitle: '您的出生数据是星图的基础。',
+    enterBirthData: '输入你的出生数据',
+    birthDataSubtitle: '你的出生数据是星图的基础。',
     name: '姓名',
-    namePlaceholder: '您的姓名',
+    namePlaceholder: '你的姓名',
     datePlaceholder: 'DD.MM.YYYY',
     timePlaceholder: 'HH:MM',
     locationPlaceholder: '城市，国家',
@@ -3457,20 +3457,20 @@ const T = {
 
     // PDF section headers
     pdfTitle: 'NATAL NAVIGATOR',
-    pdfSubtitleReport: '您的个人星图报告',
-    pdfYourChart: '您的出生星盘',
+    pdfSubtitleReport: '你的个人星图报告',
+    pdfYourChart: '你的出生星盘',
     pdfPlanetCol: '行星',
     pdfSignCol: '星座',
     pdfDegreeCol: '度数',
     pdfHouseCol: '宫位',
     pdfElementCol: '元素',
-    pdfReadings: '您的行星解读',
-    pdfThriveZones: '兴旺区域 — 最适合您的城市',
+    pdfReadings: '你的行星解读',
+    pdfThriveZones: '兴旺区域 — 最适合你的城市',
     pdfCautionZones: '谨慎区域 — 需小心对待的城市',
     pdfNeutralZones: '中性区域 — 微妙影响',
     pdfNoCities: '此区域未找到城市。',
     pdfGenerated: '生成日期',
-    pdfFindStars: '找到与您星象契合的地方',
+    pdfFindStars: '找到与你星象契合的地方',
     pdfAscendantIn: '上升点在',
     pdfMidheavenIn: '天顶在',
 
@@ -3484,13 +3484,13 @@ const T = {
     // Birth data modal
     emailVerified: '邮箱已验证',
     welcomeToNN: '欢迎来到NatalNavigator',
-    welcomeReady: '您的账户已准备就绪。为生成您的个性化星图地球仪，我们需要您的精确出生信息。',
+    welcomeReady: '你的账户已准备就绪。为生成你的个性化星图地球仪，我们需要你的精确出生信息。',
     precisionNote: '数据越精确，行星线就越准确。',
     enterBirthDataBtn: '输入出生数据',
     takesLess: '不到一分钟',
     birthDataHeading: '出生数据',
-    enterDetailsFor: '输入您的详细信息以获得准确的出生星盘',
-    yourName: '您的姓名',
+    enterDetailsFor: '输入你的详细信息以获得准确的出生星盘',
+    yourName: '你的姓名',
     optionalPlaceholder: '选填',
     birthDateLabel: '出生日期 *',
     birthTimeLabel: '出生时间 *',
@@ -3499,9 +3499,9 @@ const T = {
     searchingCity: '搜索中...',
     noResults: '无结果。请尝试不同拼写或附近较大的城市。',
     changeCity: '更改',
-    selectCityError: '请搜索并选择您的出生城市。',
-    dateTimeError: '请输入您的出生日期和确切时间。',
-    calculatingChart: '正在计算您的星盘...',
+    selectCityError: '请搜索并选择你的出生城市。',
+    dateTimeError: '请输入你的出生日期和确切时间。',
+    calculatingChart: '正在计算你的星盘...',
     generateChart: '生成我的出生星盘',
     back: '← 返回',
     // Planet names
@@ -3549,9 +3549,9 @@ const T = {
     demo: 'عرض تجريبي',
 
     // Page titles
-    titleDemo: 'عرض تجريبي لخريطة الأبراج الفلكية — ناتال نافيجيتور',
-    titleDash: 'لوحة خريطة الأبراج الفلكية الخاصة بك — ناتال نافيجيتور',
-    titleH1: 'ناتال نافيجيتور — لوحة خريطة الأبراج الفلكية',
+    titleDemo: 'عرض تجريبي لالخرائط الفلكية المكانية — ناتال نافيجيتور',
+    titleDash: 'لوحة الخرائط الفلكية المكانية الخاصة بك — ناتال نافيجيتور',
+    titleH1: 'ناتال نافيجيتور — لوحة الخرائط الفلكية المكانية',
 
     // Loading
     loadingDemo: 'جارٍ تحميل الخريطة التجريبية...',
@@ -3563,7 +3563,7 @@ const T = {
     paymentReceived: 'تم استلام الدفعة! جارٍ تفعيل حسابك...',
     premiumActivated: 'تم تفعيل الاشتراك المميز! مرحبًا بك في ناتال نافيجيتور المميز. ✓',
     natalNavigator: 'NATAL NAVIGATOR',
-    yourMap: 'خريطتك الفلكية الشخصية',
+    yourMap: 'خريطتك الفلكية',
     premium: 'مميز',
     yourPersonalMap: 'خريطتك الفلكية\nالشخصية',
     mapDescription: 'خطوط الكواكب، تحليل المدن، والخريطة الفلكية — محسوبة من بيانات ولادتك الدقيقة.',
@@ -3605,11 +3605,11 @@ const T = {
     // Map controls
     globe: 'الكرة الأرضية',
     map: 'الخريطة',
-    natalChart: 'خريطة الولادة',
+    natalChart: 'الخريطة الفلكية',
     mobilePlanets: 'الكواكب',
 
     // Natal panel tabs
-    natalChartTab: 'خريطة الولادة',
+    natalChartTab: 'الخريطة الفلكية',
     personalityTab: 'الشخصية',
     pdfTab: '↓ PDF',
 
@@ -3648,7 +3648,7 @@ const T = {
 
     // PDF info panel
     yourNatalReport: 'تقريرك الفلكي',
-    pdfSubtitle: 'تقرير خريطة أبراج فلكية مخصص بناءً على خريطة ولادتك',
+    pdfSubtitle: 'تقرير خرائط فلكية مكانية مخصص بناءً على خريطتك الفلكية',
     whatsIncluded: 'ما الذي يتضمنه',
     pdfItem1: 'خريطة ولادة كاملة مع جميع الكواكب العشرة والأبراج والدرجات والبيوت',
     pdfItem2: 'قراءات شخصية معمّقة لكل موضع كوكبي',
@@ -3747,7 +3747,7 @@ const T = {
     fourLineTypesIntro: 'ينتج كل كوكب أربعة خطوط على الكرة الأرضية — واحد لكل زاوية. يحدد نوع الخط مجال الحياة الذي تنشّطه طاقة الكوكب في ذلك الموقع.',
     mcLine: 'وسط السماء',
     mcLineDesc: 'حيث يتوج الكوكب — أعلى نقطة. ينشّط المهنة والسمعة العامة والطموح. الطاقة الأكثر وضوحًا والموجهة للخارج.',
-    icLine: 'القاع',
+    icLine: 'وتد الأرض',
     icLineDesc: 'حيث يكون الكوكب في أدنى نقطة تحت الأفق. ينشّط الحياة المنزلية والجذور العاطفية والأمان الداخلي. طاقة عميقة وخاصة.',
     ascLine: 'الطالع',
     ascLineDesc: 'حيث كان الكوكب يشرق في الأفق الشرقي. ينشّط الهوية والتعبير عن الذات والانطباعات الأولى. طاقة شخصية وجسدية.',
@@ -3793,13 +3793,13 @@ const T = {
     faq5A: 'نعم. يتم حساب مواقع الكواكب باستخدام خوارزميات فلكية عالية الدقة (astronomy-engine)، مماثلة لبيانات التقويم الفلكي البحثية. ثم تطبق الخرائط الفلكية التفسير الفلكي على هذه المواقع.',
 
     // Angle info
-    mcFull: 'وسط السماء (ميديوم كويلي)',
+    mcFull: 'وسط السماء (Medium Coeli)',
     mcAngleDesc: 'أعلى نقطة في السماء عند ولادتك. يمثل المهنة والسمعة العامة وكيف يرى العالم إنجازاتك. على خط MC الخاص بك، تشعر بالتمكين المهني والتقدير العام.',
-    icFull: 'قاع السماء (إيموم كويلي)',
+    icFull: 'وتد الأرض (Imum Coeli)',
     icAngleDesc: 'أعمق نقطة تحت الأفق. يمثل المنزل والجذور والعائلة والحياة العاطفية الداخلية. على خط IC الخاص بك، تشعر بانتماء عميق وتأريض عاطفي.',
-    ascFull: 'الطالع (الصاعد)',
+    ascFull: 'الطالع',
     ascAngleDesc: 'الأفق الشرقي عند ولادتك. يمثل هويتك والتعبير عن الذات والانطباعات الأولى. على خط ASC الخاص بك، تتألق شخصيتك ويرى الآخرون ذاتك الحقيقية.',
-    dcFull: 'الغارب (الهابط)',
+    dcFull: 'الغارب',
     dcAngleDesc: 'الأفق الغربي، مقابل الطالع. يمثل الشراكات والعلاقات وكيف تتواصل مع الآخرين. على خط DC الخاص بك، تتشكل العلاقات والتحالفات ذات المعنى بشكل طبيعي.',
 
     // Planet domains
@@ -3852,7 +3852,7 @@ const T = {
     // PDF section headers
     pdfTitle: 'NATAL NAVIGATOR',
     pdfSubtitleReport: 'تقريرك الشخصي للخرائط الفلكية',
-    pdfYourChart: 'خريطة ولادتك',
+    pdfYourChart: 'خريطتك الفلكية',
     pdfPlanetCol: 'الكوكب',
     pdfSignCol: 'البرج',
     pdfDegreeCol: 'الدرجة',
@@ -3935,6 +3935,29 @@ const T = {
     noSearchResults: 'لم يتم العثور على مدن',
   },
   ko: {
+    // Tutorial (첫 방문 튜토리얼)
+    tutorialAriaLabel: '환영 투어',
+    tutorialBadge: '투어',
+    tutorialNext: '다음',
+    tutorialBack: '이전',
+    tutorialSkip: '건너뛰기',
+    tutorialDone: '확인했습니다',
+    tutorialIntroBadge: '간단한 투어',
+    tutorialIntroTitle: '간단한 투어를 진행하시겠습니까?',
+    tutorialIntroBody: '1분도 안 되는 시간에 6가지 핵심 기능을 안내해 드립니다 — 지구본, 행성 라인, 출생 차트, 그리고 가장 자주 사용하게 될 컨트롤들입니다. 언제든지 건너뛸 수 있습니다.',
+    tutorialIntroYes: '네, 보여주세요',
+    tutorialIntroNo: '아니요, 괜찮습니다',
+    tutGlobeTitle: '지구본과 지도 — 나의 우주 청사진',
+    tutGlobeBody: '각 색상의 점은 행성 라인 위의 도시입니다. 라인 자체는 출생 순간 행성이 지평선이나 자오선 위에 정확히 있었던 경로를 나타내며, 그 라인 위에 서면 해당 행성의 에너지가 삶에서 활성화됩니다. 드래그로 회전, 스크롤로 확대/축소, 도시를 클릭하면 개인 리딩을 확인할 수 있습니다.',
+    tutPlanetsTitle: '행성과 라인 유형',
+    tutPlanetsBody: '모든 행성은 네 개의 라인을 가집니다: MC(커리어와 가시성), IC(가정과 뿌리), ASC(정체성), DC(관계). 행성을 클릭하면 라인이 펼쳐지고, 색상 점을 클릭하면 지도에서 숨길 수 있으며, "?"를 탭하면 각 라인 유형의 의미를 확인할 수 있습니다.',
+    tutZoneTabsTitle: '번영 / 중립 / 주의 / 전체',
+    tutZoneTabsBody: '표 안의 도시를 구역별로 필터링합니다: 번영은 강점을 증폭하는 장소, 주의는 도전적인 장소, 중립은 그 사이이며, 전체는 라인 위의 모든 도시를 보여줍니다. 행을 클릭하면 해당 도시 뒤에 있는 라인, 앵글, 리딩을 확인할 수 있습니다.',
+    tutCityTitle: '도시 상세 리딩',
+    tutCityBody: '도시를 선택하면 관련 행성 에너지, 가장 가까운 라인까지의 거리, 그 지역에서 활성화되는 삶의 주제에 대한 맞춤형 해석이 표시됩니다.',
+    tutNatalTitle: '출생 차트와 성격',
+    tutNatalBody: '모든 행성, 별자리, 하우스를 포함한 전체 출생 차트를 열고, 각 배치에 대한 심층 리딩이 담긴 성격 탭을 확인할 수 있습니다. 전체 리딩을 한 번의 클릭으로 PDF로 내보낼 수 있습니다.',
+
     // Topbar
     live: '라이브',
     howItWorks: '사용 방법',
@@ -3943,9 +3966,9 @@ const T = {
     demo: '데모',
 
     // Page titles
-    titleDemo: '아스트로카토그래피 지구본 데모 — 네이탈 내비게이터',
-    titleDash: '나의 아스트로카토그래피 대시보드 — 네이탈 내비게이터',
-    titleH1: '네이탈 내비게이터 — 아스트로카토그래피 대시보드',
+    titleDemo: '점성 지도학 지구본 데모 — 네이탈 내비게이터',
+    titleDash: '나의 점성 지도학 대시보드 — 네이탈 내비게이터',
+    titleH1: '네이탈 내비게이터 — 점성 지도학 대시보드',
 
     // Loading
     loadingDemo: '데모 차트 로딩 중...',
@@ -3957,9 +3980,9 @@ const T = {
     paymentReceived: '결제가 확인되었습니다! 계정을 활성화하는 중...',
     premiumActivated: '프리미엄이 활성화되었습니다! NatalNavigator 프리미엄에 오신 것을 환영합니다. ✓',
     natalNavigator: '네이탈 내비게이터',
-    yourMap: '나의 아스트로카토그래피 지도',
+    yourMap: '나의 점성 지도학 지도',
     premium: '프리미엄',
-    yourPersonalMap: '나만의\n아스트로카토그래피 지도',
+    yourPersonalMap: '나만의\n점성 지도학 지도',
     mapDescription: '행성 라인, 도시 분석, 출생 차트 — 정확한 출생 데이터를 기반으로 계산됩니다.',
     oneTime: '일회 결제 · 평생 이용',
     redirecting: '리디렉션 중...',
@@ -3987,7 +4010,7 @@ const T = {
     cautionZone: '주의 구역',
     tickerBirthTime: '⏱ 정확한 출생 시간이 중요합니다 — 15분만 달라도 라인이 바뀝니다 ⏱',
     tickerTip1: '✦ 도시를 클릭해 개인 리딩을 확인하세요 — 행성이 그곳에서 당신에게 무엇을 활성화하는지 발견 ✦',
-    tickerTip2: '◈ 스라이브 라인 근처에 사는 것은 재능을 증폭시킵니다 — 몇 주간의 방문만으로도 에너지가 바뀔 수 있습니다 ◈',
+    tickerTip2: '◈ 번영 라인 근처에 사는 것은 재능을 증폭시킵니다 — 몇 주간의 방문만으로도 에너지가 바뀔 수 있습니다 ◈',
     tickerTip3: '☽ 달 라인은 감정적으로 편안한 곳을 보여줍니다 — 영혼이 알아보는 장소 ☽',
     tickerTip4: '⚖ 두 도시를 나란히 비교하세요 — 비교 모드로 이상적인 장소를 찾아보세요 ⚖',
     tickerTip5: '↻ 지역을 확대해 근처 도시와 라인까지의 정확한 거리를 확인하세요 ↻',
@@ -4014,9 +4037,9 @@ const T = {
     elem: '원소',
     domain: '영역',
     angles: '앵글',
-    ascendant: '어센던트',
-    midheaven: '미드헤븐',
-    ascDesc: '라이징 사인 — 외적 인격',
+    ascendant: '상승점',
+    midheaven: '중천',
+    ascDesc: '라이징 사인 — 겉으로 드러나는 인상',
     mcDesc: '커리어와 사회적 평판',
     details: '상세',
     position: '위치',
@@ -4032,7 +4055,7 @@ const T = {
     yourRisingSn: '나의 라이징 사인',
     yourMidheaven: '나의 미드헤븐',
     inThe: '',
-    houseWord: '하우스',
+    houseWord: '궁',
 
     // Element names
     fire: '불',
@@ -4042,7 +4065,7 @@ const T = {
 
     // PDF info panel
     yourNatalReport: '나의 출생 보고서',
-    pdfSubtitle: '출생 차트를 기반으로 한 개인 맞춤 아스트로카토그래피 PDF',
+    pdfSubtitle: '출생 차트를 기반으로 한 개인 맞춤 점성 지도학 PDF',
     whatsIncluded: '포함 내용',
     pdfItem1: '10개 행성 전체의 출생 차트 (별자리, 도수, 하우스 포함)',
     pdfItem2: '각 행성 배치에 대한 심층 성격 리딩',
@@ -4090,7 +4113,7 @@ const T = {
     edit: '편집',
     email: '이메일',
     memberSince: '가입일',
-    birthDataInfo: '출생 데이터는 아스트로카토그래피 차트의 기반입니다. 모든 행성 라인 계산이 이 값에 의존합니다.',
+    birthDataInfo: '출생 데이터는 점성 지도학 차트의 기반입니다. 모든 행성 라인 계산이 이 값에 의존합니다.',
     dateOfBirth: '생년월일',
     timeOfBirth: '출생 시간',
     timePrecision: '정밀도가 중요합니다 — 4분의 차이로 ASC 라인이 약 1° 이동합니다',
@@ -4131,17 +4154,17 @@ const T = {
 
     // Guide - Overview
     whatIsNN: '네이탈 내비게이터란',
-    whatIsNNBody: '네이탈 내비게이터는 출생 차트를 지구 위에 매핑하는 아스트로카토그래피 도구입니다. 행성 위치와 에너지적으로 조화되는 도시와 지역을 밝혀주며, 강점이 증폭되는 곳과 도전이 생길 수 있는 곳을 보여줍니다.',
-    whatIsAstro: '아스트로카토그래피란',
-    whatIsAstroBody1: '아스트로카토그래피(위치 점성술)는 출생 차트에서 각 행성이 상승, 하강, 남중 또는 최저점에 있었던 위치를 계산하고, 그 위치를 라인으로 지구 위에 투영합니다. 이 라인 근처에서 살거나 여행하면 해당 행성의 에너지가 삶에서 활성화됩니다.',
-    whatIsAstroBody2: '출생 차트는 태어난 순간 하늘의 스냅샷입니다. 그 시점의 태양, 달, 행성의 위치가 성격 특성, 강점, 삶의 주제를 정의합니다. 아스트로카토그래피는 이 행성 에너지가 지구상 어디에서 가장 강했는지를 물음으로써 이를 확장합니다.',
+    whatIsNNBody: '네이탈 내비게이터는 출생 차트를 지구 위에 매핑하는 점성 지도학 도구입니다. 행성 위치와 에너지적으로 조화되는 도시와 지역을 밝혀주며, 강점이 증폭되는 곳과 도전이 생길 수 있는 곳을 보여줍니다.',
+    whatIsAstro: '점성 지도학란',
+    whatIsAstroBody1: '점성 지도학(위치 점성술)는 출생 차트에서 각 행성이 상승, 하강, 남중 또는 최저점에 있었던 위치를 계산하고, 그 위치를 라인으로 지구 위에 투영합니다. 이 라인 근처에서 살거나 여행하면 해당 행성의 에너지가 삶에서 활성화됩니다.',
+    whatIsAstroBody2: '출생 차트는 태어난 순간 하늘의 스냅샷입니다. 그 시점의 태양, 달, 행성의 위치가 성격 특성, 강점, 삶의 주제를 정의합니다. 점성 지도학는 이 행성 에너지가 지구상 어디에서 가장 강했는지를 물음으로써 이를 확장합니다.',
 
     // Guide - Lines
     fourLineTypes: '네 가지 라인 유형',
     fourLineTypesIntro: '각 행성은 지구 위에 4개의 라인(각 앵글당 하나)을 생성합니다. 라인 유형은 해당 위치에서 행성 에너지가 어떤 생활 영역을 활성화하는지를 결정합니다.',
-    mcLine: '미드헤븐',
+    mcLine: '중천',
     mcLineDesc: '행성이 남중하는 곳 — 최고점. 커리어, 사회적 평판, 야망을 활성화합니다. 가장 가시적이고 외향적인 에너지입니다.',
-    icLine: '네이디어',
+    icLine: '천저',
     icLineDesc: '행성이 지평선 아래 최저점에 있는 곳. 가정생활, 감정적 뿌리, 내면의 안정감을 활성화합니다. 깊고 사적인 에너지입니다.',
     ascLine: '어센던트',
     ascLineDesc: '행성이 동쪽 지평선에서 떠오르던 곳. 정체성, 자기 표현, 첫인상을 활성화합니다. 개인적이고 신체적인 에너지입니다.',
@@ -4184,12 +4207,12 @@ const T = {
     faq4Q: '지구본 보기와 지도 보기의 차이점은?',
     faq4A: '지구본 보기는 3D로 공간적 맥락을 제공합니다. 지도 보기는 투영을 평면으로 펼쳐 대륙을 가로지르는 라인 추적과 지역 비교가 쉬워집니다.',
     faq5Q: '실제 천문학에 기반하나요?',
-    faq5A: '네. 행성 위치는 고정밀 천문 계산 알고리즘(astronomy-engine)을 사용하여 계산되며, 연구 수준의 천문력 데이터에 필적합니다. 아스트로카토그래피는 이 위치에 점성학적 해석을 적용합니다.',
+    faq5A: '네. 행성 위치는 고정밀 천문 계산 알고리즘(astronomy-engine)을 사용하여 계산되며, 연구 수준의 천문력 데이터에 필적합니다. 점성 지도학는 이 위치에 점성학적 해석을 적용합니다.',
 
     // Angle info
-    mcFull: '메디움 코엘리 (미드헤븐)',
+    mcFull: '중천 (MC)',
     mcAngleDesc: '출생 시 하늘의 최고점. 커리어, 사회적 평판, 세상이 당신의 성취를 어떻게 보는지를 나타냅니다. MC 라인에서는 직업적으로 힘을 얻고 대중적 인정을 받습니다.',
-    icFull: '이뭄 코엘리 (네이디어)',
+    icFull: '천저 (IC)',
     icAngleDesc: '지평선 아래의 가장 깊은 지점. 가정, 뿌리, 가족, 내면의 감정 생활을 나타냅니다. IC 라인에서는 깊은 소속감과 감정적 안정을 느낍니다.',
     ascFull: '어센던트 (라이징)',
     ascAngleDesc: '출생 시 동쪽 지평선. 정체성, 자기 표현, 첫인상을 나타냅니다. ASC 라인에서는 개성이 빛나고 타인이 진정한 자신을 봅니다.',
@@ -4206,13 +4229,13 @@ const T = {
     domSaturn: '규율 · 제한 · 업보',
     domUranus: '혁신 · 변혁 · 자유',
     domNeptune: '영성 · 환상 · 예술',
-    domPluto: '변환 · 권력 · 깊이',
+    domPluto: '변용 · 권력 · 깊이',
 
     // Auth page
     welcomeBack: '다시 오신 것을 환영합니다',
     createAccount: '계정 만들기',
     resetPassword: '비밀번호 재설정',
-    discoverCities: '당신의 별과 조화를 이루는 지구상의 도시를 발견하세요.',
+    discoverCities: '지구 위에서 내 별과 조화를 이루는 도시를 발견하세요.',
     emailLabel: '이메일',
     passwordLabel: '비밀번호',
     emailPlaceholder: 'you@example.com',
@@ -4234,7 +4257,7 @@ const T = {
 
     // Birth data
     enterBirthData: '출생 데이터 입력',
-    birthDataSubtitle: '출생 데이터는 아스트로카토그래피 차트의 기반입니다.',
+    birthDataSubtitle: '출생 데이터는 점성 지도학 차트의 기반입니다.',
     name: '이름',
     namePlaceholder: '이름을 입력하세요',
     datePlaceholder: 'DD.MM.YYYY',
@@ -4245,7 +4268,7 @@ const T = {
 
     // PDF section headers
     pdfTitle: '네이탈 내비게이터',
-    pdfSubtitleReport: '나의 아스트로카토그래피 보고서',
+    pdfSubtitleReport: '나의 점성 지도학 보고서',
     pdfYourChart: '나의 출생 차트',
     pdfPlanetCol: '행성',
     pdfSignCol: '별자리',
@@ -4272,7 +4295,7 @@ const T = {
     // Birth data modal
     emailVerified: '이메일 인증 완료',
     welcomeToNN: '네이탈 내비게이터에 오신 것을 환영합니다',
-    welcomeReady: '계정이 준비되었습니다. 맞춤형 아스트로카토그래피 지구본을 생성하려면 정확한 출생 정보가 필요합니다.',
+    welcomeReady: '계정이 준비되었습니다. 맞춤형 점성 지도학 지구본을 생성하려면 정확한 출생 정보가 필요합니다.',
     precisionNote: '데이터가 정확할수록 행성 라인이 더 정확해집니다.',
     enterBirthDataBtn: '출생 데이터 입력',
     takesLess: '1분도 걸리지 않습니다',
@@ -4344,7 +4367,7 @@ const T = {
     // Loading
     loadingDemo: 'Ładowanie mapy demonstracyjnej...',
     connecting: 'Łączenie...',
-    calculating: 'Obliczanie twoich linii planetarnych...',
+    calculating: 'Obliczanie Twoich linii planetarnych...',
     reEnterBirth: 'Wprowadź ponownie dane urodzeniowe',
 
     // Paywall
@@ -4354,7 +4377,7 @@ const T = {
     yourMap: 'TWOJA OSOBISTA MAPA ASTROKARTOGRAFII',
     premium: 'Premium',
     yourPersonalMap: 'Twoja Osobista\nMapa Astrokartografii',
-    mapDescription: 'Linie planetarne, analiza miast i horoskop urodzeniowy — obliczone na podstawie twoich dokładnych danych urodzeniowych.',
+    mapDescription: 'Linie planetarne, analiza miast i horoskop urodzeniowy — obliczone na podstawie Twoich dokładnych danych urodzeniowych.',
     oneTime: 'JEDNORAZOWO · DOŻYWOTNI DOSTĘP',
     redirecting: 'PRZEKIEROWANIE...',
     getStarted: 'ROZPOCZNIJ',
@@ -4373,7 +4396,7 @@ const T = {
     topCities: 'NAJLEPSZE MIASTA',
     dragRotate: 'Przeciągnij = Obróć · Przewiń = Powiększ',
     dblClickZoom: 'Podwójne kliknięcie = Powiększ punkt',
-    clickCity: 'Kliknij miasto = Odczyt',
+    clickCity: 'Kliknij w miasto = Interpretacja',
 
     // Zones
     thriveZone: 'Strefa siły',
@@ -4384,8 +4407,8 @@ const T = {
     tickerTip2: '◈ Mieszkanie blisko linii siły wzmacnia twoje talenty — nawet kilkutygodniowa wizyta może zmienić twoją energię ◈',
     tickerTip3: '☽ Twoja linia Księżyca pokazuje, gdzie czujesz się emocjonalnie w domu — miejsce, które rozpoznaje twoja dusza ☽',
     tickerTip4: '⚖ Porównaj dwa miasta obok siebie — użyj trybu porównania, aby znaleźć idealne miejsce ⚖',
-    tickerTip5: '↻ Przybliż region, aby zobaczyć pobliskie miasta i ich dokładną odległość od twoich linii ↻',
-    tickerTip6: '★ Twoja linia Słońce MC wskazuje, gdzie sukces zawodowy i publiczne uznanie przychodzą najnaturalniej ★',
+    tickerTip5: '↻ Przybliż region, aby zobaczyć pobliskie miasta i ich dokładną odległość od Twoich linii ↻',
+    tickerTip6: '★ Twoja linia Słońca MC wskazuje, gdzie sukces zawodowy i publiczne uznanie przychodzą najnaturalniej ★',
     challengesLikely: 'Prawdopodobne wyzwania',
     neutral: 'Neutralna',
     subtleInfluence: 'Subtelny wpływ',
@@ -4446,7 +4469,7 @@ const T = {
     pdfItem6: 'Strefy neutralne z subtelnymi wpływami planetarnymi',
     pdfItem7: 'Spersonalizowane odczyty na poziomie miast z odległościami orbu',
     format: 'FORMAT',
-    pdfFormat: 'Wielostronicowy PDF A4 z ciemnym motywem. Zawiera numery stron, nagłówki sekcji i podsumowanie twoich danych urodzeniowych.',
+    pdfFormat: 'Wielostronicowy PDF A4 z ciemnym motywem. Zawiera numery stron, nagłówki sekcji i podsumowanie Twoich danych urodzeniowych.',
     generating: '⏳ GENEROWANIE...',
     downloadPdf: '↓ POBIERZ PDF',
 
@@ -4459,18 +4482,18 @@ const T = {
     // Bottom panel
     thriveTab: '▲ SIŁA',
     neutralTab: '◆ NEUTRALNE',
-    avoidTab: '▼ UNIKAJ',
+    avoidTab: '▼ OSTROŻNOŚĆ',
     allTab: 'WSZYSTKIE',
     city: 'MIASTO',
     line: 'LINIA',
     signal: 'SYGNAŁ',
     lifeArea: 'OBSZAR ŻYCIA',
-    reading: 'ODCZYT',
+    reading: 'INTERPRETACJA',
     onYourLines: 'NA TWOICH LINIACH',
     cities: 'MIASTA',
     bestCity: 'Najlepsze miasto',
     yourChart: 'Twój spersonalizowany horoskop',
-    total: 'łącznie miast na twoich liniach urodzeniowych',
+    total: 'łącznie miast na Twoich liniach urodzeniowych',
 
     // Settings
     settings: 'USTAWIENIA',
@@ -4499,7 +4522,7 @@ const T = {
     signOutHeading: 'Wyloguj się',
     signOutDesc: 'Wyloguj się ze swojego konta na tym urządzeniu',
     signOutBtn: 'WYLOGUJ SIĘ',
-    dangerZone: 'STREFA ZAGROŻENIA',
+    dangerZone: 'STREFA NIEBEZPIECZNA',
     deleteAccount: 'Usuń konto',
     deleteDesc: 'Trwale usuń swój profil i wszystkie powiązane dane. Tej czynności nie można cofnąć.',
     deleteBtn: 'USUŃ KONTO',
@@ -4525,10 +4548,10 @@ const T = {
 
     // Guide - Overview
     whatIsNN: 'CZYM JEST NATAL NAVIGATOR',
-    whatIsNNBody: 'Natal Navigator to narzędzie astrokartografii, które odwzorowuje twój horoskop urodzeniowy na globusie. Pokazuje, które miasta i regiony świata są energetycznie dopasowane do twoich pozycji planetarnych — wskazując, gdzie twoje mocne strony są wzmacniane i gdzie mogą pojawić się wyzwania.',
+    whatIsNNBody: 'Natal Navigator to narzędzie astrokartografii, które odwzorowuje twój horoskop urodzeniowy na globusie. Pokazuje, które miasta i regiony świata są energetycznie dopasowane do Twoich pozycji planetarnych — wskazując, gdzie twoje mocne strony są wzmacniane i gdzie mogą pojawić się wyzwania.',
     whatIsAstro: 'CZYM JEST ASTROKARTOGRAFIA',
-    whatIsAstroBody1: 'Astrokartografia (czyli astrologia lokacyjna) oblicza, gdzie każda planeta w twoim horoskopie urodzeniowym wschodziła, zachodziła, kulminowała lub była w najniższym punkcie — i rzutuje te pozycje jako linie na globusie. Życie w pobliżu tych linii lub podróż do nich aktywuje energię planety w twoim życiu.',
-    whatIsAstroBody2: 'Twój horoskop urodzeniowy to migawka nieba w dokładnym momencie twoich narodzin. Pozycje Słońca, Księżyca i planet w tym czasie definiują twoje cechy osobowości, mocne strony i tematy życiowe. Astrokartografia rozszerza to, pytając: gdzie na Ziemi te energie planetarne były najsilniejsze?',
+    whatIsAstroBody1: 'Astrokartografia (czyli astrologia lokacyjna) oblicza, gdzie każda planeta w Twoimhoroskopie urodzeniowym wschodziła, zachodziła, kulminowała lub była w najniższym punkcie — i rzutuje te pozycje jako linie na globusie. Życie w pobliżu tych linii lub podróż do nich aktywuje energię planety w Twoimżyciu.',
+    whatIsAstroBody2: 'Twój horoskop urodzeniowy to migawka nieba w dokładnym momencie Twoich narodzin. Pozycje Słońca, Księżyca i planet w tym czasie definiują twoje cechy osobowości, mocne strony i tematy życiowe. Astrokartografia rozszerza to, pytając: gdzie na Ziemi te energie planetarne były najsilniejsze?',
 
     // Guide - Lines
     fourLineTypes: 'CZTERY TYPY LINII',
@@ -4549,7 +4572,7 @@ const T = {
 
     // Guide - Zones
     zoneClassification: 'KLASYFIKACJA STREF',
-    zoneClassificationIntro: 'Miasta w pobliżu twoich linii są klasyfikowane w trzech strefach na podstawie tradycyjnej natury planety. Traktuj je jako wskazówki, nie bezwzględne reguły.',
+    zoneClassificationIntro: 'Miasta w pobliżu Twoich linii są klasyfikowane w trzech strefach na podstawie tradycyjnej natury planety. Traktuj je jako wskazówki, nie bezwzględne reguły.',
     thriveZoneDesc: 'Dobroczynne linie planetarne — Słońce (witalność, uznanie), Księżyc (przynależność emocjonalna), Wenus (miłość, piękno) i Jowisz (szczęście, ekspansja). Każda planeta aktywuje różne mocne strony w zależności od kąta.',
     neutralZoneDesc: 'Linie o mieszanej energii — Merkury (komunikacja, intelekt) i niektóre kąty Marsa/Saturna/Urana. Efekty są subtelne i zależą od świadomego zaangażowania.',
     cautionZoneDesc: 'Wymagające linie planetarne — Saturn (ograniczenia), Mars (konflikt), Neptun (zamęt), Pluton (walki o władzę) i niektóre kąty Urana (niestabilność). Krótkie wizyty mogą uczyć lekcji; dłuższe pobyty wymagają świadomości.',
@@ -4561,11 +4584,11 @@ const T = {
     step2: 'Eksploruj globus',
     step2Desc: 'Przeciągnij, aby obracać, przewiń, aby powiększyć. Twoje linie planetarne są rzutowane na globusie. Każda kolorowa linia reprezentuje kombinację planeta-kąt.',
     step3: 'Kliknij na miasta',
-    step3Desc: 'Miasta w pobliżu twoich linii pojawiają się w dolnym panelu. Kliknij dowolne miasto, aby uzyskać szczegółowy odczyt tego, co ta energia planetarna oznacza dla ciebie w danym miejscu.',
+    step3Desc: 'Miasta w pobliżu Twoich linii pojawiają się w dolnym panelu. Kliknij dowolne miasto, aby uzyskać szczegółowy odczyt tego, co ta energia planetarna oznacza dla ciebie w danym miejscu.',
     step4: 'Filtruj według planety',
     step4Desc: 'Użyj lewego panelu bocznego, aby włączać/wyłączać planety, rozwijać je w celu zobaczenia poszczególnych linii i filtrować według stref siły/neutralnych/ostrożności.',
     step5: 'Przeczytaj swój horoskop urodzeniowy',
-    step5Desc: 'Kliknij "Horoskop urodzeniowy", aby zobaczyć swoje pozycje planetarne. Przełącz na "Twój horoskop urodzeniowy", aby uzyskać szczegółowe odczyty — dotknij dowolnej planety, aby zobaczyć, co oznacza w twoim znaku i domu.',
+    step5Desc: 'Kliknij "Horoskop urodzeniowy", aby zobaczyć swoje pozycje planetarne. Przełącz na "Twój horoskop urodzeniowy", aby uzyskać szczegółowe odczyty — dotknij dowolnej planety, aby zobaczyć, co oznacza w Twoimznaku i domu.',
 
     // Guide - FAQ
     faqTitle: 'NAJCZĘŚCIEJ ZADAWANE PYTANIA',
@@ -4574,7 +4597,7 @@ const T = {
     faq2Q: 'Jak blisko linii muszę być?',
     faq2A: 'Wpływ jest najsilniejszy w odległości 1-2° od linii (około 100-200 km). Pokazujemy miasta w odległości do 3,5°, a siła sygnału maleje wraz z odległością.',
     faq3Q: 'Czy mogę mieszkać na linii "ostrożności"?',
-    faq3A: 'To zależy od planety. Linie Saturna przynoszą ciężar i powolny postęp. Linie Marsa tworzą konflikty. Linie Neptuna rozpuszczają jasność. Linie Plutona wymuszają intensywną transformację. Krótkie wizyty mogą uczyć cennych lekcji; dłuższe pobyty wymagają głębokiej samoświadomości.',
+    faq3A: 'To zależy od planety. Linie Saturna przynoszą ciężar i powolny postęp. Linie Marsa tworzą konflikty. Linie Neptuna zacierają jasność. Linie Plutona wymuszają intensywną transformację. Krótkie wizyty mogą uczyć cennych lekcji; dłuższe pobyty wymagają głębokiej samoświadomości.',
     faq4Q: 'Jaka jest różnica między widokiem globusa a mapy?',
     faq4A: 'Widok globusa pokazuje Ziemię w 3D dla kontekstu przestrzennego. Widok mapy rozkłada projekcję na płasko, ułatwiając śledzenie linii między kontynentami i porównywanie regionów.',
     faq5Q: 'Czy to jest oparte na prawdziwej astronomii?',
@@ -4582,11 +4605,11 @@ const T = {
 
     // Angle info
     mcFull: 'Medium Coeli (Szczyt nieba)',
-    mcAngleDesc: 'Najwyższy punkt na niebie w momencie twoich narodzin. Reprezentuje karierę, publiczną reputację i to, jak świat postrzega twoje osiągnięcia. Na twojej linii MC czujesz się zawodowo wzmocniony i publicznie uznawany.',
+    mcAngleDesc: 'Najwyższy punkt na niebie w momencie Twoich narodzin. Reprezentuje karierę, publiczną reputację i to, jak świat postrzega twoje osiągnięcia. Na twojej linii MC czujesz się zawodowo wzmocniony i publicznie uznawany.',
     icFull: 'Imum Coeli (Nadir)',
     icAngleDesc: 'Najgłębszy punkt pod horyzontem. Reprezentuje dom, korzenie, rodzinę i wewnętrzne życie emocjonalne. Na twojej linii IC odczuwasz głębokie poczucie przynależności i emocjonalnego zakorzenienia.',
     ascFull: 'Ascendent (Wschodzący)',
-    ascAngleDesc: 'Wschodni horyzont w momencie twoich narodzin. Reprezentuje twoją tożsamość, autoekspresję i pierwsze wrażenia. Na twojej linii ASC twoja osobowość błyszczy, a inni widzą twoje autentyczne ja.',
+    ascAngleDesc: 'Wschodni horyzont w momencie Twoich narodzin. Reprezentuje twoją tożsamość, autoekspresję i pierwsze wrażenia. Na twojej linii ASC twoja osobowość błyszczy, a inni widzą twoje autentyczne ja.',
     dcFull: 'Descendent (Zachodzący)',
     dcAngleDesc: 'Zachodni horyzont, naprzeciwko Ascendentu. Reprezentuje partnerstwa, relacje i sposób, w jaki łączysz się z innymi. Na twojej linii DC znaczące relacje i sojusze tworzą się naturalnie.',
 
@@ -4598,7 +4621,7 @@ const T = {
     domMars: 'Napęd · Ambicja · Konflikt',
     domJupiter: 'Wzrost · Szczęście · Ekspansja',
     domSaturn: 'Dyscyplina · Granice · Karma',
-    domUranus: 'Innowacja · Zakłócenie · Wolność',
+    domUranus: 'Innowacja · Przełom · Wolność',
     domNeptune: 'Duchowość · Iluzja · Sztuka',
     domPluto: 'Transformacja · Moc · Głębia',
 
@@ -4652,7 +4675,7 @@ const T = {
     pdfNeutralZones: 'STREFY NEUTRALNE — SUBTELNE WPŁYWY',
     pdfNoCities: 'Nie znaleziono miast w tej strefie.',
     pdfGenerated: 'Wygenerowano',
-    pdfFindStars: 'Znajdź, gdzie twoje gwiazdy się spotykają',
+    pdfFindStars: 'Odkryj, gdzie zbiegają się Twoje gwiazdy',
     pdfAscendantIn: 'Ascendent w',
     pdfMidheavenIn: 'Medium Coeli w',
 
@@ -4666,7 +4689,7 @@ const T = {
     // Birth data modal
     emailVerified: 'E-MAIL ZWERYFIKOWANY',
     welcomeToNN: 'Witaj w NatalNavigator',
-    welcomeReady: 'Twoje konto jest gotowe. Aby wygenerować twój spersonalizowany globus astrokartografii, potrzebujemy twoich dokładnych danych urodzeniowych.',
+    welcomeReady: 'Twoje konto jest gotowe. Aby wygenerować twój spersonalizowany globus astrokartografii, potrzebujemy Twoich dokładnych danych urodzeniowych.',
     precisionNote: 'Im dokładniejsze twoje dane, tym precyzyjniejsze będą twoje linie planetarne.',
     enterBirthDataBtn: 'WPROWADŹ DANE URODZENIOWE',
     takesLess: 'Zajmie mniej niż minutę',
