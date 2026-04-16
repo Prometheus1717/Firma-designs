@@ -20,7 +20,7 @@ const STEPS = [
   { keys: ['globe'],                         i18n: 'tutGlobe' },
   { keys: ['planets'],                       i18n: 'tutPlanets' },
   { keys: ['bottomTicker'],                  i18n: 'tutBottomTicker' },
-  { keys: ['natal'],                         i18n: 'tutNatal' },
+  { keys: ['natalTabs'],                     i18n: 'tutNatal' },
   { keys: ['mapToggle'],                     i18n: 'tutMapToggle' },
   { keys: ['search', 'layerToggles'],        i18n: 'tutSearchLayers' },
 ];
@@ -113,19 +113,18 @@ function arrowGeometry(targetRect, place) {
   return { x1, y1, x2, y2 };
 }
 
-export default function Tutorial({ lang, onClose }) {
+export default function Tutorial({ lang, onClose, onStep }) {
   const [stepIdx, setStepIdx] = useState(0);
   const [rects, setRects] = useState([]);
   const [tick, setTick] = useState(0);
 
-  const activeSteps = useMemo(() => {
-    const present = STEPS
-      .map(s => ({ ...s, keys: s.keys.filter(k => document.querySelector(`[data-tutorial="${k}"]`)) }))
-      .filter(s => s.keys.length > 0);
-    return present.length ? present : STEPS;
-  }, []);
+  const activeSteps = useMemo(() => STEPS, []);
 
   const step = activeSteps[stepIdx];
+
+  useEffect(() => {
+    if (onStep && step) onStep(step.keys);
+  }, [stepIdx, step, onStep]);
 
   useLayoutEffect(() => {
     if (!step) return;

@@ -1111,7 +1111,7 @@ export default function Dashboard({ demo = false }) {
 
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
-                <div style={{ display: 'flex', borderBottom: `1px solid ${T.bd}`, background: T.b, flexShrink: 0 }}>
+                <div data-tutorial="natalTabs" style={{ display: 'flex', borderBottom: `1px solid ${T.bd}`, background: T.b, flexShrink: 0 }}>
                   {[{ key: 'chart', label: t('natalChartTab', lang) }, { key: 'planets', label: t('personalityTab', lang) }, { key: 'pdf', label: t('pdfTab', lang) }].map(tb => (
                     <div key={tb.key} onClick={() => setNatalTab(tb.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === tb.key ? T.ac : T.td, borderBottom: natalTab === tb.key ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
                       {tb.label}
@@ -2176,9 +2176,21 @@ export default function Dashboard({ demo = false }) {
       {showTutorial && (
         <Tutorial
           lang={lang}
+          onStep={(keys) => {
+            // Auto-open the natal chart modal on the "natal" step so both
+            // the chart and personality tabs are visible and highlighted.
+            if (keys.includes('natalTabs')) {
+              closeAllPopups('natal');
+              setShowNatal(true);
+              setNatalTab('chart');
+            } else if (showNatal) {
+              setShowNatal(false);
+            }
+          }}
           onClose={(persist) => {
             setShowTutorial(false);
             setTutorialDismissedAt(Date.now());
+            if (showNatal) setShowNatal(false);
             if (persist) {
               try { localStorage.setItem('nn_tutorial_seen', '1'); } catch { /* storage unavailable */ }
               try { trackEvent('tutorial_completed'); } catch { /* analytics optional */ }
