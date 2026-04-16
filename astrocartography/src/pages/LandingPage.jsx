@@ -152,10 +152,13 @@ export default function LandingPage() {
         }
       });
     };
-    // Use both scroll event AND rAF loop for maximum reliability
+    // Scroll event alone is reliable; the previous per-frame rAF loop was
+    // running checkReveals() at 60 fps forever (with querySelectorAll +
+    // getBoundingClientRect on every element) which spun the CPU even when
+    // the user was idle on the landing page.
     container.addEventListener('scroll', checkReveals, { passive: true });
-    const loop = () => { checkReveals(); rafId = requestAnimationFrame(loop); };
-    rafId = requestAnimationFrame(loop);
+    // One initial pass after layout so above-the-fold elements reveal on load.
+    rafId = requestAnimationFrame(checkReveals);
     return () => { container.removeEventListener('scroll', checkReveals); cancelAnimationFrame(rafId); };
   }, []);
 

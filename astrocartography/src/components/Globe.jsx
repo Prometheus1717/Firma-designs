@@ -105,8 +105,10 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     pinchDist: 0,
     // Double-tap tracking
     lastTap: 0, lastTapX: 0, lastTapY: 0,
-    // Mobile: ~30fps (33ms) for smooth rotation; desktop: 60fps
-    frameInterval: isMobile ? 33 : 16,
+    // Render at 30fps on all platforms. The auto-rotation is ~200s per full
+    // revolution, which is visually indistinguishable between 30 and 60fps but
+    // draws only half as often, keeping laptops cool while idle.
+    frameInterval: 33,
     // Cached atmosphere gradient — avoid per-frame allocation (Chrome/Firefox GC pressure)
     _atmosGrad: null, _atmosScale: 0, _atmosCx: 0, _atmosCy: 0,
     // Fly-to animation state
@@ -699,16 +701,25 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl, { passive: true }); c.addEventListener('click', click, { passive: true });
     const rs = () => { scheduleRedraw(); }; window.addEventListener('resize', rs);
 
-    // Pause RAF loop when tab is hidden, resume when visible
-    const onVis = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(s.raf);
-        loopRunning = false;
-      } else {
-        scheduleRedraw();
-      }
+    // Pause RAF loop when tab is hidden OR window loses focus (user switched
+    // to another app / window). Without the focus check, the laptop keeps
+    // burning cycles rotating a globe the user is not looking at.
+    const pauseLoop = () => {
+      cancelAnimationFrame(s.raf);
+      loopRunning = false;
+      // Note: we do NOT reset s.auto — when the user comes back, the globe
+      // resumes rotating from where it left off, so the UX is unchanged.
     };
+    const resumeLoop = () => { scheduleRedraw(); };
+    const onVis = () => {
+      if (document.hidden) pauseLoop();
+      else resumeLoop();
+    };
+    const onBlur = () => pauseLoop();
+    const onFocus = () => resumeLoop();
     document.addEventListener('visibilitychange', onVis);
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
 
     // No auto-stop timer — rotation continues until user drags/zooms in
 
@@ -716,6 +727,8 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
       cancelAnimationFrame(s.raf);
       cancelAnimationFrame(_mvRaf);
       document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('blur', onBlur);
+      window.removeEventListener('focus', onFocus);
       c.removeEventListener('mousedown', dn); window.removeEventListener('mousemove', mvThrottled); window.removeEventListener('mouseup', up);
       c.removeEventListener('touchstart', dn); c.removeEventListener('touchmove', mv); c.removeEventListener('touchend', up);
       c.removeEventListener('wheel', wh); c.removeEventListener('dblclick', dbl); c.removeEventListener('click', click);
