@@ -4371,7 +4371,7 @@ const T = {
     reEnterBirth: 'Wprowadź ponownie dane urodzeniowe',
 
     // Paywall
-    paymentReceived: 'Płatność otrzymana! Aktywacja twojego konta...',
+    paymentReceived: 'Płatność otrzymana! Aktywacja Twojego konta...',
     premiumActivated: 'Premium aktywowany! Witaj w NatalNavigator Premium. ✓',
     natalNavigator: 'NATAL NAVIGATOR',
     yourMap: 'TWOJA OSOBISTA MAPA ASTROKARTOGRAFII',
@@ -4404,8 +4404,8 @@ const T = {
     cautionZone: 'Strefa ostrożności',
     tickerBirthTime: '⏱ Dokładna godzina urodzenia jest kluczowa — 15 minut przesuwa linie ⏱',
     tickerTip1: '✦ Kliknij miasto, aby zobaczyć swoją osobistą interpretację — odkryj, co planety aktywują tam dla ciebie ✦',
-    tickerTip2: '◈ Mieszkanie blisko linii siły wzmacnia twoje talenty — nawet kilkutygodniowa wizyta może zmienić twoją energię ◈',
-    tickerTip3: '☽ Twoja linia Księżyca pokazuje, gdzie czujesz się emocjonalnie w domu — miejsce, które rozpoznaje twoja dusza ☽',
+    tickerTip2: '◈ Mieszkanie blisko linii siły wzmacnia Twoje talenty — nawet kilkutygodniowa wizyta może zmienić Twoją energię ◈',
+    tickerTip3: '☽ Twoja linia Księżyca pokazuje, gdzie czujesz się emocjonalnie w domu — miejsce, które rozpoznaje Twoja dusza ☽',
     tickerTip4: '⚖ Porównaj dwa miasta obok siebie — użyj trybu porównania, aby znaleźć idealne miejsce ⚖',
     tickerTip5: '↻ Przybliż region, aby zobaczyć pobliskie miasta i ich dokładną odległość od Twoich linii ↻',
     tickerTip6: '★ Twoja linia Słońca MC wskazuje, gdzie sukces zawodowy i publiczne uznanie przychodzą najnaturalniej ★',
@@ -4433,7 +4433,7 @@ const T = {
     angles: 'KĄTY',
     ascendant: 'Ascendent',
     midheaven: 'Medium Coeli',
-    ascDesc: 'Znak wschodzący — twoja zewnętrzna persona',
+    ascDesc: 'Znak wschodzący — Twoja zewnętrzna persona',
     mcDesc: 'Kariera i publiczna reputacja',
     details: 'SZCZEGÓŁY',
     position: 'Pozycja',
@@ -4459,12 +4459,12 @@ const T = {
 
     // PDF info panel
     yourNatalReport: 'TWÓJ RAPORT URODZENIOWY',
-    pdfSubtitle: 'Spersonalizowany PDF astrokartografii dostosowany do twojego horoskopu urodzeniowego',
+    pdfSubtitle: 'Spersonalizowany PDF astrokartografii dostosowany do Twojego horoskopu urodzeniowego',
     whatsIncluded: 'CO ZAWIERA',
     pdfItem1: 'Pełny horoskop urodzeniowy ze wszystkimi 10 planetami, znakami, stopniami i domami',
     pdfItem2: 'Szczegółowe odczyty osobowości dla każdego położenia planetarnego',
     pdfItem3: 'Interpretacje Ascendentu i Medium Coeli',
-    pdfItem4: 'Najlepsze miasta siły — twoje najlepsze lokalizacje na świecie',
+    pdfItem4: 'Najlepsze miasta siły — Twoje najlepsze lokalizacje na świecie',
     pdfItem5: 'Strefy ostrożności — miejsca do ostrożnego podejścia',
     pdfItem6: 'Strefy neutralne z subtelnymi wpływami planetarnymi',
     pdfItem7: 'Spersonalizowane odczyty na poziomie miast z odległościami orbu',
@@ -4507,10 +4507,10 @@ const T = {
     edit: 'EDYTUJ',
     email: 'E-MAIL',
     memberSince: 'CZŁONEK OD',
-    birthDataInfo: 'Twoje dane urodzeniowe stanowią podstawę twojej mapy astrokartografii. Wszystkie obliczenia linii planetarnych zależą od tych wartości.',
+    birthDataInfo: 'Twoje dane urodzeniowe stanowią podstawę Twojej mapy astrokartografii. Wszystkie obliczenia linii planetarnych zależą od tych wartości.',
     dateOfBirth: 'DATA URODZENIA',
     timeOfBirth: 'GODZINA URODZENIA',
-    timePrecision: 'Precyzja ma znaczenie — nawet 4 minuty przesuwają twoje linie ASC o ~1°',
+    timePrecision: 'Precyzja ma znaczenie — nawet 4 minuty przesuwają Twoje linie ASC o ~1°',
     birthLocation: 'MIEJSCE URODZENIA',
     editBirthData: 'EDYTUJ DANE URODZENIOWE',
     plan: 'Plan',
@@ -4548,10 +4548,10 @@ const T = {
 
     // Guide - Overview
     whatIsNN: 'CZYM JEST NATAL NAVIGATOR',
-    whatIsNNBody: 'Natal Navigator to narzędzie astrokartografii, które odwzorowuje twój horoskop urodzeniowy na globusie. Pokazuje, które miasta i regiony świata są energetycznie dopasowane do Twoich pozycji planetarnych — wskazując, gdzie twoje mocne strony są wzmacniane i gdzie mogą pojawić się wyzwania.',
+    whatIsNNBody: 'Natal Navigator to narzędzie astrokartografii, które odwzorowuje Twój horoskop urodzeniowy na globusie. Pokazuje, które miasta i regiony świata są energetycznie dopasowane do Twoich pozycji planetarnych — wskazując, gdzie Twoje mocne strony są wzmacniane i gdzie mogą pojawić się wyzwania.',
     whatIsAstro: 'CZYM JEST ASTROKARTOGRAFIA',
-    whatIsAstroBody1: 'Astrokartografia (czyli astrologia lokacyjna) oblicza, gdzie każda planeta w Twoimhoroskopie urodzeniowym wschodziła, zachodziła, kulminowała lub była w najniższym punkcie — i rzutuje te pozycje jako linie na globusie. Życie w pobliżu tych linii lub podróż do nich aktywuje energię planety w Twoimżyciu.',
-    whatIsAstroBody2: 'Twój horoskop urodzeniowy to migawka nieba w dokładnym momencie Twoich narodzin. Pozycje Słońca, Księżyca i planet w tym czasie definiują twoje cechy osobowości, mocne strony i tematy życiowe. Astrokartografia rozszerza to, pytając: gdzie na Ziemi te energie planetarne były najsilniejsze?',
+    whatIsAstroBody1: 'Astrokartografia (czyli astrologia lokacyjna) oblicza, gdzie każda planeta w Twoim horoskopie urodzeniowym wschodziła, zachodziła, kulminowała lub była w najniższym punkcie — i rzutuje te pozycje jako linie na globusie. Życie w pobliżu tych linii lub podróż do nich aktywuje energię planety w Twoim życiu.',
+    whatIsAstroBody2: 'Twój horoskop urodzeniowy to migawka nieba w dokładnym momencie Twoich narodzin. Pozycje Słońca, Księżyca i planet w tym czasie definiują Twoje cechy osobowości, mocne strony i tematy życiowe. Astrokartografia rozszerza to, pytając: gdzie na Ziemi te energie planetarne były najsilniejsze?',
 
     // Guide - Lines
     fourLineTypes: 'CZTERY TYPY LINII',
@@ -4568,7 +4568,7 @@ const T = {
 
     // Guide - Planets
     planetaryEnergies: 'ENERGIE PLANETARNE',
-    planetaryEnergiesIntro: 'Każda planeta rządzi konkretnymi tematami życiowymi. Gdy mieszkasz blisko lub odwiedzasz linię planetarną, energia tej planety jest wzmacniana w odpowiednim obszarze twojego życia.',
+    planetaryEnergiesIntro: 'Każda planeta rządzi konkretnymi tematami życiowymi. Gdy mieszkasz blisko lub odwiedzasz linię planetarną, energia tej planety jest wzmacniana w odpowiednim obszarze Twojego życia.',
 
     // Guide - Zones
     zoneClassification: 'KLASYFIKACJA STREF',
@@ -4580,7 +4580,7 @@ const T = {
     // Guide - How to use
     howToUse: 'JAK UŻYWAĆ',
     step1: 'Utwórz swój horoskop',
-    step1Desc: 'Zarejestruj się i wprowadź dokładną datę, godzinę i miejsce urodzenia. Precyzja ma znaczenie — nawet 15 minut może przesunąć twoje linie.',
+    step1Desc: 'Zarejestruj się i wprowadź dokładną datę, godzinę i miejsce urodzenia. Precyzja ma znaczenie — nawet 15 minut może przesunąć Twoje linie.',
     step2: 'Eksploruj globus',
     step2Desc: 'Przeciągnij, aby obracać, przewiń, aby powiększyć. Twoje linie planetarne są rzutowane na globusie. Każda kolorowa linia reprezentuje kombinację planeta-kąt.',
     step3: 'Kliknij na miasta',
@@ -4588,12 +4588,12 @@ const T = {
     step4: 'Filtruj według planety',
     step4Desc: 'Użyj lewego panelu bocznego, aby włączać/wyłączać planety, rozwijać je w celu zobaczenia poszczególnych linii i filtrować według stref siły/neutralnych/ostrożności.',
     step5: 'Przeczytaj swój horoskop urodzeniowy',
-    step5Desc: 'Kliknij "Horoskop urodzeniowy", aby zobaczyć swoje pozycje planetarne. Przełącz na "Twój horoskop urodzeniowy", aby uzyskać szczegółowe odczyty — dotknij dowolnej planety, aby zobaczyć, co oznacza w Twoimznaku i domu.',
+    step5Desc: 'Kliknij "Horoskop urodzeniowy", aby zobaczyć swoje pozycje planetarne. Przełącz na "Twój horoskop urodzeniowy", aby uzyskać szczegółowe odczyty — dotknij dowolnej planety, aby zobaczyć, co oznacza w Twoim znaku i domu.',
 
     // Guide - FAQ
     faqTitle: 'NAJCZĘŚCIEJ ZADAWANE PYTANIA',
     faq1Q: 'Czy muszę znać dokładną godzinę urodzenia?',
-    faq1A: 'Tak. Twoja godzina urodzenia określa Ascendent i wierzchołki domów, które znacząco przesuwają twoje linie. Jeśli nie znasz dokładnej godziny, sprawdź akt urodzenia lub skontaktuj się ze szpitalem.',
+    faq1A: 'Tak. Twoja godzina urodzenia określa Ascendent i wierzchołki domów, które znacząco przesuwają Twoje linie. Jeśli nie znasz dokładnej godziny, sprawdź akt urodzenia lub skontaktuj się ze szpitalem.',
     faq2Q: 'Jak blisko linii muszę być?',
     faq2A: 'Wpływ jest najsilniejszy w odległości 1-2° od linii (około 100-200 km). Pokazujemy miasta w odległości do 3,5°, a siła sygnału maleje wraz z odległością.',
     faq3Q: 'Czy mogę mieszkać na linii "ostrożności"?',
@@ -4605,13 +4605,13 @@ const T = {
 
     // Angle info
     mcFull: 'Medium Coeli (Szczyt nieba)',
-    mcAngleDesc: 'Najwyższy punkt na niebie w momencie Twoich narodzin. Reprezentuje karierę, publiczną reputację i to, jak świat postrzega twoje osiągnięcia. Na twojej linii MC czujesz się zawodowo wzmocniony i publicznie uznawany.',
+    mcAngleDesc: 'Najwyższy punkt na niebie w momencie Twoich narodzin. Reprezentuje karierę, publiczną reputację i to, jak świat postrzega Twoje osiągnięcia. Na Twojej linii MC czujesz się zawodowo wzmocniony i publicznie uznawany.',
     icFull: 'Imum Coeli (Nadir)',
-    icAngleDesc: 'Najgłębszy punkt pod horyzontem. Reprezentuje dom, korzenie, rodzinę i wewnętrzne życie emocjonalne. Na twojej linii IC odczuwasz głębokie poczucie przynależności i emocjonalnego zakorzenienia.',
+    icAngleDesc: 'Najgłębszy punkt pod horyzontem. Reprezentuje dom, korzenie, rodzinę i wewnętrzne życie emocjonalne. Na Twojej linii IC odczuwasz głębokie poczucie przynależności i emocjonalnego zakorzenienia.',
     ascFull: 'Ascendent (Wschodzący)',
-    ascAngleDesc: 'Wschodni horyzont w momencie Twoich narodzin. Reprezentuje twoją tożsamość, autoekspresję i pierwsze wrażenia. Na twojej linii ASC twoja osobowość błyszczy, a inni widzą twoje autentyczne ja.',
+    ascAngleDesc: 'Wschodni horyzont w momencie Twoich narodzin. Reprezentuje Twoją tożsamość, autoekspresję i pierwsze wrażenia. Na Twojej linii ASC Twoja osobowość błyszczy, a inni widzą Twoje autentyczne ja.',
     dcFull: 'Descendent (Zachodzący)',
-    dcAngleDesc: 'Zachodni horyzont, naprzeciwko Ascendentu. Reprezentuje partnerstwa, relacje i sposób, w jaki łączysz się z innymi. Na twojej linii DC znaczące relacje i sojusze tworzą się naturalnie.',
+    dcAngleDesc: 'Zachodni horyzont, naprzeciwko Ascendentu. Reprezentuje partnerstwa, relacje i sposób, w jaki łączysz się z innymi. Na Twojej linii DC znaczące relacje i sojusze tworzą się naturalnie.',
 
     // Planet domains
     domSun: 'Tożsamość · Kariera · Witalność',
@@ -4629,7 +4629,7 @@ const T = {
     welcomeBack: 'Witaj ponownie',
     createAccount: 'Utwórz swoje konto',
     resetPassword: 'Zresetuj hasło',
-    discoverCities: 'Odkryj, które miasta na Ziemi są w harmonii z twoimi gwiazdami.',
+    discoverCities: 'Odkryj, które miasta na Ziemi są w harmonii z Twoimi gwiazdami.',
     emailLabel: 'E-MAIL',
     passwordLabel: 'HASŁO',
     emailPlaceholder: 'ty@przyklad.pl',
@@ -4646,12 +4646,12 @@ const T = {
     signInLink: 'Zaloguj się',
     backToSignIn: '← Powrót do logowania',
     accountCreated: 'Konto utworzone! Sprawdź swój e-mail i kliknij link potwierdzający, a następnie wróć i zaloguj się.',
-    resetLinkSent: 'Link do resetowania hasła wysłany na twój e-mail.',
+    resetLinkSent: 'Link do resetowania hasła wysłany na Twój e-mail.',
     invalidCredentials: 'Nie znaleziono konta z tymi danymi. Sprawdź swój e-mail i hasło lub zarejestruj się, aby utworzyć nowe konto.',
 
     // Birth data
     enterBirthData: 'Wprowadź swoje dane urodzeniowe',
-    birthDataSubtitle: 'Twoje dane urodzeniowe stanowią podstawę twojej mapy astrokartografii.',
+    birthDataSubtitle: 'Twoje dane urodzeniowe stanowią podstawę Twojej mapy astrokartografii.',
     name: 'IMIĘ',
     namePlaceholder: 'Twoje imię',
     datePlaceholder: 'DD.MM.RRRR',
@@ -4689,8 +4689,8 @@ const T = {
     // Birth data modal
     emailVerified: 'E-MAIL ZWERYFIKOWANY',
     welcomeToNN: 'Witaj w NatalNavigator',
-    welcomeReady: 'Twoje konto jest gotowe. Aby wygenerować twój spersonalizowany globus astrokartografii, potrzebujemy Twoich dokładnych danych urodzeniowych.',
-    precisionNote: 'Im dokładniejsze twoje dane, tym precyzyjniejsze będą twoje linie planetarne.',
+    welcomeReady: 'Twoje konto jest gotowe. Aby wygenerować Twój spersonalizowany globus astrokartografii, potrzebujemy Twoich dokładnych danych urodzeniowych.',
+    precisionNote: 'Im dokładniejsze Twoje dane, tym precyzyjniejsze będą Twoje linie planetarne.',
     enterBirthDataBtn: 'WPROWADŹ DANE URODZENIOWE',
     takesLess: 'Zajmie mniej niż minutę',
     birthDataHeading: 'DANE URODZENIOWE',
@@ -4828,7 +4828,7 @@ const T = {
     ascendant: 'Ascendant',
     midheaven: 'Medium Coeli',
     ascDesc: 'Stijgend teken — je uiterlijke persona',
-    mcDesc: 'Carriere en publieke reputatie',
+    mcDesc: 'Carrière en publieke reputatie',
     details: 'DETAILS',
     position: 'Positie',
     house: 'Huis',
@@ -4945,15 +4945,15 @@ const T = {
     whatIsNNBody: 'Natal Navigator is een astrocartografie-tool die je geboortehoroscoop op de globe projecteert. Het onthult welke steden en regio\'s ter wereld energetisch zijn afgestemd op je planetaire posities — en toont waar je sterke punten worden versterkt en waar uitdagingen kunnen ontstaan.',
     whatIsAstro: 'WAT IS ASTROCARTOGRAFIE',
     whatIsAstroBody1: 'Astrocartografie (of locationale astrologie) berekent waar elke planeet in je geboortehoroscoop opkwam, onderging, culmineerde of op het laagste punt stond — en projecteert die posities als lijnen over de globe. Wonen nabij of reizen naar deze lijnen activeert de energie van de planeet in je leven.',
-    whatIsAstroBody2: 'Je geboortehoroscoop is een momentopname van de hemel op het exacte moment van je geboorte. De posities van de Zon, Maan en planeten op dat moment bepalen je persoonlijkheidskenmerken, sterke punten en levensthema\'s. Astrocartografie breidt dit uit door te vragen: waar op aarde waren deze planetaire energieen het sterkst?',
+    whatIsAstroBody2: 'Je geboortehoroscoop is een momentopname van de hemel op het exacte moment van je geboorte. De posities van de Zon, Maan en planeten op dat moment bepalen je persoonlijkheidskenmerken, sterke punten en levensthema\'s. Astrocartografie breidt dit uit door te vragen: waar op aarde waren deze planetaire energieën het sterkst?',
 
     // Guide - Lines
     fourLineTypes: 'DE VIER LIJNTYPEN',
     fourLineTypesIntro: 'Elke planeet produceert vier lijnen op de globe — een voor elke hoek. Het lijntype bepaalt welk levensgebied de energie van de planeet activeert op die locatie.',
     mcLine: 'Medium Coeli',
-    mcLineDesc: 'Waar een planeet culmineert — het hoogste punt. Activeert carriere, publieke reputatie en ambitie. De meest zichtbare en naar buiten gerichte energie.',
+    mcLineDesc: 'Waar een planeet culmineert — het hoogste punt. Activeert carrière, publieke reputatie en ambitie. De meest zichtbare en naar buiten gerichte energie.',
     icLine: 'Nadir',
-    icLineDesc: 'Waar een planeet op het laagste punt onder de horizon staat. Activeert huiselijk leven, emotionele wortels en innerlijke veiligheid. Diepe, prive-energie.',
+    icLineDesc: 'Waar een planeet op het laagste punt onder de horizon staat. Activeert huiselijk leven, emotionele wortels en innerlijke veiligheid. Diepe, privé-energie.',
     ascLine: 'Ascendant',
     ascLineDesc: 'Waar een planeet opkwam aan de oostelijke horizon. Activeert identiteit, zelfexpressie en eerste indrukken. Persoonlijke en fysieke energie.',
     dcLine: 'Descendant',
