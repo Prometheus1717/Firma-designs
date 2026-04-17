@@ -252,7 +252,7 @@ export default function Dashboard({ demo = false }) {
   // re-launched, faster tour.
   const firstTimeRef = useRef(null);
   if (firstTimeRef.current === null) {
-    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v3') !== '1'; }
+    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v4') !== '1'; }
     catch { firstTimeRef.current = true; }
   }
   const [guideTab, _setGuideTab] = useState(0);
@@ -365,20 +365,19 @@ export default function Dashboard({ demo = false }) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  // First-visit tutorial — opens 30 s after the dashboard mounts, giving
-  // the user enough time to orient themselves on the globe before the
-  // intro dialog interrupts them. Shown only once per browser (localStorage
-  // flag). Applies to both demo visitors and signed-in users; returning
-  // users never see it again. QA overrides via URL: ?tutorial=1 forces
-  // show (fast), ?tutorial=0 suppresses. We read URL params at mount time
-  // (not via the React Router hook) to avoid resetting the timer on
-  // unrelated query-string changes.
+  // First-visit tutorial — opens 4 s after the dashboard mounts, giving
+  // the user a beat to see the globe before the intro dialog appears.
+  // Shown only once per browser (localStorage flag). Applies to both demo
+  // visitors and signed-in users; returning users never see it again. QA
+  // overrides via URL: ?tutorial=1 forces show (fast), ?tutorial=0
+  // suppresses. We read URL params at mount time (not via the React Router
+  // hook) to avoid resetting the timer on unrelated query-string changes.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const force = params.get('tutorial');
     if (force === '0') return;
     if (force !== '1' && !firstTimeRef.current) return;
-    const delay = force === '1' ? 300 : 30000;
+    const delay = force === '1' ? 300 : 4000;
     const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
   }, []);
@@ -2209,7 +2208,7 @@ export default function Dashboard({ demo = false }) {
             setTutorialDismissedAt(Date.now());
             if (showNatal) setShowNatal(false);
             if (persist) {
-              try { localStorage.setItem('nn_tutorial_seen_v3', '1'); } catch { /* storage unavailable */ }
+              try { localStorage.setItem('nn_tutorial_seen_v4', '1'); } catch { /* storage unavailable */ }
               try { trackEvent(completed ? 'tutorial_completed' : 'tutorial_dismissed'); } catch { /* analytics optional */ }
             }
           }}
