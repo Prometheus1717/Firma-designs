@@ -1,5 +1,5 @@
 // ── Natal Readings: Internationalization (Part 1) ──
-// Languages: de, fr, it, es, tr, ru, pt
+// Languages: de, fr, es, it
 
 export const NATAL_I18N = {
   de: {
