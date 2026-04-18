@@ -8,15 +8,14 @@ import { t } from '../lib/i18n';
 // bounding-box so the popup sits next to the whole highlighted cluster.
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
-const PADDING = 8;        // padding around each spotlight box
-const POPUP_W = 320;      // popup width
-const POPUP_GAP = 18;     // gap between popup and target
-const VP_MARGIN = 12;     // min margin from viewport edge
+const PADDING = 8;
+const POPUP_GAP = 14;
+const VP_MARGIN = 10;
 const ACCENT = '#00D88A';
 
-// Tutorial steps — in the order the user sees them.
-// `keys` is an array to support highlighting multiple elements per step.
-const STEPS = [
+// Tutorial steps — desktop and mobile variants.
+// `keys` arrays may differ per viewport so we target the right DOM nodes.
+const STEPS_DESKTOP = [
   { keys: ['globe'],                         i18n: 'tutGlobe' },
   { keys: ['planets'],                       i18n: 'tutPlanets' },
   { keys: ['zoneTabs'],                      i18n: 'tutZoneTabs' },
@@ -24,6 +23,26 @@ const STEPS = [
   { keys: ['mapToggle'],                     i18n: 'tutMapToggle' },
   { keys: ['search', 'layerToggles'],        i18n: 'tutSearchLayers' },
 ];
+
+const STEPS_MOBILE = [
+  { keys: ['globe'],              i18n: 'tutGlobe' },
+  { keys: ['mobPlanets'],         i18n: 'tutPlanets' },
+  { keys: ['zoneTabs'],           i18n: 'tutZoneTabs' },
+  { keys: ['natalTabs'],          i18n: 'tutNatal' },
+  { keys: ['mapToggle'],          i18n: 'tutMapToggle' },
+  { keys: ['mobSearch'],          i18n: 'tutSearchLayers' },
+];
+
+function isMobile() {
+  return window.innerWidth < 900;
+}
+
+function getPopupW() {
+  const vw = window.innerWidth;
+  if (vw < 400) return vw - VP_MARGIN * 2 - 8;
+  if (vw < 600) return Math.min(280, vw - VP_MARGIN * 2);
+  return 320;
+}
 
 function getRect(key) {
   const el = document.querySelector(`[data-tutorial="${key}"]`);
@@ -45,8 +64,26 @@ function unionRect(rects) {
   return { left, top, right, bottom, width: right - left, height: bottom - top };
 }
 
-function computePlacement(rect, popupH) {
+function computePlacement(rect, popupH, popupW) {
   const vw = window.innerWidth, vh = window.innerHeight;
+  const mob = vw < 900;
+
+  // On mobile, always place popup below or above the target
+  if (mob) {
+    const spaceBelow = vh - rect.bottom;
+    const spaceAbove = rect.top;
+    let top, left;
+    if (spaceBelow >= popupH + POPUP_GAP + VP_MARGIN) {
+      top = rect.bottom + POPUP_GAP;
+    } else if (spaceAbove >= popupH + POPUP_GAP + VP_MARGIN) {
+      top = rect.top - popupH - POPUP_GAP;
+    } else {
+      top = Math.max(VP_MARGIN, vh - popupH - VP_MARGIN);
+    }
+    top = Math.max(VP_MARGIN, Math.min(vh - popupH - VP_MARGIN, top));
+    left = Math.max(VP_MARGIN, Math.min(vw - popupW - VP_MARGIN, rect.left + rect.width / 2 - popupW / 2));
+    return { side: top > rect.bottom ? 'bottom' : 'top', top, left, popupH };
+  }
 
   const spaceRight  = vw - rect.right;
   const spaceLeft   = rect.left;
@@ -54,8 +91,8 @@ function computePlacement(rect, popupH) {
   const spaceAbove  = rect.top;
 
   let side;
-  if (spaceRight >= POPUP_W + POPUP_GAP + VP_MARGIN) side = 'right';
-  else if (spaceLeft  >= POPUP_W + POPUP_GAP + VP_MARGIN) side = 'left';
+  if (spaceRight >= popupW + POPUP_GAP + VP_MARGIN) side = 'right';
+  else if (spaceLeft  >= popupW + POPUP_GAP + VP_MARGIN) side = 'left';
   else if (spaceBelow >= popupH + POPUP_GAP + VP_MARGIN) side = 'bottom';
   else if (spaceAbove >= popupH + POPUP_GAP + VP_MARGIN) side = 'top';
   else side = spaceBelow >= spaceAbove ? 'bottom' : 'top';
@@ -65,29 +102,27 @@ function computePlacement(rect, popupH) {
     left = rect.right + POPUP_GAP;
     top  = Math.max(VP_MARGIN, Math.min(vh - popupH - VP_MARGIN, rect.top + rect.height / 2 - popupH / 2));
   } else if (side === 'left') {
-    left = rect.left - POPUP_W - POPUP_GAP;
+    left = rect.left - popupW - POPUP_GAP;
     top  = Math.max(VP_MARGIN, Math.min(vh - popupH - VP_MARGIN, rect.top + rect.height / 2 - popupH / 2));
   } else if (side === 'bottom') {
     top  = Math.min(vh - popupH - VP_MARGIN, rect.bottom + POPUP_GAP);
     top  = Math.max(VP_MARGIN, top);
-    left = Math.max(VP_MARGIN, Math.min(vw - POPUP_W - VP_MARGIN, rect.left + rect.width / 2 - POPUP_W / 2));
+    left = Math.max(VP_MARGIN, Math.min(vw - popupW - VP_MARGIN, rect.left + rect.width / 2 - popupW / 2));
   } else {
     top  = Math.max(VP_MARGIN, rect.top - popupH - POPUP_GAP);
-    left = Math.max(VP_MARGIN, Math.min(vw - POPUP_W - VP_MARGIN, rect.left + rect.width / 2 - POPUP_W / 2));
+    left = Math.max(VP_MARGIN, Math.min(vw - popupW - VP_MARGIN, rect.left + rect.width / 2 - popupW / 2));
   }
   return { side, top, left, popupH };
 }
 
-// Arrow geometry from popup edge to one target rect.
-function arrowGeometry(targetRect, place) {
+function arrowGeometry(targetRect, place, popupW) {
   const { top, left, popupH } = place;
-  const pL = left, pR = left + POPUP_W, pT = top, pB = top + popupH;
-  const pCX = left + POPUP_W / 2, pCY = top + popupH / 2;
+  const pL = left, pR = left + popupW, pT = top, pB = top + popupH;
+  const pCX = left + popupW / 2, pCY = top + popupH / 2;
 
   const tCX = targetRect.left + targetRect.width / 2;
   const tCY = targetRect.top + targetRect.height / 2;
 
-  // Pick popup edge nearest to target
   const dxL = Math.abs(tCX - pL), dxR = Math.abs(tCX - pR);
   const dyT = Math.abs(tCY - pT), dyB = Math.abs(tCY - pB);
   const min = Math.min(dxL, dxR, dyT, dyB);
@@ -98,7 +133,6 @@ function arrowGeometry(targetRect, place) {
   else if (min === dyT) { x1 = Math.max(pL + 20, Math.min(pR - 20, tCX)); y1 = pT; }
   else                  { x1 = Math.max(pL + 20, Math.min(pR - 20, tCX)); y1 = pB; }
 
-  // Target edge closest to popup center
   const dL = Math.abs(pCX - targetRect.left);
   const dR = Math.abs(pCX - targetRect.right);
   const dT = Math.abs(pCY - targetRect.top);
@@ -114,16 +148,16 @@ function arrowGeometry(targetRect, place) {
 }
 
 export default function Tutorial({ lang, onClose, onStep }) {
-  // 'intro' → Yes/No dialog before the tour starts
-  // 'running' → live tour overlay with spotlight
   const [phase, setPhase] = useState('intro');
   const [stepIdx, setStepIdx] = useState(0);
   const [rects, setRects] = useState([]);
   const [tick, setTick] = useState(0);
-  const [popupH, setPopupH] = useState(340);
+  const [popupH, setPopupH] = useState(240);
   const popupRef = useRef(null);
 
-  const activeSteps = useMemo(() => STEPS, []);
+  const mob = isMobile();
+  const popupW = getPopupW();
+  const activeSteps = useMemo(() => mob ? STEPS_MOBILE : STEPS_DESKTOP, [mob]);
 
   const step = activeSteps[stepIdx];
 
@@ -154,7 +188,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
 
   const next = useCallback(() => {
     if (stepIdx < activeSteps.length - 1) setStepIdx(i => i + 1);
-    else onClose(true, true); // completed the tour
+    else onClose(true, true);
   }, [stepIdx, activeSteps.length, onClose]);
 
   const prev = useCallback(() => {
@@ -174,31 +208,31 @@ export default function Tutorial({ lang, onClose, onStep }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [phase, next, prev, dismiss]);
 
-  // Measure the popup so placement + clamping use its real height
   useLayoutEffect(() => {
     if (phase !== 'running' || !popupRef.current) return;
     const h = popupRef.current.offsetHeight;
     if (h && Math.abs(h - popupH) > 4) setPopupH(h);
   }, [phase, step, rects, popupH]);
 
-  // ── Intro "do you want a tour?" dialog ─────────────────────────────
+  // ── Intro dialog ──
   if (phase === 'intro') {
+    const introW = mob ? 'calc(100% - 32px)' : 360;
     return (
       <div
         role="dialog"
         aria-label={t('tutorialIntroTitle', lang)}
         style={{ position: 'fixed', inset: 0, zIndex: 99990, background: 'rgba(2,8,18,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
       >
-        <div style={{ width: 360, maxWidth: '100%', background: '#0A1222', border: `1px solid ${ACCENT}`, borderRadius: 10, boxShadow: '0 18px 50px rgba(0,0,0,.65), 0 0 0 1px rgba(0,216,138,.18)', color: '#E4ECF5', overflow: 'hidden' }}>
+        <div style={{ width: introW, maxWidth: 360, background: '#0A1222', border: `1px solid ${ACCENT}`, borderRadius: 10, boxShadow: '0 18px 50px rgba(0,0,0,.65), 0 0 0 1px rgba(0,216,138,.18)', color: '#E4ECF5', overflow: 'hidden' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828' }}>
             <span style={{ ...F, fontSize: 9, fontWeight: 700, color: ACCENT, letterSpacing: 2 }}>{t('tutorialIntroBadge', lang)}</span>
             <span onClick={dismiss} style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }} title={t('tutorialIntroNo', lang)}>✕</span>
           </div>
-          <div style={{ padding: '18px 18px 6px' }}>
-            <div style={{ ...F, fontSize: 15, fontWeight: 700, color: '#FFFFFF', marginBottom: 10, letterSpacing: 0.3 }}>{t('tutorialIntroTitle', lang)}</div>
-            <div style={{ fontSize: 13, lineHeight: 1.6, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('tutorialIntroBody', lang)}</div>
+          <div style={{ padding: mob ? '14px 14px 4px' : '18px 18px 6px' }}>
+            <div style={{ ...F, fontSize: mob ? 13 : 15, fontWeight: 700, color: '#FFFFFF', marginBottom: 8, letterSpacing: 0.3 }}>{t('tutorialIntroTitle', lang)}</div>
+            <div style={{ fontSize: mob ? 12 : 13, lineHeight: 1.6, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('tutorialIntroBody', lang)}</div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '16px 16px 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '14px 16px' }}>
             <span onClick={dismiss} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#B6C2D2', background: 'transparent', border: '1px solid #2A3A50', borderRadius: 5, padding: '7px 14px', cursor: 'pointer', letterSpacing: 1 }}>
               {t('tutorialIntroNo', lang)}
             </span>
@@ -215,8 +249,8 @@ export default function Tutorial({ lang, onClose, onStep }) {
 
   const union = rects.length ? unionRect(rects) : null;
   const place = union
-    ? computePlacement(union, popupH)
-    : { side: 'center', top: Math.max(VP_MARGIN, window.innerHeight / 2 - popupH / 2), left: window.innerWidth / 2 - POPUP_W / 2, popupH };
+    ? computePlacement(union, popupH, popupW)
+    : { side: 'center', top: Math.max(VP_MARGIN, window.innerHeight / 2 - popupH / 2), left: Math.max(VP_MARGIN, window.innerWidth / 2 - popupW / 2), popupH };
 
   const vw = window.innerWidth, vh = window.innerHeight;
   const cuts = rects.map(r => ({
@@ -225,7 +259,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
     w: Math.min(vw, r.width + PADDING * 2),
     h: Math.min(vh, r.height + PADDING * 2),
   }));
-  const arrows = rects.map(r => arrowGeometry(r, place));
+  const arrows = rects.map(r => arrowGeometry(r, place, popupW));
 
   const title = t(`${step.i18n}Title`, lang);
   const body  = t(`${step.i18n}Body`,  lang);
@@ -277,7 +311,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
           position: 'fixed',
           top: place.top,
           left: place.left,
-          width: POPUP_W,
+          width: popupW,
           maxHeight: `calc(100vh - ${VP_MARGIN * 2}px)`,
           background: '#0A1222',
           border: `1px solid ${ACCENT}`,
@@ -290,7 +324,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
           flexDirection: 'column',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '8px 12px' : '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
           <span style={{ ...F, fontSize: 9, fontWeight: 700, color: ACCENT, letterSpacing: 2 }}>
             {t('tutorialBadge', lang)} · {stepIdx + 1}/{activeSteps.length}
           </span>
@@ -303,12 +337,12 @@ export default function Tutorial({ lang, onClose, onStep }) {
           </span>
         </div>
 
-        <div style={{ padding: '14px 16px 4px', overflowY: 'auto', flex: '1 1 auto', minHeight: 0 }}>
-          <div style={{ ...F, fontSize: 14, fontWeight: 700, color: '#FFFFFF', marginBottom: 8, letterSpacing: 0.3 }}>{title}</div>
-          <div style={{ fontSize: 12.5, lineHeight: 1.65, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{body}</div>
+        <div style={{ padding: mob ? '10px 12px 2px' : '14px 16px 4px', overflowY: 'auto', flex: '1 1 auto', minHeight: 0 }}>
+          <div style={{ ...F, fontSize: mob ? 12 : 14, fontWeight: 700, color: '#FFFFFF', marginBottom: 6, letterSpacing: 0.3 }}>{title}</div>
+          <div style={{ fontSize: mob ? 11 : 12.5, lineHeight: 1.55, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{body}</div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, padding: '12px 0 6px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, padding: '8px 0 4px', flexShrink: 0 }}>
           {activeSteps.map((_, i) => (
             <span
               key={i}
@@ -325,7 +359,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
           ))}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px 12px', borderTop: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '8px 12px 10px' : '10px 14px 12px', borderTop: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
           <span
             onClick={dismiss}
             style={{ ...F, fontSize: 9, color: '#7B8AA0', cursor: 'pointer', letterSpacing: 1 }}
