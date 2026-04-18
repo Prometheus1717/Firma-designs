@@ -22,7 +22,16 @@ const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 const ResetPasswordPage = lazyRetry(() => import('./pages/ResetPasswordPage'));
 const LandingPage = lazyRetry(() => import('./pages/LandingPage'));
 
-setTimeout(() => import('./pages/Dashboard').catch(() => {}), 1);
+// Warm the Dashboard chunk only on routes that will likely land there.
+// On /landing, /auth, /admin, /reset-password the user is unlikely to hit the
+// Dashboard before the chunk loads naturally, so we skip the eager prefetch
+// and save ~480 KB of parse work on low-powered devices.
+if (typeof window !== 'undefined') {
+  const p = window.location.pathname;
+  if (p === '/' || p.startsWith('/dashboard') || p.startsWith('/birth-data')) {
+    setTimeout(() => import('./pages/Dashboard').catch(() => {}), 1);
+  }
+}
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 

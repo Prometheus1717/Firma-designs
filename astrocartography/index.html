@@ -10,6 +10,8 @@
     <meta name="keywords" content="astrocartography, natal chart, astrology map, planetary lines, birth chart, astrocartography calculator, relocation astrology, astro map, MC IC ASC DC lines, best cities astrology" />
     <meta name="author" content="Natal Navigator" />
     <link rel="canonical" href="https://natalnavigator.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
+    <link rel="alternate" hreflang="en" href="https://natalnavigator.com/" />
 
     <!-- ─── Favicons (all browsers + mobile) ─── -->
     <!-- Safari, IE, legacy browsers -->
@@ -186,14 +188,14 @@
             {
               "@type": "ListItem",
               "position": 2,
-              "name": "Sign In",
-              "item": "https://natalnavigator.com/auth"
+              "name": "What is Astrocartography?",
+              "item": "https://natalnavigator.com/astrocartography"
             },
             {
               "@type": "ListItem",
               "position": 3,
-              "name": "Dashboard",
-              "item": "https://natalnavigator.com/dashboard"
+              "name": "Astrocartography Calculator",
+              "item": "https://natalnavigator.com/astrocartography-calculator"
             }
           ]
         }
@@ -286,8 +288,10 @@
 
       <nav aria-label="Main navigation">
         <a href="/">Home</a> ·
-        <a href="/auth">Sign In</a> ·
-        <a href="/dashboard">Dashboard</a>
+        <a href="/astrocartography">What is Astrocartography?</a> ·
+        <a href="/astrocartography-calculator">Calculator</a> ·
+        <a href="/astrokartographie">Astrokartographie (DE)</a> ·
+        <a href="/landing">About</a>
       </nav>
 
       <section>
@@ -407,6 +411,15 @@
       </section>
 
       <section>
+        <h2>Learn more</h2>
+        <ul>
+          <li><a href="/astrocartography">What is Astrocartography? — Complete beginner&apos;s guide</a></li>
+          <li><a href="/astrocartography-calculator">Free Astrocartography Calculator — How it works</a></li>
+          <li><a href="/astrokartographie">Astrokartographie — Deutsche Anleitung</a></li>
+        </ul>
+      </section>
+
+      <section>
         <h2>Try It Now</h2>
         <p>
           No signup required — explore the interactive astrocartography globe in demo mode right now.
@@ -429,7 +442,7 @@
     <!-- Force-clear stale service worker caches for existing users -->
     <script>
     (function(){
-      var V='nn-sw-v19';
+      var V='nn-sw-v20';
       if('serviceWorker' in navigator){
         // Always register SW with no HTTP cache — browser byte-checks on every navigation
         navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});

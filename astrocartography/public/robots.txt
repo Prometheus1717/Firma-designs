@@ -1,12 +1,10 @@
 # https://natalnavigator.com robots.txt
 User-agent: *
 Allow: /
-Disallow: /admin
 Disallow: /api/
-Disallow: /auth
-Disallow: /dashboard
-Disallow: /birth-data
-Disallow: /reset-password
+
+# Private routes are handled via X-Robots-Tag: noindex headers (see vercel.json)
+# so Googlebot can fetch + process the noindex directive instead of being blocked here.
 
 # Sitemap
 Sitemap: https://natalnavigator.com/sitemap.xml

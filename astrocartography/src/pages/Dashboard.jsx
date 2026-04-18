@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
 import Tutorial from '../components/Tutorial';
+import NatalWheel from '../components/NatalWheel';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
@@ -252,7 +253,7 @@ export default function Dashboard({ demo = false }) {
   // re-launched, faster tour.
   const firstTimeRef = useRef(null);
   if (firstTimeRef.current === null) {
-    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v3') !== '1'; }
+    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v4') !== '1'; }
     catch { firstTimeRef.current = true; }
   }
   const [guideTab, _setGuideTab] = useState(0);
@@ -365,20 +366,19 @@ export default function Dashboard({ demo = false }) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  // First-visit tutorial — opens 30 s after the dashboard mounts, giving
-  // the user enough time to orient themselves on the globe before the
-  // intro dialog interrupts them. Shown only once per browser (localStorage
-  // flag). Applies to both demo visitors and signed-in users; returning
-  // users never see it again. QA overrides via URL: ?tutorial=1 forces
-  // show (fast), ?tutorial=0 suppresses. We read URL params at mount time
-  // (not via the React Router hook) to avoid resetting the timer on
-  // unrelated query-string changes.
+  // First-visit tutorial — opens 4 s after the dashboard mounts, giving
+  // the user a beat to see the globe before the intro dialog appears.
+  // Shown only once per browser (localStorage flag). Applies to both demo
+  // visitors and signed-in users; returning users never see it again. QA
+  // overrides via URL: ?tutorial=1 forces show (fast), ?tutorial=0
+  // suppresses. We read URL params at mount time (not via the React Router
+  // hook) to avoid resetting the timer on unrelated query-string changes.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const force = params.get('tutorial');
     if (force === '0') return;
     if (force !== '1' && !firstTimeRef.current) return;
-    const delay = force === '1' ? 300 : 30000;
+    const delay = force === '1' ? 300 : 4000;
     const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
   }, []);
@@ -497,10 +497,6 @@ export default function Dashboard({ demo = false }) {
     return onLinesAll.filter(c => selectedContinents.has(CITY_CONTINENT[c.name]));
   }, [onLinesAll, selectedContinents]);
   // Filtered city arrays for Globe based on continent filter
-  const filteredAllCities = useMemo(() => {
-    if (selectedContinents.size === 0) return ALL_CITIES;
-    return ALL_CITIES.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
-  }, [selectedContinents]);
   const filteredCitiesTiers = useMemo(() => {
     if (selectedContinents.size === 0) return [CITIES_T1, CITIES_T2, CITIES_T3];
     const f = tier => tier.filter(c => selectedContinents.has(CITY_CONTINENT[c[2]]));
@@ -898,7 +894,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* PLANET TICKER */}
       <div style={{ height: 24, minHeight: 24, background: T.b, borderBottom: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0, minWidth: 0 }}>
-        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 20, whiteSpace: 'nowrap', ...F, fontSize: 9, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused' }}>
           {[0, 1].flatMap(i => {
             const sun = chartData?.planets?.find(p => p.id === 'Sun');
             const moon = chartData?.planets?.find(p => p.id === 'Moon');
@@ -1034,7 +1030,7 @@ export default function Dashboard({ demo = false }) {
 
         {/* GLOBE */}
         <div data-tutorial="globe" style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} allCities={filteredAllCities} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
 
           {/* City search — desktop top-left (compact icon, expands on click) */}
           {!mob && <div data-tutorial="search" style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>
@@ -1068,17 +1064,17 @@ export default function Dashboard({ demo = false }) {
           </div>}
 
           {/* Map mode toggle — top right */}
-          <div data-tutorial="mapToggle" style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: 160 }}>
-            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? T.ac : T.td, background: !flatMap ? T.acBg : 'transparent', borderRight: `1px solid ${T.bd}`, flex: 1 }}>
+          <div data-tutorial="mapToggle" style={{ position: 'absolute', top: 8, right: 8, zIndex: 50, display: 'flex', background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 6, overflow: 'hidden', width: mob ? 110 : 160 }}>
+            <button onClick={() => setFlatMap(false)} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, padding: mob ? '6px 0' : '7px 0', border: 'none', cursor: 'pointer', color: !flatMap ? T.ac : T.td, background: !flatMap ? T.acBg : 'transparent', borderRight: `1px solid ${T.bd}`, flex: 1 }}>
               ◉ {t('globe', lang)}
             </button>
-            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? T.ac : T.td, background: flatMap ? T.acBg : 'transparent', flex: 1 }}>
+            <button onClick={() => setFlatMap(true)} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, padding: mob ? '6px 0' : '7px 0', border: 'none', cursor: 'pointer', color: flatMap ? T.ac : T.td, background: flatMap ? T.acBg : 'transparent', flex: 1 }}>
               ▭ {t('map', lang)}
             </button>
           </div>
 
           {/* Natal chart button — below map toggle */}
-          <div data-tutorial="natal" onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: 42, right: 8, zIndex: 50, ...F, fontSize: 9, fontWeight: 600, padding: '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.pop, border: `1px solid ${showNatal ? T.acBd : T.bd}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? T.ac : T.td, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: 160 }}>
+          <div data-tutorial="natal" onClick={() => { if (!showNatal) closeAllPopups('natal'); setShowNatal(!showNatal); }} style={{ position: 'absolute', top: mob ? 38 : 42, right: 8, zIndex: 50, ...F, fontSize: mob ? 8 : 9, fontWeight: 600, padding: mob ? '6px 0' : '7px 0', background: showNatal ? 'rgba(0,216,138,.12)' : T.pop, border: `1px solid ${showNatal ? T.acBd : T.bd}`, borderRadius: 6, cursor: 'pointer', color: showNatal ? T.ac : T.td, transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: mob ? 110 : 160 }}>
             ☉ {t('natalChart', lang)}
           </div>
 
@@ -1202,9 +1198,17 @@ export default function Dashboard({ demo = false }) {
                 );
               })()}
 
-              {/* ═══ CHART TAB — original planet table ═══ */}
+              {/* ═══ CHART TAB — natal wheel + planet table ═══ */}
               {!selectedPlacement && natalTab === 'chart' && (
                 <>
+                  {/* Natal wheel — gated to a single QA user while in review */}
+                  {user?.email === 'sercanyesilyurt97@gmail.com' && (
+                    <div style={{ padding: mob ? '10px 8px' : '14px 12px', background: '#1E0A33', borderBottom: `1px solid ${T.bd}`, flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
+                      <div style={{ width: '100%', maxWidth: mob ? 360 : 420, aspectRatio: '1 / 1' }}>
+                        <NatalWheel planets={chartData.planets} natal={chartData.natal} size={mob ? 360 : 420} />
+                      </div>
+                    </div>
+                  )}
                   {/* Column headers */}
                   <div style={{ display: 'flex', padding: '5px 14px', borderBottom: `1px solid ${T.bs}`, background: T.bg, flexShrink: 0 }}>
                     <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 90, letterSpacing: 1 }}>{t('planet', lang)}</span>
@@ -1826,10 +1830,10 @@ export default function Dashboard({ demo = false }) {
           {mob && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 50 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div style={{ display: 'flex', gap: 4 }}>
-                <div onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
+                <div data-tutorial="mobPlanets" onClick={() => { if (popup !== 'leg') { closeAllPopups('popup'); setPopup('leg'); } else setPopup(null); }} style={{ ...F, fontSize: 9, color: popup === 'leg' ? T.ac : T.tm, background: T.pop, border: `1px solid ${popup === 'leg' ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 10px', cursor: 'pointer' }}>☰ {t('mobilePlanets', lang)}</div>
                 <div onClick={() => { if (!showAngleInfo) { closeAllPopups('angle'); setShowAngleInfo(true); } else setShowAngleInfo(false); }} style={{ ...F, fontSize: 9, color: showAngleInfo ? T.ac : T.td, background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>?</div>
                 <div onClick={() => { if (!compareMode) { closeAllPopups('compare'); setCompareMode(true); setCompareCities([]); } else { setCompareMode(false); setCompareCities([]); setShowCompare(false); } }} style={{ ...F, fontSize: 9, color: compareMode ? '#fff' : T.td, background: compareMode ? T.ac : T.pop, border: `1px solid ${compareMode ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⚖</div>
-                <div onClick={() => { if (!searchActive) { closeAllPopups('search'); setSearchActive(true); } else clearSearch(); }} style={{ ...F, fontSize: 9, color: searchActive || searchedCity ? T.ac : T.td, background: T.pop, border: `1px solid ${searchActive || searchedCity ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⌕</div>
+                <div data-tutorial="mobSearch" onClick={() => { if (!searchActive) { closeAllPopups('search'); setSearchActive(true); } else clearSearch(); }} style={{ ...F, fontSize: 9, color: searchActive || searchedCity ? T.ac : T.td, background: T.pop, border: `1px solid ${searchActive || searchedCity ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer' }}>⌕</div>
               </div>
               <div style={{ display: 'flex', gap: 4 }}>
                 <div onClick={() => { if (!showContinentFilter) { closeAllPopups('continent'); setShowContinentFilter(true); } else setShowContinentFilter(false); }} style={{ ...F, fontSize: 9, color: showContinentFilter || selectedContinents.size > 0 ? T.ac : T.tm, background: T.pop, border: `1px solid ${showContinentFilter || selectedContinents.size > 0 ? T.acBd : T.bd}`, borderRadius: 4, padding: '6px 8px', cursor: 'pointer', position: 'relative' }}>
@@ -2170,7 +2174,7 @@ export default function Dashboard({ demo = false }) {
 
       {/* BOTTOM TICKER */}
       <div data-tutorial="bottomTicker" style={{ height: 22, minHeight: 22, background: T.bg, borderTop: `1px solid ${T.bs}`, display: 'flex', alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
-        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused', willChange: 'transform', backfaceVisibility: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 24, whiteSpace: 'nowrap', ...F, fontSize: 8, animation: 'ts 200s linear infinite', animationPlayState: pageVisible ? 'running' : 'paused' }}>
           {(() => {
             const topThrive = thriveC.slice(0, 3).map(c => c.name).join(' · ');
             const topAvoid = avoidC.slice(0, 3).map(c => c.name).join(' · ');
@@ -2198,14 +2202,16 @@ export default function Dashboard({ demo = false }) {
         <Tutorial
           lang={lang}
           onStep={(keys) => {
-            // Auto-open the natal chart modal on the "natal" step so both
-            // the chart and personality tabs are visible and highlighted.
             if (keys.includes('natalTabs')) {
               closeAllPopups('natal');
               setShowNatal(true);
               setNatalTab('chart');
-            } else if (showNatal) {
-              setShowNatal(false);
+            } else if (keys.includes('mobPlanets')) {
+              closeAllPopups('popup');
+              setPopup('leg');
+            } else {
+              if (showNatal) setShowNatal(false);
+              if (popup === 'leg') setPopup(null);
             }
           }}
           onClose={(persist, completed) => {
@@ -2213,7 +2219,7 @@ export default function Dashboard({ demo = false }) {
             setTutorialDismissedAt(Date.now());
             if (showNatal) setShowNatal(false);
             if (persist) {
-              try { localStorage.setItem('nn_tutorial_seen_v3', '1'); } catch { /* storage unavailable */ }
+              try { localStorage.setItem('nn_tutorial_seen_v4', '1'); } catch { /* storage unavailable */ }
               try { trackEvent(completed ? 'tutorial_completed' : 'tutorial_dismissed'); } catch { /* analytics optional */ }
             }
           }}
