@@ -367,6 +367,19 @@ export function calculateChart({ date, time, lat, lng }) {
       moon: planetPositions.find(p => p.id === 'Moon'),
     },
     houseCusps,
+    extras: (() => {
+      const sunLon = planetPositions.find(p => p.id === 'Sun').fullDeg;
+      const moonLon = planetPositions.find(p => p.id === 'Moon').fullDeg;
+      const T = astroDate.tt / 36525;
+      const meanNode = norm360(125.04452 - 1934.136261 * T + 0.0020708 * T * T + (T * T * T) / 450000);
+      const meanLilith = norm360(83.3532465 + 4069.0137287 * T - 0.01032 * T * T - (T * T * T) / 80053);
+      const fortune = norm360(natalASC + moonLon - sunLon);
+      return [
+        { id: 'Node',    symbol: '☊', ...eclipticToZodiac(meanNode),    retrograde: true  },
+        { id: 'Lilith',  symbol: '⚸', ...eclipticToZodiac(meanLilith),  retrograde: false },
+        { id: 'Fortune', symbol: '⊗', ...eclipticToZodiac(fortune),     retrograde: false },
+      ];
+    })(),
     planetString,
     birthLocation: { lat: parsedLat, lng: parsedLng },
   };

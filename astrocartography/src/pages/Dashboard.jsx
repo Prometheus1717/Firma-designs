@@ -1293,7 +1293,7 @@ export default function Dashboard({ demo = false }) {
               {!selectedPlacement && natalTab === 'wheel' && (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: mob ? '12px 4px' : '18px 12px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
                   <div style={{ width: '100%', maxWidth: mob ? 370 : 440, aspectRatio: '1 / 1' }}>
-                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} size={mob ? 370 : 440} />
+                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} extras={chartData.extras} size={mob ? 370 : 480} />
                   </div>
                 </div>
               )}
