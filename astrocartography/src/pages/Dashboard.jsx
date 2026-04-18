@@ -1291,9 +1291,19 @@ export default function Dashboard({ demo = false }) {
 
               {/* ═══ WHEEL TAB — natal wheel chart ═══ */}
               {!selectedPlacement && natalTab === 'wheel' && (
-                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: mob ? '12px 4px' : '18px 12px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                  <div style={{ width: '100%', maxWidth: mob ? 370 : 440, aspectRatio: '1 / 1' }}>
-                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} extras={chartData.extras} size={mob ? 370 : 480} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: mob ? '8px 4px' : '14px 12px', overflowY: 'auto', WebkitOverflowScrolling: 'touch', background: '#FFFFFF' }}>
+                  {/* Birth data caption (verify data used for calculation) */}
+                  <div style={{ ...F, fontSize: 9, color: '#333', textAlign: 'center', marginBottom: 8, padding: '6px 10px', background: '#F7F4EC', border: '1px solid #C0B8A8', borderRadius: 4 }}>
+                    <div style={{ fontWeight: 700, letterSpacing: 0.5 }}>{displayName.toUpperCase()}</div>
+                    <div style={{ fontSize: 8, marginTop: 2 }}>
+                      {demo ? `${DEMO.date} · ${DEMO.time} · ${DEMO.city}` : profile ? `${profile.birth_date || '—'} · ${(profile.birth_time || '').slice(0,5)} · ${profile.birth_city || '—'}` : '—'}
+                    </div>
+                    <div style={{ fontSize: 8, marginTop: 1, color: '#666' }}>
+                      ASC {tSign(chartData.natal?.asc?.sign, lang)} {chartData.natal?.asc?.deg}°{String(chartData.natal?.asc?.min || 0).padStart(2,'0')}' · MC {tSign(chartData.natal?.mc?.sign, lang)} {chartData.natal?.mc?.deg}°{String(chartData.natal?.mc?.min || 0).padStart(2,'0')}'
+                    </div>
+                  </div>
+                  <div style={{ width: '100%', maxWidth: mob ? 360 : 460, aspectRatio: '1 / 1' }}>
+                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} extras={chartData.extras} size={mob ? 360 : 460} />
                   </div>
                 </div>
               )}
