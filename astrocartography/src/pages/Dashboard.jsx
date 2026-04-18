@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Globe from '../components/Globe';
 import Tutorial from '../components/Tutorial';
 import NatalWheel from '../components/NatalWheel';
+import NatalWheelZoom from '../components/NatalWheelZoom';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
@@ -1302,8 +1303,9 @@ export default function Dashboard({ demo = false }) {
                       ASC {tSign(chartData.natal?.asc?.sign, lang)} {chartData.natal?.asc?.deg}°{String(chartData.natal?.asc?.min || 0).padStart(2,'0')}' · MC {tSign(chartData.natal?.mc?.sign, lang)} {chartData.natal?.mc?.deg}°{String(chartData.natal?.mc?.min || 0).padStart(2,'0')}'
                     </div>
                   </div>
-                  <div style={{ width: '100%', maxWidth: mob ? 360 : 460, aspectRatio: '1 / 1' }}>
-                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} extras={chartData.extras} size={mob ? 360 : 460} />
+                  <NatalWheelZoom planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} extras={chartData.extras} size={mob ? 360 : 520} />
+                  <div style={{ ...F, fontSize: 8, color: '#888', marginTop: 6, textAlign: 'center' }}>
+                    {mob ? 'Pinch · drag to pan · tap +/− to zoom' : 'Scroll to zoom · drag to pan · +/− buttons'}
                   </div>
                 </div>
               )}
