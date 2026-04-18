@@ -1095,7 +1095,7 @@ export default function Dashboard({ demo = false }) {
               {/* Tab bar — only when no detail view */}
               {!selectedPlacement && (
                 <div data-tutorial="natalTabs" style={{ display: 'flex', borderBottom: `1px solid ${T.bd}`, background: T.b, flexShrink: 0 }}>
-                  {[{ key: 'chart', label: t('natalChartTab', lang) }, { key: 'planets', label: t('personalityTab', lang) }, { key: 'pdf', label: t('pdfTab', lang) }].map(tb => (
+                  {[{ key: 'chart', label: t('natalChartTab', lang) }, ...(user?.email === 'sercanyesilyurt97@gmail.com' ? [{ key: 'wheel', label: 'WHEEL' }] : []), { key: 'planets', label: t('personalityTab', lang) }, { key: 'pdf', label: t('pdfTab', lang) }].map(tb => (
                     <div key={tb.key} onClick={() => setNatalTab(tb.key)} style={{ ...F, fontSize: 9, fontWeight: 600, letterSpacing: 1, padding: '10px 16px', cursor: 'pointer', color: natalTab === tb.key ? T.ac : T.td, borderBottom: natalTab === tb.key ? `2px solid ${T.ac}` : '2px solid transparent', transition: 'all .15s', flex: 1, textAlign: 'center', userSelect: 'none' }}>
                       {tb.label}
                     </div>
@@ -1198,17 +1198,9 @@ export default function Dashboard({ demo = false }) {
                 );
               })()}
 
-              {/* ═══ CHART TAB — natal wheel + planet table ═══ */}
+              {/* ═══ CHART TAB — planet table ═══ */}
               {!selectedPlacement && natalTab === 'chart' && (
                 <>
-                  {/* Natal wheel — gated to a single QA user while in review */}
-                  {user?.email === 'sercanyesilyurt97@gmail.com' && (
-                    <div style={{ padding: mob ? '10px 8px' : '14px 12px', background: '#1E0A33', borderBottom: `1px solid ${T.bd}`, flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
-                      <div style={{ width: '100%', maxWidth: mob ? 360 : 420, aspectRatio: '1 / 1' }}>
-                        <NatalWheel planets={chartData.planets} natal={chartData.natal} size={mob ? 360 : 420} />
-                      </div>
-                    </div>
-                  )}
                   {/* Column headers */}
                   <div style={{ display: 'flex', padding: '5px 14px', borderBottom: `1px solid ${T.bs}`, background: T.bg, flexShrink: 0 }}>
                     <span style={{ ...F, fontSize: 7, color: T.mu, fontWeight: 700, width: 90, letterSpacing: 1 }}>{t('planet', lang)}</span>
@@ -1295,6 +1287,15 @@ export default function Dashboard({ demo = false }) {
                     </div>
                   </div>
                 </>
+              )}
+
+              {/* ═══ WHEEL TAB — natal wheel chart ═══ */}
+              {!selectedPlacement && natalTab === 'wheel' && (
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: mob ? '12px 4px' : '18px 12px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                  <div style={{ width: '100%', maxWidth: mob ? 370 : 440, aspectRatio: '1 / 1' }}>
+                    <NatalWheel planets={chartData.planets} natal={chartData.natal} houseCusps={chartData.houseCusps} size={mob ? 370 : 440} />
+                  </div>
+                </div>
               )}
 
               {/* ═══ PLANETS TAB — clickable list with readings ═══ */}
