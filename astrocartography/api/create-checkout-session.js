@@ -36,7 +36,10 @@ function isRateLimited(key) {
 let _supabase = null;
 function getSupabase() {
   if (_supabase) return _supabase;
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  // VITE_SUPABASE_URL preferred (frontend-confirmed); strip any /rest/v\d+ suffix
+  // mistakenly set in SUPABASE_URL — supabase-js expects the bare project URL.
+  const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '')
+    .replace(/\/+$/, '').replace(/\/rest\/v\d+$/, '');
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
   _supabase = createClient(url, key);

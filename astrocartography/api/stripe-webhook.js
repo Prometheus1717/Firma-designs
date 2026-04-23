@@ -7,7 +7,10 @@ import { createClient } from '@supabase/supabase-js';
 let _supabaseAdmin = null;
 function getSupabaseAdmin() {
   if (_supabaseAdmin) return _supabaseAdmin;
-  const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  // VITE_SUPABASE_URL preferred (frontend-confirmed); strip any /rest/v\d+ suffix
+  // mistakenly set in SUPABASE_URL — supabase-js expects the bare project URL.
+  const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '')
+    .replace(/\/+$/, '').replace(/\/rest\/v\d+$/, '');
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
   _supabaseAdmin = createClient(url, key);
