@@ -248,13 +248,15 @@ export default function Dashboard({ demo = false }) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialDismissedAt, setTutorialDismissedAt] = useState(null); // timestamp when tour ended
   // Snapshot "first-time visitor" once at mount so timing logic stays stable.
-  // Versioned key (_v2): we bumped the suffix so every browser carrying the
-  // old `nn_tutorial_seen` flag from earlier QA passes is treated as fresh
-  // again — otherwise users who dismissed v1 once would never see the
-  // re-launched, faster tour.
+  // We accept any past versioned key (`nn_tutorial_seen` / `_v2` / `_v3` / `_v4`)
+  // as "already seen" so users who dismissed an earlier version aren't shown
+  // the tour again every time the key is bumped.
   const firstTimeRef = useRef(null);
   if (firstTimeRef.current === null) {
-    try { firstTimeRef.current = localStorage.getItem('nn_tutorial_seen_v4') !== '1'; }
+    try {
+      const SEEN_KEYS = ['nn_tutorial_seen_v4', 'nn_tutorial_seen_v3', 'nn_tutorial_seen_v2', 'nn_tutorial_seen'];
+      firstTimeRef.current = !SEEN_KEYS.some(k => localStorage.getItem(k) === '1');
+    }
     catch { firstTimeRef.current = true; }
   }
   const [guideTab, _setGuideTab] = useState(0);
