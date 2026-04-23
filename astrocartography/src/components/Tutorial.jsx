@@ -165,22 +165,44 @@ export default function Tutorial({ lang, onClose, onStep }) {
     if (phase === 'running' && onStep && step) onStep(step.keys);
   }, [phase, stepIdx, step, onStep]);
 
+  // Re-measure on every step change AND every layout shift (resize/scroll).
+  // Cheap: just one getBoundingClientRect per target.
   useLayoutEffect(() => {
+    if (!step) return;
+    const rs = step.keys.map(getRect).filter(Boolean);
+    setRects(rs);
+  }, [step, tick]);
+
+  // On step change ONLY, also schedule a few late re-measures to catch
+  // targets whose layout finishes asynchronously (animations, fonts, etc).
+  // Not tied to `tick` — otherwise every scroll frame would queue another
+  // 3 timers and the queue would blow up during continuous scrolling.
+  useEffect(() => {
     if (!step) return;
     const measure = () => {
       const rs = step.keys.map(getRect).filter(Boolean);
       setRects(rs);
     };
-    measure();
     const timers = [50, 150, 400].map(d => setTimeout(measure, d));
     return () => timers.forEach(clearTimeout);
-  }, [step, tick]);
+  }, [step]);
 
+  // Throttle resize/scroll re-measure triggers to one per animation frame.
+  // Without rAF this fired hundreds of times per second on trackpad scroll,
+  // causing measurable jank during the tour.
   useEffect(() => {
-    const onChange = () => setTick(x => x + 1);
+    let rafId = null;
+    const onChange = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        setTick(x => x + 1);
+      });
+    };
     window.addEventListener('resize', onChange);
     window.addEventListener('scroll', onChange, true);
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', onChange);
       window.removeEventListener('scroll', onChange, true);
     };

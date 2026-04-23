@@ -274,11 +274,11 @@
     </div>
 
     <!--
-      ══════════════════════════════════════════════════════════════
+      ═════════════════════════════════════════════════════════════
       SEMANTIC CONTENT LAYER
       Visible to crawlers, screen readers, and users with JS disabled.
       Hidden automatically once React mounts into #root.
-      ══════════════════════════════════════════════════════════════
+      ═════════════════════════════════════════════════════════════
     -->
     <main id="seo-content">
       <header>
@@ -439,19 +439,21 @@
       <style>#root-loader { display: none; } #seo-content { display: block !important; } body { overflow: auto; position: static; height: auto; }</style>
     </noscript>
 
-    <!-- Force-clear stale service worker caches for existing users -->
+    <!-- Service Worker registration + version-bump cache purge.
+         Runs synchronously during HTML parsing so the new SW is being
+         installed by the time the React bundle starts.
+         No location.reload() on version bump — the new SW uses skipWaiting
+         + clients.claim and takes control on the next navigation. The
+         visible double-load this used to cause is worse UX than waiting
+         one nav for the cache to fully refresh. -->
     <script>
     (function(){
       var V='nn-sw-v20';
       if('serviceWorker' in navigator){
-        // Always register SW with no HTTP cache — browser byte-checks on every navigation
         navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});
-        // If version changed, purge all caches and reload
         if(localStorage.getItem('nn_sw_ver')!==V){
           localStorage.setItem('nn_sw_ver',V);
-          var hadSW=false;
           navigator.serviceWorker.getRegistrations().then(function(regs){
-            hadSW=regs.length>0;
             return Promise.all(regs.map(function(r){return r.unregister();}));
           }).then(function(){
             return caches.keys();
@@ -459,8 +461,6 @@
             return Promise.all(keys.map(function(k){return caches.delete(k);}));
           }).then(function(){
             return navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});
-          }).then(function(){
-            if(hadSW)location.reload();
           });
         }
       }

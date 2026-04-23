@@ -9,10 +9,6 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// Register Service Worker — caches JS/CSS chunks so repeat visitors load instantly
-// updateViaCache: 'none' ensures browser always checks for new sw.js on each page load
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(() => {});
-  });
-}
+// Service Worker registration lives in index.html so it can run during HTML
+// parsing (alongside the version-bump cache purge). Registering it again here
+// would race with that script and is redundant.

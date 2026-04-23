@@ -101,11 +101,15 @@ export function AuthProvider({ children }) {
 
       // PASSWORD_RECOVERY: Supabase logged the user in via reset link.
       // Redirect to /reset-password so they can actually change their password
-      // instead of being sent to the dashboard.
+      // instead of being sent to the dashboard. Guard against re-firing while
+      // already on /reset-password — Supabase replays this event on token
+      // refresh in some flows and would otherwise yank a working session away.
       if (event === 'PASSWORD_RECOVERY' && u) {
         markReady();
-        // Use setTimeout to ensure React Router has mounted
-        setTimeout(() => { window.location.replace('/reset-password'); }, 0);
+        if (!window.location.pathname.startsWith('/reset-password')) {
+          // Use setTimeout to ensure React Router has mounted
+          setTimeout(() => { window.location.replace('/reset-password'); }, 0);
+        }
         return;
       }
 
