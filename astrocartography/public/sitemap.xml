@@ -34,10 +34,4 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography" />
   </url>
-  <url>
-    <loc>https://natalnavigator.com/landing</loc>
-    <lastmod>2026-04-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
 </urlset>
