@@ -109,13 +109,14 @@ export default function LandingPage() {
 
   // Preview gate — remove this block when ready to go live
   const params = new URLSearchParams(window.location.search);
-  const isPreview = params.get('preview') === '1';
+  const PREVIEW_TOKEN = 'nn-lp-priv-x7k9m2q8r4';
+  const isPreview = params.get('preview') === PREVIEW_TOKEN;
   if (!isPreview) {
     window.location.href = '/';
     return null;
   }
 
-  // A/B variant: /landing?v=light&preview=1 for light mode, default dark
+  // A/B variant: add &v=light for light mode, default dark
   const variant = params.get('v') === 'light' ? 'light' : 'dark';
   const isLight = variant === 'light';
   const imgs = IMAGES[variant];
@@ -247,7 +248,7 @@ export default function LandingPage() {
               { n: '345+', l: 'Cities Analyzed' },
               { n: '10', l: 'Celestial Bodies' },
               { n: '4', l: 'Angular Lines' },
-              { n: '\u221E', l: 'Possibilities' },
+              { n: '∞', l: 'Possibilities' },
             ].map((s, i) => (
               <div key={i} className={`lp-reveal ${i > 0 ? `lp-delay-${i}` : ''}`}>
                 <div className="lp-stat-number">{s.n}</div>
