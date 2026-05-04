@@ -12,6 +12,7 @@
     <link rel="canonical" href="https://natalnavigator.com/" />
     <link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
     <link rel="alternate" hreflang="en" href="https://natalnavigator.com/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
     <!-- ─── Favicons (all browsers + mobile) ─── -->
     <!-- Safari, IE, legacy browsers -->
@@ -48,6 +49,8 @@
     <meta property="og:image" content="https://natalnavigator.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:secure_url" content="https://natalnavigator.com/og-image.png" />
     <meta property="og:image:alt" content="Natal Navigator astrocartography globe showing planetary lines across a 3D Earth" />
 
     <!-- ─── Twitter / X Card ─── -->
@@ -56,12 +59,6 @@
     <meta name="twitter:description" content="Free interactive astrocartography globe. Discover where your planets align for career, love, and personal growth. Enter your birth data and uncover the cities where your stars shine brightest." />
     <meta name="twitter:image" content="https://natalnavigator.com/og-image.png" />
     <meta name="twitter:image:alt" content="Natal Navigator astrocartography globe" />
-
-    <!-- ─── Geo / Local SEO ─── -->
-    <meta name="geo.region" content="DE" />
-    <meta name="geo.placename" content="Germany" />
-    <meta name="ICBM" content="51.1657, 10.4515" />
-    <meta name="geo.position" content="51.1657;10.4515" />
 
     <!-- ─── Robots & Crawlers ─── -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -117,11 +114,7 @@
           "@id": "https://natalnavigator.com/#org",
           "name": "Natal Navigator",
           "url": "https://natalnavigator.com",
-          "logo": "https://natalnavigator.com/favicon.svg",
-          "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "DE"
-          }
+          "logo": "https://natalnavigator.com/favicon.svg"
         },
         {
           "@type": "WebSite",
@@ -328,10 +321,7 @@
 
       <section>
         <h2>10 Planets, 40 Lines, One Globe</h2>
-        <p>
-          Natal Navigator calculates astrocartography lines for all 10 major celestial bodies,
-          each with its own influence:
-        </p>
+        <p>Natal Navigator calculates astrocartography lines for all 10 major celestial bodies, each with its own influence:</p>
         <ul>
           <li><strong>Sun ☉</strong> — Vitality, purpose, and self-expression. Sun lines highlight places where you shine.</li>
           <li><strong>Moon ☽</strong> — Emotions, intuition, and comfort. Moon lines reveal where you feel at home.</li>
@@ -344,13 +334,7 @@
           <li><strong>Neptune ♆</strong> — Imagination, spirituality, and inspiration. Neptune lines dissolve boundaries.</li>
           <li><strong>Pluto ♇</strong> — Transformation, power, and rebirth. Pluto lines catalyze deep change.</li>
         </ul>
-        <p>
-          Each planet generates 4 lines (MC, IC, ASC, DC), giving you <strong>40 unique astrocartography
-          lines</strong> mapped across the world — with color-coded quality ratings:
-          <strong style="color:#00D88A;">thrive</strong>,
-          <strong style="color:#FACC15;">neutral</strong>, and
-          <strong style="color:#F04060;">avoid</strong>.
-        </p>
+        <p>Each planet generates 4 lines (MC, IC, ASC, DC), giving you <strong>40 unique astrocartography lines</strong> mapped across the world — with color-coded quality ratings: <strong style="color:#00D88A;">thrive</strong>, <strong style="color:#FACC15;">neutral</strong>, and <strong style="color:#F04060;">avoid</strong>.</p>
       </section>
 
       <section>
@@ -384,30 +368,18 @@
 
       <section>
         <h2>Frequently Asked Questions</h2>
-
         <h3>What is astrocartography?</h3>
-        <p>Astrocartography (also called locational astrology) maps your birth chart onto the Earth's surface. It shows lines where each planet was rising, setting, culminating, or at its lowest point at the moment you were born. These lines indicate places in the world where specific planetary energies are strongest for you — influencing career, relationships, creativity, and personal growth.</p>
-
+        <p>Astrocartography maps your birth chart onto the Earth's surface. It shows lines where each planet was rising, setting, culminating, or at its lowest point at the moment you were born — indicating places where specific planetary energies are strongest for you.</p>
         <h3>How does Natal Navigator calculate astrocartography lines?</h3>
-        <p>Natal Navigator uses the astronomy-engine library for high-precision planetary position calculations. For each of the 10 major planets, it computes four lines: Midheaven (MC), Nadir (IC), Ascendant (ASC), and Descendant (DC). The calculations use the RAMC method for MC/IC and an analytical solver for ASC/DC, providing accurate positions without brute-force approximation.</p>
-
-        <h3>What planets and lines are shown?</h3>
-        <p>All 10 major celestial bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto. Each planet generates 4 lines (MC, IC, ASC, DC), giving you 40 unique astrocartography lines mapped across the entire world.</p>
-
+        <p>Using the astronomy-engine library for high-precision planetary positions. RAMC method for MC/IC lines; analytical solver for ASC/DC. No brute-force approximation.</p>
         <h3>Is Natal Navigator free to use?</h3>
-        <p>Yes. You can explore the interactive 3D globe in demo mode without signing up. Creating a free account lets you generate your personalized astrocartography chart based on your exact birth date, time, and location.</p>
-
+        <p>Yes. Demo mode requires no signup. A free account lets you generate your personalized 40-line chart based on your exact birth data.</p>
         <h3>What birth data do I need?</h3>
-        <p>You need your birth date, birth time (as precise as possible), and birth city. The birth time is essential because astrocartography lines — especially the Ascendant and Descendant — shift significantly with even small time differences.</p>
-
+        <p>Birth date, birth time (as precise as possible), and birth city. The birth time is essential because lines — especially ASC and DC — shift significantly with even small time differences.</p>
         <h3>Can I use Natal Navigator on my phone?</h3>
-        <p>Yes. Natal Navigator is fully responsive and works on desktop, tablet, and mobile browsers. The 3D globe supports touch gestures for rotation and zoom.</p>
-
-        <h3>How accurate are the calculations?</h3>
-        <p>Natal Navigator uses the same astronomy-engine library trusted by planetarium software and astronomical applications. Planetary positions are calculated to sub-arcsecond precision. The accuracy of your personal chart depends primarily on the precision of your birth time.</p>
-
+        <p>Yes. Fully responsive. The 3D globe supports touch gestures for rotation and zoom on any modern mobile browser.</p>
         <h3>What do the line colors mean?</h3>
-        <p>Lines are color-coded by quality based on traditional astrology: green ("thrive") indicates beneficial planetary influences, yellow ("neutral") indicates mixed energy, and red ("avoid") indicates challenging but potentially transformative influences.</p>
+        <p>Green = thrive (beneficial influences), yellow = neutral (mixed energy), red = avoid/caution (challenging but potentially transformative).</p>
       </section>
 
       <section>
@@ -421,31 +393,21 @@
 
       <section>
         <h2>Try It Now</h2>
-        <p>
-          No signup required — explore the interactive astrocartography globe in demo mode right now.
-          When you're ready, create a free account to generate your personalized planetary map.
-        </p>
+        <p>No signup required — explore the interactive astrocartography globe in demo mode right now. When you're ready, create a free account to generate your personalized planetary map.</p>
         <a href="/auth" class="cta">Create Free Account →</a>
       </section>
 
       <footer>
-        <p>© 2025 Natal Navigator. All rights reserved.</p>
+        <p>&copy; 2026 Natal Navigator. All rights reserved.</p>
         <p>Natal Navigator provides astrocartography calculations for educational and entertainment purposes. Astrological interpretations should not replace professional advice for important life decisions.</p>
       </footer>
     </main>
 
-    <!-- ─── No-JS fallback (additional signal for crawlers that don't render JS) ─── -->
+    <!-- ─── No-JS fallback ─── -->
     <noscript>
       <style>#root-loader { display: none; } #seo-content { display: block !important; } body { overflow: auto; position: static; height: auto; }</style>
     </noscript>
 
-    <!-- Service Worker registration + version-bump cache purge.
-         Runs synchronously during HTML parsing so the new SW is being
-         installed by the time the React bundle starts.
-         No location.reload() on version bump — the new SW uses skipWaiting
-         + clients.claim and takes control on the next navigation. The
-         visible double-load this used to cause is worse UX than waiting
-         one nav for the cache to fully refresh. -->
     <script>
     (function(){
       var V='nn-sw-v20';
