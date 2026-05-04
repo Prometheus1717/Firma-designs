@@ -12,6 +12,7 @@
   <link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography-calculator" />
   <link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography-calculator" />
   <link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -24,6 +25,10 @@
   <meta property="og:description" content="Generate your full astrocartography map free. 10 planets, 4 angles, 40 lines, real-world cities." />
   <meta property="og:url" content="https://natalnavigator.com/astrocartography-calculator" />
   <meta property="og:image" content="https://natalnavigator.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:secure_url" content="https://natalnavigator.com/og-image.png" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
@@ -45,7 +50,8 @@
         "operatingSystem": "Web",
         "description": "Free interactive astrocartography calculator that maps 40 planetary lines across a 3D globe using precise astronomy-engine calculations.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-        "browserRequirements": "Requires JavaScript, WebGL"
+        "browserRequirements": "Requires JavaScript, WebGL",
+        "dateModified": "2026-05-04"
       },
       {
         "@type": "HowTo",
@@ -142,11 +148,7 @@
     .related li { margin: 10px 0; }
     footer.site { border-top: 1px solid var(--line); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--dim); }
     footer.site a { color: var(--dim); margin: 0 10px; }
-    @media (max-width: 600px) {
-      h1 { font-size: 26px; }
-      h2 { font-size: 19px; }
-      header.top nav a { margin-left: 10px; font-size: 11px; }
-    }
+    @media (max-width: 600px) { h1 { font-size: 26px; } h2 { font-size: 19px; } header.top nav a { margin-left: 10px; font-size: 11px; } }
   </style>
 </head>
 <body>
@@ -187,17 +189,17 @@
 
       <h2>What you get</h2>
       <ul>
-        <li><strong>40 astrocartography lines</strong> across ten planets (Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto) and four angles (MC, IC, ASC, DC).</li>
+        <li><strong>40 astrocartography lines</strong> across ten planets and four angles (MC, IC, ASC, DC).</li>
         <li><strong>Color-coded zones</strong> &mdash; green thrive, yellow neutral, red caution &mdash; so you can scan the energetic landscape at a glance.</li>
         <li><strong>Real-world city matching</strong> &mdash; every line surfaces the nearest cities so you can connect astrological theory to actual places.</li>
         <li><strong>Interactive 3D globe</strong> powered by D3.js with smooth rotation, zoom, and touch support.</li>
         <li><strong>Your natal wheel</strong> alongside the globe, showing zodiac positions, house placements, and retrograde markers.</li>
-        <li><strong>Filter tabs</strong> for isolating only thrive, only caution, or only neutral zones &mdash; ideal for focused exploration.</li>
+        <li><strong>Filter tabs</strong> for isolating only thrive, only caution, or only neutral zones.</li>
       </ul>
 
       <h2>How accurate is the calculator?</h2>
-      <p>Natal Navigator uses the open-source <strong>astronomy-engine</strong> library, the same engine used by planetarium software and astronomical research tools. Planetary positions are computed to sub-arcsecond precision. The Ascendant and Descendant use an analytical solver rather than brute-force approximation, so our lines are as geometrically exact as the input birth time allows.</p>
-      <p>This means the <em>only</em> source of uncertainty in your personal map is the accuracy of your birth time. A certified birth certificate usually lists the minute; some list the hour only, in which case results should be treated as approximate.</p>
+      <p>Natal Navigator uses the open-source <strong>astronomy-engine</strong> library, the same engine used by planetarium software and astronomical research tools. Planetary positions are computed to sub-arcsecond precision. The Ascendant and Descendant use an analytical solver rather than brute-force approximation.</p>
+      <p>The <em>only</em> source of uncertainty in your personal map is the accuracy of your birth time. A certified birth certificate usually lists the minute; some list the hour only, in which case results should be treated as approximate.</p>
 
       <h2>Natal Navigator vs. other tools</h2>
       <table class="compare">
@@ -216,22 +218,22 @@
       <h2>Frequently asked questions</h2>
 
       <h3>Is this astrocartography calculator really free?</h3>
-      <p>Yes. You can generate a full 40-line astrocartography map with your real birth data at no cost. There is also a demo mode that shows the globe without any sign-up.</p>
+      <p>Yes. You can generate a full 40-line astrocartography map with your real birth data at no cost. Demo mode shows the globe without any sign-up.</p>
 
       <h3>How accurate is the calculator?</h3>
-      <p>We use the astronomy-engine library, trusted by planetarium software, for sub-arcsecond planetary position accuracy. The precision of your personal lines then depends on how accurate your birth time is.</p>
+      <p>We use the astronomy-engine library for sub-arcsecond planetary position accuracy. The precision of your personal lines depends on how accurate your birth time is.</p>
 
       <h3>Do I need to create an account?</h3>
       <p>No &mdash; you can explore the demo globe without an account. A free account is only needed if you want to save your personal chart and revisit it across devices.</p>
 
       <h3>Does the calculator work on mobile?</h3>
-      <p>Yes. The globe is built to be responsive and supports touch gestures for rotation and zoom on any modern mobile browser.</p>
+      <p>Yes. The globe supports touch gestures for rotation and zoom on any modern mobile browser.</p>
 
       <h3>What data do I need to enter?</h3>
-      <p>Three inputs: your date of birth, your exact time of birth, and your birth city. Everything else &mdash; time zone, coordinates, planetary positions, line paths &mdash; is resolved automatically.</p>
+      <p>Three inputs: date of birth, exact time of birth, and birth city. Time zone, coordinates, planetary positions, and line paths are all resolved automatically.</p>
 
       <h3>What if I don&rsquo;t know my exact birth time?</h3>
-      <p>You can still run the calculator, but be aware: the MC/IC lines move about 15 degrees of longitude per hour of time difference, and ASC/DC can move even faster near the poles. Treat the output as directional rather than precise.</p>
+      <p>You can still run the calculator, but the MC/IC lines move about 15 degrees per hour of time difference, and ASC/DC can move even faster near the poles. Treat the output as directional rather than precise.</p>
 
       <h3>Is my birth data stored?</h3>
       <p>Birth data linked to a free account is stored securely and encrypted at rest. Demo-mode input is never persisted. You can delete your account and its data at any time.</p>
