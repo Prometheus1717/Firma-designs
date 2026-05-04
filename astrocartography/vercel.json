@@ -3,6 +3,7 @@
     { "source": "/robots.txt", "destination": "/robots.txt" },
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
     { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/21915b44130d4ed9a4a65a4221aeb56b.txt", "destination": "/21915b44130d4ed9a4a65a4221aeb56b.txt" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
