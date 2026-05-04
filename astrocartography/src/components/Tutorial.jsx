@@ -165,6 +165,17 @@ export default function Tutorial({ lang, onClose, onStep }) {
     if (phase === 'running' && onStep && step) onStep(step.keys);
   }, [phase, stepIdx, step, onStep]);
 
+  // Track step views for funnel analysis
+  useEffect(() => {
+    if (phase === 'running' && step) {
+      window.posthog?.capture('tutorial_step_viewed', {
+        step: stepIdx + 1,
+        total: activeSteps.length,
+        stepKey: step.i18n,
+      });
+    }
+  }, [phase, stepIdx]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Re-measure on every step change AND every layout shift (resize/scroll).
   // Cheap: just one getBoundingClientRect per target.
   useLayoutEffect(() => {
@@ -209,26 +220,44 @@ export default function Tutorial({ lang, onClose, onStep }) {
   }, []);
 
   const next = useCallback(() => {
-    if (stepIdx < activeSteps.length - 1) setStepIdx(i => i + 1);
-    else onClose(true, true);
+    if (stepIdx < activeSteps.length - 1) {
+      setStepIdx(i => i + 1);
+    } else {
+      window.posthog?.capture('tutorial_completed', { total: activeSteps.length });
+      onClose(true, true);
+    }
   }, [stepIdx, activeSteps.length, onClose]);
 
   const prev = useCallback(() => {
     if (stepIdx > 0) setStepIdx(i => i - 1);
   }, [stepIdx]);
 
-  const dismiss = useCallback(() => onClose(true, false), [onClose]);
+  // Separate dismiss handlers so PostHog can distinguish drop-off location
+  const dismissIntro = useCallback(() => {
+    window.posthog?.capture('tutorial_dismissed', { phase: 'intro' });
+    onClose(true, false);
+  }, [onClose]);
+
+  const dismissTour = useCallback(() => {
+    window.posthog?.capture('tutorial_dismissed', {
+      phase: 'running',
+      step: stepIdx + 1,
+      total: activeSteps.length,
+      stepKey: step?.i18n,
+    });
+    onClose(true, false);
+  }, [onClose, stepIdx, activeSteps.length, step]);
 
   useEffect(() => {
     if (phase !== 'running') return;
     const onKey = (e) => {
-      if (e.key === 'Escape') dismiss();
+      if (e.key === 'Escape') dismissTour();
       else if (e.key === 'ArrowRight' || e.key === 'Enter') next();
       else if (e.key === 'ArrowLeft') prev();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [phase, next, prev, dismiss]);
+  }, [phase, next, prev, dismissTour]);
 
   useLayoutEffect(() => {
     if (phase !== 'running' || !popupRef.current) return;
@@ -248,17 +277,23 @@ export default function Tutorial({ lang, onClose, onStep }) {
         <div style={{ width: introW, maxWidth: 360, background: '#0A1222', border: `1px solid ${ACCENT}`, borderRadius: 10, boxShadow: '0 18px 50px rgba(0,0,0,.65), 0 0 0 1px rgba(0,216,138,.18)', color: '#E4ECF5', overflow: 'hidden' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid #1A2840', background: '#0E1828' }}>
             <span style={{ ...F, fontSize: 9, fontWeight: 700, color: ACCENT, letterSpacing: 2 }}>{t('tutorialIntroBadge', lang)}</span>
-            <span onClick={dismiss} style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }} title={t('tutorialIntroNo', lang)}>✕</span>
+            <span onClick={dismissIntro} style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }} title={t('tutorialIntroNo', lang)}>✕</span>
           </div>
           <div style={{ padding: mob ? '14px 14px 4px' : '18px 18px 6px' }}>
             <div style={{ ...F, fontSize: mob ? 13 : 15, fontWeight: 700, color: '#FFFFFF', marginBottom: 8, letterSpacing: 0.3 }}>{t('tutorialIntroTitle', lang)}</div>
             <div style={{ fontSize: mob ? 12 : 13, lineHeight: 1.6, color: '#B6C2D2', fontFamily: 'system-ui, -apple-system, sans-serif' }}>{t('tutorialIntroBody', lang)}</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '14px 16px' }}>
-            <span onClick={dismiss} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#B6C2D2', background: 'transparent', border: '1px solid #2A3A50', borderRadius: 5, padding: '7px 14px', cursor: 'pointer', letterSpacing: 1 }}>
+            <span onClick={dismissIntro} style={{ ...F, fontSize: 10, fontWeight: 600, color: '#B6C2D2', background: 'transparent', border: '1px solid #2A3A50', borderRadius: 5, padding: '7px 14px', cursor: 'pointer', letterSpacing: 1 }}>
               {t('tutorialIntroNo', lang)}
             </span>
-            <span onClick={() => setPhase('running')} style={{ ...F, fontSize: 10, fontWeight: 700, color: '#02101E', background: ACCENT, border: `1px solid ${ACCENT}`, borderRadius: 5, padding: '7px 16px', cursor: 'pointer', letterSpacing: 1 }}>
+            <span
+              onClick={() => {
+                window.posthog?.capture('tutorial_started');
+                setPhase('running');
+              }}
+              style={{ ...F, fontSize: 10, fontWeight: 700, color: '#02101E', background: ACCENT, border: `1px solid ${ACCENT}`, borderRadius: 5, padding: '7px 16px', cursor: 'pointer', letterSpacing: 1 }}
+            >
               {t('tutorialIntroYes', lang)}
             </span>
           </div>
@@ -292,7 +327,8 @@ export default function Tutorial({ lang, onClose, onStep }) {
       aria-label={t('tutorialAriaLabel', lang)}
       style={{ position: 'fixed', inset: 0, zIndex: 99990, pointerEvents: 'none' }}
     >
-      <svg width={vw} height={vh} style={{ position: 'fixed', inset: 0, pointerEvents: 'auto' }} onClick={dismiss}>
+      {/* SVG overlay: no onClick — prevents accidental dismissal on backdrop click */}
+      <svg width={vw} height={vh} style={{ position: 'fixed', inset: 0, pointerEvents: 'auto' }}>
         <defs>
           <mask id="nn-tut-mask">
             <rect x="0" y="0" width={vw} height={vh} fill="white" />
@@ -351,7 +387,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
             {t('tutorialBadge', lang)} · {stepIdx + 1}/{activeSteps.length}
           </span>
           <span
-            onClick={dismiss}
+            onClick={dismissTour}
             style={{ ...F, fontSize: 12, color: '#7B8AA0', cursor: 'pointer', padding: '2px 6px', borderRadius: 3, lineHeight: 1 }}
             title={t('tutorialSkip', lang)}
           >
@@ -383,7 +419,7 @@ export default function Tutorial({ lang, onClose, onStep }) {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: mob ? '8px 12px 10px' : '10px 14px 12px', borderTop: '1px solid #1A2840', background: '#0E1828', flexShrink: 0 }}>
           <span
-            onClick={dismiss}
+            onClick={dismissTour}
             style={{ ...F, fontSize: 9, color: '#7B8AA0', cursor: 'pointer', letterSpacing: 1 }}
           >
             {t('tutorialSkip', lang)}
