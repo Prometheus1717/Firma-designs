@@ -50,9 +50,21 @@
         "publisher": { "@type": "Organization", "name": "Natal Navigator", "logo": { "@type": "ImageObject", "url": "https://natalnavigator.com/favicon.svg" } },
         "datePublished": "2026-04-16",
         "dateModified": "2026-05-04",
-        "mainEntityOfPage": { "@type": "WebPage", "@id": "https://natalnavigator.com/astrocartography" },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://natalnavigator.com/astrocartography",
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": ["article h1", "article p.lead", "article h2", "article h3"]
+          }
+        },
         "image": "https://natalnavigator.com/og-image.png",
-        "inLanguage": "en"
+        "inLanguage": "en",
+        "about": {
+          "@type": "Thing",
+          "name": "Astrocartography",
+          "sameAs": "https://natalnavigator.com/astrocartography#term"
+        }
       },
       {
         "@type": "BreadcrumbList",
@@ -60,6 +72,19 @@
           { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natalnavigator.com/" },
           { "@type": "ListItem", "position": 2, "name": "What is Astrocartography?", "item": "https://natalnavigator.com/astrocartography" }
         ]
+      },
+      {
+        "@type": "DefinedTerm",
+        "@id": "https://natalnavigator.com/astrocartography#term",
+        "name": "Astrocartography",
+        "alternateName": ["Astro*Carto*Graphy", "locational astrology", "relocation astrology", "astro cartography"],
+        "description": "Astrocartography is a branch of astrology that projects a natal birth chart onto the surface of the Earth, creating a personal world map of 40 planetary lines — one for each combination of the 10 major planets (Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto) and the 4 chart angles (Midheaven/MC, Nadir/IC, Ascendant/ASC, Descendant/DC). The lines show where each planet was rising, setting, culminating, or at its lowest point at the moment of birth. Developed by Jim Lewis in the early 1970s.",
+        "url": "https://natalnavigator.com/astrocartography",
+        "inDefinedTermSet": {
+          "@type": "DefinedTermSet",
+          "name": "Astrocartography Glossary",
+          "url": "https://natalnavigator.com/astrocartography"
+        }
       },
       {
         "@type": "FAQPage",
@@ -88,6 +113,11 @@
             "@type": "Question",
             "name": "Is astrocartography scientifically proven?",
             "acceptedAnswer": { "@type": "Answer", "text": "Astrocartography is a branch of astrology, not a hard science. The planetary position calculations themselves are astronomical and precise. The interpretations of what those lines mean for your life are symbolic and traditional, and should be treated as reflective tools rather than scientific predictions." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need an exact birth time for astrocartography?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes — the MC, IC, ASC and DC rotate rapidly through the day, so a four-minute time error can shift Ascendant and Descendant lines by a full degree. The more accurate your birth time, the more accurate your map." }
           }
         ]
       }
