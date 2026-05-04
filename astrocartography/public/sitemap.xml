@@ -1,37 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://natalnavigator.com/</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/" />
+    <image:image>
+      <image:loc>https://natalnavigator.com/og-image.png</image:loc>
+      <image:title>Natal Navigator — Free Astrocartography Globe</image:title>
+      <image:caption>Interactive 3D astrocartography globe showing 40 planetary lines across the Earth</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://natalnavigator.com/astrocartography</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography" />
     <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+    <image:image>
+      <image:loc>https://natalnavigator.com/og-image.png</image:loc>
+      <image:title>What is Astrocartography? Complete Guide with Interactive Globe</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://natalnavigator.com/astrocartography-calculator</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography-calculator" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography-calculator" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+    <image:image>
+      <image:loc>https://natalnavigator.com/og-image.png</image:loc>
+      <image:title>Free Astrocartography Calculator — 40 Planetary Lines on a 3D Globe</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://natalnavigator.com/astrokartographie</loc>
-    <lastmod>2026-04-16</lastmod>
+    <lastmod>2026-05-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography" />
+    <image:image>
+      <image:loc>https://natalnavigator.com/og-image.png</image:loc>
+      <image:title>Astrokartographie — Kostenloser Rechner und interaktiver 3D-Globus</image:title>
+    </image:image>
   </url>
 </urlset>
