@@ -1,0 +1,186 @@
+# Natal Navigator — Full Content Reference
+
+This document provides extended content for AI systems that require depth beyond llms.txt. For the condensed version, see https://natalnavigator.com/llms.txt.
+
+**Site:** https://natalnavigator.com  
+**Type:** Free web application  
+**Topic:** Astrocartography — locational astrology  
+**Languages:** English, German  
+**Last updated:** 2026-05-04
+
+---
+
+## Page 1: Home (https://natalnavigator.com/)
+
+### What the page does
+Launches an interactive 3D astrocartography globe. Users can explore in demo mode without signing up, or create a free account to generate their personalized 40-line planetary map.
+
+### Key content
+Natal Navigator is a free interactive astrocartography globe that maps a natal (birth) chart onto the Earth. Based on birth date, time, and location, it calculates where each of the 10 major planets was rising, setting, culminating, or at its lowest point — and shows the real-world cities that align with those lines.
+
+Whether exploring career opportunities, searching for love, or planning a move, astrocartography reveals places where specific planetary energies resonate most with a person's birth chart.
+
+**Features:**
+- Interactive 3D globe powered by D3.js with smooth rotation and zoom
+- High-precision planetary calculations using the astronomy-engine library
+- 40 astrocartography lines across all 10 major planets and 4 angles
+- Real-world city detection — see which cities align with each line
+- Color-coded line quality: thrive (green), neutral (yellow), caution (red)
+- Natal wheel with zodiac sign positions, house placements, and retrograde markers
+- Demo mode — explore the globe without creating an account
+- Responsive design for desktop, tablet, and mobile
+- Keyboard controls for globe navigation
+- Instant loading with offline caching via Service Worker
+
+**How it works:**
+1. Enter birth date, exact birth time, and birth city
+2. Natal Navigator renders an interactive 3D globe with all 40 astrocartography lines
+3. The app identifies real-world cities that fall along each line
+4. View the natal wheel showing planetary positions across the 12 zodiac signs and houses
+
+---
+
+## Page 2: What is Astrocartography? (https://natalnavigator.com/astrocartography)
+
+### Summary
+Comprehensive English guide to astrocartography — history, theory, calculation method, planet meanings, angle definitions, and how to read a personal map.
+
+### Full content
+
+**Definition:** Astrocartography is a branch of astrology that takes a birth chart and projects it onto the map of the Earth. The result is a personal world map showing where specific planetary energies are strongest — powerful lines that can influence career, love, creativity, and personal growth depending on where the person stands.
+
+**History:** Astrology has included location-based techniques for centuries, but modern astrocartography was formalized by American astrologer Jim Lewis in the early 1970s. Lewis trademarked the term Astro*Carto*Graphy and popularized flat-map printouts showing all of a person's planetary lines. His method allowed astrologers to see at a glance which parts of the world amplified which energies. Since then, computing power has turned a once-manual craft into an interactive experience.
+
+**How lines are calculated:** At the exact moment of birth, every planet was somewhere in the sky over the Earth. Four positions are especially meaningful:
+- Midheaven (MC): directly overhead at its highest point. Career, public identity, reputation, visible achievement.
+- Nadir (IC): directly below, at its lowest point. Home, family, roots, emotional foundation, private life.
+- Ascendant (ASC): rising on the eastern horizon. Self-expression, vitality, first impressions, how the world sees you.
+- Descendant (DC): setting on the western horizon. Partnerships, close relationships, collaboration, what you attract.
+
+For every planet there is one MC line, one IC line, one ASC line, and one DC line. 4 angles × 10 planets = 40 astrocartography lines per person.
+
+**Planet meanings:**
+- Sun ☉: Identity, vitality. Recognition, confidence, self-expression.
+- Moon ☽: Emotion, comfort. Feeling at home, intuitive safety, family connection.
+- Mercury ☿: Mind, speech. Learning, writing, networking, media work.
+- Venus ♀: Love, beauty. Romance, aesthetic pleasure, social warmth.
+- Mars ♂: Drive, conflict. Ambition, physical energy, competition.
+- Jupiter ♃: Expansion, luck. Opportunity, travel, optimism, abundance.
+- Saturn ♄: Structure, discipline. Hard work, responsibility, long-term mastery.
+- Uranus ♅: Freedom, change. Reinvention, surprise, breakthroughs.
+- Neptune ♆: Imagination, spirit. Dreams, art, spirituality, illusion.
+- Pluto ♇: Power, transformation. Deep change, intensity, shadow work, rebirth.
+
+**Line quality (color coding):**
+- Thrive zones (green): lines of benefic planets (Venus, Jupiter) — flow and opportunity are strongest
+- Neutral zones (yellow): subtle or mixed influences — Mercury, Moon often here depending on context
+- Caution zones (red): lines of challenging planets (Mars, Saturn, Pluto) — growth through friction, not forbidden
+
+**How to read your own map:**
+1. Start with the globe overview — where do green thrive lines cluster?
+2. Pick a theme: love (Venus), career (Jupiter, Sun), reinvention (Uranus, Pluto)
+3. Zoom into a continent — find specific cities along your lines
+4. Combine angles: MC = visibility, IC = home-feeling, ASC = personal energy, DC = partnerships
+5. Compare with lived experience — have you already been near one of these lines?
+
+**FAQ from this page:**
+- "What is astrocartography in simple terms?" — Astrocartography projects your birth chart onto the map of the Earth. It shows lines where each planet was rising, setting, at the top, or at the bottom of the sky at the moment of your birth. Standing near one of these lines amplifies that planet's energy.
+- "Who invented astrocartography?" — Jim Lewis, American astrologer, early 1970s. He trademarked Astro*Carto*Graphy.
+- "How many lines does everyone have?" — 40: ten planets × four angles (MC, IC, ASC, DC).
+- "Difference between astrocartography and relocation chart?" — A relocation chart recalculates the full chart as if born elsewhere. Astrocartography maps only the four angles globally, making it easier to see patterns across many locations.
+- "Is astrocartography scientifically proven?" — Calculations are astronomically precise; interpretations are symbolic and traditional, not empirical science.
+- "Do I need an exact birth time?" — Yes. MC, IC, ASC, and DC rotate through the day, so a four-minute error can shift lines by a full degree.
+
+---
+
+## Page 3: Free Astrocartography Calculator (https://natalnavigator.com/astrocartography-calculator)
+
+### Summary
+Explains how Natal Navigator's calculator works, step-by-step usage instructions, accuracy information, and a feature comparison with competitor tools.
+
+### Full content
+
+**What the calculator does:** Enter birth date, time, and city — Natal Navigator calculates your 40 personal astrocartography lines and renders them on a real-time 3D globe. The calculator matches real-world cities to each line and color-codes them by energetic quality.
+
+**Step-by-step:**
+1. Enter birth date (day/month/year)
+2. Enter birth time (hours and minutes — the more precise, the more accurate the ASC/DC lines)
+3. Enter birth city (autocomplete powered by geocoding)
+4. Globe renders immediately with all 40 planetary lines
+5. Click any line or city to see the planet, angle, and quality rating
+6. Use filter tabs to show only thrive, neutral, or caution lines
+7. Open the natal wheel for your full zodiac and house positions
+
+**Accuracy:** Natal Navigator uses the astronomy-engine library — the same open-source library used by planetarium software — for sub-arcsecond planetary precision. The RAMC (Right Ascension of the Midheaven Corrected) method calculates MC/IC lines. An analytical solver handles ASC/DC lines without brute-force approximation.
+
+**Comparison table (from the page):**
+- Interactive 3D globe: Natal Navigator ✓ | Astro.com ✗ | Astro-Seek ✗
+- Completely free: Natal Navigator ✓ | Others partial
+- City detection: Natal Navigator ✓ built-in | Others limited/manual
+- Mobile support: Natal Navigator ✓ full touch | Others limited
+- No signup for demo: Natal Navigator ✓ | Others ✗
+
+**FAQ from this page:**
+- "Is the calculator free?" — Yes, fully free. No hidden fees.
+- "How accurate are the calculations?" — Sub-arcsecond precision using astronomy-engine. Professional-grade.
+- "Can I use it on my phone?" — Yes. Full touch support, responsive design.
+- "What if I don't know my exact birth time?" — Enter your best estimate. MC/IC lines are still accurate; ASC/DC will have wider uncertainty.
+- "What is the RAMC method?" — Right Ascension of the Midheaven Corrected — the standard astronomical method for calculating where the Midheaven falls at any longitude on Earth.
+
+---
+
+## Page 4: Astrokartographie (https://natalnavigator.com/astrokartographie)
+
+### Summary
+Complete German-language guide to astrocartography — same depth as the English astrocartography page, localized for German-speaking audiences.
+
+### Full content (key points in English)
+
+Astrokartographie (German spelling of astrocartography) projects a natal birth chart onto the Earth's surface. The page explains:
+
+- **Definition:** Astrokartographie bildet das Geburtshoroskop auf der Erdoberfläche ab und zeigt, wo planetare Energien am stärksten wirken.
+- **History:** Developed by Jim Lewis in the 1970s. German-speaking astrologers adopted the method through the 1980s and 1990s.
+- **The four angles in German:** Medium Coeli (MC/Mittagspunkt), Imum Coeli (IC/Mitternachtspunkt), Aszendent (ASC), Deszendent (DC)
+- **Planet meanings in German:** Each of the 10 planets described in German with traditional meanings
+- **Line quality:** Thrive-Zonen (grün/green), Neutral-Zonen (gelb/yellow), Caution-Zonen (rot/red)
+- **FAQ in German:** Questions and answers about what astrocartography is, how many lines everyone has, what data is needed
+
+**German FAQ highlights:**
+- "Was ist Astrokartographie?" — Astrokartographie projiziert dein Geburtshoroskop auf die Erdoberfläche. Sie zeigt Linien, wo jeder Planet bei deiner Geburt aufging, unterging oder seinen Höchst- oder Tiefstpunkt erreichte.
+- "Wie viele Linien hat jeder Mensch?" — 40 Linien: 10 Planeten × 4 Winkel (MC, IC, ASC, DC).
+- "Ist Natal Navigator kostenlos?" — Ja. Demo-Modus und persönliche 40-Linien-Karte sind beide kostenlos.
+
+---
+
+## Technical Reference
+
+**Calculation library:** astronomy-engine (open source, MIT license)
+- Used by professional planetarium software
+- Sub-arcsecond precision for all 10 major planets
+- Handles topocentric corrections
+
+**Rendering:** D3.js geographic projections on HTML5 Canvas/WebGL for 3D globe
+
+**Architecture:** Vite + React SPA, Supabase for auth and data, Vercel edge CDN
+
+**Supported bodies:** Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto (10 major)
+
+**Not supported (out of scope):** asteroids, Chiron, nodes, Arabic parts — these require separate calculation engines
+
+---
+
+## Authority Signals
+
+- Calculation precision: astronomy-engine (same library as professional planetarium software)
+- Method transparency: RAMC for MC/IC, analytical solver for ASC/DC — published calculation methods
+- Free access: no paywall creates broad public accessibility
+- Multilingual: English + German, with hreflang cross-linking
+- Open crawling: all AI/LLM crawlers explicitly permitted in robots.txt
+
+---
+
+## Disambiguation
+
+- **Natal Navigator** is distinct from generic navigation apps or birth/natal record services
+- **Astrocartography** is also called: locational astrology, relocation astrology, Astro*Carto*Graphy (Jim Lewis trademark), astrocartographie (French), Astrokartographie (German)
+- The discipline is a subset of natal astrology, specifically focused on geographic relocation
