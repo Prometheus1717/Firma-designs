@@ -3,6 +3,7 @@
     { "source": "/robots.txt", "destination": "/robots.txt" },
     { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
     { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/llms.txt", "destination": "/llms.txt" },
     { "source": "/21915b44130d4ed9a4a65a4221aeb56b.txt", "destination": "/21915b44130d4ed9a4a65a4221aeb56b.txt" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
@@ -37,6 +38,13 @@
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" },
         { "key": "Content-Type", "value": "application/xml" }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" },
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
       ]
     },
     {

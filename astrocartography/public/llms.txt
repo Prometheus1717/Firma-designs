@@ -1,0 +1,54 @@
+# NatalNavigator
+
+> NatalNavigator is a free interactive astrocartography app that generates a 3D globe visualization of your birth chart projected onto a world map, showing all 40 planetary lines and personalized zone interpretations.
+
+## What It Does
+
+NatalNavigator computes your astrocartography map from your birth date, time, and place of birth using Swiss Ephemeris-accurate calculations. It plots where each of the 10 major planets (Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto) crosses the four angles — Midheaven (MC), Nadir (IC), Ascendant (ASC), and Descendant (DC) — the 40 planetary lines that define your unique astrocartography map.
+
+Astrocartography (also called locational astrology or relocation astrology) is the practice of overlaying a natal birth chart onto a world map to identify the geographic locations where specific planetary energies are strongest. Originally developed by astrologer Jim Lewis in the 1970s, it is used for making decisions about where to live, work, travel, or relocate.
+
+## Key Features
+
+- Interactive 3D globe with all 40 planetary lines (10 planets × 4 angles)
+- Natal wheel birth chart visualization
+- Zone-based interpretations grouped by theme: Career & Power, Love & Relationships, Growth & Expansion, Challenges & Transformation
+- City search — find which planetary lines are closest to any city worldwide
+- Planet layer controls to show/hide individual planets or groups
+- Free to use (no signup required for the map view)
+- Mobile-responsive design
+- Available in English and German
+
+## How to Use
+
+1. Enter your birth date, time, and place of birth
+2. Your 3D astrocartography globe generates instantly
+3. Rotate the globe to explore planetary lines across the world
+4. Click any planetary line to read its interpretation
+5. Use the city search to check specific locations
+6. Switch to the Natal Wheel tab to view your birth chart
+
+## Content Pages
+
+- **Astrocartography Guide** (English): https://natalnavigator.com/astrocartography
+  - What astrocartography is, how it works, how to interpret your planetary lines
+- **Free Astrocartography Calculator** (English): https://natalnavigator.com/astrocartography-calculator
+  - Step-by-step guide to generating and reading your free astrocartography map
+- **Astrokartographie Leitfaden** (German): https://natalnavigator.com/astrokartographie
+  - German-language guide to astrocartography (Astrokartographie)
+
+## App
+
+- Homepage & App: https://natalnavigator.com/
+
+## Key Concepts Explained
+
+- **MC line (Midheaven)**: The path where a planet was exactly on the Midheaven at birth. Associated with career, public image, and life direction in that location.
+- **IC line (Nadir/Imum Coeli)**: The path where a planet was on the Nadir. Associated with home, family, roots, and private life.
+- **ASC line (Ascendant)**: Where a planet was rising on the eastern horizon. Affects personality expression and how you are perceived.
+- **DSC line (Descendant)**: Where a planet was setting on the western horizon. Influences partnerships, relationships, and how you attract others.
+- **Paran**: An intersection point of two planetary lines — where two different planetary influences cross, creating a combined effect for that latitude.
+
+## Technology
+
+Built with React + Vite. Planetary calculations use Swiss Ephemeris via a serverless API (Vercel Edge Functions). User data stored in Supabase. Completely free to use.

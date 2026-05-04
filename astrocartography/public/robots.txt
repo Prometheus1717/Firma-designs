@@ -6,5 +6,26 @@ Disallow: /api/
 # Private routes are handled via X-Robots-Tag: noindex headers (see vercel.json)
 # so Googlebot can fetch + process the noindex directive instead of being blocked here.
 
+# AI crawler guidance
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
 # Sitemap
 Sitemap: https://natalnavigator.com/sitemap.xml
