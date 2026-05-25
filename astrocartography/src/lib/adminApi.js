@@ -64,3 +64,17 @@ export async function fetchAllAppSettings() {
 export async function updateAppSetting(key, value) {
   await adminFetch('updateSetting', { key, value });
 }
+
+// ─── Demographics ───
+
+export async function fetchDemographics() {
+  // result is { ageBuckets, withBirthData, total, premium, free, signupTrend }
+  return adminFetch('fetchDemographics');
+}
+
+// ─── Usage analytics (PostHog) ───
+
+export async function fetchUsageStats() {
+  // result is { configured, dau, wau, mau, opens24h/7d/30d, avg/medianSessionSeconds, totalSessions }
+  return adminFetch('fetchUsage');
+}

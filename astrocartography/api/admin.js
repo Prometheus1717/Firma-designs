@@ -182,6 +182,157 @@ async function handleFetchSettings(supabase) {
   return { data: map };
 }
 
+// ─── Demographics (aggregated from profiles) ───
+
+// Date `years` ago in YYYY-MM-DD — used as birth_date cutoffs for age buckets.
+function yearsAgoISO(years) {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - years);
+  return d.toISOString().slice(0, 10);
+}
+
+async function handleFetchDemographics(supabase) {
+  // Age bucket boundaries expressed as birth_date cutoffs (age N ⟺ birth_date ≤ today − N years).
+  const c18 = yearsAgoISO(18);
+  const c26 = yearsAgoISO(26);
+  const c36 = yearsAgoISO(36);
+  const c46 = yearsAgoISO(46);
+  const c56 = yearsAgoISO(56);
+
+  // Cheap count-only queries (head:true) keep this scalable — no row transfer.
+  const countQ = () => supabase.from('profiles').select('*', { count: 'exact', head: true });
+  const trendSince = new Date(Date.now() - 29 * 86400000).toISOString();
+
+  const [under18, a18, a26, a36, a46, a56, totalRes, premiumRes, recent] = await Promise.all([
+    countQ().gt('birth_date', c18),
+    countQ().lte('birth_date', c18).gt('birth_date', c26),
+    countQ().lte('birth_date', c26).gt('birth_date', c36),
+    countQ().lte('birth_date', c36).gt('birth_date', c46),
+    countQ().lte('birth_date', c46).gt('birth_date', c56),
+    countQ().lte('birth_date', c56),
+    countQ(),
+    countQ().eq('is_premium', true),
+    supabase.from('profiles').select('created_at').gte('created_at', trendSince),
+  ]);
+
+  const ageBuckets = [
+    { label: '<18', count: under18.count || 0 },
+    { label: '18-25', count: a18.count || 0 },
+    { label: '26-35', count: a26.count || 0 },
+    { label: '36-45', count: a36.count || 0 },
+    { label: '46-55', count: a46.count || 0 },
+    { label: '56+', count: a56.count || 0 },
+  ];
+
+  const total = totalRes.count || 0;
+  const premium = premiumRes.count || 0;
+
+  // Signup trend — bucket recent created_at by day across the last 30 days.
+  const trendMap = {};
+  for (let i = 29; i >= 0; i--) {
+    trendMap[new Date(Date.now() - i * 86400000).toISOString().slice(0, 10)] = 0;
+  }
+  (recent.data || []).forEach(r => {
+    const key = r.created_at ? String(r.created_at).slice(0, 10) : null;
+    if (key && key in trendMap) trendMap[key]++;
+  });
+  const signupTrend = Object.entries(trendMap).map(([date, count]) => ({ date, count }));
+
+  return {
+    data: {
+      ageBuckets,
+      withBirthData: ageBuckets.reduce((s, b) => s + b.count, 0),
+      total,
+      premium,
+      free: Math.max(0, total - premium),
+      signupTrend,
+    },
+  };
+}
+
+// ─── Usage analytics (PostHog Query API) ───
+// Uses a server-side personal API key so the secret never reaches the client.
+function getPostHogConfig() {
+  const personalKey = process.env.POSTHOG_PERSONAL_API_KEY;
+  const projectId = process.env.POSTHOG_PROJECT_ID;
+  if (!personalKey || !projectId) return null;
+  // The query API lives on the app host (e.g. us.posthog.com), NOT the ingestion
+  // host (us.i.posthog.com). Allow an explicit override, else derive it.
+  let host = process.env.POSTHOG_API_HOST
+    || (process.env.VITE_POSTHOG_HOST || '').replace('.i.posthog.com', '.posthog.com')
+    || 'https://us.posthog.com';
+  host = host.replace(/\/+$/, '');
+  return { personalKey, projectId, host };
+}
+
+async function posthogQuery(cfg, hogql) {
+  const res = await fetch(`${cfg.host}/api/projects/${cfg.projectId}/query/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${cfg.personalKey}`,
+    },
+    body: JSON.stringify({ query: { kind: 'HogQLQuery', query: hogql } }),
+  });
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`PostHog API ${res.status}: ${txt.slice(0, 200)}`);
+  }
+  return res.json();
+}
+
+async function handleFetchUsage() {
+  const cfg = getPostHogConfig();
+  if (!cfg) return { data: { configured: false } };
+
+  const usageSQL = `
+    SELECT
+      uniqIf(person_id, timestamp >= now() - INTERVAL 1 DAY)  AS dau,
+      uniqIf(person_id, timestamp >= now() - INTERVAL 7 DAY)  AS wau,
+      uniqIf(person_id, timestamp >= now() - INTERVAL 30 DAY) AS mau,
+      countIf(timestamp >= now() - INTERVAL 1 DAY)  AS opens24h,
+      countIf(timestamp >= now() - INTERVAL 7 DAY)  AS opens7d,
+      countIf(timestamp >= now() - INTERVAL 30 DAY) AS opens30d
+    FROM events
+    WHERE event = '$pageview' AND timestamp >= now() - INTERVAL 30 DAY`;
+
+  // Session duration computed from event timestamps — robust to schema specifics.
+  const durationSQL = `
+    SELECT round(avg(dur)) AS avg_seconds, round(median(dur)) AS median_seconds, count() AS sessions
+    FROM (
+      SELECT dateDiff('second', min(timestamp), max(timestamp)) AS dur
+      FROM events
+      WHERE timestamp >= now() - INTERVAL 30 DAY AND notEmpty(properties.$session_id)
+      GROUP BY properties.$session_id
+    )`;
+
+  try {
+    const [usage, duration] = await Promise.all([
+      posthogQuery(cfg, usageSQL),
+      posthogQuery(cfg, durationSQL),
+    ]);
+    const u = usage.results?.[0] || [];
+    const d = duration.results?.[0] || [];
+    return {
+      data: {
+        configured: true,
+        dau: Number(u[0]) || 0,
+        wau: Number(u[1]) || 0,
+        mau: Number(u[2]) || 0,
+        opens24h: Number(u[3]) || 0,
+        opens7d: Number(u[4]) || 0,
+        opens30d: Number(u[5]) || 0,
+        avgSessionSeconds: Number(d[0]) || 0,
+        medianSessionSeconds: Number(d[1]) || 0,
+        totalSessions: Number(d[2]) || 0,
+      },
+    };
+  } catch (err) {
+    console.error('[admin] PostHog query failed:', err.message);
+    return { data: { configured: true, error: 'PostHog query failed' } };
+  }
+}
+
 // ─── Main handler ───
 
 export default async function handler(req, res) {
@@ -244,6 +395,12 @@ export default async function handler(req, res) {
         break;
       case 'fetchSettings':
         result = await handleFetchSettings(supabase);
+        break;
+      case 'fetchDemographics':
+        result = await handleFetchDemographics(supabase);
+        break;
+      case 'fetchUsage':
+        result = await handleFetchUsage();
         break;
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });

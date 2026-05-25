@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium, fetchAllAppSettings, updateAppSetting } from '../lib/adminApi';
+import { fetchAllProfiles, fetchAdminStats, fetchPaywallSetting, updatePaywallSetting, toggleUserPremium, fetchAllAppSettings, updateAppSetting, fetchDemographics, fetchUsageStats } from '../lib/adminApi';
 import { isLightMode, getTheme } from '../lib/theme';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
@@ -51,7 +51,51 @@ function formatTime(t) {
   return `${h}:${m}`;
 }
 
-function OverviewTab({ stats, paywallEnabled, setPaywallEnabled, T }) {
+function formatDuration(s) {
+  if (!s || s < 0) return '0s';
+  const m = Math.floor(s / 60);
+  const sec = Math.round(s % 60);
+  return m === 0 ? `${sec}s` : `${m}m ${sec}s`;
+}
+
+function MetricCell({ label, value, color, T }) {
+  return (
+    <div style={{ background: T.bg, borderRadius: 8, padding: '12px 16px' }}>
+      <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 6 }}>{label}</div>
+      <div style={{ ...F, fontSize: 18, fontWeight: 700, color }}>{value}</div>
+    </div>
+  );
+}
+
+function BarRow({ label, count, max, color, T }) {
+  const pct = max > 0 ? (count / max) * 100 : 0;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 }}>
+      <div style={{ ...F, fontSize: 9, color: T.tm, width: 48, flexShrink: 0, textAlign: 'right' }}>{label}</div>
+      <div style={{ flex: 1, height: 16, background: T.bg, borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 4, transition: 'width .3s', minWidth: count > 0 ? 3 : 0 }} />
+      </div>
+      <div style={{ ...F, fontSize: 9, color: T.tx, width: 36, flexShrink: 0 }}>{count}</div>
+    </div>
+  );
+}
+
+function TrendBars({ data, color, T }) {
+  const max = Math.max(1, ...data.map(d => d.count));
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 56 }}>
+      {data.map(d => (
+        <div
+          key={d.date}
+          title={`${d.date}: ${d.count}`}
+          style={{ flex: 1, height: `${(d.count / max) * 100}%`, minHeight: d.count > 0 ? 3 : 1, background: d.count > 0 ? color : T.d, borderRadius: 2, transition: 'height .3s' }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function OverviewTab({ stats, demographics, usage, paywallEnabled, setPaywallEnabled, T }) {
   const [paywallLoading, setPaywallLoading] = useState(false);
 
   return (
@@ -102,6 +146,101 @@ function OverviewTab({ stats, paywallEnabled, setPaywallEnabled, T }) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ─── App Usage (PostHog) ─── */}
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: 20, marginTop: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <div style={{ ...F, fontSize: 9, color: '#A070D0', letterSpacing: 1.2 }}>APP USAGE</div>
+          <div style={{ ...F, fontSize: 7, color: T.td, letterSpacing: 1, background: T.bg, padding: '2px 7px', borderRadius: 3 }}>POSTHOG · LAST 30 DAYS</div>
+        </div>
+
+        {!usage ? (
+          <div style={{ ...F, fontSize: 10, color: T.td }}>Loading usage data…</div>
+        ) : usage.configured === false ? (
+          <div style={{ ...F, fontSize: 10, color: T.td, lineHeight: 1.6 }}>
+            PostHog analytics not connected. Set <span style={{ color: T.tm }}>POSTHOG_PERSONAL_API_KEY</span> and <span style={{ color: T.tm }}>POSTHOG_PROJECT_ID</span> in your environment to see app-open and session metrics here.
+          </div>
+        ) : usage.error ? (
+          <div style={{ ...F, fontSize: 10, color: '#F04060', lineHeight: 1.6 }}>
+            Could not load PostHog data ({usage.error}). Check the personal API key and project ID.
+          </div>
+        ) : (
+          <>
+            <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 8 }}>ACTIVE USERS</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12, marginBottom: 16 }}>
+              <MetricCell label="ACTIVE TODAY" value={usage.dau} color="#00D88A" T={T} />
+              <MetricCell label="ACTIVE · 7 DAYS" value={usage.wau} color="#5BA8D4" T={T} />
+              <MetricCell label="ACTIVE · 30 DAYS" value={usage.mau} color="#A070D0" T={T} />
+            </div>
+            <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 8 }}>APP OPENS & SESSIONS</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+              <MetricCell label="OPENS · 24H" value={usage.opens24h} color="#D8A030" T={T} />
+              <MetricCell label="OPENS · 7 DAYS" value={usage.opens7d} color="#D8A030" T={T} />
+              <MetricCell label="OPENS · 30 DAYS" value={usage.opens30d} color="#D8A030" T={T} />
+              <MetricCell label="AVG TIME ON SITE" value={formatDuration(usage.avgSessionSeconds)} color="#E8A838" T={T} />
+              <MetricCell label="MEDIAN TIME" value={formatDuration(usage.medianSessionSeconds)} color="#E8A838" T={T} />
+              <MetricCell label="SESSIONS · 30D" value={usage.totalSessions} color="#5BA8D4" T={T} />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* ─── Demographics ─── */}
+      <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: 20, marginTop: 20 }}>
+        <div style={{ ...F, fontSize: 9, color: '#5BA8D4', letterSpacing: 1.2, marginBottom: 16 }}>DEMOGRAPHICS</div>
+
+        {!demographics ? (
+          <div style={{ ...F, fontSize: 10, color: T.td }}>Loading demographics…</div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 24 }}>
+            {/* Age distribution */}
+            <div>
+              <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 12 }}>
+                AGE DISTRIBUTION
+                <span style={{ color: T.mu, marginLeft: 6 }}>({demographics.withBirthData} with birth data)</span>
+              </div>
+              {(() => {
+                const maxAge = Math.max(1, ...demographics.ageBuckets.map(b => b.count));
+                return demographics.ageBuckets.map(b => (
+                  <BarRow key={b.label} label={b.label} count={b.count} max={maxAge} color="#5BA8D4" T={T} />
+                ));
+              })()}
+            </div>
+
+            {/* Premium vs Free */}
+            <div>
+              <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 12 }}>PREMIUM VS FREE</div>
+              {(() => {
+                const maxPF = Math.max(1, demographics.premium, demographics.free);
+                return (
+                  <>
+                    <BarRow label="PRO" count={demographics.premium} max={maxPF} color="#E8A838" T={T} />
+                    <BarRow label="FREE" count={demographics.free} max={maxPF} color="#5A7088" T={T} />
+                  </>
+                );
+              })()}
+              <div style={{ ...F, fontSize: 9, color: T.td, marginTop: 10 }}>
+                {demographics.total > 0 ? ((demographics.premium / demographics.total) * 100).toFixed(1) : 0}% premium of {demographics.total} users
+              </div>
+            </div>
+
+            {/* Signup trend */}
+            <div>
+              <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 12 }}>
+                NEW SIGNUPS
+                <span style={{ color: T.mu, marginLeft: 6 }}>
+                  (last 30 days · {demographics.signupTrend.reduce((s, d) => s + d.count, 0)} total)
+                </span>
+              </div>
+              <TrendBars data={demographics.signupTrend} color="#00D88A" T={T} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                <span style={{ ...F, fontSize: 7, color: T.mu }}>30d ago</span>
+                <span style={{ ...F, fontSize: 7, color: T.mu }}>today</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -392,6 +531,8 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const [stats, setStats] = useState(null);
+  const [demographics, setDemographics] = useState(null);
+  const [usage, setUsage] = useState(null);
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState('');
@@ -426,6 +567,12 @@ export default function AdminPage() {
   }, [search, sortField, sortAsc, page]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Demographics & PostHog usage don't depend on search/sort/page — fetch once.
+  useEffect(() => {
+    fetchDemographics().then(setDemographics).catch(() => setDemographics(null));
+    fetchUsageStats().then(setUsage).catch(() => setUsage(null));
+  }, []);
 
   const [searchInput, setSearchInput] = useState('');
   useEffect(() => {
@@ -474,7 +621,7 @@ export default function AdminPage() {
 
       <div style={{ flex: 1, overflow: 'auto', padding: 20, WebkitOverflowScrolling: 'touch' }}>
         {activeTab === 'overview' && (
-          <OverviewTab stats={stats} paywallEnabled={paywallEnabled} setPaywallEnabled={setPaywallEnabled} T={T} />
+          <OverviewTab stats={stats} demographics={demographics} usage={usage} paywallEnabled={paywallEnabled} setPaywallEnabled={setPaywallEnabled} T={T} />
         )}
         {activeTab === 'settings' && (
           <SettingsTab settings={appSettings} onSave={handleSaveSetting} T={T} />
