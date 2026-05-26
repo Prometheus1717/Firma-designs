@@ -203,7 +203,7 @@ async function handleFetchDemographics(supabase) {
   const countQ = () => supabase.from('profiles').select('*', { count: 'exact', head: true });
   const trendSince = new Date(Date.now() - 29 * 86400000).toISOString();
 
-  const [under18, a18, a26, a36, a46, a56, totalRes, premiumRes, recent] = await Promise.all([
+  const [under18, a18, a26, a36, a46, a56, totalRes, premiumRes, recent, ageStatsRes] = await Promise.all([
     countQ().gt('birth_date', c18),
     countQ().lte('birth_date', c18).gt('birth_date', c26),
     countQ().lte('birth_date', c26).gt('birth_date', c36),
@@ -213,6 +213,7 @@ async function handleFetchDemographics(supabase) {
     countQ(),
     countQ().eq('is_premium', true),
     supabase.from('profiles').select('created_at').gte('created_at', trendSince),
+    supabase.rpc('get_age_stats'),
   ]);
 
   const ageBuckets = [
@@ -238,9 +239,19 @@ async function handleFetchDemographics(supabase) {
   });
   const signupTrend = Object.entries(trendMap).map(([date, count]) => ({ date, count }));
 
+  const as = ageStatsRes.data || {};
+  const ageStats = {
+    avg: as.avg != null ? Number(as.avg) : null,
+    median: as.median != null ? Number(as.median) : null,
+    min: as.min != null ? Number(as.min) : null,
+    max: as.max != null ? Number(as.max) : null,
+    count: as.count != null ? Number(as.count) : 0,
+  };
+
   return {
     data: {
       ageBuckets,
+      ageStats,
       withBirthData: ageBuckets.reduce((s, b) => s + b.count, 0),
       total,
       premium,

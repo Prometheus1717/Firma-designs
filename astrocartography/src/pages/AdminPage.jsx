@@ -200,6 +200,21 @@ function OverviewTab({ stats, demographics, usage, paywallEnabled, setPaywallEna
                 AGE DISTRIBUTION
                 <span style={{ color: T.mu, marginLeft: 6 }}>({demographics.withBirthData} with birth data)</span>
               </div>
+              {demographics.ageStats && demographics.ageStats.count > 0 && (
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                  {[
+                    ['AVG AGE', demographics.ageStats.avg],
+                    ['MEDIAN', demographics.ageStats.median],
+                    ['YOUNGEST', demographics.ageStats.min],
+                    ['OLDEST', demographics.ageStats.max],
+                  ].map(([label, val]) => (
+                    <div key={label} style={{ background: T.bg, borderRadius: 6, padding: '8px 12px', flex: 1, minWidth: 56 }}>
+                      <div style={{ ...F, fontSize: 7, color: T.td, letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+                      <div style={{ ...F, fontSize: 15, fontWeight: 700, color: '#5BA8D4' }}>{val ?? '—'}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
               {(() => {
                 const maxAge = Math.max(1, ...demographics.ageBuckets.map(b => b.count));
                 return demographics.ageBuckets.map(b => (
