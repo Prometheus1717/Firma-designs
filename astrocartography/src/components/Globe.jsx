@@ -87,6 +87,26 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
+// Normalize a wheel event's deltaY to approximate pixels across browsers/devices.
+// deltaMode: 0 = pixels, 1 = lines, 2 = pages. High-resolution trackpads on newer
+// Macs emit many small pixel deltas (plus momentum), while legacy mice emit a few
+// large line deltas. Clamping each event bounds momentum/oversized spikes so one
+// physical scroll produces a consistent zoom step on every device.
+function normalizeWheelDelta(e) {
+  let dy = e.deltaY;
+  if (e.deltaMode === 1) dy *= 16;
+  else if (e.deltaMode === 2) dy *= (typeof window !== 'undefined' ? window.innerHeight : 800);
+  return Math.max(-50, Math.min(50, dy));
+}
+
+// Convert a wheel event to a multiplicative zoom factor. Exponential mapping makes
+// the cumulative zoom over a gesture depend on total scroll distance rather than the
+// number of events fired, so 120Hz/ProMotion displays zoom the same as 60Hz ones.
+const WHEEL_ZOOM_SENSITIVITY = 0.0018;
+function wheelZoomFactor(e) {
+  return Math.exp(-normalizeWheelDelta(e) * WHEEL_ZOOM_SENSITIVITY);
+}
+
 export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
   const canvasRef = useRef(null);
   const lightRef = useRef(lightMode);
@@ -625,11 +645,11 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     };
     const wh = e => {
       e.preventDefault();
+      const factor = wheelZoomFactor(e);
       if (flatRef.current) {
         const rect = c.getBoundingClientRect();
         const mx = e.clientX - rect.left - rect.width / 2 - s.panX;
         const my = e.clientY - rect.top - rect.height / 2 - s.panY;
-        const factor = e.deltaY < 0 ? 1.1 : 0.91;
         const newZoom = Math.max(1, Math.min(25, s.zoom * factor));
         // Zoom toward mouse position
         s.panX -= mx * (newZoom / s.zoom - 1);
@@ -637,7 +657,7 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
         s.zoom = newZoom;
         clampPan();
       } else {
-        s.scale = Math.max(80, Math.min(8000, s.scale * (e.deltaY < 0 ? 1.1 : .91)));
+        s.scale = Math.max(80, Math.min(8000, s.scale * factor));
         s.auto = false;
         clearTimeout(s._z);
         const gf = c && s.scale >= Math.min(c.parentElement.clientWidth, c.parentElement.clientHeight) * 1.5;
