@@ -422,14 +422,19 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
 
   useEffect(() => {
     const s = S.current;
+
+    // Efficient rendering: only run RAF when needed, stop when idle.
+    // Declared before fetchWorldGeo because a cached world-atlas resolves its
+    // callback synchronously, which calls scheduleRedraw() — these must already
+    // be initialized to avoid a temporal-dead-zone ReferenceError.
+    let loopRunning = false;
+    let lastLoopTs = 0;
+
     if (!s.fd) {
       s.fd = true;
       fetchWorldGeo((features) => { s.wg = features; scheduleRedraw(); });
     }
 
-    // Efficient rendering: only run RAF when needed, stop when idle
-    let loopRunning = false;
-    let lastLoopTs = 0;
     function loop(ts) {
       const isFlat = flatRef.current;
       // Delta time for smooth time-based rotation (avoids jitter from variable frame rates)
