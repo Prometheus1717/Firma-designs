@@ -24,6 +24,14 @@ const DEMO = {
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
+// Chrome leaves less vertical room than Safari (taller browser UI), so the globe
+// gets clipped there. Shrink the bottom panel to ~4 city rows instead of 5 — but
+// only in Chrome. Safari has enough room and keeps the full height.
+const IS_CHROME = typeof navigator !== 'undefined' && (
+  navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ??
+  (/Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent))
+);
+
 // ── Translatable lookups ──
 const tPlanet = (name, lang) => t(`p${name}`, lang);
 const tSign = (name, lang) => t(`s${name}`, lang);
@@ -2073,7 +2081,7 @@ export default function Dashboard({ demo = false }) {
       </div>
 
       {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 160 : 240, maxHeight: mob ? 160 : 240, background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+      <div style={{ minHeight: mob ? 160 : (IS_CHROME ? 202 : 240), maxHeight: mob ? 160 : (IS_CHROME ? 202 : 240), background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}

@@ -189,7 +189,15 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
       ctx.strokeStyle = border; ctx.lineWidth = lt ? .6 : .5;
       flatFeatures.forEach(f => { ctx.beginPath(); path(f); ctx.stroke(); });
     } else {
-      // Globe — Orthographic projection
+      // Globe — Orthographic projection.
+      // Fit the sphere to the visible canvas so the whole globe shows regardless of
+      // how tall the browser UI is. The initial scale is derived from window height,
+      // but the canvas is much shorter (bottom panel), so on tall-chrome browsers
+      // like Chrome the globe was clipped top and bottom. Refit to actual canvas.
+      if (!isMobile && !s._fitted) {
+        const fit = Math.min(W, H) / 2 * 0.95;
+        s.scale = fit; s.baseScale = fit; s._fitted = true;
+      }
       proj = geoOrthographic().scale(s.scale).translate([cx, cy]).rotate(s.rot).clipAngle(90);
       path = geoPath(proj, ctx);
       center = [-s.rot[0], -s.rot[1]];
@@ -704,7 +712,13 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     c.addEventListener('mousedown', dn, { passive: true }); window.addEventListener('mousemove', mvThrottled, { passive: true }); window.addEventListener('mouseup', up, { passive: true });
     c.addEventListener('touchstart', dn, { passive: false }); c.addEventListener('touchmove', mv, { passive: false }); c.addEventListener('touchend', up, { passive: true });
     c.addEventListener('wheel', wh, { passive: false }); c.addEventListener('dblclick', dbl, { passive: true }); c.addEventListener('click', click, { passive: true });
-    const rs = () => { scheduleRedraw(); }; window.addEventListener('resize', rs);
+    const rs = () => {
+      // Re-fit the globe on resize, but only when the user is at the default zoom —
+      // don't reset their view if they've zoomed in.
+      if (!isMobile && Math.abs(s.scale - s.baseScale) < 0.5) s._fitted = false;
+      scheduleRedraw();
+    };
+    window.addEventListener('resize', rs);
 
     // Pause RAF loop when tab is hidden OR window loses focus (user switched
     // to another app / window). Without the focus check, the laptop keeps
