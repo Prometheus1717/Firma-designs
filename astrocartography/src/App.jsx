@@ -176,10 +176,15 @@ function DemoOrDashboard() {
   return (
     <>
       <Dashboard demo />
-      <BirthDataModal onComplete={() => {
-        dismissBirthDataModal();
-        if (user) loadProfile(user.id);
-      }} onDismiss={dismissBirthDataModal} />
+      {showBirthDataModal && (
+        <BirthDataModal
+          onComplete={() => {
+            dismissBirthDataModal();
+            if (user) loadProfile(user.id);
+          }}
+          onDismiss={dismissBirthDataModal}
+        />
+      )}
     </>
   );
 }

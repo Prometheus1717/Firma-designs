@@ -33,6 +33,31 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
     return () => clearTimeout(t);
   }, []);
 
+  // Closing the modal: fade out, then notify the parent. Always uses onDismiss
+  // if provided (we never sign the user out from a close gesture — the explicit
+  // "Sign out" link still does that).
+  const handleClose = () => {
+    if (submitting) return;
+    setVisible(false);
+    setTimeout(() => { (onDismiss || signOut)(); }, 200);
+  };
+
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') handleClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitting]);
+
+  // Lock body scroll while modal is open so the page underneath doesn't
+  // jitter when the user tries to interact with the backdrop.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   useEffect(() => {
     if (selectedCity) return;
     if (citySearch.length < 2) { setResults([]); return; }
@@ -115,18 +140,26 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 9999,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: light ? 'rgba(242,240,237,0.85)' : 'rgba(5, 8, 12, 0.85)',
-      backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-      opacity: visible ? 1 : 0,
-      transition: 'opacity 0.4s ease',
-      padding: 16,
-      overflowY: 'auto',
-    }}>
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="nn-birth-modal-title"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 9999,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: light ? 'rgba(242,240,237,0.85)' : 'rgba(5, 8, 12, 0.85)',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+        padding: 16,
+        overflowY: 'auto',
+        cursor: 'pointer',
+      }}
+    >
       {/* Modal Card */}
-      <div style={{
+      <div onMouseDown={(e) => e.stopPropagation()} style={{
+        cursor: 'default',
         width: '100%', maxWidth: 480,
         background: T.p,
         border: `1px solid ${T.bd}`,
@@ -146,8 +179,24 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
         }} />
 
         {/* Close button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 16px 0' }}>
-          <span onClick={() => { if (onDismiss) onDismiss(); else signOut(); }} style={{ ...F, fontSize: 13, color: T.td, cursor: 'pointer', padding: '4px 8px', borderRadius: 4 }}>✕</span>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 12px 0' }}>
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label={t('close', lang) || 'Close'}
+            style={{
+              width: 36, height: 36, borderRadius: 8,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent', border: `1px solid ${T.bd}`,
+              color: T.tm, cursor: 'pointer', padding: 0,
+              ...F, fontSize: 16, lineHeight: 1,
+              transition: 'background 0.15s, color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = T.c; e.currentTarget.style.color = T.tx; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = T.tm; }}
+          >
+            &#10005;
+          </button>
         </div>
 
         <div style={{ padding: '0 28px 32px' }}>
@@ -167,7 +216,7 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
                 {t('emailVerified', lang)}
               </div>
 
-              <h2 style={{
+              <h2 id="nn-birth-modal-title" style={{
                 ...F, fontSize: 22, fontWeight: 700, color: T.tx,
                 margin: '0 0 12px', lineHeight: 1.3,
               }}>

@@ -56,6 +56,20 @@ try { localStorage.removeItem(PROFILE_CACHE_KEY); } catch {}
 // with useRef().current pattern inside component body
 const _initialCachedProfile = getCachedProfile();
 
+// Dismissal flag for the birth-data prompt. Persists for the browser session
+// only — once a returning user dismisses, we don't re-pop the modal on every
+// tab refocus / route change within the same session.
+const BIRTH_MODAL_DISMISSED_KEY = 'nn_birth_modal_dismissed';
+function isBirthModalDismissed() {
+  try { return sessionStorage.getItem(BIRTH_MODAL_DISMISSED_KEY) === '1'; } catch { return false; }
+}
+function setBirthModalDismissed(v) {
+  try {
+    if (v) sessionStorage.setItem(BIRTH_MODAL_DISMISSED_KEY, '1');
+    else sessionStorage.removeItem(BIRTH_MODAL_DISMISSED_KEY);
+  } catch {}
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(() => _initialCachedProfile);
@@ -124,11 +138,6 @@ export function AuthProvider({ children }) {
             clearTimeout(authTimeout);
             clearTimeout(absoluteTimeout);
             markReady();
-            // Detect newly verified user (came from email link, no birth data yet)
-            // Show the birth data modal instead of redirecting to /birth-data page
-            if (profileData && !profileData.birth_date && !profileData.birth_time) {
-              setShowBirthDataModal(true);
-            }
           }
         }
       } else {
@@ -149,7 +158,18 @@ export function AuthProvider({ children }) {
   const isPremium = profile?.is_premium === true;
   const loading = !ready;
 
+  // Drive the birth-data modal off the actual profile state, but respect a
+  // session-scoped dismissal so returning users aren't re-prompted on every
+  // tab refocus / route change.
+  useEffect(() => {
+    if (!user || !profile) { setShowBirthDataModal(false); return; }
+    if (hasBirthData) { setShowBirthDataModal(false); return; }
+    if (isBirthModalDismissed()) { setShowBirthDataModal(false); return; }
+    setShowBirthDataModal(true);
+  }, [user, profile, hasBirthData]);
+
   function dismissBirthDataModal() {
+    setBirthModalDismissed(true);
     setShowBirthDataModal(false);
   }
 
@@ -161,18 +181,19 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
       if (data?.user) {
+        setBirthModalDismissed(false);
         await supabase.from('profiles').upsert({
           id: data.user.id,
           email: data.user.email,
           updated_at: new Date().toISOString(),
         });
-        // If auto-confirmed (session exists), load profile and show birth data modal
+        // If auto-confirmed (session exists), load profile — the modal will be
+        // surfaced by the effect that watches profile state.
         if (data.session) {
           setUser(data.user);
           const profileData = await loadProfile(data.user.id);
           setCachedProfile(profileData);
           setReady(true);
-          setShowBirthDataModal(true);
         }
         sendWelcomeEmail(data.user.email).catch(() => {});
         identifyUser(data.user.id, { email: data.user.email });
@@ -191,6 +212,7 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       if (data?.user) {
+        setBirthModalDismissed(false);
         setUser(data.user);
         const profileData = await loadProfile(data.user.id);
         setCachedProfile(profileData);
@@ -209,6 +231,7 @@ export function AuthProvider({ children }) {
     resetUser();
     fetchIdRef.current++;
     setCachedProfile(null);
+    setBirthModalDismissed(false);
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
