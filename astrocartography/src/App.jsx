@@ -172,7 +172,12 @@ function DemoOrDashboard() {
   const { user, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
-  if (hasBirthData) return <Navigate to="/dashboard" replace />;
+  // Logged-in user with birth data: render the real Dashboard *inline* on `/`
+  // instead of <Navigate to="/dashboard">. Navigating forced an extra route
+  // unmount/remount, which tore down the Globe (refetching world-atlas) and
+  // produced a visible flash + multiple LoadingScreens on every revisit.
+  // The /dashboard route still exists for direct deep links.
+  if (hasBirthData) return <Dashboard />;
   return (
     <>
       <Dashboard demo />
@@ -197,12 +202,26 @@ function PageViewTracker() {
   return null;
 }
 
-try { sessionStorage.removeItem('nn_err_reloads'); } catch {}
+function ErrorReloadCleanup() {
+  // Clear the reload-attempt counter only AFTER a successful first render
+  // (we got past the boundary). Doing this at module load — as we used to —
+  // reset the counter on every reload triggered by the boundary, so an
+  // intermittent boot error could trigger an unbounded reload chain instead
+  // of the intended 2-attempt cap.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      try { sessionStorage.removeItem('nn_err_reloads'); } catch {}
+    }, 3000);
+    return () => clearTimeout(id);
+  }, []);
+  return null;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
       <ErrorBoundaryWithLocation>
+        <ErrorReloadCleanup />
         <PageViewTracker />
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>

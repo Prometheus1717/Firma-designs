@@ -78,6 +78,17 @@ export function AuthProvider({ children }) {
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
 
+  // Shallow structural equality for profile rows — used to suppress no-op
+  // state updates that would otherwise cascade into Dashboard re-renders
+  // and globe re-paints on every TOKEN_REFRESHED event.
+  const profileFieldsEqual = (a, b) => {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    const keys = ['id','email','display_name','birth_date','birth_time','birth_lat','birth_lng','birth_city','is_admin','is_premium','updated_at'];
+    for (const k of keys) if (a[k] !== b[k]) return false;
+    return true;
+  };
+
   const loadProfile = useCallback(async (userId) => {
     const id = ++fetchIdRef.current;
     const { data, error } = await supabase
@@ -87,7 +98,10 @@ export function AuthProvider({ children }) {
       .single();
     if (error) console.error('[loadProfile]', error.message);
     if (id === fetchIdRef.current) {
-      setProfile(data);
+      // Only update React state if the row actually changed — keeps profile
+      // object identity stable across token refreshes so Dashboard's effects
+      // and the globe don't re-fire for nothing.
+      setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
       setCachedProfile(data);
     }
     return data;
@@ -111,7 +125,11 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       gotAuthRef.done = true;
       const u = session?.user ?? null;
-      setUser(u);
+      // Keep user identity stable across TOKEN_REFRESHED / SIGNED_IN replays
+      // for the same user — Supabase hands us a fresh object every time, but
+      // React still re-renders the whole tree on `setUser` because identity
+      // changed. Suppress when the underlying user id hasn't moved.
+      setUser(prev => (prev?.id === u?.id ? prev : u));
 
       // PASSWORD_RECOVERY: Supabase logged the user in via reset link.
       // Redirect to /reset-password so they can actually change their password
@@ -132,7 +150,11 @@ export function AuthProvider({ children }) {
           identifyUser(u.id, { email: u.email });
           if (hasCached) {
             markReady();
-            loadProfile(u.id);
+            // Skip the background profile refetch on TOKEN_REFRESHED — the
+            // token rotates every hour but the row hasn't changed. Without
+            // this guard every tab-refocus produced a profile setState which
+            // re-fired Dashboard's chart effect and re-painted the globe.
+            if (event !== 'TOKEN_REFRESHED') loadProfile(u.id);
           } else {
             const profileData = await loadProfile(u.id);
             clearTimeout(authTimeout);
