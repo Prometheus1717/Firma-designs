@@ -91,18 +91,33 @@ export function AuthProvider({ children }) {
 
   const loadProfile = useCallback(async (userId) => {
     const id = ++fetchIdRef.current;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    // Retry once on AbortError — that's the symptom of Supabase's auth-lock
+    // contention when the same site is open in multiple tabs (or a token
+    // refresh races with our profile fetch). Without this retry, the user
+    // ended up with profile=null forever and was trapped in a loading state
+    // they couldn't escape from.
+    let data = null, error = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const res = await supabase.from('profiles').select('*').eq('id', userId).single();
+      data = res.data;
+      error = res.error;
+      if (!error) break;
+      const msg = error.message || '';
+      const isLockAbort = /AbortError|Lock broken|stolen|aborted/i.test(msg);
+      if (!isLockAbort) break;
+      // Brief jittered backoff so we don't slam into the same lock immediately.
+      await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+    }
     if (error) console.error('[loadProfile]', error.message);
     if (id === fetchIdRef.current) {
       // Only update React state if the row actually changed — keeps profile
       // object identity stable across token refreshes so Dashboard's effects
-      // and the globe don't re-fire for nothing.
-      setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
-      setCachedProfile(data);
+      // and the globe don't re-fire for nothing. Also: if the fetch failed
+      // (data === null), don't wipe an existing cached profile.
+      if (data) {
+        setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
+        setCachedProfile(data);
+      }
     }
     return data;
   }, []);
@@ -180,15 +195,20 @@ export function AuthProvider({ children }) {
   const isPremium = profile?.is_premium === true;
   const loading = !ready;
 
-  // Drive the birth-data modal off the actual profile state, but respect a
-  // session-scoped dismissal so returning users aren't re-prompted on every
-  // tab refocus / route change.
+  // Drive the birth-data modal off auth state.
+  // Important: we deliberately do NOT require `profile` to be non-null. If the
+  // profile fetch failed (e.g. Supabase auth-lock contention from multiple
+  // tabs returns AbortError), profile stays null but the user is still
+  // authenticated. We must still surface the modal so they can at least sign
+  // out via the modal's "Sign out" link — otherwise Dashboard's loading screen
+  // covers everything and the user has no escape.
   useEffect(() => {
-    if (!user || !profile) { setShowBirthDataModal(false); return; }
+    if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
+    if (!ready) return; // still resolving auth — don't decide yet
     if (isBirthModalDismissed()) { setShowBirthDataModal(false); return; }
     setShowBirthDataModal(true);
-  }, [user, profile, hasBirthData]);
+  }, [user, profile, hasBirthData, ready]);
 
   function dismissBirthDataModal() {
     setBirthModalDismissed(true);
