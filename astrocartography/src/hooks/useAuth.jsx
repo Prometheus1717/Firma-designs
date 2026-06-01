@@ -268,15 +268,37 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Sign-out must never silently fail. The previous version awaited
+  // supabase.auth.signOut() BEFORE clearing local state — when that call
+  // hit Supabase's auth-lock contention (multi-tab / token-refresh race) it
+  // could throw, and the setUser(null) / setProfile(null) lines never ran,
+  // leaving the user "still signed in" in React state with no way out.
+  // New flow: wipe everything locally first so the UI flips instantly, then
+  // ask Supabase to invalidate the remote session — and tolerate failure.
+  function forceClearSupabaseTokens() {
+    try {
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('sb-'))
+        .forEach(k => localStorage.removeItem(k));
+    } catch {}
+  }
+
   async function signOut() {
     trackEvent('user_signed_out');
     resetUser();
     fetchIdRef.current++;
-    setCachedProfile(null);
-    setBirthModalDismissed(false);
-    await supabase.auth.signOut();
+    // Flip UI immediately — do not wait on the network.
     setUser(null);
     setProfile(null);
+    setCachedProfile(null);
+    setBirthModalDismissed(false);
+    forceClearSupabaseTokens();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      // Lock contention / network blip — local sign-out already done.
+      console.warn('[signOut] supabase.auth.signOut failed:', err?.message);
+    }
   }
 
   async function deleteAccount() {
@@ -284,13 +306,20 @@ export function AuthProvider({ children }) {
     // (Supabase user deletion requires admin/service role,
     //  so we mark the profile as deleted and sign out)
     if (user) {
-      await supabase.from('profiles').delete().eq('id', user.id);
+      try { await supabase.from('profiles').delete().eq('id', user.id); }
+      catch (err) { console.warn('[deleteAccount] profile delete failed:', err?.message); }
     }
     fetchIdRef.current++;
-    setCachedProfile(null);
-    await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    setCachedProfile(null);
+    setBirthModalDismissed(false);
+    forceClearSupabaseTokens();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('[deleteAccount] signOut failed:', err?.message);
+    }
   }
 
   async function updateDisplayName(newName) {
