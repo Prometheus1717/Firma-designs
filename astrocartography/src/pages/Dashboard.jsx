@@ -874,7 +874,19 @@ export default function Dashboard({ demo = false }) {
           {!mob && <span ref={clockRef} style={{ ...F, fontSize: 9, color: T.td }} />}
           {demo ? <>
             <span style={{ ...F, fontSize: mob ? 7 : 8, color: T.td, background: T.c, padding: mob ? '2px 5px' : '3px 8px', borderRadius: 3, border: `1px solid ${T.bd}`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: mob ? 90 : 'none' }}>{t('demo', lang)}{mob ? '' : ':'} {DEMO.name}</span>
-            <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
+            {user ? <>
+              {/*
+                Logged-in user viewing demo (no birth data yet). The old code
+                showed "SIGN UP" here — but AuthRoute redirects logged-in users
+                away from /auth, so that button ping-ponged them back to /
+                forever. Replace with the two actions they actually need: enter
+                birth data, or sign out so they can use a different account.
+              */}
+              <span onClick={() => { try { sessionStorage.removeItem('nn_birth_modal_dismissed'); } catch {}; window.location.reload(); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('enterBirthDataBtn', lang) || 'Enter birth data'}</span>
+              <span onClick={signOut} title={t('signOut', lang) || 'Sign out'} style={{ ...F, fontSize: mob ? 10 : 11, color: '#F04060', cursor: 'pointer', padding: mob ? '4px 6px' : '4px 10px', borderRadius: 4, border: '1px solid #F0406040', background: '#F0406010', whiteSpace: 'nowrap', flexShrink: 0, lineHeight: 1 }}>⏻</span>
+            </> : (
+              <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
+            )}
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
             <div onClick={() => { closeAllPopups('settings'); setShowSettings(!showSettings); setSettingsTab('profile'); setEditingName(false); setConfirmDelete(false); }} style={{ ...F, fontSize: 9, color: showSettings ? T.ac : T.tm, cursor: 'pointer', background: showSettings ? T.acBg : T.c, padding: '4px 10px', borderRadius: 4, border: `1px solid ${showSettings ? T.acBd : T.bd}`, transition: 'all .2s' }}>
