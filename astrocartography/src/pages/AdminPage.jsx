@@ -67,11 +67,16 @@ function MetricCell({ label, value, color, T }) {
   );
 }
 
-function BarRow({ label, count, max, color, T }) {
+function BarRow({ label, count, max, color, T, labelWidth = 48 }) {
   const pct = max > 0 ? (count / max) * 100 : 0;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 }}>
-      <div style={{ ...F, fontSize: 9, color: T.tm, width: 48, flexShrink: 0, textAlign: 'right' }}>{label}</div>
+      <div
+        title={typeof label === 'string' ? label : undefined}
+        style={{ ...F, fontSize: 9, color: T.tm, width: labelWidth, flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+      >
+        {label}
+      </div>
       <div style={{ flex: 1, height: 16, background: T.bg, borderRadius: 4, overflow: 'hidden' }}>
         <div style={{ width: `${pct}%`, height: '100%', background: color, borderRadius: 4, transition: 'width .3s', minWidth: count > 0 ? 3 : 0 }} />
       </div>
@@ -253,6 +258,41 @@ function OverviewTab({ stats, demographics, usage, paywallEnabled, setPaywallEna
                 <span style={{ ...F, fontSize: 7, color: T.mu }}>30d ago</span>
                 <span style={{ ...F, fontSize: 7, color: T.mu }}>today</span>
               </div>
+            </div>
+
+            {/* Birth-country distribution */}
+            <div>
+              <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 12 }}>
+                BIRTH COUNTRIES
+                <span style={{ color: T.mu, marginLeft: 6 }}>
+                  ({demographics.totalWithCountry || 0} attributed)
+                </span>
+              </div>
+              {(() => {
+                const list = demographics.topCountries || [];
+                if (list.length === 0) {
+                  return <div style={{ ...F, fontSize: 9, color: T.mu }}>No country data yet.</div>;
+                }
+                const maxC = Math.max(1, ...list.map(c => c.count));
+                // Native ISO-2 → country name via Intl.DisplayNames. Avoids
+                // shipping a country-name lookup table; falls back to the code
+                // if the runtime doesn't support it (very old browsers).
+                let nameOf;
+                try {
+                  const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+                  nameOf = (code) => dn.of(code) || code;
+                } catch { nameOf = (code) => code; }
+                // ISO-2 → flag emoji (regional indicator symbols).
+                const flagOf = (code) => /^[A-Z]{2}$/.test(code)
+                  ? String.fromCodePoint(...[...code].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)))
+                  : '·';
+                return list.map(c => {
+                  const label = c.code === 'OTHER'
+                    ? '· OTHER'
+                    : `${flagOf(c.code)} ${nameOf(c.code)}`;
+                  return <BarRow key={c.code} label={label} count={c.count} max={maxC} color="#8068C0" T={T} labelWidth={120} />;
+                });
+              })()}
             </div>
           </div>
         )}

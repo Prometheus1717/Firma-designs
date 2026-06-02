@@ -68,7 +68,8 @@ export async function updateAppSetting(key, value) {
 // ─── Demographics ───
 
 export async function fetchDemographics() {
-  // result is { ageBuckets, withBirthData, total, premium, free, signupTrend }
+  // result is { ageBuckets, ageStats, withBirthData, total, premium, free,
+  //   signupTrend, topCountries: [{code, count}], totalWithCountry }
   return adminFetch('fetchDemographics');
 }
 

@@ -203,7 +203,7 @@ async function handleFetchDemographics(supabase) {
   const countQ = () => supabase.from('profiles').select('*', { count: 'exact', head: true });
   const trendSince = new Date(Date.now() - 29 * 86400000).toISOString();
 
-  const [under18, a18, a26, a36, a46, a56, totalRes, premiumRes, recent, ageStatsRes] = await Promise.all([
+  const [under18, a18, a26, a36, a46, a56, totalRes, premiumRes, recent, ageStatsRes, birthCitiesRes] = await Promise.all([
     countQ().gt('birth_date', c18),
     countQ().lte('birth_date', c18).gt('birth_date', c26),
     countQ().lte('birth_date', c26).gt('birth_date', c36),
@@ -214,6 +214,12 @@ async function handleFetchDemographics(supabase) {
     countQ().eq('is_premium', true),
     supabase.from('profiles').select('created_at').gte('created_at', trendSince),
     supabase.rpc('get_age_stats'),
+    // Birth-country breakdown — pull only the one column for every profile that
+    // has a birth_city. Cheap because birth_city is short text; aggregation is
+    // done in JS to keep the SQL surface small. If profile count ever pushes
+    // past ~50k, swap this for a Postgres view that does the GROUP BY server
+    // side (see SQL in the function below for the equivalent shape).
+    supabase.from('profiles').select('birth_city').not('birth_city', 'is', null).limit(50000),
   ]);
 
   const ageBuckets = [
@@ -248,6 +254,33 @@ async function handleFetchDemographics(supabase) {
     count: as.count != null ? Number(as.count) : 0,
   };
 
+  // Birth-country breakdown.
+  // birth_city is built by BirthDataModal.jsx as "City[, State], ISO2" where
+  // ISO2 is the 2-letter uppercase Nominatim country_code. We pop the last
+  // comma-separated segment and treat anything that isn't a clean ISO-2 as
+  // "OTHER" — keeps the chart readable when a few legacy rows have non-
+  // canonical formatting.
+  const countryCounts = {};
+  (birthCitiesRes.data || []).forEach(({ birth_city }) => {
+    if (!birth_city || typeof birth_city !== 'string') return;
+    const last = birth_city.split(',').pop().trim();
+    const code = /^[A-Z]{2}$/.test(last) ? last : 'OTHER';
+    countryCounts[code] = (countryCounts[code] || 0) + 1;
+  });
+  const sortedCountries = Object.entries(countryCounts)
+    .map(([code, count]) => ({ code, count }))
+    .sort((a, b) => b.count - a.count);
+  // Keep the top 12 and roll everything else into a single "OTHER" so the
+  // chart stays compact even at long-tail scale.
+  const topCountries = sortedCountries.slice(0, 12);
+  const tailCount = sortedCountries.slice(12).reduce((s, c) => s + c.count, 0);
+  if (tailCount > 0) {
+    const existingOther = topCountries.find(c => c.code === 'OTHER');
+    if (existingOther) existingOther.count += tailCount;
+    else topCountries.push({ code: 'OTHER', count: tailCount });
+  }
+  const totalWithCountry = sortedCountries.reduce((s, c) => s + c.count, 0);
+
   return {
     data: {
       ageBuckets,
@@ -257,6 +290,8 @@ async function handleFetchDemographics(supabase) {
       premium,
       free: Math.max(0, total - premium),
       signupTrend,
+      topCountries,           // [{ code: 'DE', count: 42 }, ...] desc
+      totalWithCountry,       // sum of all country-attributed profiles
     },
   };
 }
