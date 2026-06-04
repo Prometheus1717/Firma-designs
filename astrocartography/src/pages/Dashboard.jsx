@@ -244,6 +244,8 @@ export default function Dashboard({ demo = false }) {
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
   const [expandedPlanet, setExpandedPlanet] = useState(null);
   const [showAngleInfo, setShowAngleInfo] = useState(false);
   const [flatMap, setFlatMap] = useState(false);
@@ -1606,9 +1608,26 @@ export default function Dashboard({ demo = false }) {
                         ) : (
                           <div style={{ background: '#F0406010', border: '1px solid #F0406030', borderRadius: 8, padding: 14 }}>
                             <div style={{ ...F, fontSize: 10, color: '#F04060', fontWeight: 600, marginBottom: 10 }}>{t('deleteConfirm', lang)}</div>
+                            {deleteError && (
+                              <div style={{ ...F, fontSize: 9, color: '#F04060', marginBottom: 10, padding: '6px 8px', background: 'rgba(240,64,96,0.12)', borderRadius: 4, lineHeight: 1.5 }}>
+                                {deleteError}
+                              </div>
+                            )}
                             <div style={{ display: 'flex', gap: 10 }}>
-                              <div onClick={() => { deleteAccount(); }} style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: 'pointer', padding: '8px 18px', borderRadius: 6, background: '#F04060', letterSpacing: 0.5 }}>{t('deleteYes', lang)}</div>
-                              <div onClick={() => setConfirmDelete(false)} style={{ ...F, fontSize: 9, color: T.td, cursor: 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}` }}>{t('cancel', lang)}</div>
+                              <div
+                                onClick={async () => {
+                                  if (deletingAccount) return;
+                                  setDeletingAccount(true);
+                                  setDeleteError('');
+                                  try { await deleteAccount(); }
+                                  catch (err) { setDeleteError(err?.message || 'Deletion failed. Please try again.'); }
+                                  finally { setDeletingAccount(false); }
+                                }}
+                                style={{ ...F, fontSize: 9, fontWeight: 600, color: '#fff', cursor: deletingAccount ? 'wait' : 'pointer', padding: '8px 18px', borderRadius: 6, background: deletingAccount ? '#80303A' : '#F04060', letterSpacing: 0.5, opacity: deletingAccount ? 0.7 : 1 }}
+                              >
+                                {deletingAccount ? '...' : t('deleteYes', lang)}
+                              </div>
+                              <div onClick={() => { if (!deletingAccount) { setConfirmDelete(false); setDeleteError(''); } }} style={{ ...F, fontSize: 9, color: T.td, cursor: deletingAccount ? 'not-allowed' : 'pointer', padding: '8px 14px', borderRadius: 6, border: `1px solid ${T.bd}`, opacity: deletingAccount ? 0.5 : 1 }}>{t('cancel', lang)}</div>
                             </div>
                           </div>
                         )}

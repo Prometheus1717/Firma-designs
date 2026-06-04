@@ -111,10 +111,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Only single recipient allowed' });
   }
 
-  // Verify auth — email can only be sent to the authenticated user's own email
+  // Verify auth — email can only be sent to the authenticated user's own email.
+  // Previously the "no auth = pass" branch existed for hypothetical server-to-
+  // server callers (no real caller used it — the Stripe webhook has its own
+  // Resend instance). That left this endpoint as an open relay where anyone
+  // could send phishing mails from info@natalnavigator.com, throttled only by
+  // a per-IP rate limit. Auth is now mandatory.
   const user = await verifyAuth(req);
-  if (user && user.email !== recipient) {
-    // Allow server-to-server calls (webhook) without auth, but if auth present, must match
+  if (!user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  if (user.email !== recipient) {
     return res.status(403).json({ error: 'Can only send emails to your own address' });
   }
 

@@ -31,6 +31,12 @@ export default function AuthPage() {
     setSubmitting(true);
 
     try {
+      if (mode === 'signup' && password.length < 10) {
+        // Belt-and-braces check — the minLength HTML attribute can be tampered
+        // with via devtools. Supabase server-side enforces its own minimum
+        // (configurable in dashboard), but we standardise on 10 client-side.
+        throw new Error(t('passwordTooShort', lang) || 'Password must be at least 10 characters.');
+      }
       if (mode === 'login') {
         await signIn(email, password);
       } else if (mode === 'signup') {
@@ -95,7 +101,7 @@ export default function AuthPage() {
               <input
                 type="password"
                 required
-                minLength={6}
+                minLength={10}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 style={{

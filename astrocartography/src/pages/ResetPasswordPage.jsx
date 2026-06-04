@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
+    if (password.length < 10) { setError('Password must be at least 10 characters.'); return; }
     if (password !== confirm) { setError('Passwords do not match.'); return; }
 
     setSubmitting(true);
@@ -63,18 +63,18 @@ export default function ResetPasswordPage() {
             <input
               type="password"
               required
-              minLength={6}
+              minLength={10}
               value={password}
               onChange={e => setPassword(e.target.value)}
               style={{ width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 16, outline: 'none', boxSizing: 'border-box' }}
-              placeholder="Min. 6 characters"
+              placeholder="Min. 10 characters"
             />
 
             <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>CONFIRM PASSWORD</label>
             <input
               type="password"
               required
-              minLength={6}
+              minLength={10}
               value={confirm}
               onChange={e => setConfirm(e.target.value)}
               style={{ width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 20, outline: 'none', boxSizing: 'border-box' }}

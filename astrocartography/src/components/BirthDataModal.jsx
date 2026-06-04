@@ -103,25 +103,30 @@ export default function BirthDataModal({ onComplete, onDismiss }) {
       const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
       const withTimeout = (promise, ms) => Promise.race([
         promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Check your connection and try again.')), ms)),
+        new Promise((_, reject) => setTimeout(() => reject(new Error(t('saveTimeout', lang) || 'Request timed out. Check your connection and try again.')), ms)),
       ]);
 
-      // Calculate chart synchronously — instant (~200ms)
+      // Calculate chart synchronously — instant (~200ms). Done in parallel with
+      // the DB write below, but the cached chart only persists if save succeeds
+      // (so a failed save can't leave a "ghost" chart cached for a profile that
+      // never actually got created).
       let chartData = null;
       try { chartData = calculateChart(birthInput); } catch {}
-      if (chartData) setCachedChart(birthInput, chartData);
 
-      // Transition to dashboard immediately — don't wait for DB save
-      onComplete?.();
-
-      // Save to DB in background (fire-and-forget)
-      withTimeout(saveBirthData({
+      // AWAIT the save — previously fire-and-forget with silent catch, which
+      // meant a network blip or RLS reject silently dropped the user's data and
+      // they'd see the same modal again next session with no idea why. Now we
+      // surface failures and keep the modal open so the user can retry.
+      await withTimeout(saveBirthData({
         name: name.trim(), date, time,
         city: selectedCity.name,
         lat: selectedCity.lat, lng: selectedCity.lng,
-      }), 15000).catch(() => {});
+      }), 15000);
+
+      if (chartData) setCachedChart(birthInput, chartData);
+      onComplete?.();
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || (t('saveError', lang) || 'Could not save your birth data. Please try again.'));
     } finally {
       setSubmitting(false);
     }

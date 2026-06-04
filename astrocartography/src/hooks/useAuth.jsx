@@ -305,24 +305,42 @@ export function AuthProvider({ children }) {
   }
 
   async function deleteAccount() {
-    // Delete profile row first, then sign out
-    // (Supabase user deletion requires admin/service role,
-    //  so we mark the profile as deleted and sign out)
-    if (user) {
-      try { await supabase.from('profiles').delete().eq('id', user.id); }
-      catch (err) { console.warn('[deleteAccount] profile delete failed:', err?.message); }
+    // Hard-delete via /api/delete-account: the endpoint uses the service-role
+    // key to remove both the profile row AND the auth.users record. Without
+    // that, "deleted" accounts came back to life on next login because the
+    // saveBirthData upsert path re-created the profile row.
+    if (!user) return;
+    let serverError = null;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers = { 'Content-Type': 'application/json' };
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+      const res = await fetch('/api/delete-account', { method: 'POST', headers });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        serverError = body.error || `Deletion failed (HTTP ${res.status})`;
+      }
+    } catch (err) {
+      serverError = err?.message || 'Network error during deletion';
     }
+    if (serverError) {
+      // Don't wipe local state — leave the user signed in so they can retry
+      // and so they know the request didn't succeed. Throw so the UI surfaces
+      // it instead of silently appearing to log them out.
+      throw new Error(serverError);
+    }
+    // Server confirmed deletion — clear everything locally.
+    trackEvent('account_deleted');
+    resetUser();
     fetchIdRef.current++;
     setUser(null);
     setProfile(null);
     setCachedProfile(null);
     setBirthModalDismissed(false);
     forceClearSupabaseTokens();
-    try {
-      await supabase.auth.signOut();
-    } catch (err) {
-      console.warn('[deleteAccount] signOut failed:', err?.message);
-    }
+    try { await supabase.auth.signOut(); } catch {}
   }
 
   async function updateDisplayName(newName) {
