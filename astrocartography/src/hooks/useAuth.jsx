@@ -206,9 +206,12 @@ export function AuthProvider({ children }) {
     if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
     if (!ready) return; // still resolving auth — don't decide yet
+    // Admins never see the birth-data modal: they use the admin dashboard
+    // and shouldn't be prompted to enter chart data they don't need.
+    if (isAdmin) { setShowBirthDataModal(false); return; }
     if (isBirthModalDismissed()) { setShowBirthDataModal(false); return; }
     setShowBirthDataModal(true);
-  }, [user, profile, hasBirthData, ready]);
+  }, [user, profile, hasBirthData, ready, isAdmin]);
 
   function dismissBirthDataModal() {
     setBirthModalDismissed(true);

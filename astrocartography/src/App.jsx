@@ -146,8 +146,13 @@ function ProtectedRoute({ children }) {
 }
 
 function AuthRoute({ children }) {
-  const { user, loading, hasBirthData } = useAuth();
+  const { user, profile, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
+  // Admins go straight to /admin — they don't need a birth chart to use the
+  // admin dashboard, so don't dump them on the demo landing with a forced
+  // BirthDataModal. Without this, signing in as admin lands on "/" showing
+  // the "Enter birth data" CTA instead of the admin tools.
+  if (user && profile?.is_admin) return <Navigate to="/admin" replace />;
   if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/'} replace />;
   return children;
 }
@@ -161,17 +166,21 @@ function AdminRoute({ children }) {
 }
 
 function SmartRedirect() {
-  const { user, loading, hasBirthData } = useAuth();
+  const { user, profile, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/" replace />;
+  if (profile?.is_admin) return <Navigate to="/admin" replace />;
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/" replace />;
 }
 
 function DemoOrDashboard() {
-  const { user, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
+  const { user, profile, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
+  // Admin lands on the admin dashboard, period. Don't render the demo +
+  // BirthDataModal trap for admins who happen not to have a chart on file.
+  if (profile?.is_admin) return <Navigate to="/admin" replace />;
   // Logged-in user with birth data: render the real Dashboard *inline* on `/`
   // instead of <Navigate to="/dashboard">. Navigating forced an extra route
   // unmount/remount, which tore down the Globe (refetching world-atlas) and
