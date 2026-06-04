@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { sendWelcomeEmail } from '../lib/email';
 import { identifyUser, resetUser, trackEvent } from '../lib/posthog';
 
 const AuthContext = createContext(null);
@@ -227,20 +226,26 @@ export function AuthProvider({ children }) {
       if (error) throw error;
       if (data?.user) {
         setBirthModalDismissed(false);
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          email: data.user.email,
-          updated_at: new Date().toISOString(),
-        });
-        // If auto-confirmed (session exists), load profile — the modal will be
-        // surfaced by the effect that watches profile state.
+        // Profile-row creation is handled by the on_auth_user_created Postgres
+        // trigger (handle_new_user) — no need for a client-side upsert that
+        // would fail under RLS when email-confirmation is on and there's no
+        // session yet. Kept as a defensive no-op fallback only when we already
+        // have a session (auto-confirm flows / dev).
         if (data.session) {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            email: data.user.email,
+            updated_at: new Date().toISOString(),
+          });
           setUser(data.user);
           const profileData = await loadProfile(data.user.id);
           setCachedProfile(profileData);
           setReady(true);
         }
-        sendWelcomeEmail(data.user.email).catch(() => {});
+        // No welcome email — Supabase already sends the confirmation email,
+        // and the user explicitly wants only ONE message in the inbox to keep
+        // the flow simple. The branded verify template in
+        // supabase-email-templates.html doubles as the welcome moment.
         identifyUser(data.user.id, { email: data.user.email });
         trackEvent('user_signed_up', { email: data.user.email });
       }
