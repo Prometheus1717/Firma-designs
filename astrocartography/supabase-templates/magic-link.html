@@ -1,0 +1,62 @@
+<!--
+  =====================================================================
+  PASTE INTO: Supabase Dashboard → Authentication → Email Templates
+              → Tab "Magic Link"
+  SUBJECT:    Your NatalNavigator sign-in link
+  Note:       Only sent if passwordless sign-in is enabled. Currently
+              unused by the app — branded so it's safe if you flip it on.
+  =====================================================================
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Your NatalNavigator sign-in link</title>
+</head>
+<body style="margin:0;padding:0;width:100%;background-color:#0A1018;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#0A1018;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="max-width:560px;width:100%;">
+        <tr><td align="center" style="padding-bottom:32px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="font-family:'Courier New',Courier,monospace;font-size:22px;font-weight:700;color:#00D88A;letter-spacing:6px;line-height:1.4;">NATAL&nbsp;&nbsp;NAVIGATOR</td></tr>
+            <tr><td align="center" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#5A7088;letter-spacing:3px;padding-top:6px;line-height:1.4;">YOUR PERSONAL ASTROCARTOGRAPHY MAP</td></tr>
+          </table>
+        </td></tr>
+        <tr><td style="background-color:#0D1520;border:1px solid #1A2840;border-radius:12px;padding:40px 32px;" bgcolor="#0D1520">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr><td align="center" style="padding-bottom:20px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td align="center" width="64" height="64" style="background-color:#111D2B;border-radius:50%;font-size:28px;line-height:64px;text-align:center;" bgcolor="#111D2B">&#129668;</td>
+              </tr></table>
+            </td></tr>
+            <tr><td align="center" style="font-family:'Courier New',Courier,monospace;font-size:20px;font-weight:700;color:#D0DDE8;padding-bottom:8px;line-height:1.3;">Your Sign-In Link</td></tr>
+            <tr><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#5A7088;padding-bottom:24px;line-height:1.5;">No password needed</td></tr>
+            <tr><td style="padding-bottom:24px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="border-top:1px solid #1A2840;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
+            <tr><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#8A9BB0;line-height:1.7;padding-bottom:32px;">Click the button below to sign in to your NatalNavigator account.</td></tr>
+            <tr><td align="center" style="padding-bottom:32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
+                <td align="center" bgcolor="#00D88A" style="background-color:#00D88A;border-radius:8px;mso-padding-alt:16px 40px;">
+                  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ .ConfirmationURL }}" style="height:52px;v-text-anchor:middle;width:240px;" arcsize="15%" stroke="f" fillcolor="#00D88A"><w:anchorlock/><center style="color:#0A1018;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:2px;">SIGN IN</center></v:roundrect><![endif]-->
+                  <!--[if !mso]><!--><a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;background-color:#00D88A;color:#0A1018;font-family:'Courier New',Courier,monospace;font-size:14px;font-weight:700;letter-spacing:2px;text-decoration:none;padding:16px 40px;border-radius:8px;line-height:1.2;">SIGN IN</a><!--<![endif]-->
+                </td>
+              </tr></table>
+            </td></tr>
+            <tr><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#3A5068;line-height:1.5;padding-bottom:24px;word-break:break-all;">Button not working? Copy and paste this link:<br /><a href="{{ .ConfirmationURL }}" style="color:#5A7088;text-decoration:underline;">{{ .ConfirmationURL }}</a></td></tr>
+            <tr><td style="padding-bottom:20px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="border-top:1px solid #1A2840;font-size:0;line-height:0;">&nbsp;</td></tr></table></td></tr>
+            <tr><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#5A7088;line-height:1.5;">This link expires in 1 hour and works only once.<br />If you did not request a sign-in link, you can safely ignore this email.</td></tr>
+          </table>
+        </td></tr>
+        <tr><td align="center" style="padding-top:32px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td align="center" style="font-family:'Courier New',Courier,monospace;font-size:10px;color:#2A3A50;line-height:1.4;">NATAL NAVIGATOR &copy; 2026</td></tr>
+            <tr><td align="center" style="padding-top:8px;"><a href="https://natalnavigator.com" style="font-family:'Courier New',Courier,monospace;font-size:9px;color:#1A2840;text-decoration:none;">natalnavigator.com</a></td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
