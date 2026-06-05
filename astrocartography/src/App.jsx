@@ -145,41 +145,50 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+// All four route guards below MUST defer their is_admin / hasBirthData
+// decision until the profile fetch has actually resolved. The previous
+// implementation evaluated `profile?.is_admin` on the very first render
+// after sign-in or page-load, while loadProfile was still in flight. The
+// nullish chain made admin look like a non-admin → Navigate('/') → demo +
+// BirthDataModal trap, even though the database row was correct. The
+// `profileResolved` flag flips true after the first lookup completes
+// (success or fail) or after a 2.5 s backstop, so guards either wait for
+// the truth or fall through safely.
 function AuthRoute({ children }) {
-  const { user, profile, loading, hasBirthData } = useAuth();
+  const { user, profile, profileResolved, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
-  // Admins go straight to /admin — they don't need a birth chart to use the
-  // admin dashboard, so don't dump them on the demo landing with a forced
-  // BirthDataModal. Without this, signing in as admin lands on "/" showing
-  // the "Enter birth data" CTA instead of the admin tools.
+  if (user && !profile && !profileResolved) return <LoadingScreen />;
   if (user && profile?.is_admin) return <Navigate to="/admin" replace />;
   if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/'} replace />;
   return children;
 }
 
 function AdminRoute({ children }) {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, profileResolved, loading } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
+  if (!profile && !profileResolved) return <LoadingScreen />;
   if (!profile?.is_admin) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
 function SmartRedirect() {
-  const { user, profile, loading, hasBirthData } = useAuth();
+  const { user, profile, profileResolved, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/" replace />;
+  if (!profile && !profileResolved) return <LoadingScreen />;
   if (profile?.is_admin) return <Navigate to="/admin" replace />;
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/" replace />;
 }
 
 function DemoOrDashboard() {
-  const { user, profile, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
+  const { user, profile, profileResolved, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
-  // Admin lands on the admin dashboard, period. Don't render the demo +
-  // BirthDataModal trap for admins who happen not to have a chart on file.
+  // Wait for the profile lookup so we don't briefly render demo + modal for
+  // an admin whose profile arrives one render later.
+  if (!profile && !profileResolved) return <LoadingScreen />;
   if (profile?.is_admin) return <Navigate to="/admin" replace />;
   // Logged-in user with birth data: render the real Dashboard *inline* on `/`
   // instead of <Navigate to="/dashboard">. Navigating forced an extra route

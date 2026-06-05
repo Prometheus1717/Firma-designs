@@ -73,6 +73,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(() => _initialCachedProfile);
   const [ready, setReady] = useState(false);
+  // `profileResolved` tracks whether we have a definitive answer about the
+  // profile (loaded successfully OR a load attempt finished without data).
+  // Without this, the route guards in App.jsx made admin/dashboard/demo
+  // decisions while profile was still null on the very first render after
+  // signIn or a fresh page load, dumping admins on the demo + BirthDataModal
+  // even though their profile in Supabase had is_admin=true. Initial value
+  // mirrors whether we have a cached profile at module load — so the warm
+  // path doesn't introduce a LoadingScreen for users who already have data.
+  const [profileResolved, setProfileResolved] = useState(() => !!_initialCachedProfile);
   const [showBirthDataModal, setShowBirthDataModal] = useState(false);
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
@@ -117,6 +126,11 @@ export function AuthProvider({ children }) {
         setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
         setCachedProfile(data);
       }
+      // Mark "we now have a definitive answer about this user's profile" so
+      // the route guards stop showing LoadingScreen. Set on both success and
+      // failure paths — a failed lookup is still a resolved state from the
+      // routing layer's point of view (fall through to the safe default).
+      setProfileResolved(true);
     }
     return data;
   }, []);
@@ -135,6 +149,12 @@ export function AuthProvider({ children }) {
       if (gotAuthRef.done) markReady();
     }, hasCached ? 0 : 500);
     const absoluteTimeout = setTimeout(markReady, 1500);
+    // Hard backstop for profileResolved: if the Supabase round-trip hangs
+    // (auth-lock contention / dead network) we don't want the route guards
+    // to show LoadingScreen forever. After 2.5 s give up and fall through —
+    // user lands on demo + BirthDataModal which has a visible "Sign out"
+    // link, so they can always escape.
+    const profileResolveTimeout = setTimeout(() => setProfileResolved(true), 2500);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       gotAuthRef.done = true;
@@ -180,13 +200,23 @@ export function AuthProvider({ children }) {
         fetchIdRef.current++;
         setProfile(null);
         setCachedProfile(null);
+        // Reset profileResolved on logout so the next sign-in correctly
+        // waits for a fresh profile fetch instead of inheriting the
+        // previous user's "resolved" status.
+        setProfileResolved(false);
         clearTimeout(authTimeout);
         clearTimeout(absoluteTimeout);
+        clearTimeout(profileResolveTimeout);
         markReady();
       }
     });
 
-    return () => { clearTimeout(authTimeout); clearTimeout(absoluteTimeout); subscription.unsubscribe(); };
+    return () => {
+      clearTimeout(authTimeout);
+      clearTimeout(absoluteTimeout);
+      clearTimeout(profileResolveTimeout);
+      subscription.unsubscribe();
+    };
   }, [loadProfile]);
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
@@ -237,9 +267,18 @@ export function AuthProvider({ children }) {
             email: data.user.email,
             updated_at: new Date().toISOString(),
           });
+          // Same batched order as signIn — fetch first, set state together.
+          let profileData = null;
+          for (let attempt = 0; attempt < 2; attempt++) {
+            const res = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+            if (!res.error) { profileData = res.data; break; }
+            if (!/AbortError|Lock broken|stolen|aborted/i.test(res.error.message || '')) break;
+            await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+          }
           setUser(data.user);
-          const profileData = await loadProfile(data.user.id);
+          if (profileData) setProfile(profileData);
           setCachedProfile(profileData);
+          setProfileResolved(true);
           setReady(true);
         }
         // No welcome email — Supabase already sends the confirmation email,
@@ -262,10 +301,26 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       if (data?.user) {
+        // Fetch the profile BEFORE flipping setUser. Previously the order was
+        // setUser → await loadProfile, which forced a render in between with
+        // user set but profile still null/stale. AuthRoute saw "no admin flag"
+        // and Navigate('/')'d the admin into the demo + BirthDataModal trap
+        // before the real profile (with is_admin=true) arrived. Batching all
+        // state into one synchronous block ensures the first render after
+        // sign-in already has both.
+        let profileData = null;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          const res = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+          if (!res.error) { profileData = res.data; break; }
+          if (!/AbortError|Lock broken|stolen|aborted/i.test(res.error.message || '')) break;
+          await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+        }
+        // Synchronous batch — React 18 coalesces these into a single render.
         setBirthModalDismissed(false);
         setUser(data.user);
-        const profileData = await loadProfile(data.user.id);
+        if (profileData) setProfile(profileData);
         setCachedProfile(profileData);
+        setProfileResolved(true);
         identifyUser(data.user.id, { email: data.user.email, is_premium: profileData?.is_premium });
         trackEvent('user_signed_in');
       }
@@ -393,7 +448,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, hasBirthData, isAdmin, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );
