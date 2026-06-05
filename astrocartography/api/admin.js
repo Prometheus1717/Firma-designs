@@ -115,20 +115,13 @@ async function handleUpdatePaywall(supabase, body) {
 }
 
 async function handleFetchStats(supabase) {
-  const { count: totalUsers } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true });
-
-  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-  const { count: recentSignups } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .gte('updated_at', weekAgo);
-
-  const { count: withBirthData } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true })
-    .not('birth_date', 'is', null);
+  // Pull the full signup → confirm → activation funnel from a single
+  // server-side function (auth.users joined to profiles). This is the only
+  // honest "user count" — `profiles` alone doesn't distinguish signed-up
+  // from activated, and the previous "totalUsers" was just COUNT(profiles)
+  // which inflated the number with people who never entered birth data.
+  const { data: funnel } = await supabase.rpc('get_funnel_stats');
+  const f = funnel || {};
 
   const { count: premiumUsers } = await supabase
     .from('profiles')
@@ -137,10 +130,18 @@ async function handleFetchStats(supabase) {
 
   return {
     data: {
-      totalUsers: totalUsers || 0,
-      recentSignups: recentSignups || 0,
-      withBirthData: withBirthData || 0,
+      // New funnel-shaped fields. The admin UI reads these directly.
+      signedUp: f.signed_up || 0,                 // entered email+password
+      emailConfirmed: f.email_confirmed || 0,     // clicked confirm link
+      activated: f.activated || 0,                // entered full birth chart
+      signedUp7d: f.signed_up_7d || 0,
+      confirmed7d: f.confirmed_7d || 0,
+      activated7d: f.activated_7d || 0,
       premiumUsers: premiumUsers || 0,
+      // Legacy keys kept for back-compat with any old UI code paths:
+      totalUsers: f.signed_up || 0,
+      recentSignups: f.signed_up_7d || 0,
+      withBirthData: f.activated || 0,
     },
   };
 }
@@ -152,11 +153,29 @@ async function handleFetchProfiles(supabase, body) {
     sortAsc = false,
     page = 1,
     pageSize = 25,
+    // Default to activated users only — i.e. people who entered the full
+    // birth chart and actually used the product. The handle_new_user trigger
+    // backfill flooded the profiles table with rows for old auth.users that
+    // signed up months ago but never made it past the BirthDataModal, and
+    // the admin list is meant to surface real users, not abandoned signups.
+    // Pass `activatedOnly: false` from the client to see the raw list.
+    activatedOnly = true,
   } = body;
 
   let query = supabase
     .from('profiles')
     .select('*', { count: 'exact' });
+
+  if (activatedOnly) {
+    // "Activated" = entered all four birth fields, matching the same
+    // definition used by get_funnel_stats so the user-list total lines up
+    // with the activation stat on the Overview tab.
+    query = query
+      .not('birth_date', 'is', null)
+      .not('birth_time', 'is', null)
+      .not('birth_lat',  'is', null)
+      .not('birth_city', 'is', null);
+  }
 
   if (search) {
     const safe = search.replace(/[%_\\(),."']/g, c => '\\' + c);

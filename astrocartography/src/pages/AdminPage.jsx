@@ -15,6 +15,27 @@ function StatCard({ label, value, color, T }) {
   );
 }
 
+// Bigger card variant used by the funnel row. Shows the total in colour plus
+// an optional sub-line ("what does this stage mean") and an optional delta
+// ("how many of those happened in the last 7 days") so the dashboard answers
+// both "how big is this stage" and "how fast is it growing" at a glance.
+function FunnelCard({ label, sub, value, delta, color, T }) {
+  return (
+    <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, padding: '18px 20px', flex: 1, minWidth: 170 }}>
+      <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1.5, marginBottom: 4 }}>{label}</div>
+      {sub && <div style={{ ...F, fontSize: 9, color: T.tm, marginBottom: 10, lineHeight: 1.4 }}>{sub}</div>}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+        <div style={{ ...F, fontSize: 28, fontWeight: 700, color }}>{value ?? 0}</div>
+        {typeof delta === 'number' && (
+          <div style={{ ...F, fontSize: 10, color: T.tm }}>
+            +{delta} <span style={{ color: T.td }}>(7d)</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SettingRow({ label, description, children, T }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', borderBottom: `1px solid ${T.d}`, flexWrap: 'wrap', gap: 12 }}>
@@ -106,12 +127,64 @@ function OverviewTab({ stats, demographics, usage, paywallEnabled, setPaywallEna
   return (
     <>
       {stats && (
-        <div style={{ display: 'flex', gap: 14, marginBottom: 20, flexWrap: 'wrap' }}>
-          <StatCard label="TOTAL USERS" value={stats.totalUsers} color="#00D88A" T={T} />
-          <StatCard label="LAST 7 DAYS" value={stats.recentSignups} color="#D8A030" T={T} />
-          <StatCard label="PROFILES COMPLETE" value={stats.withBirthData} color="#5BA8D4" T={T} />
-          <StatCard label="PREMIUM USERS" value={stats.premiumUsers} color="#E8A838" T={T} />
-        </div>
+        <>
+          {/* Funnel: site visitor → confirmed → activated user. Each card shows
+              the absolute count plus the 7-day delta, so the dashboard surfaces
+              both the historical total and current momentum. */}
+          <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1.5, marginBottom: 10 }}>ONBOARDING FUNNEL</div>
+          <div style={{ display: 'flex', gap: 14, marginBottom: 14, flexWrap: 'wrap' }}>
+            <FunnelCard
+              label="SIGNED UP"
+              sub="entered email + password"
+              value={stats.signedUp}
+              delta={stats.signedUp7d}
+              color="#5A7088"
+              T={T}
+            />
+            <FunnelCard
+              label="EMAIL CONFIRMED"
+              sub="clicked verification link"
+              value={stats.emailConfirmed}
+              delta={stats.confirmed7d}
+              color="#5BA8D4"
+              T={T}
+            />
+            <FunnelCard
+              label="ACTIVATED USERS"
+              sub="entered full birth chart"
+              value={stats.activated}
+              delta={stats.activated7d}
+              color="#00D88A"
+              T={T}
+            />
+            <FunnelCard
+              label="PREMIUM"
+              sub="paid subscription"
+              value={stats.premiumUsers}
+              color="#E8A838"
+              T={T}
+            />
+          </div>
+          {/* Activation rate — the single number that matters most: how many
+              of the people we paid to acquire actually completed onboarding. */}
+          {stats.signedUp > 0 && (
+            <div style={{ ...F, fontSize: 10, color: T.tm, marginBottom: 20, paddingLeft: 4 }}>
+              Activation rate: <span style={{ color: '#00D88A', fontWeight: 700 }}>
+                {((stats.activated / stats.signedUp) * 100).toFixed(1)}%
+              </span>
+              {stats.emailConfirmed > 0 && (
+                <> &nbsp;·&nbsp; Of confirmed: <span style={{ color: '#5BA8D4', fontWeight: 700 }}>
+                  {((stats.activated / stats.emailConfirmed) * 100).toFixed(1)}%
+                </span></>
+              )}
+              {stats.signedUp > stats.emailConfirmed && (
+                <> &nbsp;·&nbsp; Confirm drop-off: <span style={{ color: '#F04060', fontWeight: 700 }}>
+                  {(((stats.signedUp - stats.emailConfirmed) / stats.signedUp) * 100).toFixed(1)}%
+                </span></>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       <div style={{ background: T.p, border: `1px solid ${paywallEnabled ? '#E8A83830' : '#00D88A30'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 20 }}>
@@ -141,9 +214,12 @@ function OverviewTab({ stats, demographics, usage, paywallEnabled, setPaywallEna
         <div style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1.2, marginBottom: 14 }}>QUICK INFO</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
           {[
-            ['Conversion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#E8A838'],
-            ['Completion Rate', stats ? `${stats.totalUsers > 0 ? ((stats.withBirthData / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#5BA8D4'],
-            ['Weekly Growth', stats ? `${stats.totalUsers > 0 ? ((stats.recentSignups / stats.totalUsers) * 100).toFixed(1) : 0}%` : '\u2014', '#D8A030'],
+            // Conversion rate is computed against ACTIVATED users (the real
+            // monetisable base) not signed-up \u2014 otherwise the rate is dragged
+            // down by accounts that never finished onboarding.
+            ['Premium Conversion', stats ? `${stats.activated > 0 ? ((stats.premiumUsers / stats.activated) * 100).toFixed(1) : 0}%` : '\u2014', '#E8A838'],
+            ['Activation Rate', stats ? `${stats.signedUp > 0 ? ((stats.activated / stats.signedUp) * 100).toFixed(1) : 0}%` : '\u2014', '#5BA8D4'],
+            ['Weekly Signups', stats ? `${stats.signedUp7d || 0}` : '\u2014', '#D8A030'],
           ].map(([label, val, color]) => (
             <div key={label} style={{ background: T.bg, borderRadius: 8, padding: '12px 16px' }}>
               <div style={{ ...F, fontSize: 8, color: T.td, letterSpacing: 1, marginBottom: 6 }}>{label}</div>
