@@ -202,7 +202,7 @@ function getInitialChart(demo, profile) {
 }
 
 export default function Dashboard({ demo = false }) {
-  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile } = useAuth();
+  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lightMode, setLightMode] = useState(() => {
@@ -884,7 +884,7 @@ export default function Dashboard({ demo = false }) {
                 forever. Replace with the two actions they actually need: enter
                 birth data, or sign out so they can use a different account.
               */}
-              <span onClick={() => { try { sessionStorage.removeItem('nn_birth_modal_dismissed'); } catch {}; window.location.reload(); }} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('enterBirthDataBtn', lang) || 'Enter birth data'}</span>
+              <span onClick={openBirthDataModal} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('enterBirthDataBtn', lang) || 'Enter birth data'}</span>
               <span onClick={signOut} title={t('signOut', lang) || 'Sign out'} style={{ ...F, fontSize: mob ? 10 : 11, color: '#F04060', cursor: 'pointer', padding: mob ? '4px 6px' : '4px 10px', borderRadius: 4, border: '1px solid #F0406040', background: '#F0406010', whiteSpace: 'nowrap', flexShrink: 0, lineHeight: 1 }}>⏻</span>
             </> : (
               <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>

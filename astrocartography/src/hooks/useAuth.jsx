@@ -262,32 +262,35 @@ export function AuthProvider({ children }) {
   // authenticated. We must still surface the modal so they can at least sign
   // out via the modal's "Sign out" link — otherwise Dashboard's loading screen
   // covers everything and the user has no escape.
+  // The BirthDataModal NEVER auto-opens. After login/page-load the user
+  // always lands on their dashboard — admins on /admin, activated users on
+  // the real dashboard, unactivated users on the demo dashboard with an
+  // explicit "Enter birth data" CTA in the header.
+  //
+  // Why this is a hard rule now: every previous attempt to "auto-open the
+  // modal only for users who need it" introduced a race window where the
+  // profile was still loading and we couldn't tell whether to auto-open.
+  // On mobile the race window stretched to seconds and turned the modal
+  // into a recurring sign-in interruption. Making the modal manual-only
+  // closes every race condition in one shot.
+  //
+  // This effect now only ensures the modal is CLOSED whenever the user
+  // logs out or finishes onboarding. It never sets it true.
   useEffect(() => {
     if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
-    if (!ready) return; // still resolving auth — don't decide yet
-    // CRITICAL: never pop the modal until we have a definitive answer about
-    // the profile. The old "fail-open to modal" comment justified that with
-    // the modal being the only sign-out escape — but the Dashboard demo
-    // header now has its own ⏻ button, so we can be strict here. This is
-    // the single line that caused the admin to see the modal on mobile:
-    // the 1.5 s absoluteTimeout flipped `ready` to true before the profile
-    // network round-trip finished, so the effect ran with profile=null,
-    // isAdmin=false, and the modal popped.
-    if (!profileResolved) return;
-    if (!profile) return; // resolved-but-null → treat as unknown, don't show
-    // Admins NEVER see the birth-data modal — even if their profile happens
-    // to lack birth_date for whatever reason. The localStorage flag also
-    // catches the case where the network fetch failed but we know from a
-    // previous session that this user is an admin.
-    if (isAdmin || getCachedIsAdmin(user.id)) { setShowBirthDataModal(false); return; }
-    if (isBirthModalDismissed()) { setShowBirthDataModal(false); return; }
-    setShowBirthDataModal(true);
-  }, [user, profile, hasBirthData, ready, profileResolved, isAdmin]);
+  }, [user, hasBirthData]);
 
   function dismissBirthDataModal() {
     setBirthModalDismissed(true);
     setShowBirthDataModal(false);
+  }
+
+  // Manual opener used by the "Enter birth data" CTA in the demo dashboard
+  // header. Clears the dismiss flag so the modal definitely renders.
+  function openBirthDataModal() {
+    setBirthModalDismissed(false);
+    setShowBirthDataModal(true);
   }
 
   async function signUp(email, password) {
@@ -497,7 +500,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, openBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );
