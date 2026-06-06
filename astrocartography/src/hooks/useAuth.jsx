@@ -73,6 +73,37 @@ function setCachedIsAdmin(userId, isAdmin) {
   } catch {}
 }
 
+// ─── "User has been welcomed" flag, per user id, in localStorage ───
+// Drives the one-time "Email Verified / Welcome to NatalNavigator" popup.
+// Persisting per-user-id (instead of a single global flag) means a second
+// brand-new account on the same browser still gets its hero moment, and a
+// returning user opening a fresh tab does NOT get bothered again. Stored
+// as a JSON array of user ids so we can support multi-account browsers.
+const WELCOMED_KEY = 'nn_welcomed';
+function isWelcomed(userId) {
+  if (!userId) return false;
+  try {
+    const raw = localStorage.getItem(WELCOMED_KEY);
+    if (!raw) return false;
+    const list = JSON.parse(raw);
+    return Array.isArray(list) && list.includes(userId);
+  } catch { return false; }
+}
+function markWelcomed(userId) {
+  if (!userId) return;
+  try {
+    const raw = localStorage.getItem(WELCOMED_KEY);
+    const list = raw ? (JSON.parse(raw) || []) : [];
+    if (!Array.isArray(list)) return;
+    if (!list.includes(userId)) {
+      list.push(userId);
+      // Cap the list so it can't grow unbounded on shared devices.
+      while (list.length > 32) list.shift();
+      localStorage.setItem(WELCOMED_KEY, JSON.stringify(list));
+    }
+  } catch {}
+}
+
 // Read cached profile once at module level — avoids minifier TDZ issues
 // with useRef().current pattern inside component body
 const _initialCachedProfile = getCachedProfile();
@@ -214,12 +245,19 @@ export function AuthProvider({ children }) {
             // token rotates every hour but the row hasn't changed. Without
             // this guard every tab-refocus produced a profile setState which
             // re-fired Dashboard's chart effect and re-painted the globe.
-            if (event !== 'TOKEN_REFRESHED') loadProfile(u.id);
+            if (event !== 'TOKEN_REFRESHED') {
+              loadProfile(u.id).then(p => maybeWelcomeUser(u, p));
+            }
           } else {
             const profileData = await loadProfile(u.id);
             clearTimeout(authTimeout);
             clearTimeout(absoluteTimeout);
             markReady();
+            // Brand-new email-confirmation redirect lands here on the very
+            // first page-load after the user clicks the link in their
+            // inbox. maybeWelcomeUser will only trigger if the confirm was
+            // <5 min ago AND we haven't welcomed this user before.
+            maybeWelcomeUser(u, profileData);
           }
         }
       } else {
@@ -262,24 +300,41 @@ export function AuthProvider({ children }) {
   // authenticated. We must still surface the modal so they can at least sign
   // out via the modal's "Sign out" link — otherwise Dashboard's loading screen
   // covers everything and the user has no escape.
-  // The BirthDataModal NEVER auto-opens. After login/page-load the user
-  // always lands on their dashboard — admins on /admin, activated users on
-  // the real dashboard, unactivated users on the demo dashboard with an
-  // explicit "Enter birth data" CTA in the header.
-  //
-  // Why this is a hard rule now: every previous attempt to "auto-open the
-  // modal only for users who need it" introduced a race window where the
-  // profile was still loading and we couldn't tell whether to auto-open.
-  // On mobile the race window stretched to seconds and turned the modal
-  // into a recurring sign-in interruption. Making the modal manual-only
-  // closes every race condition in one shot.
-  //
-  // This effect now only ensures the modal is CLOSED whenever the user
-  // logs out or finishes onboarding. It never sets it true.
+  // The BirthDataModal does NOT auto-open on every sign-in. It only auto-
+  // opens in exactly one situation: the user just confirmed their email and
+  // is seeing the app for the very first time (see maybeWelcomeUser). Every
+  // other case is manual — either by hitting the "Enter birth data" CTA in
+  // the demo dashboard header, or never.
   useEffect(() => {
     if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
   }, [user, hasBirthData]);
+
+  // Called by sign-in and the initial auth event with the fully-loaded
+  // profile in hand. Triggers the one-time hero welcome when ALL of the
+  // following are true:
+  //   - the user confirmed their email within the last 5 minutes (so this
+  //     is the redirect from the Supabase confirmation link, not a return
+  //     visit days later)
+  //   - we have never marked this user as welcomed before
+  //   - they're not an admin (admins go to /admin instead)
+  //   - they don't already have a complete birth chart on file
+  // Marks the welcomed flag the moment we decide to show, so even if the
+  // user hard-refreshes mid-flow it won't re-trigger.
+  function maybeWelcomeUser(u, profileData) {
+    if (!u || !u.id) return;
+    if (isWelcomed(u.id)) return;
+    if (profileData?.is_admin === true) return;
+    const hasBirth = !!(profileData?.birth_date && profileData?.birth_time
+                        && profileData?.birth_lat != null && profileData?.birth_lng != null);
+    if (hasBirth) return;
+    const confirmedAtMs = u.email_confirmed_at ? new Date(u.email_confirmed_at).getTime() : 0;
+    const justConfirmed = confirmedAtMs > 0 && Date.now() - confirmedAtMs < 5 * 60 * 1000;
+    if (!justConfirmed) return;
+    markWelcomed(u.id);
+    setBirthModalDismissed(false);
+    setShowBirthDataModal(true);
+  }
 
   function dismissBirthDataModal() {
     setBirthModalDismissed(true);
@@ -371,6 +426,10 @@ export function AuthProvider({ children }) {
         setProfileResolved(true);
         identifyUser(data.user.id, { email: data.user.email, is_premium: profileData?.is_premium });
         trackEvent('user_signed_in');
+        // Edge case: user signs in manually right after confirming. The
+        // 5 min window in maybeWelcomeUser catches it; if they signed in
+        // hours later it won't fire.
+        maybeWelcomeUser(data.user, profileData);
       }
       setReady(true);
       return data;
