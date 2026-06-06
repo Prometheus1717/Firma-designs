@@ -51,6 +51,28 @@ function setCachedProfile(data) {
 // Clean up old localStorage cache from previous versions
 try { localStorage.removeItem(PROFILE_CACHE_KEY); } catch {}
 
+// ─── Persistent is_admin cache ───
+// Cached in localStorage (NOT sessionStorage) keyed by user id, so it
+// survives tab close / browser restart. Admin status is the one bit of
+// profile data we MUST know before deciding routes — without persistence,
+// every fresh tab races the profile fetch and risks dumping the admin on
+// the demo + BirthDataModal trap if the fetch is slow, fails, or hits
+// auth-lock contention. Keeping only the boolean (not the full row) means
+// no birth data sits in localStorage, so the XSS blast-radius argument
+// for sessionStorage is preserved.
+const ADMIN_FLAG_KEY = 'nn_is_admin';
+function getCachedIsAdmin(userId) {
+  if (!userId) return false;
+  try { return localStorage.getItem(ADMIN_FLAG_KEY) === userId; }
+  catch { return false; }
+}
+function setCachedIsAdmin(userId, isAdmin) {
+  try {
+    if (userId && isAdmin) localStorage.setItem(ADMIN_FLAG_KEY, userId);
+    else localStorage.removeItem(ADMIN_FLAG_KEY);
+  } catch {}
+}
+
 // Read cached profile once at module level — avoids minifier TDZ issues
 // with useRef().current pattern inside component body
 const _initialCachedProfile = getCachedProfile();
@@ -125,6 +147,10 @@ export function AuthProvider({ children }) {
       if (data) {
         setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
         setCachedProfile(data);
+        // Persist the admin flag in localStorage so the next page load
+        // knows immediately, before the profile network round-trip even
+        // starts. Critical for mobile networks where the fetch is slow.
+        setCachedIsAdmin(userId, data.is_admin === true);
       }
       // Mark "we now have a definitive answer about this user's profile" so
       // the route guards stop showing LoadingScreen. Set on both success and
@@ -221,6 +247,11 @@ export function AuthProvider({ children }) {
 
   const hasBirthData = !!(profile?.birth_date && profile?.birth_time && profile?.birth_lat != null && profile?.birth_lng != null);
   const isAdmin = profile?.is_admin === true;
+  // `isAdminKnown` answers: "do we have any signal at all that this user is
+  // admin?". True when the live profile says so OR when localStorage from a
+  // previous session remembers them as admin. Use this in route guards to
+  // pre-empt the modal/demo path while profile is still loading on mobile.
+  const isAdminKnown = isAdmin || getCachedIsAdmin(user?.id);
   const isPremium = profile?.is_premium === true;
   const loading = !ready;
 
@@ -235,12 +266,24 @@ export function AuthProvider({ children }) {
     if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
     if (!ready) return; // still resolving auth — don't decide yet
-    // Admins never see the birth-data modal: they use the admin dashboard
-    // and shouldn't be prompted to enter chart data they don't need.
-    if (isAdmin) { setShowBirthDataModal(false); return; }
+    // CRITICAL: never pop the modal until we have a definitive answer about
+    // the profile. The old "fail-open to modal" comment justified that with
+    // the modal being the only sign-out escape — but the Dashboard demo
+    // header now has its own ⏻ button, so we can be strict here. This is
+    // the single line that caused the admin to see the modal on mobile:
+    // the 1.5 s absoluteTimeout flipped `ready` to true before the profile
+    // network round-trip finished, so the effect ran with profile=null,
+    // isAdmin=false, and the modal popped.
+    if (!profileResolved) return;
+    if (!profile) return; // resolved-but-null → treat as unknown, don't show
+    // Admins NEVER see the birth-data modal — even if their profile happens
+    // to lack birth_date for whatever reason. The localStorage flag also
+    // catches the case where the network fetch failed but we know from a
+    // previous session that this user is an admin.
+    if (isAdmin || getCachedIsAdmin(user.id)) { setShowBirthDataModal(false); return; }
     if (isBirthModalDismissed()) { setShowBirthDataModal(false); return; }
     setShowBirthDataModal(true);
-  }, [user, profile, hasBirthData, ready, isAdmin]);
+  }, [user, profile, hasBirthData, ready, profileResolved, isAdmin]);
 
   function dismissBirthDataModal() {
     setBirthModalDismissed(true);
@@ -278,6 +321,7 @@ export function AuthProvider({ children }) {
           setUser(data.user);
           if (profileData) setProfile(profileData);
           setCachedProfile(profileData);
+          setCachedIsAdmin(data.user.id, profileData?.is_admin === true);
           setProfileResolved(true);
           setReady(true);
         }
@@ -320,6 +364,7 @@ export function AuthProvider({ children }) {
         setUser(data.user);
         if (profileData) setProfile(profileData);
         setCachedProfile(profileData);
+        setCachedIsAdmin(data.user.id, profileData?.is_admin === true);
         setProfileResolved(true);
         identifyUser(data.user.id, { email: data.user.email, is_premium: profileData?.is_premium });
         trackEvent('user_signed_in');
@@ -343,6 +388,10 @@ export function AuthProvider({ children }) {
       Object.keys(localStorage)
         .filter(k => k.startsWith('sb-'))
         .forEach(k => localStorage.removeItem(k));
+      // Also clear the persistent admin flag — a different user may sign in
+      // next on the same browser. Without this clear the previous admin's
+      // status would carry over visually for a split second.
+      localStorage.removeItem(ADMIN_FLAG_KEY);
     } catch {}
   }
 
@@ -448,7 +497,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );
