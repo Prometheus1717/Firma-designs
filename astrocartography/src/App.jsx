@@ -154,14 +154,25 @@ function ProtectedRoute({ children }) {
 // `profileResolved` flag flips true after the first lookup completes
 // (success or fail) or after a 2.5 s backstop, so guards either wait for
 // the truth or fall through safely.
+// Routing matrix — three signed-in states, one anonymous state, ZERO mixed
+// demo-for-logged-in users. The previous design (demo + modal + "Enter
+// birth data" button) repeatedly produced UX confusion and race conditions.
+// Now every signed-in user lands on exactly one focused page:
+//
+//   admin            -> /admin
+//   has birth data   -> /dashboard (real globe + chart)
+//   no birth data    -> /birth-data (full-page setup form)
+//   anonymous        -> / (demo dashboard with sample chart)
+//
+// The demo dashboard is reserved for anonymous visitors. Signed-in users
+// never see it. This eliminates the "why am I seeing Elon Musk's chart"
+// trap and removes the entire class of bugs around the welcome modal.
 function AuthRoute({ children }) {
   const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
-  // isAdminKnown also reads localStorage, so an admin returning on a fresh
-  // tab is recognised BEFORE the profile network call finishes — no race.
   if (user && isAdminKnown) return <Navigate to="/admin" replace />;
   if (user && !profile && !profileResolved) return <LoadingScreen />;
-  if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/'} replace />;
+  if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/birth-data'} replace />;
   return children;
 }
 
@@ -182,42 +193,18 @@ function SmartRedirect() {
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
-  return <Navigate to="/" replace />;
+  return <Navigate to="/birth-data" replace />;
 }
 
 function DemoOrDashboard() {
-  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData, showBirthDataModal, dismissBirthDataModal, loadProfile } = useAuth();
+  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Dashboard demo />;
-  // Admin check uses localStorage flag too, so we redirect to /admin
-  // immediately even on a fresh tab where the profile is still loading.
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
-  // Logged-in user with birth data: render the real Dashboard *inline* on `/`
-  // instead of <Navigate to="/dashboard">. Navigating forced an extra route
-  // unmount/remount, which tore down the Globe (refetching world-atlas) and
-  // produced a visible flash + multiple LoadingScreens on every revisit.
-  // The /dashboard route still exists for direct deep links.
   if (hasBirthData) return <Dashboard />;
-  return (
-    <>
-      <Dashboard demo />
-      {/* Belt-and-suspenders: even if the modal-effect somehow flipped to
-          true (e.g. an admin race we haven't anticipated), require both a
-          loaded profile AND a non-admin status at render time. Three layers
-          now have to fail simultaneously for an admin to see this modal,
-          which is effectively impossible. */}
-      {showBirthDataModal && profile && !profile.is_admin && !isAdminKnown && (
-        <BirthDataModal
-          onComplete={() => {
-            dismissBirthDataModal();
-            if (user) loadProfile(user.id);
-          }}
-          onDismiss={dismissBirthDataModal}
-        />
-      )}
-    </>
-  );
+  // Signed-in user with no birth data → focused setup page, NOT the demo.
+  return <Navigate to="/birth-data" replace />;
 }
 
 function PageViewTracker() {

@@ -9,6 +9,16 @@ const F = { fontFamily: 'JetBrains Mono, monospace' };
 
 export default function BirthDataPage() {
   const { saveBirthData, signOut, hasBirthData, profile, user } = useAuth();
+  // Welcome hero: shown only for first-time visitors whose email was just
+  // confirmed (< 5 min ago). Replaces the popup modal that used to do this.
+  // Quiet for editing flows and returning users so the page never feels
+  // patronising the second time around.
+  const justConfirmed = (() => {
+    if (!user?.email_confirmed_at) return false;
+    const ms = Date.now() - new Date(user.email_confirmed_at).getTime();
+    return ms >= 0 && ms < 5 * 60 * 1000;
+  })();
+  const showWelcomeHero = justConfirmed && !hasBirthData;
   const navigate = useNavigate();
   const location = useLocation();
   const isEditing = location.state?.edit === true;
@@ -145,6 +155,16 @@ export default function BirthDataPage() {
         <h1 style={{ ...F, fontSize: 18, fontWeight: 700, color: T.ac, letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
         <p style={{ ...F, fontSize: 10, color: T.td, letterSpacing: 2, margin: 0 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</p>
       </header>
+
+      {showWelcomeHero && (
+        <div style={{ width: '100%', maxWidth: 460, marginBottom: 18, textAlign: 'center' }}>
+          <div style={{ ...F, fontSize: 11, color: T.ac, letterSpacing: 3, marginBottom: 10 }}>EMAIL VERIFIED</div>
+          <h2 style={{ ...F, fontSize: 22, fontWeight: 700, color: T.tx, margin: '0 0 10px', lineHeight: 1.3 }}>Welcome to NatalNavigator</h2>
+          <p style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: 13, color: T.tm, lineHeight: 1.6, margin: '0 14px' }}>
+            Your account is ready. Enter your exact birth details below to generate your personalised astrocartography globe.
+          </p>
+        </div>
+      )}
 
       <div style={{ width: '100%', maxWidth: 460, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32 }}>
         <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20, lineHeight: 1.7 }}>
