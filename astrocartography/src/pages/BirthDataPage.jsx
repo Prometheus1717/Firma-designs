@@ -29,7 +29,7 @@ function writeDraft(userId, data) {
 function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
 
 export default function BirthDataPage() {
-  const { saveBirthData, signOut, hasBirthData, profile, user } = useAuth();
+  const { saveBirthData, signOut, hasBirthData, profile, user, loadProfile } = useAuth();
   // Welcome hero: shown only for first-time visitors whose email was just
   // confirmed (< 5 min ago). Replaces the popup modal that used to do this.
   // Quiet for editing flows and returning users so the page never feels
@@ -60,6 +60,33 @@ export default function BirthDataPage() {
   const debounceRef = useRef(null);
 
   useEffect(() => { document.title = isEditing ? 'Edit Birth Data \u2014 Natal Navigator' : 'Enter Birth Data \u2014 Natal Navigator'; }, [isEditing]);
+
+  // Bullet-proof guard: this page should NEVER be shown to admins or to
+  // users who already have a chart. The route guards in App.jsx try to
+  // prevent it, but if the profile fetch during signIn failed for any
+  // reason (auth-lock, slow network, JWT-refresh edge case), the guards
+  // see profile=null and default to /birth-data. So we re-fetch on mount,
+  // and if the fresh profile says admin or has a chart, we redirect away.
+  // This is the safety net that catches the route-guard race once and for all.
+  useEffect(() => {
+    if (isEditing) return;
+    if (profile?.is_admin) { navigate('/admin', { replace: true }); return; }
+    if (hasBirthData) { navigate('/dashboard', { replace: true }); return; }
+    if (!user?.id) return;
+    // Profile is null or incomplete — force a fresh fetch from the DB.
+    let cancelled = false;
+    (async () => {
+      const fresh = await loadProfile(user.id);
+      if (cancelled || !fresh) return;
+      if (fresh.is_admin === true) {
+        navigate('/admin', { replace: true });
+        return;
+      }
+      const freshHasBirth = !!(fresh.birth_date && fresh.birth_time && fresh.birth_lat != null && fresh.birth_lng != null);
+      if (freshHasBirth) navigate('/dashboard', { replace: true });
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id, profile, hasBirthData, isEditing, navigate, loadProfile]);
 
   useEffect(() => {
     if (hasBirthData && !isEditing) {
