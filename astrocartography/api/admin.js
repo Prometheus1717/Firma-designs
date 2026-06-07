@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { applySecurityHeaders, clampInt, getClientIp, getCorsHeaders, isUuid } from './_security.js';
 
 // ─── Supabase admin client (service role — bypasses RLS) ───
 // Singleton: reuse across warm function invocations to avoid connection pool exhaustion
@@ -13,20 +14,6 @@ function getSupabaseAdmin() {
   if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
   _supabaseAdmin = createClient(url, key);
   return _supabaseAdmin;
-}
-
-// ─── CORS ───
-const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
-
-function getCorsHeaders(req) {
-  const origin = req.headers.origin || '';
-  const isAllowed = ALLOWED_ORIGINS.includes(origin) ||
-    (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost'));
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
 }
 
 // ─── In-memory rate limiter (per Vercel instance) ───
@@ -79,8 +66,8 @@ async function verifyAdmin(req, supabase) {
 
 async function handleTogglePremium(supabase, body) {
   const { userId, isPremium } = body;
-  if (!userId || typeof isPremium !== 'boolean') {
-    return { error: 'userId (string) and isPremium (boolean) are required', status: 400 };
+  if (!isUuid(userId) || typeof isPremium !== 'boolean') {
+    return { error: 'valid userId and isPremium (boolean) are required', status: 400 };
   }
   const { error } = await supabase
     .from('profiles')
@@ -92,8 +79,20 @@ async function handleTogglePremium(supabase, body) {
 
 async function handleUpdateSetting(supabase, body) {
   const { key, value } = body;
-  if (!key || value === undefined) {
+  const allowedKeys = new Set([
+    'paywall_enabled',
+    'display_price',
+    'display_currency',
+    'price_label',
+    'announcement_text',
+    'announcement_active',
+    'announcement_color',
+  ]);
+  if (!allowedKeys.has(key) || value === undefined) {
     return { error: 'key and value are required', status: 400 };
+  }
+  if (String(value).length > 1000) {
+    return { error: 'value is too long', status: 400 };
   }
   const { error } = await supabase
     .from('app_settings')
@@ -147,20 +146,13 @@ async function handleFetchStats(supabase) {
 }
 
 async function handleFetchProfiles(supabase, body) {
-  const {
-    search = '',
-    sortField = 'updated_at',
-    sortAsc = false,
-    page = 1,
-    pageSize = 25,
-    // Default to activated users only — i.e. people who entered the full
-    // birth chart and actually used the product. The handle_new_user trigger
-    // backfill flooded the profiles table with rows for old auth.users that
-    // signed up months ago but never made it past the BirthDataModal, and
-    // the admin list is meant to surface real users, not abandoned signups.
-    // Pass `activatedOnly: false` from the client to see the raw list.
-    activatedOnly = true,
-  } = body;
+  const allowedSortFields = new Set(['display_name', 'email', 'birth_city', 'birth_date', 'birth_time', 'updated_at', 'created_at']);
+  const search = typeof body.search === 'string' ? body.search.slice(0, 120) : '';
+  const sortField = allowedSortFields.has(body.sortField) ? body.sortField : 'updated_at';
+  const sortAsc = body.sortAsc === true;
+  const page = clampInt(body.page, 1, 1, 10000);
+  const pageSize = clampInt(body.pageSize, 25, 1, 100);
+  const activatedOnly = body.activatedOnly !== false;
 
   let query = supabase
     .from('profiles')
@@ -402,6 +394,7 @@ async function handleFetchUsage() {
 
 export default async function handler(req, res) {
   const CORS_HEADERS = getCorsHeaders(req);
+  applySecurityHeaders(res);
 
   // Preflight
   if (req.method === 'OPTIONS') {
@@ -416,7 +409,7 @@ export default async function handler(req, res) {
   Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
 
   // Rate limit by IP
-  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const clientIp = getClientIp(req);
   if (isRateLimited(`admin:${clientIp}`)) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }

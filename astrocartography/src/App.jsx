@@ -1,4 +1,4 @@
-import { lazy, Suspense, Component, useEffect } from 'react';
+import { lazy, Suspense, Component, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -49,6 +49,48 @@ function LoadingScreen() {
         ))}
       </div>
       <style>{`@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }`}</style>
+    </div>
+  );
+}
+
+// Shown when loadProfile exhausted its 5-attempt retry loop and we still
+// have no profile data. We DO NOT route the user anywhere in this case —
+// any default destination would be wrong (a paying user on the paywall, an
+// admin on the demo, etc.). The user explicitly retries or signs out; no
+// silent degradation is allowed.
+function ProfileRecoveryScreen({ user }) {
+  const T = getTheme(isLightMode());
+  const { loadProfile, signOut } = useAuth();
+  const [retrying, setRetrying] = useState(false);
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ ...F, fontSize: 16, fontWeight: 700, color: T.ac, letterSpacing: 5, marginBottom: 28 }}>NATAL NAVIGATOR</div>
+      <div style={{ ...F, fontSize: 12, color: T.tx, marginBottom: 10, textAlign: 'center', maxWidth: 380, lineHeight: 1.6 }}>
+        We could not load your account right now.
+      </div>
+      <div style={{ fontFamily: 'system-ui,-apple-system,sans-serif', fontSize: 13, color: T.td, marginBottom: 28, textAlign: 'center', maxWidth: 380, lineHeight: 1.6 }}>
+        This is usually a brief network hiccup. Your data is safe — we just need to fetch it again.
+      </div>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <button
+          onClick={async () => {
+            if (retrying || !user?.id) return;
+            setRetrying(true);
+            try { await loadProfile(user.id); }
+            finally { setRetrying(false); }
+          }}
+          disabled={retrying}
+          style={{ ...F, fontSize: 11, fontWeight: 700, letterSpacing: 1, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '10px 26px', cursor: retrying ? 'wait' : 'pointer' }}
+        >
+          {retrying ? 'RETRYING…' : 'TRY AGAIN'}
+        </button>
+        <button
+          onClick={() => { signOut(); }}
+          style={{ ...F, fontSize: 11, color: T.td, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 22px', cursor: 'pointer' }}
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
@@ -230,6 +272,23 @@ function ErrorReloadCleanup() {
   return null;
 }
 
+// Global gate: when the user is logged in but the robust profile fetcher
+// gave up after 5 retries, show the recovery screen on TOP of every route.
+// This is the one place that makes "we have no profile" a UI state instead
+// of letting the routing decide. Critical for paywall correctness: a paid
+// user must NEVER be routed back through billing UI just because a single
+// network blip swallowed their profile fetch.
+function GlobalProfileGate({ children }) {
+  const { user, profile, profileLoadFailed, loading } = useAuth();
+  // Only intercept if: user is logged in, retry truly exhausted, and we
+  // don't even have a stale cached profile to fall back on. /landing,
+  // /reset-password etc. still render normally for anonymous traffic.
+  if (!loading && user && profileLoadFailed && !profile) {
+    return <ProfileRecoveryScreen user={user} />;
+  }
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -238,16 +297,18 @@ export default function App() {
         <PageViewTracker />
         <AuthProvider>
           <Suspense fallback={<LoadingScreen />}>
-            <Routes>
-              <Route path="/" element={<DemoOrDashboard />} />
-              <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-              <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-              <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
-              <Route path="/landing" element={<LandingPage />} />
-              <Route path="*" element={<SmartRedirect />} />
-            </Routes>
+            <GlobalProfileGate>
+              <Routes>
+                <Route path="/" element={<DemoOrDashboard />} />
+                <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+                <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+                <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
+                <Route path="/landing" element={<LandingPage />} />
+                <Route path="*" element={<SmartRedirect />} />
+              </Routes>
+            </GlobalProfileGate>
           </Suspense>
         </AuthProvider>
       </ErrorBoundaryWithLocation>

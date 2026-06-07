@@ -341,8 +341,13 @@ export default function Dashboard({ demo = false }) {
     });
   }, [demo]);
 
-  // Determine if user should see paywall
-  const showPaywall = !demo && paywallEnabled === true && !isPremium && profile?.is_admin !== true;
+  // Determine if user should see paywall.
+  // CRITICAL: we require `profile` to be loaded — never show paywall when
+  // profile is null. A paying user must never be confronted with the upgrade
+  // screen because of a transient profile-fetch failure. If `profile` is
+  // missing, the GlobalProfileGate or LoadingScreen will already be on top
+  // of this; the explicit guard here is belt-and-suspenders.
+  const showPaywall = !demo && !!profile && paywallEnabled === true && !isPremium && profile.is_admin !== true;
 
   // Track paywall impression once
   const paywallTracked = useRef(false);

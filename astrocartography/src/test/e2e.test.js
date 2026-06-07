@@ -53,7 +53,7 @@ describe('Vercel configuration', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
     expect(config.rewrites).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ source: '/(.*)', destination: '/index.html' }),
+        expect.objectContaining({ source: '/((?!api/).*)', destination: '/index.html' }),
       ])
     );
   });

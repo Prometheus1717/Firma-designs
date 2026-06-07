@@ -1,18 +1,6 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-
-const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
-
-function getCorsHeaders(req) {
-  const origin = req.headers.origin || '';
-  const isAllowed = ALLOWED_ORIGINS.includes(origin) ||
-    (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost'));
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
-}
+import { applySecurityHeaders, getClientIp, getCorsHeaders, getRequestOrigin } from './_security.js';
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
@@ -60,6 +48,7 @@ async function verifyAuth(req) {
 
 export default async function handler(req, res) {
   const CORS_HEADERS = getCorsHeaders(req);
+  applySecurityHeaders(res);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, CORS_HEADERS);
@@ -73,7 +62,7 @@ export default async function handler(req, res) {
   Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
 
   // Rate limit by IP
-  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const clientIp = getClientIp(req);
   if (isRateLimited(`checkout:${clientIp}`)) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
@@ -102,13 +91,14 @@ export default async function handler(req, res) {
 
   try {
     const stripe = new Stripe(stripeSecretKey);
+    const origin = getRequestOrigin(req);
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${req.headers.origin || 'https://natalnavigator.com'}/dashboard?payment=success`,
-      cancel_url: `${req.headers.origin || 'https://natalnavigator.com'}/dashboard?payment=cancelled`,
+      success_url: `${origin}/dashboard?payment=success`,
+      cancel_url: `${origin}/dashboard?payment=cancelled`,
       metadata: { userId },
     });
 

@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
+import { applySecurityHeaders, isUuid } from './_security.js';
 
 // Supabase admin client (service role — bypasses RLS)
 // Singleton: reuse across warm function invocations to avoid connection pool exhaustion
@@ -132,6 +133,8 @@ async function sendPaymentConfirmationEmail(email, amount) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -162,16 +165,23 @@ export default async function handler(req, res) {
     const customerEmail = session.customer_details?.email || session.customer_email;
     const stripeCustomerId = session.customer;
     const amountTotal = session.amount_total;
+    const userId = session.metadata?.userId;
 
-    if (!customerEmail) {
-      console.error('[stripe-webhook] No customer email in session', session.id);
-      return res.status(400).json({ error: 'No customer email' });
+    if (session.payment_status && session.payment_status !== 'paid') {
+      console.error('[stripe-webhook] Checkout completed but not paid', session.id, session.payment_status);
+      return res.status(400).json({ error: 'Payment not completed' });
+    }
+
+    if (!isUuid(userId)) {
+      console.error('[stripe-webhook] Missing or invalid metadata.userId in session', session.id);
+      return res.status(400).json({ error: 'Invalid checkout metadata' });
     }
 
     try {
       const supabase = getSupabaseAdmin();
 
-      // Update profile: mark as premium + store Stripe customer ID
+      // Update the exact server-authenticated user captured at checkout
+      // creation. Email is used only for the receipt, never for entitlement.
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -179,17 +189,17 @@ export default async function handler(req, res) {
           stripe_customer_id: stripeCustomerId,
           updated_at: new Date().toISOString(),
         })
-        .eq('email', customerEmail);
+        .eq('id', userId);
 
       if (error) {
         console.error('[stripe-webhook] Supabase update failed:', error.message);
         return res.status(500).json({ error: 'Database update failed' });
       }
 
-      console.log(`[stripe-webhook] Premium activated for ${customerEmail}`);
+      console.log(`[stripe-webhook] Premium activated for user ${userId}`);
 
       // Send confirmation email (fire-and-forget)
-      sendPaymentConfirmationEmail(customerEmail, amountTotal);
+      if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal);
     } catch (err) {
       console.error('[stripe-webhook] Unexpected error:', err);
       return res.status(500).json({ error: 'Internal error' });

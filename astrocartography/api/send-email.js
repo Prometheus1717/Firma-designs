@@ -1,21 +1,9 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
-
-const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
+import { applySecurityHeaders, getClientIp, getCorsHeaders } from './_security.js';
 
 // Only these templates can be sent from the client
 const ALLOWED_TEMPLATES = ['welcome', 'verification', 'passwordReset', 'notification'];
-
-function getCorsHeaders(req) {
-  const origin = req.headers.origin || '';
-  const isAllowed = ALLOWED_ORIGINS.includes(origin) ||
-    (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost'));
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
-}
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
@@ -68,6 +56,7 @@ async function verifyAuth(req) {
 
 export default async function handler(req, res) {
   const CORS_HEADERS = getCorsHeaders(req);
+  applySecurityHeaders(res);
 
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -83,7 +72,7 @@ export default async function handler(req, res) {
   Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
 
   // Rate limit by IP
-  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const clientIp = getClientIp(req);
   if (isRateLimited(`email:${clientIp}`)) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }

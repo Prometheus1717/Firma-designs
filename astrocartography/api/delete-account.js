@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { applySecurityHeaders, getClientIp, getCorsHeaders } from './_security.js';
 
 // ─── Self-service account deletion ───
 // Hard-deletes the authenticated caller's auth.users row + profiles row.
@@ -6,19 +7,6 @@ import { createClient } from '@supabase/supabase-js';
 // supabase.auth.signOut() — the auth.users record survived, so the deleted
 // user could log back in, hit the BirthDataModal, and re-create their profile
 // via the saveBirthData upsert, silently resurrecting the account.
-
-const ALLOWED_ORIGINS = ['https://natalnavigator.com', 'https://www.natalnavigator.com'];
-
-function getCorsHeaders(req) {
-  const origin = req.headers.origin || '';
-  const isAllowed = ALLOWED_ORIGINS.includes(origin) ||
-    (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost'));
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
-}
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
@@ -52,6 +40,7 @@ function getSupabaseAdmin() {
 
 export default async function handler(req, res) {
   const CORS_HEADERS = getCorsHeaders(req);
+  applySecurityHeaders(res);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, CORS_HEADERS);
@@ -65,7 +54,7 @@ export default async function handler(req, res) {
   Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
 
   // Rate limit by IP — deletion is a destructive action, keep it tight.
-  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+  const clientIp = getClientIp(req);
   if (isRateLimited(`delete:${clientIp}`)) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }

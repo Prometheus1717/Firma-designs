@@ -122,6 +122,55 @@ function setBirthModalDismissed(v) {
   } catch {}
 }
 
+// ─── Shared robust profile fetcher ───
+// Single source of truth for "get this user's profile, but never silently
+// give up on a transient failure". Used by both loadProfile (inside the
+// component) and the batched signIn/signUp paths (which need just the data
+// without touching React state in flight).
+//
+// Retry policy: 5 attempts, exponential backoff 0.2/0.5/1.2/2.5/5 s
+// (max ~9 s). Retries on anything that smells transient — network blip,
+// auth-lock contention, 5xx, JWT refresh race, fetch abort. Stops only on
+// PGRST116 (truthful "no row") so a brand-new user gets answered quickly.
+function withTimeout(promise, ms) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('Profile request timed out')), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
+
+async function fetchProfileRobust(userId) {
+  if (!userId) return { data: null, error: new Error('no user id'), notFound: false };
+  let data = null;
+  let error = null;
+  const ATTEMPTS = 5;
+  const BACKOFF = [200, 500, 1200, 2500, 5000];
+  const ATTEMPT_TIMEOUT = 4500;
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    try {
+      const res = await withTimeout(
+        supabase.from('profiles').select('*').eq('id', userId).single(),
+        ATTEMPT_TIMEOUT
+      );
+      data = res.data;
+      error = res.error;
+      if (!error && data) return { data, error: null, notFound: false };
+      const msg = error?.message || '';
+      if (/PGRST116|not\s+found|no\s+rows/i.test(msg)) {
+        return { data: null, error: null, notFound: true };
+      }
+    } catch (e) {
+      error = e;
+    }
+    if (attempt < ATTEMPTS - 1) {
+      const base = BACKOFF[attempt];
+      await new Promise(r => setTimeout(r, base + Math.floor(Math.random() * 150)));
+    }
+  }
+  return { data: null, error: error || new Error('exhausted retries'), notFound: false };
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(() => _initialCachedProfile);
@@ -135,6 +184,13 @@ export function AuthProvider({ children }) {
   // mirrors whether we have a cached profile at module load — so the warm
   // path doesn't introduce a LoadingScreen for users who already have data.
   const [profileResolved, setProfileResolved] = useState(() => !!_initialCachedProfile);
+  // `profileLoadFailed` flips true ONLY after the robust retry loop in
+  // loadProfile has exhausted itself with no data. Distinguishes "profile is
+  // confirmed empty / not found" from "we tried 5 times and the network /
+  // auth-lock kept failing". The UI uses this to show a recovery screen
+  // instead of degrading to a wrong-state route (e.g. sending a paid user
+  // to /birth-data or back to the paywall after a transient blip).
+  const [profileLoadFailed, setProfileLoadFailed] = useState(false);
   const [showBirthDataModal, setShowBirthDataModal] = useState(false);
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
@@ -151,42 +207,30 @@ export function AuthProvider({ children }) {
   };
 
   const loadProfile = useCallback(async (userId) => {
+    if (!userId) return null;
     const id = ++fetchIdRef.current;
-    // Retry once on AbortError — that's the symptom of Supabase's auth-lock
-    // contention when the same site is open in multiple tabs (or a token
-    // refresh races with our profile fetch). Without this retry, the user
-    // ended up with profile=null forever and was trapped in a loading state
-    // they couldn't escape from.
-    let data = null, error = null;
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const res = await supabase.from('profiles').select('*').eq('id', userId).single();
-      data = res.data;
-      error = res.error;
-      if (!error) break;
-      const msg = error.message || '';
-      const isLockAbort = /AbortError|Lock broken|stolen|aborted/i.test(msg);
-      if (!isLockAbort) break;
-      // Brief jittered backoff so we don't slam into the same lock immediately.
-      await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
-    }
-    if (error) console.error('[loadProfile]', error.message);
+    const { data, error, notFound } = await fetchProfileRobust(userId);
+    if (error && !data) console.error('[loadProfile] persistent failure:', error.message || error);
     if (id === fetchIdRef.current) {
-      // Only update React state if the row actually changed — keeps profile
-      // object identity stable across token refreshes so Dashboard's effects
-      // and the globe don't re-fire for nothing. Also: if the fetch failed
-      // (data === null), don't wipe an existing cached profile.
       if (data) {
         setProfile(prev => profileFieldsEqual(prev, data) ? prev : data);
         setCachedProfile(data);
-        // Persist the admin flag in localStorage so the next page load
-        // knows immediately, before the profile network round-trip even
-        // starts. Critical for mobile networks where the fetch is slow.
         setCachedIsAdmin(userId, data.is_admin === true);
+        setProfileLoadFailed(false);
+      } else if (notFound) {
+        setProfile(null);
+        setCachedProfile(null);
+        setCachedIsAdmin(userId, false);
+        setProfileLoadFailed(false);
+      } else if (error) {
+        // Persistent failure — flip the flag so the UI can show a recovery
+        // screen instead of routing the user to a wrong-state page. We do
+        // NOT wipe any cached profile here: a stale profile is safer than
+        // none for paywall/admin decisions until the user actively retries.
+        setProfileLoadFailed(true);
       }
-      // Mark "we now have a definitive answer about this user's profile" so
-      // the route guards stop showing LoadingScreen. Set on both success and
-      // failure paths — a failed lookup is still a resolved state from the
-      // routing layer's point of view (fall through to the safe default).
+      // profileResolved=true means "we tried" (success OR failure). The
+      // app uses profileLoadFailed to decide whether to trust the result.
       setProfileResolved(true);
     }
     return data;
@@ -206,13 +250,6 @@ export function AuthProvider({ children }) {
       if (gotAuthRef.done) markReady();
     }, hasCached ? 0 : 500);
     const absoluteTimeout = setTimeout(markReady, 1500);
-    // Hard backstop for profileResolved: if the Supabase round-trip hangs
-    // (auth-lock contention / dead network) we don't want the route guards
-    // to show LoadingScreen forever. After 2.5 s give up and fall through —
-    // user lands on demo + BirthDataModal which has a visible "Sign out"
-    // link, so they can always escape.
-    const profileResolveTimeout = setTimeout(() => setProfileResolved(true), 2500);
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       gotAuthRef.done = true;
       const u = session?.user ?? null;
@@ -268,9 +305,9 @@ export function AuthProvider({ children }) {
         // waits for a fresh profile fetch instead of inheriting the
         // previous user's "resolved" status.
         setProfileResolved(false);
+        setProfileLoadFailed(false);
         clearTimeout(authTimeout);
         clearTimeout(absoluteTimeout);
-        clearTimeout(profileResolveTimeout);
         markReady();
       }
     });
@@ -278,7 +315,6 @@ export function AuthProvider({ children }) {
     return () => {
       clearTimeout(authTimeout);
       clearTimeout(absoluteTimeout);
-      clearTimeout(profileResolveTimeout);
       subscription.unsubscribe();
     };
   }, [loadProfile]);
@@ -293,18 +329,11 @@ export function AuthProvider({ children }) {
   const isPremium = profile?.is_premium === true;
   const loading = !ready;
 
-  // Drive the birth-data modal off auth state.
-  // Important: we deliberately do NOT require `profile` to be non-null. If the
-  // profile fetch failed (e.g. Supabase auth-lock contention from multiple
-  // tabs returns AbortError), profile stays null but the user is still
-  // authenticated. We must still surface the modal so they can at least sign
-  // out via the modal's "Sign out" link — otherwise Dashboard's loading screen
-  // covers everything and the user has no escape.
-  // The BirthDataModal does NOT auto-open on every sign-in. It only auto-
-  // opens in exactly one situation: the user just confirmed their email and
+  // The BirthDataModal does NOT auto-open on every sign-in. It only opens in
+  // exactly one automatic situation: the user just confirmed their email and
   // is seeing the app for the very first time (see maybeWelcomeUser). Every
-  // other case is manual — either by hitting the "Enter birth data" CTA in
-  // the demo dashboard header, or never.
+  // other case is manual. A profile-fetch failure is handled by
+  // ProfileRecoveryScreen, not by pretending the user has no birth data.
   useEffect(() => {
     if (!user) { setShowBirthDataModal(false); return; }
     if (hasBirthData) { setShowBirthDataModal(false); return; }
@@ -368,18 +397,17 @@ export function AuthProvider({ children }) {
             email: data.user.email,
             updated_at: new Date().toISOString(),
           });
-          // Same batched order as signIn — fetch first, set state together.
-          let profileData = null;
-          for (let attempt = 0; attempt < 2; attempt++) {
-            const res = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-            if (!res.error) { profileData = res.data; break; }
-            if (!/AbortError|Lock broken|stolen|aborted/i.test(res.error.message || '')) break;
-            await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
-          }
+          // Same batched order as signIn — fetch (with full retry) first,
+          // then set every piece of state in one synchronous block so React
+          // 18 coalesces them into a single render and the route guards
+          // never see a "user set, profile null" intermediate frame.
+          const { data: profileData, error: profileErr, notFound } = await fetchProfileRobust(data.user.id);
           setUser(data.user);
           if (profileData) setProfile(profileData);
-          setCachedProfile(profileData);
+          else if (notFound) setProfile(null);
+          if (profileData || notFound) setCachedProfile(profileData);
           setCachedIsAdmin(data.user.id, profileData?.is_admin === true);
+          setProfileLoadFailed(!profileData && !!profileErr);
           setProfileResolved(true);
           setReady(true);
         }
@@ -410,19 +438,15 @@ export function AuthProvider({ children }) {
         // before the real profile (with is_admin=true) arrived. Batching all
         // state into one synchronous block ensures the first render after
         // sign-in already has both.
-        let profileData = null;
-        for (let attempt = 0; attempt < 2; attempt++) {
-          const res = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-          if (!res.error) { profileData = res.data; break; }
-          if (!/AbortError|Lock broken|stolen|aborted/i.test(res.error.message || '')) break;
-          await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
-        }
+        const { data: profileData, error: profileErr, notFound } = await fetchProfileRobust(data.user.id);
         // Synchronous batch — React 18 coalesces these into a single render.
         setBirthModalDismissed(false);
         setUser(data.user);
         if (profileData) setProfile(profileData);
-        setCachedProfile(profileData);
+        else if (notFound) setProfile(null);
+        if (profileData || notFound) setCachedProfile(profileData);
         setCachedIsAdmin(data.user.id, profileData?.is_admin === true);
+        setProfileLoadFailed(!profileData && !!profileErr);
         setProfileResolved(true);
         identifyUser(data.user.id, { email: data.user.email, is_premium: profileData?.is_premium });
         trackEvent('user_signed_in');
@@ -465,6 +489,8 @@ export function AuthProvider({ children }) {
     setUser(null);
     setProfile(null);
     setCachedProfile(null);
+    setProfileResolved(false);
+    setProfileLoadFailed(false);
     setBirthModalDismissed(false);
     forceClearSupabaseTokens();
     try {
@@ -509,6 +535,8 @@ export function AuthProvider({ children }) {
     setUser(null);
     setProfile(null);
     setCachedProfile(null);
+    setProfileResolved(false);
+    setProfileLoadFailed(false);
     setBirthModalDismissed(false);
     forceClearSupabaseTokens();
     try { await supabase.auth.signOut(); } catch {}
@@ -525,6 +553,7 @@ export function AuthProvider({ children }) {
     if (error) throw error;
     setProfile(data);
     setCachedProfile(data);
+    setProfileLoadFailed(false);
     return data;
   }
 
@@ -555,11 +584,12 @@ export function AuthProvider({ children }) {
     if (error) throw error;
     setProfile(data);
     setCachedProfile(data);
+    setProfileLoadFailed(false);
     return data;
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, profileResolved, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, openBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, profileResolved, profileLoadFailed, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, openBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );

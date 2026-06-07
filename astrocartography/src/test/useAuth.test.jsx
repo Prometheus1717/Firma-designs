@@ -40,6 +40,7 @@ vi.mock('../lib/supabase', () => ({
 }));
 
 import { AuthProvider, useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 function wrapper({ children }) {
   return <AuthProvider>{children}</AuthProvider>;
@@ -96,5 +97,51 @@ describe('useAuth hook', () => {
   it('provides loadProfile function', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     expect(typeof result.current.loadProfile).toBe('function');
+  });
+
+  it('does not mark an expected missing profile row as a load failure', async () => {
+    supabase.from.mockImplementationOnce(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'PGRST116: no rows returned' },
+      }),
+    }));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await act(async () => {
+      await result.current.signIn('new@test.com', 'password1234');
+    });
+
+    expect(result.current.user?.id).toBe('test-user');
+    expect(result.current.profile).toBe(null);
+    expect(result.current.profileResolved).toBe(true);
+    expect(result.current.profileLoadFailed).toBe(false);
+    expect(result.current.hasBirthData).toBe(false);
+  });
+
+  it('marks persistent profile fetch errors as recovery state instead of clearing to birth-data state', async () => {
+    supabase.from.mockImplementation(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: null,
+        error: { message: 'Lock broken: request aborted' },
+      }),
+    }));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await act(async () => {
+      const promise = result.current.signIn('test@test.com', 'password1234');
+      await vi.runAllTimersAsync();
+      await promise;
+    });
+
+    expect(result.current.user?.id).toBe('test-user');
+    expect(result.current.profile).toBe(null);
+    expect(result.current.profileResolved).toBe(true);
+    expect(result.current.profileLoadFailed).toBe(true);
+    expect(result.current.hasBirthData).toBe(false);
   });
 });
