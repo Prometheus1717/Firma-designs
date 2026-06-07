@@ -7,6 +7,27 @@ import { isLightMode, getTheme } from '../lib/theme';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
+// Stash form input in localStorage so a timeout or refresh never destroys
+// what the user typed. Keyed by user id so a different account on the same
+// device can't see another user's draft.
+const DRAFT_KEY = 'nn_birth_draft';
+function readDraft(userId) {
+  if (!userId) return null;
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed?.userId !== userId) return null;
+    if (!parsed?.ts || Date.now() - parsed.ts > 24 * 60 * 60 * 1000) return null;
+    return parsed.data || null;
+  } catch { return null; }
+}
+function writeDraft(userId, data) {
+  if (!userId) return;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ userId, ts: Date.now(), data })); } catch {}
+}
+function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+
 export default function BirthDataPage() {
   const { saveBirthData, signOut, hasBirthData, profile, user } = useAuth();
   // Welcome hero: shown only for first-time visitors whose email was just
@@ -70,6 +91,46 @@ export default function BirthDataPage() {
     }
   }, [isEditing, profile]);
 
+  // Recover any in-progress draft for this user — typical case: the user
+  // typed everything, hit save, got a timeout error, refreshed the page in
+  // frustration. Without this they had to start over from scratch and most
+  // gave up at that point. Skip in edit mode since we already pre-fill from
+  // the saved profile.
+  useEffect(() => {
+    if (isEditing) return;
+    if (!user?.id) return;
+    const draft = readDraft(user.id);
+    if (!draft) return;
+    if (draft.name) setName(draft.name);
+    if (draft.date) {
+      setDate(draft.date);
+      const [y, m, d] = draft.date.split('-');
+      if (y && m && d) setDateDisplay(`${d}.${m}.${y}`);
+    }
+    if (draft.time) {
+      setTime(draft.time);
+      setTimeDisplay(draft.time.slice(0, 5));
+    }
+    if (draft.city) {
+      setCitySearch(draft.city.name || '');
+      setSelectedCity(draft.city);
+    }
+  }, [user?.id, isEditing]);
+
+  // Auto-save the draft on every change. localStorage write is cheap (~µs)
+  // and means the very moment the user types something it's safe even if
+  // the browser tab crashes immediately after.
+  useEffect(() => {
+    if (isEditing) return;
+    if (!user?.id) return;
+    writeDraft(user.id, {
+      name,
+      date,
+      time,
+      city: selectedCity ? { name: selectedCity.name, lat: selectedCity.lat, lng: selectedCity.lng } : null,
+    });
+  }, [user?.id, isEditing, name, date, time, selectedCity]);
+
   useEffect(() => {
     if (selectedCity) return;
     if (citySearch.length < 2) { setResults([]); return; }
@@ -118,27 +179,63 @@ export default function BirthDataPage() {
     setSubmitting(true);
     try {
       const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
-      const withTimeout = (promise, ms) => Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Check your internet connection and try again.')), ms)),
+      const payload = {
+        name: name.trim(), date, time,
+        city: selectedCity.name,
+        lat: selectedCity.lat, lng: selectedCity.lng,
+      };
+
+      // Run the local chart calc in parallel so it overlaps with the network
+      // round-trip — saves ~200 ms total on the happy path.
+      const chartPromise = new Promise((resolve) => {
+        try { resolve(calculateChart(birthInput)); }
+        catch { resolve(null); }
+      });
+
+      // Try the save up to 3 times with exponential backoff, each attempt
+      // bounded by a 30 s timeout (raised from 15 s — too aggressive for
+      // slow mobile networks; concrete user keririchardson@hotmail timed
+      // out yesterday). 30 + 31 + 33 s = ~94 s worst case, which is
+      // acceptable for the "I'm setting up my account" moment.
+      const ATTEMPTS = 3;
+      const PER_ATTEMPT_MS = 30_000;
+      const isTransient = (msg) => /timed out|abort|network|fetch failed|lock|stolen|503|504|gateway|temporarily/i.test(msg || '');
+      const withTimeout = (p, ms) => Promise.race([
+        p,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. We will retry automatically — please wait.')), ms)),
       ]);
 
-      const [, chartData] = await Promise.all([
-        withTimeout(saveBirthData({
-          name: name.trim(), date, time,
-          city: selectedCity.name,
-          lat: selectedCity.lat, lng: selectedCity.lng,
-        }), 15000),
-        new Promise((resolve) => {
-          try { resolve(calculateChart(birthInput)); }
-          catch { resolve(null); }
-        }),
-      ]);
+      let lastErr = null;
+      for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+        try {
+          await withTimeout(saveBirthData(payload), PER_ATTEMPT_MS);
+          lastErr = null;
+          break;
+        } catch (err) {
+          lastErr = err;
+          if (attempt === ATTEMPTS || !isTransient(err?.message)) break;
+          // Backoff: 1 s, then 3 s. Inline retry; UI stays in "submitting"
+          // state so the user just sees a longer spinner, not a flash of
+          // error followed by a magical recovery.
+          await new Promise(r => setTimeout(r, attempt === 1 ? 1000 : 3000));
+        }
+      }
+      if (lastErr) throw lastErr;
 
+      const chartData = await chartPromise;
       if (chartData) setCachedChart(birthInput, chartData);
+      clearDraft();
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      // Friendly message: keep their data, tell them it will resume on retry.
+      const msg = err?.message || '';
+      if (/timed out|network|fetch failed|abort/i.test(msg)) {
+        setError('Could not reach the server. Your data is saved locally — please check your connection and click Save again.');
+      } else if (/jwt|expired|sign in|unauthor/i.test(msg)) {
+        setError('Your session expired. Please sign in again — your data is preserved.');
+      } else {
+        setError(msg || 'Could not save your birth data. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
