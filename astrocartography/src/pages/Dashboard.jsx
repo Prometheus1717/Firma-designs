@@ -32,6 +32,15 @@ const IS_CHROME = typeof navigator !== 'undefined' && (
   (/Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent))
 );
 
+const getViewportSize = () => {
+  if (typeof window === 'undefined') return { w: 900, h: 700 };
+  const vv = window.visualViewport;
+  return {
+    w: Math.round((vv?.width || window.innerWidth || document.documentElement.clientWidth || 900)),
+    h: Math.round((vv?.height || window.innerHeight || document.documentElement.clientHeight || 700)),
+  };
+};
+
 // ── Translatable lookups ──
 const tPlanet = (name, lang) => t(`p${name}`, lang);
 const tSign = (name, lang) => t(`s${name}`, lang);
@@ -237,7 +246,7 @@ export default function Dashboard({ demo = false }) {
   // clock is rendered via ref to avoid re-renders
   const [popup, setPopup] = useState(null);
   const [cityPop, setCityPop] = useState(null);
-  const [w, setW] = useState(900);
+  const [viewport, setViewport] = useState(() => getViewportSize());
   const [showSettings, setShowSettings] = useState(false);
   const [settingsTab, setSettingsTab] = useState('profile');
   const [editingName, setEditingName] = useState(false);
@@ -418,6 +427,8 @@ export default function Dashboard({ demo = false }) {
     return () => clearTimeout(t);
   }, [demo, tutorialDismissedAt]);
 
+  const w = viewport.w;
+  const appHeight = viewport.h;
   const mob = w < 900;
 
   // Close all popups/overlays — prevents window overlap
@@ -459,9 +470,33 @@ export default function Dashboard({ demo = false }) {
   // Debounced resize — prevents re-render storm during window dragging
   useEffect(() => {
     let raf;
-    const h = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setW(window.innerWidth)); };
-    h(); window.addEventListener('resize', h);
-    return () => { window.removeEventListener('resize', h); cancelAnimationFrame(raf); };
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        window.__syncAppViewport?.();
+        setViewport(getViewportSize());
+      });
+    };
+
+    sync();
+    window.addEventListener('resize', sync, { passive: true });
+    window.addEventListener('orientationchange', sync, { passive: true });
+    window.addEventListener('pageshow', sync, { passive: true });
+    window.addEventListener('focus', sync, { passive: true });
+    document.addEventListener('visibilitychange', sync, { passive: true });
+    window.visualViewport?.addEventListener('resize', sync, { passive: true });
+    window.visualViewport?.addEventListener('scroll', sync, { passive: true });
+
+    return () => {
+      window.removeEventListener('resize', sync);
+      window.removeEventListener('orientationchange', sync);
+      window.removeEventListener('pageshow', sync);
+      window.removeEventListener('focus', sync);
+      document.removeEventListener('visibilitychange', sync);
+      window.visualViewport?.removeEventListener('resize', sync);
+      window.visualViewport?.removeEventListener('scroll', sync);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   // Redirect if no birth data (skip in demo mode)
@@ -839,7 +874,7 @@ export default function Dashboard({ demo = false }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, background: T.bg, color: T.tx, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', transition: 'background .3s, color .3s' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, right: 0, bottom: 'auto', left: 0, width: '100%', height: 'var(--app-height, 100dvh)', minHeight: 'var(--app-height, 100dvh)', background: T.bg, color: T.tx, fontFamily: 'Instrument Sans, sans-serif', overflow: 'hidden', transition: 'background .3s, color .3s' }}>
       {/* Payment success banner */}
       {paymentStatus === 'success' && (
         <div onClick={() => setPaymentStatus(null)} style={{ ...F, fontSize: 11, color: T.ac, background: T.acBg, borderBottom: `1px solid ${T.acBd}`, padding: '8px 16px', textAlign: 'center', cursor: 'pointer', zIndex: 400, flexShrink: 0 }}>
@@ -1060,7 +1095,7 @@ export default function Dashboard({ demo = false }) {
 
         {/* GLOBE */}
         <div data-tutorial="globe" style={{ flex: 1, position: 'relative', overflow: 'hidden', background: T.bg, cursor: 'grab' }}>
-          <Globe lines={visibleLines} citiesOnLines={onLines} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} />
+          <Globe lines={visibleLines} citiesOnLines={onLines} citiesTiers={filteredCitiesTiers} homeLocation={homeLocation} onCityClick={handleCityClick} flat={flatMap} lightMode={lightMode} viewportHeight={appHeight} />
 
           {/* City search — desktop top-left (compact icon, expands on click) */}
           {!mob && <div data-tutorial="search" style={{ position: 'absolute', top: 8, left: 8, zIndex: 60 }}>

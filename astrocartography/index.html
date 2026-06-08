@@ -217,12 +217,39 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Instrument+Sans:wght@400;600;700&display=swap" as="style" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 
+    <script>
+      (function () {
+        function syncAppViewport() {
+          var doc = document.documentElement;
+          var vv = window.visualViewport;
+          var width = Math.round((vv && vv.width) || window.innerWidth || doc.clientWidth || 0);
+          var height = Math.round((vv && vv.height) || window.innerHeight || doc.clientHeight || 0);
+          if (width > 0) doc.style.setProperty('--app-width', width + 'px');
+          if (height > 0) doc.style.setProperty('--app-height', height + 'px');
+        }
+
+        window.__syncAppViewport = syncAppViewport;
+        syncAppViewport();
+
+        window.addEventListener('resize', syncAppViewport, { passive: true });
+        window.addEventListener('orientationchange', syncAppViewport, { passive: true });
+        window.addEventListener('pageshow', syncAppViewport, { passive: true });
+        window.addEventListener('focus', syncAppViewport, { passive: true });
+        document.addEventListener('visibilitychange', syncAppViewport, { passive: true });
+
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', syncAppViewport, { passive: true });
+          window.visualViewport.addEventListener('scroll', syncAppViewport, { passive: true });
+        }
+      })();
+    </script>
+
     <!-- ─── Critical CSS ─── -->
     <style>
-      html { overflow: hidden; height: 100%; }
-      body { margin: 0; background: #0A1018; overflow: hidden; height: 100%; width: 100%; position: fixed; touch-action: pan-y; }
+      html { overflow: hidden; width: 100%; height: var(--app-height, 100dvh); }
+      body { margin: 0; background: #0A1018; overflow: hidden; height: var(--app-height, 100dvh); min-height: var(--app-height, 100dvh); width: 100%; position: fixed; inset: 0; touch-action: pan-y; overscroll-behavior: none; }
       #root-loader {
-        min-height: 100vh; display: flex; flex-direction: column;
+        min-height: var(--app-height, 100dvh); display: flex; flex-direction: column;
         align-items: center; justify-content: center; background: #0A1018;
       }
       #root-loader .title {

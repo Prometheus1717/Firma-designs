@@ -87,7 +87,7 @@ function topoF(t, n) {
   } catch (e) { return null; }
 }
 
-export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation, onCityClick, flat, lightMode }) {
+export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation, onCityClick, flat, lightMode, viewportHeight }) {
   const canvasRef = useRef(null);
   const lightRef = useRef(lightMode);
   lightRef.current = lightMode;
@@ -133,7 +133,12 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     const W = par.clientWidth, H = par.clientHeight;
     if (!W || !H) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; }
+    if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+    }
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -718,7 +723,9 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
       if (!isMobile && Math.abs(s.scale - s.baseScale) < 0.5) s._fitted = false;
       scheduleRedraw();
     };
-    window.addEventListener('resize', rs);
+    window.addEventListener('resize', rs, { passive: true });
+    window.visualViewport?.addEventListener('resize', rs, { passive: true });
+    window.visualViewport?.addEventListener('scroll', rs, { passive: true });
 
     // Pause RAF loop when tab is hidden OR window loses focus (user switched
     // to another app / window). Without the focus check, the laptop keeps
@@ -752,6 +759,8 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
       c.removeEventListener('touchstart', dn); c.removeEventListener('touchmove', mv); c.removeEventListener('touchend', up);
       c.removeEventListener('wheel', wh); c.removeEventListener('dblclick', dbl); c.removeEventListener('click', click);
       window.removeEventListener('resize', rs);
+      window.visualViewport?.removeEventListener('resize', rs);
+      window.visualViewport?.removeEventListener('scroll', rs);
     };
   }, [draw, citiesOnLines, onCityClick]);
 
@@ -771,6 +780,12 @@ export default function Globe({ lines, citiesOnLines, citiesTiers, homeLocation,
     s.dirty = true;
     if (s.scheduleRedraw) s.scheduleRedraw();
   }, [lightMode]);
+
+  useEffect(() => {
+    const s = S.current;
+    s.dirty = true;
+    if (s.scheduleRedraw) s.scheduleRedraw();
+  }, [viewportHeight]);
 
   // Expose flyTo — smooth animated rotation + zoom
   Globe.flyTo = (la, lo, name) => {
