@@ -238,10 +238,19 @@ function SmartRedirect() {
   return <Navigate to="/birth-data" replace />;
 }
 
+// Build-time flag. Only the dedicated "natal-landing" deployment is built with
+// VITE_IS_LANDING=1 — there the homepage is the marketing landing page.
+// On natalnavigator.com (the web app) the flag is unset, so anonymous "/"
+// stays the live demo dashboard exactly as before.
+const IS_LANDING = import.meta.env.VITE_IS_LANDING === '1' || import.meta.env.VITE_IS_LANDING === 'true';
+
 function DemoOrDashboard() {
   const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (!user) return <Dashboard demo />;
+  // Anonymous visitors: marketing landing page on the natal-landing build,
+  // the live demo dashboard on the app build. The demo lives at /demo and is
+  // embedded into the landing page via an iframe.
+  if (!user) return IS_LANDING ? <LandingPage /> : <Dashboard demo />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
   if (hasBirthData) return <Dashboard />;
@@ -300,12 +309,13 @@ export default function App() {
             <GlobalProfileGate>
               <Routes>
                 <Route path="/" element={<DemoOrDashboard />} />
+                <Route path="/demo" element={<Dashboard demo />} />
                 <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
                 <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                 <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
-                <Route path="/landing" element={<LandingPage />} />
+                <Route path="/landing" element={<Navigate to="/" replace />} />
                 <Route path="*" element={<SmartRedirect />} />
               </Routes>
             </GlobalProfileGate>

@@ -14,13 +14,21 @@ import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
 import { getCityReading } from '../lib/cityReadingsI18n.js';
 import { getNatalReadings } from '../data/natalReadings.js';
 
-// Demo chart: Elon Musk — public birth data
-const DEMO = {
-  date: '1971-06-28', time: '07:00',
-  lat: -25.7479, lng: 28.2293,
-  city: 'Pretoria, South Africa',
-  name: 'Elon Musk',
+// Demo charts — public birth data (Astro-Databank). The landing page embeds
+// /demo?star=<key> to switch profiles; default stays Elon Musk.
+const DEMOS = {
+  musk:     { date: '1971-06-28', time: '07:00', lat: -25.7479, lng: 28.2293,   city: 'Pretoria, South Africa',  home: 'Pretoria',      name: 'Elon Musk' },
+  einstein: { date: '1879-03-14', time: '11:30', lat: 48.3984,  lng: 9.9916,    city: 'Ulm, Germany',            home: 'Ulm',           name: 'Albert Einstein' },
+  monroe:   { date: '1926-06-01', time: '09:30', lat: 34.0522,  lng: -118.2437, city: 'Los Angeles, USA',        home: 'Los Angeles',   name: 'Marilyn Monroe' },
+  jobs:     { date: '1955-02-24', time: '19:15', lat: 37.7749,  lng: -122.4194, city: 'San Francisco, USA',      home: 'San Francisco', name: 'Steve Jobs' },
+  kahlo:    { date: '1907-07-06', time: '08:30', lat: 19.3434,  lng: -99.1626,  city: 'Coyoacán, Mexico City',   home: 'Coyoacán',      name: 'Frida Kahlo' },
 };
+// Resolved once per document load — the landing embeds each star as a fresh
+// iframe document, so reading location here is safe.
+const DEMO = (() => {
+  try { return DEMOS[new URLSearchParams(window.location.search).get('star')] || DEMOS.musk; }
+  catch { return DEMOS.musk; }
+})();
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -215,11 +223,21 @@ export default function Dashboard({ demo = false }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lightMode, setLightMode] = useState(() => {
-    try { return localStorage.getItem('nn_theme') === 'light'; } catch { return false; }
+    try {
+      // ?theme=light|dark overrides the stored preference (landing-page embed)
+      const forced = new URLSearchParams(window.location.search).get('theme');
+      if (forced === 'light') return true;
+      if (forced === 'dark') return false;
+      return localStorage.getItem('nn_theme') === 'light';
+    } catch { return false; }
   });
   const L = lightMode;
   useEffect(() => {
-    try { localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark'); } catch {}
+    // Don't let a URL-forced theme (landing embed) overwrite the user's choice
+    try {
+      if (new URLSearchParams(window.location.search).has('theme')) return;
+      localStorage.setItem('nn_theme', lightMode ? 'light' : 'dark');
+    } catch {}
   }, [lightMode]);
   const T = useMemo(() => lightMode ? {
     bg: '#F2F0ED', p: '#FFFFFF', c: '#FAF9F7', b: '#F7F6F4', d: '#EDEAE6', a: '#F4F2EF',
@@ -416,8 +434,11 @@ export default function Dashboard({ demo = false }) {
   //    "No thanks" / ✕, or 30 s after the last tour step on "Yes show me".
   //    Gives the user breathing room to explore before the paywall.
   //  • Returning visitors: fires 25 s after page load (original behavior).
+  //  • Embedded on the landing page (?embed=1): never fires — the page
+  //    around the iframe owns the conversion CTAs.
   useEffect(() => {
     if (!demo) return;
+    if (new URLSearchParams(window.location.search).get('embed') === '1') return;
     if (firstTimeRef.current) {
       if (tutorialDismissedAt === null) return;   // wait for the tour to end
       const t = setTimeout(() => setShowDemoGate(true), 30000);
@@ -593,7 +614,7 @@ export default function Dashboard({ demo = false }) {
     return [searchedCity, ...rest];
   }, [filteredTabBase, searchedCity]);
 
-  const homeLocation = demo ? [DEMO.lng, DEMO.lat, 'Pretoria'] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
+  const homeLocation = demo ? [DEMO.lng, DEMO.lat, DEMO.home] : profile ? [profile.birth_lng, profile.birth_lat, profile.birth_city?.split(',')[0] || 'HOME'] : null;
   const displayName = demo ? DEMO.name : profile?.display_name || user?.email?.split('@')[0] || 'User';
   const planetString = useMemo(() => {
     if (!chartData?.planets) return chartData?.planetString || '';

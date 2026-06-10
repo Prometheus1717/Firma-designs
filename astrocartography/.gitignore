@@ -26,3 +26,6 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# landing screenshot pipeline (raw captures + puppeteer)
+lp-shots/
