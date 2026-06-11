@@ -107,7 +107,9 @@ class ErrorBoundary extends Component {
       if (count < 2) {
         return { error, reloading: true };
       }
-    } catch {}
+    } catch {
+      // Storage may be unavailable; fall through to the normal error screen.
+    }
     return { error, reloading: false };
   }
   componentDidCatch() {
@@ -120,7 +122,9 @@ class ErrorBoundary extends Component {
         return;
       }
       sessionStorage.removeItem(key);
-    } catch {}
+    } catch {
+      // Storage may be unavailable; the error boundary still renders safely.
+    }
   }
   componentDidUpdate(prevProps) {
     if (this.state.error && prevProps.locationKey !== this.props.locationKey) {
@@ -244,13 +248,25 @@ function SmartRedirect() {
 // stays the live demo dashboard exactly as before.
 const IS_LANDING = import.meta.env.VITE_IS_LANDING === '1' || import.meta.env.VITE_IS_LANDING === 'true';
 
+function isEmbeddedDemoRequest() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('embed') === '1';
+  } catch {
+    // If URLSearchParams is unavailable, fall back to the normal landing route.
+    return false;
+  }
+}
+
 function DemoOrDashboard() {
   const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
   // Anonymous visitors: marketing landing page on the natal-landing build,
   // the live demo dashboard on the app build. The demo lives at /demo and is
-  // embedded into the landing page via an iframe.
-  if (!user) return IS_LANDING ? <LandingPage /> : <Dashboard demo />;
+  // embedded into the landing page via an iframe. If the embedded app ever
+  // navigates back to /, keep rendering the demo instead of nesting the landing
+  // page inside itself.
+  if (!user) return (IS_LANDING && !isEmbeddedDemoRequest()) ? <LandingPage /> : <Dashboard demo />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
   if (hasBirthData) return <Dashboard />;
@@ -274,7 +290,9 @@ function ErrorReloadCleanup() {
   // of the intended 2-attempt cap.
   useEffect(() => {
     const id = setTimeout(() => {
-      try { sessionStorage.removeItem('nn_err_reloads'); } catch {}
+      try { sessionStorage.removeItem('nn_err_reloads'); } catch {
+        // Storage may be unavailable; this cleanup is best effort.
+      }
     }, 3000);
     return () => clearTimeout(id);
   }, []);

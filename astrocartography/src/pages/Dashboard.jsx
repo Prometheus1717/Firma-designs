@@ -31,6 +31,15 @@ const DEMO = (() => {
 })();
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
+const APP_AUTH_URL = 'https://natalnavigator.com/auth';
+
+function isEmbeddedDemo() {
+  try { return new URLSearchParams(window.location.search).get('embed') === '1'; }
+  catch {
+    // If parsing fails, keep the standard in-app auth navigation.
+    return false;
+  }
+}
 
 // Chrome leaves less vertical room than Safari (taller browser UI), so the globe
 // gets clipped there. Shrink the bottom panel to ~4 city rows instead of 5 — but
@@ -222,6 +231,13 @@ export default function Dashboard({ demo = false }) {
   const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const goAuth = useCallback(() => {
+    if (isEmbeddedDemo()) {
+      window.top.location.href = APP_AUTH_URL;
+      return;
+    }
+    navigate('/auth');
+  }, [navigate]);
   const [lightMode, setLightMode] = useState(() => {
     try {
       // ?theme=light|dark overrides the stored preference (landing-page embed)
@@ -948,7 +964,7 @@ export default function Dashboard({ demo = false }) {
               <span onClick={openBirthDataModal} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('enterBirthDataBtn', lang) || 'Enter birth data'}</span>
               <span onClick={signOut} title={t('signOut', lang) || 'Sign out'} style={{ ...F, fontSize: mob ? 10 : 11, color: '#F04060', cursor: 'pointer', padding: mob ? '4px 6px' : '4px 10px', borderRadius: 4, border: '1px solid #F0406040', background: '#F0406010', whiteSpace: 'nowrap', flexShrink: 0, lineHeight: 1 }}>⏻</span>
             </> : (
-              <span onClick={() => navigate('/auth')} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
+              <span onClick={goAuth} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
             )}
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
@@ -1930,10 +1946,10 @@ export default function Dashboard({ demo = false }) {
                   {t('demoSignup', lang)}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
+                  <button onClick={goAuth} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
                     {t('createMyChart', lang)}
                   </button>
-                  <button onClick={() => navigate('/auth')} style={{ ...F, fontSize: 11, color: T.tm, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
+                  <button onClick={goAuth} style={{ ...F, fontSize: 11, color: T.tm, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
                     {t('alreadyAccount', lang)}
                   </button>
                 </div>

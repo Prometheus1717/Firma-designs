@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -112,7 +111,7 @@ const USE_CASES = [
 ];
 
 const WHY = [
-  'Free interactive demo — no signup, no email, no paywall to look around',
+  'Interactive live demo with example charts before you create your personal map',
   'A real 3D globe, not a static map image',
   '345+ cities rated and explained in writing — not just lines on a map',
   'Sub-arcsecond ephemeris precision (astronomy-engine)',
@@ -138,9 +137,9 @@ const PLANET_LINES = [
 
 const FAQS = [
   ['What is astrocartography?', 'Astrocartography — also called locational or relocation astrology — projects your natal chart onto the world map. For each planet it draws four lines (MC, IC, ASC, DSC) showing where that planet was angular at your birth. Living on or near a line is read as experiencing that planet’s themes more strongly in that place.'],
-  ['Is Natal Navigator free?', 'Yes. The interactive demo is completely free and needs no signup. Your personal map — all 40 planetary lines, 345+ rated cities, natal wheel and PDF export — is a one-time payment of €4.99. No subscription, lifetime access.'],
+  ['What does Natal Navigator cost?', 'You can explore the interactive demo with example charts first. Your personal astrocartography map — all 40 planetary lines, 345+ rated cities, natal wheel and PDF export — is a one-time payment of €4.99. No subscription, lifetime access.'],
   ['Who is astrocartography for?', 'Anyone weighing a place against a feeling: digital nomads and expats choosing a base, professionals considering a relocation for work, people searching for where home or love comes easier, and travellers who want their trips to mean something. You don’t need any astrology knowledge — the readings explain everything.'],
-  ['Whose charts can I explore in the demo?', 'The free demo lets you switch between the astrocartography maps of Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo — all based on publicly documented birth data. It’s the full app, just with a famous chart instead of yours.'],
+  ['Whose charts can I explore in the demo?', 'The interactive demo lets you switch between the astrocartography maps of Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo — all based on publicly documented birth data. It’s the full app, just with a famous chart instead of yours.'],
   ['How accurate are the calculations?', 'Natal Navigator uses the astronomy-engine ephemeris library to compute real planetary positions to sub-arcsecond precision — no lookup tables or approximations. Line positions match professional astrology software.'],
   ['Do I need my exact birth time?', 'Yes — for a meaningful map. The angles (MC, IC, ASC, DSC) move roughly one degree every four minutes, so even 15 minutes can shift your lines by hundreds of kilometres. Check your birth certificate if you are unsure.'],
   ['Can astrocartography tell me where to live?', 'It is a reflection tool, not a verdict. Your map highlights places whose planetary themes support career (MC), home (IC), identity (ASC) or relationships (DSC). Natal Navigator rates 345+ cities as thrive, neutral or caution zones so you can compare options — the decision stays yours.'],
@@ -225,7 +224,6 @@ function FeatureMedia({ media }) {
 }
 
 export default function LandingPage() {
-  const navigate = useNavigate();
   const rootRef = useRef(null);
   const navRef = useRef(null);
   const [demoOn, setDemoOn] = useState(false);
@@ -237,8 +235,8 @@ export default function LandingPage() {
     const prevTitle = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute('content');
-    document.title = 'Free Astrocartography Map & Calculator — Natal Navigator';
-    meta?.setAttribute('content', 'Turn your birth chart into a living map. Free astrocartography calculator with an interactive 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.');
+    document.title = 'Astrocartography Map & Calculator — Natal Navigator';
+    meta?.setAttribute('content', 'Turn your birth chart into a living map. Interactive astrocartography calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.');
     return () => {
       document.title = prevTitle;
       if (prevDesc) meta?.setAttribute('content', prevDesc);
@@ -255,6 +253,13 @@ export default function LandingPage() {
     });
   }, []);
 
+  // Auto-load the embedded live app shortly after first paint, so the hero
+  // shows the real, clickable demo (poster first for a fast LCP, then swap).
+  useEffect(() => {
+    const t = setTimeout(() => setDemoOn(true), 650);
+    return () => clearTimeout(t);
+  }, []);
+
   // Scroll-triggered reveals + nav shadow
   useEffect(() => {
     const root = rootRef.current;
@@ -268,7 +273,9 @@ export default function LandingPage() {
     return () => { io.disconnect(); root.removeEventListener('scroll', onScroll); };
   }, []);
 
-  const goAuth = () => navigate('/auth');
+  const goAuth = () => {
+    window.location.href = 'https://natalnavigator.com/auth';
+  };
   // Query the scroll container at click time (not via ref) so the handler
   // factory can safely run during render — see react-hooks/refs.
   const scrollTo = (id) => (e) => {
@@ -302,67 +309,58 @@ export default function LandingPage() {
             <a href="#pricing" onClick={scrollTo('pricing')}>Pricing</a>
             <a href="#faq" onClick={scrollTo('faq')}>FAQ</a>
           </div>
-          <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>Get your free map <span className="lp-btn-ic">{I.arrow}</span></button>
+          <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>Create your map <span className="lp-btn-ic">{I.arrow}</span></button>
         </nav>
       </header>
 
-      {/* ═══ HERO ═══ */}
-      <section className="lp-hero">
-        <div className="lp-hero-glow" aria-hidden="true" />
-        <div className="lp-dots" aria-hidden="true" />
-        <div className="lp-wrap lp-hero-inner">
+      {/* ═══ HERO + LIVE DEMO STAGE (cosmic glass) ═══ */}
+      <section className="lp-stage" id="demo">
+        <div className="lp-stage-sky" aria-hidden="true" />
+        <div className="lp-stage-aurora" aria-hidden="true" />
+        <div className="lp-stage-stars" aria-hidden="true" />
+        <i className="lp-shoot lp-shoot-1" aria-hidden="true" />
+        <i className="lp-shoot lp-shoot-2" aria-hidden="true" />
+
+        {/* hero copy — short, so the live app is visible above the fold */}
+        <div className="lp-wrap lp-stage-copy">
           <div className="lp-badge lp-h-an" style={{ '--d': '0ms' }}>
-            <span className="lp-badge-dot" /> Free astrocartography calculator — no signup needed
+            <span className="lp-badge-dot" /> Find your best places with astrocartography
           </div>
-          <h1 className="lp-h1 lp-h-an" style={{ '--d': '80ms' }}>
-            Turn your{' '}
-            <span className="lp-chip lp-chip-lav"><span className="lp-chip-ic">{I.wheel}</span><em>birth chart</em></span>{' '}
-            into a{' '}
-            <span className="lp-chip lp-chip-mint"><span className="lp-chip-ic">{I.globe}</span><em>living map</em></span>{' '}
-            of your best places
+          <h1 className="lp-h1 lp-h-an" style={{ '--d': '90ms' }}>
+            <span className="lp-sr">Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.</span>
+            <span aria-hidden="true">
+              <span className="lp-h1-row">
+                Your{' '}
+                <span className="lp-chip lp-chip-lav lp-float"><span className="lp-chip-ic">{I.wheel}</span><em>birth chart</em></span>{' '}
+                is secretly a{' '}
+                <span className="lp-orbit">map<i className="lp-orbit-sys"><i className="lp-orbit-ring" /><i className="lp-orbit-spin"><i className="lp-orbit-dot" /></i></i></span>
+              </span>
+              <span className="lp-h1-row lp-h1-it">
+                <em>See where you</em>{' '}
+                <span className="lp-cycle">
+                  <span className="lp-cycle-track">
+                    <span className="lp-cw lp-cw-mint">thrive</span>
+                    <span className="lp-cw lp-cw-rose">fall in love</span>
+                    <span className="lp-cw lp-cw-amber">feel at home</span>
+                    <span className="lp-cw lp-cw-lav">grow</span>
+                  </span>
+                </span>
+              </span>
+            </span>
           </h1>
-          <p className="lp-hero-sub lp-h-an" style={{ '--d': '170ms' }}>
-            Natal Navigator projects your natal chart onto an interactive 3D globe — every Sun, Moon,
-            Venus and Jupiter line, plus 345+ cities rated for career, love and home.
-            Relocation astrology, computed to sub-arcsecond precision.
-          </p>
-          <div className="lp-hero-cta lp-h-an" style={{ '--d': '260ms' }}>
-            <button className="lp-btn lp-btn-ink" onClick={goAuth}>Explore your map — it’s free <span className="lp-btn-ic">{I.arrow}</span></button>
-            <a className="lp-btn lp-btn-ghost" href="#demo" onClick={scrollTo('demo')}><span className="lp-btn-ic">{I.play}</span> Play with the live demo</a>
+          <div className="lp-hero-cta lp-h-an" style={{ '--d': '200ms' }}>
+            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener"><span className="lp-btn-ic">{I.open}</span> Open fullscreen</a>
           </div>
+          <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>the real app, live below <span className="lp-hint-arrow">↓</span></div>
         </div>
 
-        {/* ═══ LIVE DEMO ═══ */}
-        <div className="lp-wrap-wide" id="demo">
-          <figure className="lp-frame lp-h-an" style={{ '--d': '380ms' }}>
-            <div className="lp-frame-bar">
-              <span className="lp-frame-dots" aria-hidden="true"><i /><i /><i /></span>
-              <span className="lp-frame-url">natalnavigator.com · live demo — {starName}’s chart</span>
-              <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">Open fullscreen {I.open}</a>
-            </div>
-            <div className="lp-frame-body">
-              {demoOn ? (
-                <iframe
-                  key={demoSrc}
-                  src={demoSrc}
-                  title={`Natal Navigator — interactive astrocartography map demo (${starName})`}
-                  loading="lazy"
-                  allow="fullscreen"
-                />
-              ) : (
-                <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label="Start the interactive astrocartography demo">
-                  <img src="/landing/app-globe.webp" alt="Interactive astrocartography map — 3D globe with 40 planetary lines and rated cities in the Natal Navigator app" width="2000" height="1214" fetchPriority="high" />
-                  <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> Play with the live demo</span>
-                  <span className="lp-poster-note">Real app, not a video — drag the globe, toggle planets, click cities</span>
-                </button>
-              )}
-            </div>
-          </figure>
+        {/* pinned live demo with flanking glass control rails */}
+        <div className="lp-stage-pin">
+          <div className="lp-demo-stage lp-h-an" style={{ '--d': '360ms' }}>
 
-          {/* Demo controls: star profiles + theme */}
-          <div className="lp-demo-controls lp-h-an" style={{ '--d': '440ms' }}>
-            <div className="lp-demo-group" role="group" aria-label="Choose a demo chart">
-              <span className="lp-demo-label">Demo chart</span>
+            {/* LEFT rail — switch chart */}
+            <aside className="lp-rail lp-rail-l" role="group" aria-label="Choose a demo chart">
+              <span className="lp-rail-label">Demo chart</span>
               {STARS.map(([key, name]) => (
                 <button
                   key={key}
@@ -371,19 +369,48 @@ export default function LandingPage() {
                   aria-pressed={star === key}
                 >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
               ))}
-            </div>
-            <div className="lp-demo-group" role="group" aria-label="Choose demo theme">
-              <span className="lp-demo-label">Theme</span>
-              <div className="lp-mode">
+            </aside>
+
+            {/* glass-framed live app */}
+            <figure className="lp-glass">
+              <div className="lp-frame">
+                <div className="lp-frame-bar">
+                  <span className="lp-frame-dots" aria-hidden="true"><i /><i /><i /></span>
+                  <span className="lp-frame-url">natalnavigator.com · live demo — {starName}’s chart</span>
+                  <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">Fullscreen {I.open}</a>
+                </div>
+                <div className="lp-frame-body">
+                  {demoOn ? (
+                    <iframe
+                      key={demoSrc}
+                      src={demoSrc}
+                      title={`Natal Navigator — interactive astrocartography map demo (${starName})`}
+                      allow="fullscreen"
+                    />
+                  ) : (
+                    <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label="Start the interactive astrocartography demo">
+                      <img src="/landing/app-globe.webp" alt="Interactive astrocartography map — 3D globe with 40 planetary lines and rated cities in the Natal Navigator app" width="2000" height="1214" fetchPriority="high" />
+                      <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> Play with the live demo</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </figure>
+
+            {/* RIGHT rail — theme + hint */}
+            <aside className="lp-rail lp-rail-r" role="group" aria-label="Demo theme">
+              <span className="lp-rail-label">Theme</span>
+              <div className="lp-mode lp-mode-col">
                 <button className={demoTheme === 'dark' ? 'lp-on' : ''} onClick={() => pickTheme('dark')} aria-pressed={demoTheme === 'dark'}>{I.moon} Dark</button>
                 <button className={demoTheme === 'light' ? 'lp-on' : ''} onClick={() => pickTheme('light')} aria-pressed={demoTheme === 'light'}>{I.sun} Light</button>
               </div>
-            </div>
+              <p className="lp-rail-note">The real app — drag the globe, toggle planets, click any city.</p>
+              <button className="lp-btn lp-btn-mint lp-rail-cta" onClick={goAuth}>Create my map <span className="lp-btn-ic">{I.arrow}</span></button>
+            </aside>
           </div>
-          <figcaption className="lp-frame-cap lp-h-an" style={{ '--d': '500ms' }}>
-            The actual app, embedded — explore famous charts, then create your own.
-          </figcaption>
         </div>
+
+        <div className="lp-stage-spacer" aria-hidden="true" />
       </section>
 
       {/* ═══ STATS ═══ */}
@@ -522,8 +549,8 @@ export default function LandingPage() {
           <div className="lp-pricing">
             <article className="lp-price-card lp-reveal">
               <h3 className="lp-price-tier">Explorer</h3>
-              <div className="lp-price-n">Free</div>
-              <p className="lp-price-sub">The full app with famous example charts — no account needed.</p>
+              <div className="lp-price-n">Demo</div>
+              <p className="lp-price-sub">The full app experience with famous example charts.</p>
               <ul className="lp-price-list">
                 <li>{I.check} Interactive demo globe & map</li>
                 <li>{I.check} 5 celebrity charts to explore</li>
@@ -594,7 +621,7 @@ export default function LandingPage() {
           <nav aria-label="Learn">
             <h4>Learn</h4>
             <a href="/astrocartography">Astrocartography guide</a>
-            <a href="/astrocartography-calculator">Free calculator</a>
+            <a href="/astrocartography-calculator">Astrocartography calculator</a>
             <a href="/astrokartographie">Astrokartographie (DE)</a>
           </nav>
           <nav aria-label="Contact">
@@ -648,16 +675,18 @@ const CSS = `
 }
 @keyframes lpUp{ to{ opacity:1; transform:none; } }
 
-/* ── nav ── */
-.lp-nav-wrap{ position:sticky; top:0; z-index:50; padding:14px clamp(12px,3vw,28px) 6px; }
+/* ── nav (frosted glass) ── */
+.lp-nav-wrap{ position:sticky; top:0; z-index:50; padding:16px clamp(12px,3vw,28px) 6px; }
 .lp-nav{
-  max-width:1120px; margin:0 auto; height:58px; padding:0 10px 0 20px;
+  max-width:1120px; margin:0 auto; height:60px; padding:0 10px 0 22px;
   display:flex; align-items:center; justify-content:space-between; gap:16px;
-  background:rgba(255,255,255,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--line); border-radius:999px;
-  transition:box-shadow .3s ease;
+  background:rgba(255,255,255,.42);
+  backdrop-filter:blur(24px) saturate(180%); -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,.65); border-radius:999px;
+  box-shadow:0 10px 34px -18px rgba(40,44,90,.32), inset 0 1px 0 rgba(255,255,255,.8);
+  transition:box-shadow .3s ease, background .3s ease;
 }
-.lp-nav.lp-scrolled{ box-shadow:0 12px 32px -14px rgba(24,28,35,.18); }
+.lp-nav.lp-scrolled{ background:rgba(255,255,255,.62); box-shadow:0 14px 38px -16px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.9); }
 .lp-logo{ display:flex; align-items:center; gap:9px; font-weight:600; font-size:15.5px; letter-spacing:-.01em; white-space:nowrap; }
 .lp-logo-mark{ display:grid; place-items:center; width:30px; height:30px; border-radius:9px; background:var(--ink); color:#fff; flex-shrink:0; }
 .lp-logo-mark svg{ width:17px; height:17px; }
@@ -684,37 +713,149 @@ const CSS = `
 .lp-btn-mint:hover{ box-shadow:0 16px 34px -10px rgba(25,198,139,.55); }
 .lp-btn-night{ background:rgba(255,255,255,.08); color:#EAF2EE; border:1px solid rgba(255,255,255,.18); }
 .lp-btn-night:hover{ background:rgba(255,255,255,.14); }
+.lp-btn-glass{
+  background:rgba(255,255,255,.45); color:var(--ink); border:1px solid rgba(255,255,255,.7);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px -14px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.lp-btn-glass:hover{ background:rgba(255,255,255,.7); box-shadow:0 14px 32px -14px rgba(40,44,90,.5); }
 .lp-btn-sm{ padding:10px 18px; font-size:14px; }
 .lp-btn-full{ width:100%; }
 
-/* ── hero ── */
-.lp-hero{ position:relative; padding:clamp(56px,9vh,110px) 0 0; }
-.lp-hero-glow{
-  position:absolute; inset:-120px 0 auto; height:680px; pointer-events:none; z-index:0;
+/* ── hero + demo stage (cosmic glass) ── */
+.lp-stage{ position:relative; padding-top:clamp(22px,3.5vh,46px); isolation:isolate; }
+.lp-stage-sky{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:linear-gradient(180deg,
+    #C7D7FF 0%, #D4D1F6 24%, #E4DCEE 48%, #F1E8DD 72%, var(--paper) 100%);
+}
+.lp-stage-aurora{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
   background:
-    radial-gradient(620px 340px at 18% 8%, rgba(93,79,184,.10), transparent 70%),
-    radial-gradient(700px 380px at 82% 4%, rgba(25,198,139,.12), transparent 70%),
-    radial-gradient(560px 320px at 55% 30%, rgba(168,101,15,.06), transparent 70%);
+    radial-gradient(680px 380px at 15% 4%, rgba(93,79,184,.34), transparent 64%),
+    radial-gradient(760px 440px at 86% 0%, rgba(25,198,139,.28), transparent 64%),
+    radial-gradient(1000px 560px at 50% 34%, rgba(120,150,235,.20), transparent 70%);
+  filter:saturate(125%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 88%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 88%);
 }
-.lp-dots{
-  position:absolute; inset:0; pointer-events:none; z-index:0; opacity:.5;
-  background-image:radial-gradient(rgba(24,28,35,.13) 1px, transparent 1.4px);
-  background-size:26px 26px;
-  mask-image:radial-gradient(900px 600px at 50% 8%, #000 30%, transparent 75%);
-  -webkit-mask-image:radial-gradient(900px 600px at 50% 8%, #000 30%, transparent 75%);
+.lp-stage-stars{
+  position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 16%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 26% 40%, #fff, transparent),
+    radial-gradient(1.7px 1.7px at 45% 10%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 64% 28%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 81% 14%, #fff, transparent),
+    radial-gradient(1px 1px at 7% 56%, #fff, transparent),
+    radial-gradient(1px 1px at 93% 46%, #fff, transparent),
+    radial-gradient(1px 1px at 37% 60%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 73% 54%, #fff, transparent),
+    radial-gradient(1px 1px at 55% 8%, #fff, transparent);
+  mask-image:linear-gradient(180deg,#000 0%,#000 38%,transparent 74%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 38%,transparent 74%);
 }
-.lp-hero-inner{ position:relative; z-index:1; text-align:center; }
+.lp-stage-copy{ position:relative; z-index:2; text-align:center; }
 .lp-badge{
   display:inline-flex; align-items:center; gap:9px; padding:8px 18px;
-  background:#fff; border:1px solid var(--line); border-radius:999px;
+  background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.7); border-radius:999px;
+  backdrop-filter:blur(14px) saturate(150%); -webkit-backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:0 6px 20px -12px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.8);
   font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--ink2);
 }
-.lp-badge-dot{ width:7px; height:7px; border-radius:50%; background:var(--mint-bright); box-shadow:0 0 0 4px rgba(25,198,139,.18); flex-shrink:0; }
+.lp-badge-dot{ width:7px; height:7px; border-radius:50%; background:var(--mint-bright); box-shadow:0 0 0 4px rgba(25,198,139,.22); flex-shrink:0; }
 .lp-h1{
-  font-family:var(--serif); font-weight:400; font-size:clamp(42px,6.6vw,82px);
-  line-height:1.06; letter-spacing:-.015em; margin:30px auto 0; max-width:16ch;
+  font-family:var(--serif); font-weight:400; font-size:clamp(34px,4.6vw,62px);
+  line-height:1.13; letter-spacing:-.015em; margin:clamp(24px,3.4vh,34px) auto 0; max-width:34ch;
 }
 .lp-h1 em, .lp-h2 em{ font-style:italic; }
+.lp-sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+.lp-h1-row{ display:block; }
+.lp-h1-row + .lp-h1-row{ margin-top:.18em; }
+.lp-h1-it{
+  display:flex; align-items:center; justify-content:center; gap:.16em; flex-wrap:wrap;
+}
+.lp-h1-it em{ font-style:italic; color:var(--ink2); }
+
+/* word cycler — "thrive / fall in love / feel at home / grow" */
+.lp-cycle{
+  display:inline-grid; align-items:center; justify-items:start;
+  width:6.9em;
+  padding:0 .04em;
+}
+.lp-cycle-track{
+  display:grid; align-items:center; justify-items:start;
+  width:100%;
+}
+.lp-cw{
+  grid-area:1 / 1;
+  display:flex; align-items:center; justify-content:center;
+  width:max-content; height:1.12em; box-sizing:border-box; margin:0;
+  padding:0 .38em .07em; border-radius:.24em; font-style:italic; white-space:nowrap;
+  line-height:1.05;
+  opacity:0; transform:translateY(.035em) scale(.995);
+}
+.lp-cw-mint{ background:rgba(220,242,229,.9); color:var(--mint); }
+.lp-cw-rose{ background:rgba(249,227,224,.9); color:#B2543F; }
+.lp-cw-amber{ background:rgba(250,235,210,.9); color:var(--amber); }
+.lp-cw-lav{ background:rgba(233,229,249,.9); color:var(--lav); }
+
+/* tiny planet orbiting the word "map" */
+.lp-orbit{ position:relative; display:inline-block; }
+.lp-orbit-sys{ position:absolute; inset:-.3em -.36em; transform:rotate(-12deg) scaleY(.52); pointer-events:none; }
+.lp-orbit-ring{ position:absolute; inset:0; border:1.5px solid rgba(93,79,184,.45); border-radius:50%; display:block; }
+.lp-orbit-spin{ position:absolute; inset:0; display:block; }
+.lp-orbit-dot{
+  position:absolute; top:-4px; left:50%; width:8px; height:8px; margin-left:-4px;
+  border-radius:50%; background:var(--lav); display:block;
+  box-shadow:0 0 10px 3px rgba(93,79,184,.5);
+}
+
+/* shooting stars */
+.lp-shoot{
+  position:absolute; z-index:0; pointer-events:none; opacity:0;
+  width:130px; height:1.6px; border-radius:99px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.95));
+}
+.lp-shoot-1{ top:10%; left:-6%; }
+.lp-shoot-2{ top:24%; left:34%; }
+
+/* hint under the single CTA */
+.lp-stage-hint{
+  margin-top:clamp(16px,2.2vh,22px); font-family:var(--mono); font-size:11.5px; letter-spacing:.08em;
+  color:var(--ink2);
+}
+.lp-hint-arrow{ display:inline-block; margin-left:2px; }
+
+/* small, slow signature animations — always on (word cycler, orbit, hint) */
+.lp-cw{ animation:lpWordCycle 8.8s cubic-bezier(.2,.65,.25,1) infinite; }
+.lp-cw:nth-child(2){ animation-delay:2.2s; }
+.lp-cw:nth-child(3){ animation-delay:4.4s; }
+.lp-cw:nth-child(4){ animation-delay:6.6s; }
+.lp-orbit-spin{ animation:lpSpin 8s linear infinite; }
+.lp-hint-arrow{ animation:lpBob 1.8s ease-in-out infinite; }
+/* larger ambient motion only when the user allows it */
+@media (prefers-reduced-motion: no-preference){
+  .lp-float{ animation:lpFloat 5.5s ease-in-out infinite alternate; }
+  .lp-shoot-1{ animation:lpShoot 9s ease-in 2.5s infinite; }
+  .lp-shoot-2{ animation:lpShoot 12s ease-in 7s infinite; }
+  .lp-stage-aurora{ animation:lpAurora 26s ease-in-out infinite alternate; }
+}
+@keyframes lpWordCycle{
+  0%{ opacity:0; transform:translateY(.035em) scale(.995); }
+  7%,21%{ opacity:1; transform:translateY(0) scale(1); }
+  28%,100%{ opacity:0; transform:translateY(-.035em) scale(.995); }
+}
+@keyframes lpSpin{ to{ transform:rotate(360deg); } }
+@keyframes lpFloat{ from{ transform:translateY(0) rotate(0); } to{ transform:translateY(-4px) rotate(-1.4deg); } }
+@keyframes lpShoot{
+  0%{ transform:translate3d(0,0,0) rotate(15deg); opacity:0; }
+  2%{ opacity:.9; }
+  8%{ transform:translate3d(46vw,13vw,0) rotate(15deg); opacity:0; }
+  100%{ opacity:0; }
+}
+@keyframes lpBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
+@keyframes lpAurora{ from{ transform:translate3d(-1.5%,0,0) scale(1); } to{ transform:translate3d(1.5%,1%,0) scale(1.05); } }
 .lp-chip{
   display:inline-flex; align-items:center; gap:.3em; vertical-align:baseline;
   padding:.04em .36em .1em .14em; border-radius:.3em; line-height:1;
@@ -725,23 +866,69 @@ const CSS = `
   transform:rotate(-6deg);
 }
 .lp-chip-ic svg{ width:62%; height:62%; }
-.lp-chip-lav{ background:var(--lav-soft); color:var(--lav); }
+.lp-chip-lav{ background:rgba(233,229,249,.85); color:var(--lav); }
 .lp-chip-lav .lp-chip-ic{ background:var(--lav); color:#fff; }
-.lp-chip-mint{ background:var(--mint-soft); color:var(--mint); }
+.lp-chip-mint{ background:rgba(220,242,229,.85); color:var(--mint); }
 .lp-chip-mint .lp-chip-ic{ background:var(--mint); color:#fff; }
-.lp-hero-sub{ max-width:640px; margin:26px auto 0; font-size:clamp(16px,1.6vw,18.5px); color:var(--ink2); line-height:1.65; }
-.lp-hero-cta{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:34px; }
+.lp-hero-sub{ max-width:600px; margin:24px auto 0; font-size:clamp(16px,1.6vw,18px); color:var(--ink2); line-height:1.6; }
+.lp-hero-cta{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:clamp(28px,4vh,42px); }
 
-/* ── demo frame ── */
-#demo{ margin-top:clamp(48px,7vh,84px); position:relative; z-index:1; }
+/* pinned demo + spacer give the live app a sticky "stays as you scroll" feel */
+.lp-stage-pin{ position:sticky; top:74px; z-index:2; margin-top:clamp(14px,2.2vh,28px); }
+.lp-stage-spacer{ position:relative; z-index:0; height:clamp(90px,22vh,260px); }
+
+.lp-demo-stage{
+  display:grid; grid-template-columns:176px minmax(0,1fr) 200px;
+  gap:clamp(12px,1.4vw,24px); align-items:stretch;
+  max-width:1520px; margin:0 auto; padding:0 clamp(12px,2vw,28px);
+}
+
+/* glass control rails flanking the app */
+.lp-rail{
+  display:flex; flex-direction:column; gap:8px; align-self:center;
+  padding:16px 13px; border-radius:22px;
+  background:rgba(255,255,255,.38); border:1px solid rgba(255,255,255,.66);
+  backdrop-filter:blur(22px) saturate(165%); -webkit-backdrop-filter:blur(22px) saturate(165%);
+  box-shadow:0 24px 56px -28px rgba(40,44,90,.5), inset 0 1px 0 rgba(255,255,255,.82);
+}
+.lp-rail-label{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); padding:0 4px 5px; }
+.lp-rail-r{ gap:12px; }
+.lp-rail-note{ font-size:12px; color:var(--ink2); line-height:1.55; padding:2px 4px; }
+.lp-rail-cta{ margin-top:auto; width:100%; padding:11px 14px; font-size:13.5px; }
+
+.lp-star-pill{
+  display:flex; align-items:center; gap:7px; width:100%; text-align:left;
+  padding:9px 13px; border-radius:13px; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6);
+  font-size:13px; font-weight:600; color:var(--ink2);
+  transition:all .2s cubic-bezier(.2,.65,.25,1);
+}
+.lp-star-pill:hover{ background:rgba(255,255,255,.8); color:var(--ink); }
+.lp-star-pill.lp-on{ background:var(--ink); border-color:var(--ink); color:#FBF8F1; box-shadow:0 10px 24px -12px rgba(24,28,35,.5); }
+.lp-star-ic{ display:inline-grid; place-items:center; color:var(--mint-bright); flex-shrink:0; }
+.lp-star-ic svg{ width:11px; height:11px; }
+.lp-mode{ display:inline-flex; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6); border-radius:999px; padding:3px; }
+.lp-mode-col{ display:flex; }
+.lp-mode button{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px; flex:1;
+  padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; color:var(--ink3); transition:all .22s;
+}
+.lp-mode button svg{ width:13px; height:13px; }
+.lp-mode button.lp-on{ background:var(--ink); color:#FBF8F1; }
+
+/* frozen-glass bezel around the live app */
+.lp-glass{
+  padding:clamp(8px,.9vw,15px); border-radius:30px;
+  background:rgba(255,255,255,.32); border:1px solid rgba(255,255,255,.72);
+  backdrop-filter:blur(30px) saturate(150%); -webkit-backdrop-filter:blur(30px) saturate(150%);
+  box-shadow:0 60px 140px -46px rgba(38,40,92,.6), inset 0 1px 0 rgba(255,255,255,.85);
+}
 .lp-frame{
-  background:#fff; border:1px solid var(--line); border-radius:var(--r-lg);
-  box-shadow:0 40px 90px -32px rgba(24,28,35,.35), 0 2px 6px rgba(24,28,35,.05);
-  overflow:hidden;
+  background:#fff; border:1px solid rgba(255,255,255,.7); border-radius:18px;
+  box-shadow:0 20px 54px -26px rgba(24,28,35,.5); overflow:hidden;
 }
 .lp-frame-bar{
-  display:flex; align-items:center; gap:14px; padding:12px 18px;
-  border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:14px; padding:11px 16px;
+  border-bottom:1px solid rgba(24,28,35,.07);
 }
 .lp-frame-dots{ display:flex; gap:6px; }
 .lp-frame-dots i{ width:10px; height:10px; border-radius:50%; }
@@ -758,8 +945,7 @@ const CSS = `
 }
 .lp-frame-open:hover{ color:var(--ink); background:var(--paper); }
 .lp-frame-open svg{ width:12px; height:12px; }
-/* Generous, near-viewport canvas so the app renders like the real thing */
-.lp-frame-body{ position:relative; height:clamp(540px, 82vh, 940px); background:var(--night); }
+.lp-frame-body{ position:relative; height:clamp(440px, 70vh, 820px); background:var(--night); }
 .lp-frame-body iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 .lp-poster{ position:absolute; inset:0; width:100%; display:block; }
 .lp-poster img{ width:100%; height:100%; object-fit:cover; object-position:center top; }
@@ -779,44 +965,6 @@ const CSS = `
   background:var(--mint-bright); color:#06241A; flex-shrink:0;
 }
 .lp-poster-play svg{ width:18px; height:18px; margin-left:2px; }
-.lp-poster-note{
-  position:absolute; left:50%; bottom:5%; transform:translateX(-50%); z-index:2;
-  font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:rgba(255,255,255,.85);
-  background:rgba(8,12,18,.55); padding:7px 14px; border-radius:999px; white-space:nowrap;
-  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-  max-width:92%; overflow:hidden; text-overflow:ellipsis;
-}
-.lp-frame-cap{ text-align:center; font-size:13.5px; color:var(--ink3); margin-top:14px; }
-
-/* ── demo controls ── */
-.lp-demo-controls{
-  display:flex; flex-wrap:wrap; gap:14px 36px; justify-content:center; align-items:center;
-  margin-top:20px;
-}
-.lp-demo-group{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; justify-content:center; }
-.lp-demo-label{
-  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ink3); margin-right:2px;
-}
-.lp-star-pill{
-  display:inline-flex; align-items:center; gap:7px;
-  padding:9px 17px; border-radius:999px; background:#fff; border:1px solid var(--line2);
-  font-size:13.5px; font-weight:600; color:var(--ink2);
-  transition:all .22s cubic-bezier(.2,.65,.25,1);
-}
-.lp-star-pill:hover{ transform:translateY(-1px); color:var(--ink); box-shadow:0 8px 20px -10px rgba(24,28,35,.25); }
-.lp-star-pill.lp-on{ background:var(--ink); border-color:var(--ink); color:#FBF8F1; box-shadow:0 10px 24px -10px rgba(24,28,35,.4); }
-.lp-star-ic{ display:inline-grid; place-items:center; color:var(--mint-bright); }
-.lp-star-ic svg{ width:11px; height:11px; }
-.lp-mode{
-  display:inline-flex; background:#fff; border:1px solid var(--line2); border-radius:999px; padding:3px;
-}
-.lp-mode button{
-  display:inline-flex; align-items:center; gap:7px; padding:7px 15px; border-radius:999px;
-  font-size:13px; font-weight:600; color:var(--ink3); transition:all .22s;
-}
-.lp-mode button svg{ width:13px; height:13px; }
-.lp-mode button.lp-on{ background:var(--ink); color:#FBF8F1; }
 
 /* ── stats ── */
 .lp-stats{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:#fff; margin-top:clamp(56px,8vh,96px); }
@@ -1039,7 +1187,20 @@ const CSS = `
   .lp-uses{ grid-template-columns:repeat(2,1fr); }
   .lp-angles{ grid-template-columns:repeat(2,1fr); }
   .lp-footer-grid{ grid-template-columns:1fr 1fr; }
-  .lp-frame-body{ height:min(76vh, 760px); }
+  /* demo: drop sticky, stack rails around the app */
+  .lp-stage-pin{ position:static; margin-top:clamp(22px,3.5vh,40px); }
+  .lp-stage-spacer{ display:none; }
+  .lp-demo-stage{ grid-template-columns:1fr; gap:16px; max-width:840px; }
+  .lp-glass{ order:1; }
+  .lp-rail-l{ order:2; }
+  .lp-rail-r{ order:3; }
+  .lp-rail{ flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px 10px; padding:14px 16px; }
+  .lp-rail-label{ width:100%; text-align:center; padding-bottom:2px; }
+  .lp-rail .lp-star-pill{ width:auto; }
+  .lp-rail-note{ width:100%; text-align:center; order:5; }
+  .lp-rail-cta{ width:auto; margin-top:0; }
+  .lp-mode-col{ flex:0 0 auto; }
+  .lp-frame-body{ height:min(74vh, 720px); }
 }
 @media (max-width: 860px){
   .lp-nav-links{ display:none; }
@@ -1049,9 +1210,8 @@ const CSS = `
   .lp-stat:nth-child(3){ border-left:0; }
   .lp-stat:nth-child(n+3){ border-top:1px solid var(--line); }
   .lp-planet{ grid-template-columns:1fr; gap:6px; padding:18px 22px; }
-  .lp-poster-note{ display:none; }
   .lp-why-list{ grid-template-columns:1fr; }
-  .lp-frame-body{ height:min(72vh, 640px); }
+  .lp-frame-body{ height:min(66vh, 600px); }
 }
 @media (max-width: 560px){
   .lp-angles{ grid-template-columns:1fr; }
@@ -1064,6 +1224,6 @@ const CSS = `
   .lp-nav .lp-btn-sm .lp-btn-ic{ display:none; }
   .lp-logo{ font-size:14.5px; }
   .lp-frame-url{ display:none; }
-  .lp-frame-body{ height:min(68vh, 560px); }
+  .lp-frame-body{ height:min(64vh, 520px); }
 }
 `;
