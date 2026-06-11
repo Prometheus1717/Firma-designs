@@ -821,19 +821,20 @@ const CSS = `
 .lp-h1-it{ display:flex; align-items:center; justify-content:center; gap:.26em; flex-wrap:wrap; }
 .lp-h1-it > em{ font-style:italic; color:var(--ink2); }
 
+/* Width snaps instantly (no smooth transition) so the centred line never
+   slides — a sliding line leaves GPU ghost-trails of the text. The word swap
+   is a pure opacity crossfade; nothing moves continuously, so no traces. */
 .lp-cycle{
   position:relative; display:inline-flex; align-items:center; height:1.16em;
-  transition:width .5s cubic-bezier(.55,0,.2,1);
 }
 .lp-cw{
-  position:absolute; left:0; top:50%;
+  position:absolute; left:0; top:50%; transform:translateY(-50%);
   display:flex; align-items:center; justify-content:flex-start; height:1.16em;
   padding:0 .34em .06em; border-radius:.24em; font-style:italic; white-space:nowrap;
   line-height:1.05; box-sizing:border-box;
-  opacity:0; transform:translateY(calc(-50% + .22em));
-  transition:opacity .42s ease, transform .42s cubic-bezier(.2,.65,.25,1);
+  opacity:0; transition:opacity .4s ease;
 }
-.lp-cw-on{ opacity:1; transform:translateY(-50%); }
+.lp-cw-on{ opacity:1; }
 .lp-cw-mint{ background:rgba(220,242,229,.9); color:var(--mint); }
 .lp-cw-rose{ background:rgba(249,227,224,.9); color:#B2543F; }
 .lp-cw-amber{ background:rgba(250,235,210,.9); color:var(--amber); }
