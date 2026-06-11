@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -21,6 +21,14 @@ const I = {
 };
 
 // ─── Content data ───
+// Hero word-cycler options: [word, colour tone]
+const CYCLE_WORDS = [
+  ['thrive', 'mint'],
+  ['fall in love', 'rose'],
+  ['feel at home', 'amber'],
+  ['grow', 'lav'],
+];
+
 const STARS = [
   ['musk', 'Elon Musk'],
   ['einstein', 'Albert Einstein'],
@@ -230,6 +238,34 @@ export default function LandingPage() {
   const [star, setStar] = useState('musk');
   const [demoTheme, setDemoTheme] = useState('dark');
 
+  // Hero word-cycler: advance the word, and morph the slot width to the active
+  // word so "See where you ___" reads as one naturally-spaced, centred phrase.
+  const [wi, setWi] = useState(0);
+  const [cycleW, setCycleW] = useState(null);
+  const wordRefs = useRef([]);
+  const wiRef = useRef(0);
+  useEffect(() => { wiRef.current = wi; }, [wi]);
+  useEffect(() => {
+    const id = setInterval(() => setWi(i => (i + 1) % CYCLE_WORDS.length), 2600);
+    return () => clearInterval(id);
+  }, []);
+  // Measure the active word before paint on each change…
+  useLayoutEffect(() => {
+    const el = wordRefs.current[wi];
+    if (el) setCycleW(el.offsetWidth);
+  }, [wi]);
+  // …and re-measure whenever a word's rendered width changes (web-font swap,
+  // resize), so the slot can never end up too narrow for the word.
+  useEffect(() => {
+    if (!window.ResizeObserver) return;
+    const ro = new ResizeObserver(() => {
+      const el = wordRefs.current[wiRef.current];
+      if (el) setCycleW(el.offsetWidth);
+    });
+    wordRefs.current.forEach(el => el && ro.observe(el));
+    return () => ro.disconnect();
+  }, []);
+
   // Title + meta description for the homepage
   useEffect(() => {
     const prevTitle = document.title;
@@ -337,13 +373,14 @@ export default function LandingPage() {
               </span>
               <span className="lp-h1-row lp-h1-it">
                 <em>See where you</em>{' '}
-                <span className="lp-cycle">
-                  <span className="lp-cycle-track">
-                    <span className="lp-cw lp-cw-mint">thrive</span>
-                    <span className="lp-cw lp-cw-rose">fall in love</span>
-                    <span className="lp-cw lp-cw-amber">feel at home</span>
-                    <span className="lp-cw lp-cw-lav">grow</span>
-                  </span>
+                <span className="lp-cycle" style={cycleW != null ? { width: cycleW } : undefined}>
+                  {CYCLE_WORDS.map(([word, tone], i) => (
+                    <span
+                      key={word}
+                      ref={el => { wordRefs.current[i] = el; }}
+                      className={`lp-cw lp-cw-${tone}${i === wi ? ' lp-cw-on' : ''}`}
+                    >{word}</span>
+                  ))}
                 </span>
               </span>
             </span>
@@ -777,31 +814,26 @@ const CSS = `
    heading. The cycle is centred by text-align; the lead-in is absolutely
    positioned just left of it, so its width can't shove the word off-centre.
    (half cycle width 6.9em/2 = 3.45em, + gap) */
-.lp-h1-it{ position:relative; text-align:center; min-height:1.16em; }
-.lp-h1-it > em{
-  position:absolute; top:50%; right:50%; transform:translateY(-50%);
-  margin-right:3.62em; white-space:nowrap; font-style:italic; color:var(--ink2);
-}
-.lp-h1-it > .lp-cycle{ display:inline-grid; }
+/* "See where you ___" — one naturally-spaced, centred phrase. The cycle slot
+   morphs its width (set in JS) to the active word, so the lead-in always sits a
+   single space before the word and the whole phrase stays centred — no fixed
+   slot, no gap. Wraps cleanly on narrow screens. */
+.lp-h1-it{ display:flex; align-items:center; justify-content:center; gap:.26em; flex-wrap:wrap; }
+.lp-h1-it > em{ font-style:italic; color:var(--ink2); }
 
-/* word cycler — "thrive / fall in love / feel at home / grow" */
 .lp-cycle{
-  display:inline-grid; align-items:center; justify-items:center;
-  width:6.9em;
-  padding:0 .04em;
-}
-.lp-cycle-track{
-  display:grid; align-items:center; justify-items:center;
-  width:100%;
+  position:relative; display:inline-flex; align-items:center; height:1.16em;
+  transition:width .5s cubic-bezier(.55,0,.2,1);
 }
 .lp-cw{
-  grid-area:1 / 1;
-  display:flex; align-items:center; justify-content:center;
-  width:max-content; height:1.12em; box-sizing:border-box; margin:0;
-  padding:0 .38em .07em; border-radius:.24em; font-style:italic; white-space:nowrap;
-  line-height:1.05;
-  opacity:0; transform:translateY(.035em) scale(.995);
+  position:absolute; left:0; top:50%;
+  display:flex; align-items:center; justify-content:flex-start; height:1.16em;
+  padding:0 .34em .06em; border-radius:.24em; font-style:italic; white-space:nowrap;
+  line-height:1.05; box-sizing:border-box;
+  opacity:0; transform:translateY(calc(-50% + .22em));
+  transition:opacity .42s ease, transform .42s cubic-bezier(.2,.65,.25,1);
 }
+.lp-cw-on{ opacity:1; transform:translateY(-50%); }
 .lp-cw-mint{ background:rgba(220,242,229,.9); color:var(--mint); }
 .lp-cw-rose{ background:rgba(249,227,224,.9); color:#B2543F; }
 .lp-cw-amber{ background:rgba(250,235,210,.9); color:var(--amber); }
@@ -834,11 +866,8 @@ const CSS = `
 }
 .lp-hint-arrow{ display:inline-block; margin-left:2px; }
 
-/* small, slow signature animations — always on (word cycler, orbit, hint) */
-.lp-cw{ animation:lpWordCycle 8.8s cubic-bezier(.2,.65,.25,1) infinite; }
-.lp-cw:nth-child(2){ animation-delay:2.2s; }
-.lp-cw:nth-child(3){ animation-delay:4.4s; }
-.lp-cw:nth-child(4){ animation-delay:6.6s; }
+/* small, slow signature animations — always on (orbit, hint).
+   The word cycler is JS-driven (width morph + crossfade), see .lp-cw above. */
 .lp-orbit-spin{ animation:lpSpin 8s linear infinite; }
 .lp-hint-arrow{ animation:lpBob 1.8s ease-in-out infinite; }
 /* larger ambient motion only when the user allows it */
@@ -847,11 +876,6 @@ const CSS = `
   .lp-shoot-1{ animation:lpShoot 9s ease-in 2.5s infinite; }
   .lp-shoot-2{ animation:lpShoot 12s ease-in 7s infinite; }
   .lp-stage-aurora{ animation:lpAurora 26s ease-in-out infinite alternate; }
-}
-@keyframes lpWordCycle{
-  0%{ opacity:0; transform:translateY(.035em) scale(.995); }
-  7%,21%{ opacity:1; transform:translateY(0) scale(1); }
-  28%,100%{ opacity:0; transform:translateY(-.035em) scale(.995); }
 }
 @keyframes lpSpin{ to{ transform:rotate(360deg); } }
 @keyframes lpFloat{ from{ transform:translateY(0) rotate(0); } to{ transform:translateY(-4px) rotate(-1.4deg); } }
@@ -1219,11 +1243,6 @@ const CSS = `
   .lp-planet{ grid-template-columns:1fr; gap:6px; padding:18px 22px; }
   .lp-why-list{ grid-template-columns:1fr; }
   .lp-frame-body{ height:min(66vh, 600px); }
-  /* narrow screens: the absolute-centred lead-in would overflow off-screen,
-     so fall back to a simple wrapped, group-centred line. */
-  .lp-h1-it{ position:static; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.16em; min-height:0; }
-  .lp-h1-it > em{ position:static; transform:none; margin-right:0; }
-  .lp-cycle{ width:auto; }
 }
 @media (max-width: 560px){
   .lp-angles{ grid-template-columns:1fr; }
