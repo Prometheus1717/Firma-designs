@@ -349,7 +349,7 @@ export default function LandingPage() {
             </span>
           </h1>
           <div className="lp-hero-cta lp-h-an" style={{ '--d': '200ms' }}>
-            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener"><span className="lp-btn-ic">{I.open}</span> Open fullscreen</a>
+            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">Reveal my best places <span className="lp-btn-ic">{I.arrow}</span></a>
           </div>
           <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>the real app, live below <span className="lp-hint-arrow">↓</span></div>
         </div>
