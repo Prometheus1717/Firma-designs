@@ -772,19 +772,26 @@ const CSS = `
 .lp-sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 .lp-h1-row{ display:block; }
 .lp-h1-row + .lp-h1-row{ margin-top:.18em; }
-.lp-h1-it{
-  display:flex; align-items:center; justify-content:center; gap:.16em; flex-wrap:wrap;
+/* "See where you ___" — center the *changing word* dead-centre under the
+   title (not the whole line), so every option lands on the same axis as the
+   heading. The cycle is centred by text-align; the lead-in is absolutely
+   positioned just left of it, so its width can't shove the word off-centre.
+   (half cycle width 6.9em/2 = 3.45em, + gap) */
+.lp-h1-it{ position:relative; text-align:center; min-height:1.16em; }
+.lp-h1-it > em{
+  position:absolute; top:50%; right:50%; transform:translateY(-50%);
+  margin-right:3.62em; white-space:nowrap; font-style:italic; color:var(--ink2);
 }
-.lp-h1-it em{ font-style:italic; color:var(--ink2); }
+.lp-h1-it > .lp-cycle{ display:inline-grid; }
 
 /* word cycler — "thrive / fall in love / feel at home / grow" */
 .lp-cycle{
-  display:inline-grid; align-items:center; justify-items:start;
+  display:inline-grid; align-items:center; justify-items:center;
   width:6.9em;
   padding:0 .04em;
 }
 .lp-cycle-track{
-  display:grid; align-items:center; justify-items:start;
+  display:grid; align-items:center; justify-items:center;
   width:100%;
 }
 .lp-cw{
@@ -1212,6 +1219,11 @@ const CSS = `
   .lp-planet{ grid-template-columns:1fr; gap:6px; padding:18px 22px; }
   .lp-why-list{ grid-template-columns:1fr; }
   .lp-frame-body{ height:min(66vh, 600px); }
+  /* narrow screens: the absolute-centred lead-in would overflow off-screen,
+     so fall back to a simple wrapped, group-centred line. */
+  .lp-h1-it{ position:static; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.16em; min-height:0; }
+  .lp-h1-it > em{ position:static; transform:none; margin-right:0; }
+  .lp-cycle{ width:auto; }
 }
 @media (max-width: 560px){
   .lp-angles{ grid-template-columns:1fr; }

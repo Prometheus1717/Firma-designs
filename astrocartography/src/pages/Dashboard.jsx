@@ -2188,8 +2188,9 @@ export default function Dashboard({ demo = false }) {
         </div>
       </div>
 
-      {/* BOTTOM PANEL — Bloomberg-style */}
-      <div style={{ minHeight: mob ? 160 : (IS_CHROME ? 202 : 240), maxHeight: mob ? 160 : (IS_CHROME ? 202 : 240), background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+      {/* BOTTOM PANEL — Bloomberg-style. Kept compact so the globe/map stays the
+          hero of the screen; the city table scrolls internally for more rows. */}
+      <div style={{ minHeight: mob ? 138 : (IS_CHROME ? 150 : 168), maxHeight: mob ? 138 : (IS_CHROME ? 150 : 168), background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
