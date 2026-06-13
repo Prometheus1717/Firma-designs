@@ -260,6 +260,19 @@ function isEmbeddedDemoRequest() {
   }
 }
 
+// Opt-in preview override: "/?landing=1" forces the marketing landing page for
+// anonymous visitors even on builds where VITE_IS_LANDING is unset. Lets the
+// landing be reviewed on any branch/preview deployment. It only affects an
+// anonymous visitor who explicitly adds the param — default behaviour and SEO
+// (crawlers never add it) are unchanged.
+function isLandingPreviewRequest() {
+  try {
+    return new URLSearchParams(window.location.search).get('landing') === '1';
+  } catch {
+    return false;
+  }
+}
+
 function DemoOrDashboard() {
   const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
@@ -268,7 +281,7 @@ function DemoOrDashboard() {
   // embedded into the landing page via an iframe. If the embedded app ever
   // navigates back to /, keep rendering the demo instead of nesting the landing
   // page inside itself.
-  if (!user) return (IS_LANDING && !isEmbeddedDemoRequest()) ? <LandingPage /> : <Dashboard demo />;
+  if (!user) return ((IS_LANDING || isLandingPreviewRequest()) && !isEmbeddedDemoRequest()) ? <LandingPage /> : <Dashboard demo />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
   if (hasBirthData) return <Dashboard />;
