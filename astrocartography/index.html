@@ -236,8 +236,6 @@
     </script>
 
     <!-- ─── Preconnects ─── -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://kbwjxtvqdkcicaydtixp.supabase.co" />
     <link rel="dns-prefetch" href="https://kbwjxtvqdkcicaydtixp.supabase.co" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
@@ -245,9 +243,8 @@
     <!-- Prefetch globe world data — starts download before JS needs it -->
     <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json" as="fetch" crossorigin />
 
-    <!-- ─── Fonts (non-blocking) ─── -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Instrument+Sans:wght@400;600;700&display=swap" as="style" />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <!-- Fonts are self-hosted via @fontsource (bundled, imported in main.jsx) —
+         no external Google Fonts requests. -->
 
     <script>
       (function () {

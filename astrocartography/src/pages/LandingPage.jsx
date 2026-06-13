@@ -169,8 +169,9 @@ const PREMIUM_FEATURES = [
 
 // FAQPage JSON-LD lives statically in index.html (same questions/answers),
 // where crawlers that don't execute JS can still read it.
+// Instrument Serif is self-hosted via @fontsource (imported in main.jsx).
+// General Sans (Fontshare) is still loaded externally for now.
 const FONT_LINKS = [
-  ['lp-font-gf', 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap'],
   ['lp-font-fs', 'https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap'],
 ];
 
