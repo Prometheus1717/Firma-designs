@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { resetConsent } from '../lib/consent';
+import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } from '../lib/landingContent';
+import { LANGUAGES } from '../lib/i18n';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -21,14 +23,6 @@ const I = {
   sun: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>,
 };
 
-// ─── Content data ───
-// Hero word-cycler options: [word, colour tone]
-const CYCLE_WORDS = [
-  ['thrive', 'mint'],
-  ['fall in love', 'rose'],
-  ['feel at home', 'amber'],
-  ['grow', 'lav'],
-];
 
 const STARS = [
   ['musk', 'Elon Musk'],
@@ -38,134 +32,6 @@ const STARS = [
   ['kahlo', 'Frida Kahlo'],
 ];
 
-const STATS = [
-  ['40', 'planetary lines'],
-  ['10', 'planets, Sun to Pluto'],
-  ['4', 'angles · MC IC ASC DSC'],
-  ['345+', 'cities rated for you'],
-];
-
-// Features, in order of importance — each explained properly.
-const FEATURES = [
-  {
-    num: '01',
-    title: <>The interactive 3D astrocartography globe</>,
-    lead: 'The heart of Natal Navigator. Your whole natal chart, projected onto a globe you can spin — not a static map image.',
-    points: [
-      'All 40 planetary lines: MC, IC, ASC and DSC for every planet from Sun to Pluto',
-      'Drag, rotate and zoom in real time — toggle each planet on and off',
-      'Your birth place and every city on your lines, marked and clickable',
-    ],
-    media: { type: 'img', src: '/landing/app-globe.webp', alt: '3D astrocartography globe with 40 planetary lines, planet toggles and rated cities' },
-  },
-  {
-    num: '02',
-    title: <>345+ cities, rated <em>thrive / neutral / caution</em></>,
-    lead: 'The question behind every astrocartography map is “so where should I go?” — Natal Navigator answers it city by city.',
-    points: [
-      'Every city scored against your lines, with the exact line and orb behind the rating',
-      'Sorted lists: your strongest thrive zones and your caution zones, worldwide',
-      'Filter by continent, search any city, compare candidates side by side',
-    ],
-    media: { type: 'ratings' },
-  },
-  {
-    num: '03',
-    title: <>A written reading for every city</>,
-    lead: 'Lines and percentages are data. The readings turn them into something you can actually decide with.',
-    points: [
-      'Personal interpretations for career, home, love and growth — per city',
-      'Available in English and German',
-      'Export your complete chart and readings as a PDF',
-    ],
-    media: { type: 'reading' },
-  },
-  {
-    num: '04',
-    title: <>Your full natal chart, computed properly</>,
-    lead: 'Underneath the map sits a real birth chart — calculated from planetary ephemeris, not lookup tables.',
-    points: [
-      'Natal wheel plus a full chart table: signs, degrees, elements, retrogrades',
-      'Powered by the astronomy-engine library — sub-arcsecond precision',
-      'The same chart professional astrology software would draw',
-    ],
-    media: { type: 'img', src: '/landing/app-natal.webp', alt: 'Natal chart panel with planet positions, zodiac signs, degrees and life domains' },
-  },
-  {
-    num: '05',
-    title: <>Globe or flat map. Dark or light. Any device.</>,
-    lead: 'Astrocartography the way you prefer to read it.',
-    points: [
-      'Classic 2D world-map view for an at-a-glance look at every line crossing',
-      'Dark and light themes — switch any time',
-      'Fully responsive: phone, tablet and desktop',
-    ],
-    media: { type: 'img', src: '/landing/app-map-light.webp', alt: '2D astrocartography world map in light mode with planetary lines and rated cities' },
-  },
-];
-
-const STEPS = [
-  ['01', 'Enter your birth details', 'Date, exact time and city of birth — that is everything astrocartography needs. No credit card, no quiz, no waiting.'],
-  ['02', 'We compute your chart', 'Real ephemeris calculations with the astronomy-engine library map all 40 planetary lines in seconds — to sub-arcsecond precision, the same math professional software uses.'],
-  ['03', 'Explore your world', 'Spin the 3D globe, switch to the flat map, open your natal wheel and read why each of 345+ cities helps you thrive — or tests you.'],
-];
-
-const USE_CASES = [
-  ['Nomads & expats', 'Choosing your next base abroad?', 'Compare the cities on your shortlist against your Venus, Jupiter and Sun lines before you sign a lease. Relocation astrology was made for exactly this decision.'],
-  ['Career moves', 'Job offer in another city?', 'Sun MC and Jupiter MC lines mark the places where your work gets seen and opportunities compound. Check where a move supports your ambition — and where Saturn will test it.'],
-  ['Love & connection', 'Wondering where you keep meeting the right people?', 'Venus and DSC lines describe your relationship geography — the places where attraction, friendship and partnership come easier.'],
-  ['Finding home', 'Searching for the place that finally feels like home?', 'Moon and IC lines point to where you put down roots, rest deeply and build family life. Often it is not where you were born.'],
-  ['Meaningful travel', 'Planning a sabbatical, retreat or big trip?', 'Travel along your lines on purpose: a creative residency on your Venus line, a reset on your Moon line, a bold launch on your Sun MC.'],
-  ['Astro-curious & pros', 'Already reading charts?', 'Check any relocation chart in seconds on a proper 3D globe — with the math handled by a real ephemeris engine, not approximations.'],
-];
-
-const WHY = [
-  'Interactive live demo with example charts before you create your personal map',
-  'A real 3D globe, not a static map image',
-  '345+ cities rated and explained in writing — not just lines on a map',
-  'Sub-arcsecond ephemeris precision (astronomy-engine)',
-  '€4.99 once. Not another subscription',
-  'English & German, PDF export, works on every device',
-  'Your birth data stays private — never sold, deletable any time',
-];
-
-const ANGLES = [
-  ['MC', 'Midheaven', 'Career, visibility, public role. On an MC line the planet shapes how the world sees your work.'],
-  ['IC', 'Imum Coeli', 'Home, roots, family. IC lines colour where you rest, retreat and build a private life.'],
-  ['ASC', 'Ascendant', 'Identity and first impressions. ASC lines change how you show up — and how people read you.'],
-  ['DSC', 'Descendant', 'Partnership and attraction. DSC lines describe who you meet and what relationships ask of you.'],
-];
-
-const PLANET_LINES = [
-  ['Sun line', 'Vitality and recognition. Places where you feel seen, central and unmistakably yourself.'],
-  ['Moon line', 'Emotion and belonging. Where life turns inward — comfort, intuition and a sense of home.'],
-  ['Venus line', 'Love, beauty and ease. Classic territory for romance, friendship, art and pleasure.'],
-  ['Jupiter line', 'Luck and expansion. Opportunities, mentors and growth tend to arrive faster here.'],
-  ['Saturn line', 'Discipline and tests. Demanding ground — slow, structural progress for those who stay.'],
-];
-
-const FAQS = [
-  ['What is astrocartography?', 'Astrocartography — also called locational or relocation astrology — projects your natal chart onto the world map. For each planet it draws four lines (MC, IC, ASC, DSC) showing where that planet was angular at your birth. Living on or near a line is read as experiencing that planet’s themes more strongly in that place.'],
-  ['What does Natal Navigator cost?', 'You can explore the interactive demo with example charts first. Your personal astrocartography map — all 40 planetary lines, 345+ rated cities, natal wheel and PDF export — is a one-time payment of €4.99. No subscription, lifetime access.'],
-  ['Who is astrocartography for?', 'Anyone weighing a place against a feeling: digital nomads and expats choosing a base, professionals considering a relocation for work, people searching for where home or love comes easier, and travellers who want their trips to mean something. You don’t need any astrology knowledge — the readings explain everything.'],
-  ['Whose charts can I explore in the demo?', 'The interactive demo lets you switch between the astrocartography maps of Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo — all based on publicly documented birth data. It’s the full app, just with a famous chart instead of yours.'],
-  ['How accurate are the calculations?', 'Natal Navigator uses the astronomy-engine ephemeris library to compute real planetary positions to sub-arcsecond precision — no lookup tables or approximations. Line positions match professional astrology software.'],
-  ['Do I need my exact birth time?', 'Yes — for a meaningful map. The angles (MC, IC, ASC, DSC) move roughly one degree every four minutes, so even 15 minutes can shift your lines by hundreds of kilometres. Check your birth certificate if you are unsure.'],
-  ['Can astrocartography tell me where to live?', 'It is a reflection tool, not a verdict. Your map highlights places whose planetary themes support career (MC), home (IC), identity (ASC) or relationships (DSC). Natal Navigator rates 345+ cities as thrive, neutral or caution zones so you can compare options — the decision stays yours.'],
-  ['What is the difference between a natal chart and an astrocartography map?', 'Your natal chart is a snapshot of the sky at your birth — it describes you. An astrocartography map takes that same chart and asks where on Earth each planet would rise, set or culminate — it describes you somewhere. Natal Navigator shows both, side by side.'],
-  ['What is a Venus line?', 'A Venus line marks the places where Venus was rising, setting, culminating or anti-culminating at your birth. Venus lines are traditionally read as the easiest, most pleasant geography in a chart — favourable for love, friendship, beauty and money.'],
-  ['Is my birth data private?', 'Yes. Your birth data is stored securely, never sold and never shared. You can delete your account — and all data with it — at any time.'],
-];
-
-const PREMIUM_FEATURES = [
-  'Your personal 3D globe & flat map',
-  'All 40 planetary lines — Sun to Pluto',
-  '345+ cities rated thrive / neutral / caution',
-  'Personal readings for every city',
-  'Full natal wheel & chart table',
-  'PDF export of your complete chart',
-  'Lifetime access — pay once, keep forever',
-];
 
 // FAQPage JSON-LD lives statically in index.html (same questions/answers),
 // where crawlers that don't execute JS can still read it.
@@ -191,13 +57,13 @@ function RatingRow({ city, line, pct, tone }) {
   );
 }
 
-function RatingsMock() {
+function RatingsMock({ m }) {
   return (
     <div className="lp-rate-box" aria-hidden="true">
       <div className="lp-rate-tabs">
-        <span className="lp-rate-tab lp-on">▲ Thrive 127</span>
-        <span className="lp-rate-tab">Neutral 79</span>
-        <span className="lp-rate-tab">▼ Caution 139</span>
+        <span className="lp-rate-tab lp-on">▲ {m.thrive} 127</span>
+        <span className="lp-rate-tab">{m.neutral} 79</span>
+        <span className="lp-rate-tab">▼ {m.caution} 139</span>
       </div>
       <RatingRow city="Hanoi" line="Sun MC" pct={97} tone="mint" />
       <RatingRow city="Lisbon" line="Venus MC" pct={96} tone="mint" />
@@ -209,28 +75,24 @@ function RatingsMock() {
   );
 }
 
-function ReadingMock() {
+function ReadingMock({ m }) {
   return (
     <blockquote className="lp-reading">
-      <p>“Lisbon lies on your <strong>Venus MC</strong> line — one of the most graceful places for your public life. Work feels social, doors open through people who simply like you, and what you make here tends to be beautiful…”</p>
-      <footer>— sample city reading</footer>
+      <p>{m.readingQuote}</p>
+      <footer>{m.readingCaption}</footer>
       <div className="lp-tag-row">
-        <span className="lp-tag">Career & Public Life</span>
-        <span className="lp-tag">Home & Roots</span>
-        <span className="lp-tag">Love & Connection</span>
-        <span className="lp-tag">PDF export</span>
-        <span className="lp-tag">EN · DE</span>
+        {m.tags.map((tag) => <span className="lp-tag" key={tag}>{tag}</span>)}
       </div>
     </blockquote>
   );
 }
 
-function FeatureMedia({ media }) {
+function FeatureMedia({ media, m }) {
   if (media.type === 'img') {
     return <div className="lp-shot"><img src={media.src} alt={media.alt} loading="lazy" width="2000" height="1214" /></div>;
   }
-  if (media.type === 'ratings') return <RatingsMock />;
-  return <ReadingMock />;
+  if (media.type === 'ratings') return <RatingsMock m={m} />;
+  return <ReadingMock m={m} />;
 }
 
 export default function LandingPage() {
@@ -239,6 +101,14 @@ export default function LandingPage() {
   const [demoOn, setDemoOn] = useState(false);
   const [star, setStar] = useState('musk');
   const [demoTheme, setDemoTheme] = useState('dark');
+
+  // Language: auto-detected from the visitor's browser on first load, switchable
+  // via the nav. English is the fallback. Same URL — no redirect (SEO-neutral).
+  const [lang, setLangState] = useState(getLandingLang);
+  const C = landingContent(lang);
+  const CYCLE_WORDS = C.hero.cycle;
+  const isRtl = RTL_LANGS.includes(lang);
+  const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
   // Hero word-cycler: advance the word, and morph the slot width to the active
   // word so "See where you ___" reads as one naturally-spaced, centred phrase.
@@ -268,18 +138,18 @@ export default function LandingPage() {
     return () => ro.disconnect();
   }, []);
 
-  // Title + meta description for the homepage
+  // Title + meta description for the homepage (follows the chosen language)
   useEffect(() => {
     const prevTitle = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute('content');
-    document.title = 'Astrocartography Map & Calculator — Natal Navigator';
-    meta?.setAttribute('content', 'Turn your birth chart into a living map. Interactive astrocartography calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.');
+    document.title = C.meta.title;
+    meta?.setAttribute('content', C.meta.desc);
     return () => {
       document.title = prevTitle;
       if (prevDesc) meta?.setAttribute('content', prevDesc);
     };
-  }, []);
+  }, [C.meta.title, C.meta.desc]);
 
   // Display fonts, loaded only when the landing page mounts
   useEffect(() => {
@@ -329,7 +199,7 @@ export default function LandingPage() {
   const starName = STARS.find(([k]) => k === star)?.[1] || 'Elon Musk';
 
   return (
-    <div className="lp-root" ref={rootRef}>
+    <div className="lp-root" ref={rootRef} lang={lang} dir={isRtl ? 'rtl' : 'ltr'}>
       <style>{CSS}</style>
 
       {/* ═══ NAV ═══ */}
@@ -340,14 +210,24 @@ export default function LandingPage() {
             Natal&nbsp;Navigator
           </a>
           <div className="lp-nav-links">
-            <a href="#demo" onClick={scrollTo('demo')}>Live demo</a>
-            <a href="#features" onClick={scrollTo('features')}>Features</a>
-            <a href="#for-you" onClick={scrollTo('for-you')}>Who it’s for</a>
-            <a href="#lines" onClick={scrollTo('lines')}>Line meanings</a>
-            <a href="#pricing" onClick={scrollTo('pricing')}>Pricing</a>
-            <a href="#faq" onClick={scrollTo('faq')}>FAQ</a>
+            <a href="#demo" onClick={scrollTo('demo')}>{C.nav.demo}</a>
+            <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
+            <a href="#for-you" onClick={scrollTo('for-you')}>{C.nav.forYou}</a>
+            <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
+            <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
+            <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </div>
-          <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>Create your map <span className="lp-btn-ic">{I.arrow}</span></button>
+          <div className="lp-nav-right">
+            <label className="lp-lang" aria-label="Language">
+              {I.globe}
+              <select value={lang} onChange={(e) => changeLang(e.target.value)}>
+                {LP_LANGS.map((code) => (
+                  <option key={code} value={code}>{(LANGUAGES.find((l) => l.code === code)?.name) || code.toUpperCase()}</option>
+                ))}
+              </select>
+            </label>
+            <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>{C.nav.cta} <span className="lp-btn-ic">{I.arrow}</span></button>
+          </div>
         </nav>
       </header>
 
@@ -362,19 +242,19 @@ export default function LandingPage() {
         {/* hero copy — short, so the live app is visible above the fold */}
         <div className="lp-wrap lp-stage-copy">
           <div className="lp-badge lp-h-an" style={{ '--d': '0ms' }}>
-            <span className="lp-badge-dot" /> Find your best places with astrocartography
+            <span className="lp-badge-dot" /> {C.badge}
           </div>
           <h1 className="lp-h1 lp-h-an" style={{ '--d': '90ms' }}>
-            <span className="lp-sr">Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.</span>
+            <span className="lp-sr">{C.hero.sr}</span>
             <span aria-hidden="true">
               <span className="lp-h1-row">
-                Your{' '}
-                <span className="lp-chip lp-chip-lav lp-float"><span className="lp-chip-ic">{I.wheel}</span><em>birth chart</em></span>{' '}
-                is secretly a{' '}
-                <span className="lp-orbit">map<i className="lp-orbit-sys"><i className="lp-orbit-ring" /><i className="lp-orbit-spin"><i className="lp-orbit-dot" /></i></i></span>
+                {C.hero.pre}{' '}
+                <span className="lp-chip lp-chip-lav lp-float"><span className="lp-chip-ic">{I.wheel}</span><em>{C.hero.chartChip}</em></span>{' '}
+                {C.hero.mid}{' '}
+                <span className="lp-orbit">{C.hero.mapWord}<i className="lp-orbit-sys"><i className="lp-orbit-ring" /><i className="lp-orbit-spin"><i className="lp-orbit-dot" /></i></i></span>
               </span>
               <span className="lp-h1-row lp-h1-it">
-                <em>See where you</em>{' '}
+                <em>{C.hero.seeWhere}</em>{' '}
                 <span className="lp-cycle" style={cycleW != null ? { width: cycleW } : undefined}>
                   {CYCLE_WORDS.map(([word, tone], i) => (
                     <span
@@ -388,9 +268,9 @@ export default function LandingPage() {
             </span>
           </h1>
           <div className="lp-hero-cta lp-h-an" style={{ '--d': '200ms' }}>
-            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">Reveal my best places <span className="lp-btn-ic">{I.arrow}</span></a>
+            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></a>
           </div>
-          <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>the real app, live below <span className="lp-hint-arrow">↓</span></div>
+          <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>{C.stageHint} <span className="lp-hint-arrow">↓</span></div>
         </div>
 
         {/* pinned live demo with flanking glass control rails */}
@@ -399,7 +279,7 @@ export default function LandingPage() {
 
             {/* LEFT rail — switch chart */}
             <aside className="lp-rail lp-rail-l" role="group" aria-label="Choose a demo chart">
-              <span className="lp-rail-label">Demo chart</span>
+              <span className="lp-rail-label">{C.demo.chartLabel}</span>
               {STARS.map(([key, name]) => (
                 <button
                   key={key}
@@ -415,21 +295,21 @@ export default function LandingPage() {
               <div className="lp-frame">
                 <div className="lp-frame-bar">
                   <span className="lp-frame-dots" aria-hidden="true"><i /><i /><i /></span>
-                  <span className="lp-frame-url">natalnavigator.com · live demo — {starName}’s chart</span>
-                  <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">Fullscreen {I.open}</a>
+                  <span className="lp-frame-url">{C.demo.frameUrl(starName)}</span>
+                  <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">{C.demo.fullscreen} {I.open}</a>
                 </div>
                 <div className="lp-frame-body">
                   {demoOn ? (
                     <iframe
                       key={demoSrc}
                       src={demoSrc}
-                      title={`Natal Navigator — interactive astrocartography map demo (${starName})`}
+                      title={C.demo.iframeTitle(starName)}
                       allow="fullscreen"
                     />
                   ) : (
-                    <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label="Start the interactive astrocartography demo">
-                      <img src="/landing/app-globe.webp" alt="Interactive astrocartography map — 3D globe with 40 planetary lines and rated cities in the Natal Navigator app" width="2000" height="1214" fetchPriority="high" />
-                      <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> Play with the live demo</span>
+                    <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label={C.demo.posterCta}>
+                      <img src="/landing/app-globe.webp" alt={C.demo.posterAlt} width="2000" height="1214" fetchPriority="high" />
+                      <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> {C.demo.posterCta}</span>
                     </button>
                   )}
                 </div>
@@ -438,13 +318,13 @@ export default function LandingPage() {
 
             {/* RIGHT rail — theme + hint */}
             <aside className="lp-rail lp-rail-r" role="group" aria-label="Demo theme">
-              <span className="lp-rail-label">Theme</span>
+              <span className="lp-rail-label">{C.demo.themeLabel}</span>
               <div className="lp-mode lp-mode-col">
-                <button className={demoTheme === 'dark' ? 'lp-on' : ''} onClick={() => pickTheme('dark')} aria-pressed={demoTheme === 'dark'}>{I.moon} Dark</button>
-                <button className={demoTheme === 'light' ? 'lp-on' : ''} onClick={() => pickTheme('light')} aria-pressed={demoTheme === 'light'}>{I.sun} Light</button>
+                <button className={demoTheme === 'dark' ? 'lp-on' : ''} onClick={() => pickTheme('dark')} aria-pressed={demoTheme === 'dark'}>{I.moon} {C.demo.dark}</button>
+                <button className={demoTheme === 'light' ? 'lp-on' : ''} onClick={() => pickTheme('light')} aria-pressed={demoTheme === 'light'}>{I.sun} {C.demo.light}</button>
               </div>
-              <p className="lp-rail-note">The real app — drag the globe, toggle planets, click any city.</p>
-              <button className="lp-btn lp-btn-mint lp-rail-cta" onClick={goAuth}>Create my map <span className="lp-btn-ic">{I.arrow}</span></button>
+              <p className="lp-rail-note">{C.demo.railNote}</p>
+              <button className="lp-btn lp-btn-mint lp-rail-cta" onClick={goAuth}>{C.demo.railCta} <span className="lp-btn-ic">{I.arrow}</span></button>
             </aside>
           </div>
         </div>
@@ -455,7 +335,7 @@ export default function LandingPage() {
       {/* ═══ STATS ═══ */}
       <section className="lp-stats" aria-label="Key numbers">
         <div className="lp-wrap lp-stats-grid">
-          {STATS.map(([n, l], i) => (
+          {C.stats.map(([n, l], i) => (
             <div className="lp-stat lp-reveal" style={{ '--d': `${i * 70}ms` }} key={l}>
               <span className="lp-stat-n">{n}</span>
               <span className="lp-stat-l">{l}</span>
@@ -468,11 +348,11 @@ export default function LandingPage() {
       <section className="lp-section" id="features">
         <div className="lp-wrap">
           <div className="lp-sec-head lp-reveal">
-            <Label center>Features — what matters most, first</Label>
-            <h2 className="lp-h2">Everything an astrocartography reading needs.<br /><em>In the order it matters.</em></h2>
+            <Label center>{C.featuresHead.label}</Label>
+            <h2 className="lp-h2">{C.featuresHead.h2}</h2>
           </div>
           <div className="lp-feats">
-            {FEATURES.map((f, i) => (
+            {C.features.map((f, i) => (
               <article className={`lp-feat lp-reveal${i % 2 ? ' lp-feat-rev' : ''}`} key={f.num}>
                 <div className="lp-feat-text">
                   <span className="lp-feat-num">{f.num}</span>
@@ -483,7 +363,7 @@ export default function LandingPage() {
                   </ul>
                 </div>
                 <div className="lp-feat-media">
-                  <FeatureMedia media={f.media} />
+                  <FeatureMedia media={f.media} m={C.mock} />
                 </div>
               </article>
             ))}
@@ -495,11 +375,11 @@ export default function LandingPage() {
       <section className="lp-section lp-section-alt" id="how">
         <div className="lp-wrap">
           <div className="lp-sec-head lp-reveal">
-            <Label center>How it works</Label>
-            <h2 className="lp-h2">Your map in <em>three steps</em></h2>
+            <Label center>{C.howHead.label}</Label>
+            <h2 className="lp-h2">{C.howHead.h2}</h2>
           </div>
           <div className="lp-steps">
-            {STEPS.map(([n, t, d], i) => (
+            {C.steps.map(([n, t, d], i) => (
               <div className="lp-step lp-reveal" style={{ '--d': `${i * 90}ms` }} key={n}>
                 <span className="lp-step-n">{n}</span>
                 <h3>{t}</h3>
@@ -514,12 +394,12 @@ export default function LandingPage() {
       <section className="lp-section" id="for-you">
         <div className="lp-wrap">
           <div className="lp-sec-head lp-reveal">
-            <Label center>Who it’s for</Label>
-            <h2 className="lp-h2">Made for one question:<br /><em>“Where should I live?”</em></h2>
-            <p className="lp-sec-sub">Astrocartography is for anyone weighing a place against a feeling. These are the people who get the most out of their map.</p>
+            <Label center>{C.forYouHead.label}</Label>
+            <h2 className="lp-h2">{C.forYouHead.h2}</h2>
+            <p className="lp-sec-sub">{C.forYouHead.sub}</p>
           </div>
           <div className="lp-uses">
-            {USE_CASES.map(([tag, q, d], i) => (
+            {C.useCases.map(([tag, q, d], i) => (
               <article className="lp-use lp-reveal" style={{ '--d': `${(i % 3) * 80}ms` }} key={tag}>
                 <span className="lp-use-tag">{tag}</span>
                 <h3>{q}</h3>
@@ -534,12 +414,12 @@ export default function LandingPage() {
       <section className="lp-section lp-section-alt" id="lines">
         <div className="lp-wrap">
           <div className="lp-sec-head lp-reveal">
-            <Label center>Line meanings</Label>
-            <h2 className="lp-h2">What your <em>planetary lines</em> mean</h2>
-            <p className="lp-sec-sub">Each planet draws four lines around the Earth — one for each angle of your chart. Planet × angle is the whole grammar of astrocartography.</p>
+            <Label center>{C.linesHead.label}</Label>
+            <h2 className="lp-h2">{C.linesHead.h2}</h2>
+            <p className="lp-sec-sub">{C.linesHead.sub}</p>
           </div>
           <div className="lp-angles">
-            {ANGLES.map(([abbr, name, d], i) => (
+            {C.angles.map(([abbr, name, d], i) => (
               <div className="lp-angle lp-reveal" style={{ '--d': `${i * 70}ms` }} key={abbr}>
                 <span className="lp-angle-abbr">{abbr}</span>
                 <h3>{name}</h3>
@@ -548,17 +428,14 @@ export default function LandingPage() {
             ))}
           </div>
           <dl className="lp-planets lp-reveal">
-            {PLANET_LINES.map(([t, d]) => (
+            {C.planetLines.map(([t, d]) => (
               <div className="lp-planet" key={t}>
                 <dt>{t}</dt>
                 <dd>{d}</dd>
               </div>
             ))}
           </dl>
-          <p className="lp-more lp-reveal">
-            Want the full theory? Read the <a href="/astrocartography">complete astrocartography guide</a>
-            {' '}— also available <a href="/astrokartographie">auf Deutsch</a>.
-          </p>
+          <p className="lp-more lp-reveal">{C.more}</p>
         </div>
       </section>
 
@@ -567,11 +444,11 @@ export default function LandingPage() {
         <div className="lp-wrap lp-wrap-narrow">
           <div className="lp-why lp-reveal">
             <div className="lp-sec-head" style={{ marginBottom: 28 }}>
-              <Label center>Why Natal Navigator</Label>
-              <h2 className="lp-h2">There are other astrocartography calculators.<br /><em>Here’s the honest difference.</em></h2>
+              <Label center>{C.whyHead.label}</Label>
+              <h2 className="lp-h2">{C.whyHead.h2}</h2>
             </div>
             <ul className="lp-why-list">
-              {WHY.map(w => <li key={w}>{I.check} {w}</li>)}
+              {C.why.map(w => <li key={w}>{I.check} {w}</li>)}
             </ul>
           </div>
         </div>
@@ -581,31 +458,29 @@ export default function LandingPage() {
       <section className="lp-section lp-section-alt" id="pricing">
         <div className="lp-wrap">
           <div className="lp-sec-head lp-reveal">
-            <Label center>Pricing</Label>
-            <h2 className="lp-h2">Pay once. <em>Keep it forever.</em></h2>
-            <p className="lp-sec-sub">No subscription, no hidden tiers. Try everything in the demo first.</p>
+            <Label center>{C.pricingHead.label}</Label>
+            <h2 className="lp-h2">{C.pricingHead.h2}</h2>
+            <p className="lp-sec-sub">{C.pricingHead.sub}</p>
           </div>
           <div className="lp-pricing">
             <article className="lp-price-card lp-reveal">
-              <h3 className="lp-price-tier">Explorer</h3>
-              <div className="lp-price-n">Demo</div>
-              <p className="lp-price-sub">The full app experience with famous example charts.</p>
+              <h3 className="lp-price-tier">{C.pricing.explorerTier}</h3>
+              <div className="lp-price-n">{C.pricing.demoWord}</div>
+              <p className="lp-price-sub">{C.pricing.explorerSub}</p>
               <ul className="lp-price-list">
-                <li>{I.check} Interactive demo globe & map</li>
-                <li>{I.check} 5 celebrity charts to explore</li>
-                <li>{I.check} City ratings & readings preview</li>
+                {C.pricing.explorerList.map((item) => <li key={item}>{I.check} {item}</li>)}
               </ul>
-              <a className="lp-btn lp-btn-ghost lp-btn-full" href="/demo">Try the live demo</a>
+              <a className="lp-btn lp-btn-ghost lp-btn-full" href="/demo">{C.pricing.demoBtn}</a>
             </article>
             <article className="lp-price-card lp-price-featured lp-reveal" style={{ '--d': '100ms' }}>
-              <span className="lp-price-flag">{I.star} Most popular</span>
-              <h3 className="lp-price-tier">Navigator</h3>
-              <div className="lp-price-n">€4.99 <span>one-time</span></div>
-              <p className="lp-price-sub">Your personal astrocartography map, for life.</p>
+              <span className="lp-price-flag">{I.star} {C.pricing.flag}</span>
+              <h3 className="lp-price-tier">{C.pricing.navigatorTier}</h3>
+              <div className="lp-price-n">{C.pricing.price} <span>{C.pricing.oneTime}</span></div>
+              <p className="lp-price-sub">{C.pricing.navigatorSub}</p>
               <ul className="lp-price-list">
-                {PREMIUM_FEATURES.map(f => <li key={f}>{I.check} {f}</li>)}
+                {C.premiumFeatures.map(f => <li key={f}>{I.check} {f}</li>)}
               </ul>
-              <button className="lp-btn lp-btn-mint lp-btn-full" onClick={goAuth}>Get your map — €4.99 <span className="lp-btn-ic">{I.arrow}</span></button>
+              <button className="lp-btn lp-btn-mint lp-btn-full" onClick={goAuth}>{C.pricing.navigatorBtn} <span className="lp-btn-ic">{I.arrow}</span></button>
             </article>
           </div>
         </div>
@@ -615,11 +490,11 @@ export default function LandingPage() {
       <section className="lp-section" id="faq">
         <div className="lp-wrap lp-wrap-narrow">
           <div className="lp-sec-head lp-reveal">
-            <Label center>FAQ</Label>
-            <h2 className="lp-h2">Questions, <em>answered</em></h2>
+            <Label center>{C.faqHead.label}</Label>
+            <h2 className="lp-h2">{C.faqHead.h2}</h2>
           </div>
           <div className="lp-faq lp-reveal">
-            {FAQS.map(([q, a]) => (
+            {C.faqs.map(([q, a]) => (
               <details className="lp-faq-item" key={q}>
                 <summary>{q}<span className="lp-faq-x" aria-hidden="true">+</span></summary>
                 <p>{a}</p>
@@ -634,11 +509,11 @@ export default function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-final lp-reveal">
             <div className="lp-final-stars" aria-hidden="true" />
-            <h2 className="lp-h2 lp-final-h">Your stars are already aligned.<br /><em>See where.</em></h2>
-            <p>Two minutes from birth certificate to world map.</p>
+            <h2 className="lp-h2 lp-final-h">{C.final.h2}</h2>
+            <p>{C.final.sub}</p>
             <div className="lp-hero-cta" style={{ justifyContent: 'center' }}>
-              <button className="lp-btn lp-btn-mint" onClick={goAuth}>Create my map <span className="lp-btn-ic">{I.arrow}</span></button>
-              <a className="lp-btn lp-btn-night" href="/demo">Try the demo first</a>
+              <button className="lp-btn lp-btn-mint" onClick={goAuth}>{C.final.ctaCreate} <span className="lp-btn-ic">{I.arrow}</span></button>
+              <a className="lp-btn lp-btn-night" href="/demo">{C.final.ctaDemo}</a>
             </div>
           </div>
         </div>
@@ -741,6 +616,12 @@ const CSS = `
 .lp-nav-links{ display:flex; gap:clamp(12px,2vw,26px); font-size:14.5px; font-weight:500; color:var(--ink2); }
 .lp-nav-links a{ transition:color .2s; white-space:nowrap; }
 .lp-nav-links a:hover{ color:var(--ink); }
+.lp-nav-right{ display:flex; align-items:center; gap:14px; }
+.lp-lang{ display:inline-flex; align-items:center; gap:5px; color:var(--ink2); cursor:pointer; }
+.lp-lang svg{ width:16px; height:16px; }
+.lp-lang select{ appearance:none; -webkit-appearance:none; background:transparent; border:1px solid var(--line); border-radius:8px; color:var(--ink2); font:inherit; font-size:13.5px; font-weight:500; padding:5px 10px; cursor:pointer; }
+.lp-lang select:hover{ color:var(--ink); border-color:var(--ink2); }
+[dir="rtl"] .lp-h1-it em{ font-style:normal; }
 
 /* ── buttons ── */
 .lp-btn{
