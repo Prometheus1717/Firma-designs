@@ -22,11 +22,6 @@ const DEMOS = {
   monroe:   { date: '1926-06-01', time: '09:30', lat: 34.0522,  lng: -118.2437, city: 'Los Angeles, USA',        home: 'Los Angeles',   name: 'Marilyn Monroe' },
   jobs:     { date: '1955-02-24', time: '19:15', lat: 37.7749,  lng: -122.4194, city: 'San Francisco, USA',      home: 'San Francisco', name: 'Steve Jobs' },
   kahlo:    { date: '1907-07-06', time: '08:30', lat: 19.3434,  lng: -99.1626,  city: 'Coyoacán, Mexico City',   home: 'Coyoacán',      name: 'Frida Kahlo' },
-  obama:    { date: '1961-08-04', time: '19:24', lat: 21.3069,  lng: -157.8583, city: 'Honolulu, USA',           home: 'Honolulu',      name: 'Barack Obama' },
-  madonna:  { date: '1958-08-16', time: '07:05', lat: 43.5945,  lng: -83.8889,  city: 'Bay City, USA',           home: 'Bay City',      name: 'Madonna' },
-  jolie:    { date: '1975-06-04', time: '09:09', lat: 34.0522,  lng: -118.2437, city: 'Los Angeles, USA',        home: 'Los Angeles',   name: 'Angelina Jolie' },
-  dicaprio: { date: '1974-11-11', time: '02:47', lat: 34.0522,  lng: -118.2437, city: 'Los Angeles, USA',        home: 'Los Angeles',   name: 'Leonardo DiCaprio' },
-  houston:  { date: '1963-08-09', time: '20:55', lat: 40.7357,  lng: -74.1724,  city: 'Newark, USA',             home: 'Newark',        name: 'Whitney Houston' },
 };
 // Resolved once per document load — the landing embeds each star as a fresh
 // iframe document, so reading location here is safe.

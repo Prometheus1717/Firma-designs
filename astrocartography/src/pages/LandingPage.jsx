@@ -30,11 +30,6 @@ const STARS = [
   ['monroe', 'Marilyn Monroe'],
   ['jobs', 'Steve Jobs'],
   ['kahlo', 'Frida Kahlo'],
-  ['obama', 'Barack Obama'],
-  ['madonna', 'Madonna'],
-  ['jolie', 'Angelina Jolie'],
-  ['dicaprio', 'Leonardo DiCaprio'],
-  ['houston', 'Whitney Houston'],
 ];
 
 
