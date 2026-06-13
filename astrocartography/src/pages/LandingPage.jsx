@@ -664,6 +664,7 @@ export default function LandingPage() {
           <nav aria-label="Contact">
             <h4>Contact</h4>
             <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>
+            <a href="/kontakt">Kontaktformular</a>
           </nav>
           <nav aria-label="Legal">
             <h4>Legal</h4>

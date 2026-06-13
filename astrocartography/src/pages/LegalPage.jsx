@@ -4,7 +4,7 @@
 // noindex via vercel.json. Content reflects the actual tech stack: Vercel hosting,
 // Supabase (auth + data), Stripe (payments), PostHog (analytics), Google Fonts +
 // Fontshare (fonts), OpenStreetMap/Nominatim (city search geocoding).
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const OPERATOR = {
   name: 'Sercan Yesilyurt',
@@ -12,7 +12,6 @@ const OPERATOR = {
   city: '50674 Köln',
   country: 'Deutschland',
   email: 'info@natalnavigator.com',
-  phone: '+49 1749 418449',
 };
 
 const UPDATED = 'Juni 2026';
@@ -38,7 +37,7 @@ const DOCS = {
         <h3>Kontakt</h3>
         <p>
           E-Mail: <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a><br />
-          Telefon: {OPERATOR.phone}
+          Kontaktformular: <a href="/kontakt">natalnavigator.com/kontakt</a>
         </p>
 
         <h3>Umsatzsteuer</h3>
@@ -325,6 +324,21 @@ const DOCS = {
     ),
   },
 
+  kontakt: {
+    title: 'Kontakt',
+    render: () => (
+      <>
+        <p>
+          Haben Sie Fragen zu Natal Navigator, Ihrer Bestellung oder Ihrem Konto?
+          Schreiben Sie uns über das Formular oder direkt an{' '}
+          <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>. Wir antworten in der
+          Regel innerhalb eines Werktags.
+        </p>
+        <ContactForm />
+      </>
+    ),
+  },
+
   widerruf: {
     title: 'Widerrufsbelehrung',
     render: () => (
@@ -398,6 +412,71 @@ const DOCS = {
   },
 };
 
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', message: '', company: '' });
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [error, setError] = useState('');
+
+  const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  async function submit(e) {
+    e.preventDefault();
+    if (status === 'sending') return;
+    setStatus('sending');
+    setError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || 'Die Nachricht konnte nicht gesendet werden.');
+        setStatus('error');
+        return;
+      }
+      setStatus('sent');
+    } catch {
+      setError('Netzwerkfehler — bitte später erneut versuchen.');
+      setStatus('error');
+    }
+  }
+
+  if (status === 'sent') {
+    return (
+      <div className="lg-form lg-form-done">
+        <p>Vielen Dank! Ihre Nachricht wurde gesendet. Wir melden uns in Kürze.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form className="lg-contact" onSubmit={submit} noValidate>
+      <label>
+        <span>Name (optional)</span>
+        <input type="text" value={form.name} onChange={update('name')} autoComplete="name" maxLength={120} />
+      </label>
+      <label>
+        <span>E-Mail</span>
+        <input type="email" value={form.email} onChange={update('email')} autoComplete="email" required maxLength={254} />
+      </label>
+      <label>
+        <span>Nachricht</span>
+        <textarea value={form.message} onChange={update('message')} required rows={6} maxLength={5000} />
+      </label>
+      {/* Honeypot — hidden from real users, catches bots */}
+      <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }}>
+        <label>Firma<input type="text" tabIndex={-1} autoComplete="off" value={form.company} onChange={update('company')} /></label>
+      </div>
+      {status === 'error' && <p className="lg-err">{error}</p>}
+      <button type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Wird gesendet…' : 'Nachricht senden'}
+      </button>
+    </form>
+  );
+}
+
 export default function LegalPage({ doc }) {
   const entry = DOCS[doc];
 
@@ -426,6 +505,7 @@ export default function LegalPage({ doc }) {
           <a href="/datenschutz">Datenschutz</a>
           <a href="/agb">AGB</a>
           <a href="/widerruf">Widerruf</a>
+          <a href="/kontakt">Kontakt</a>
         </nav>
       </main>
     </div>
@@ -448,6 +528,22 @@ const CSS = `
 .lg-body a{ color:#00D88A; }
 .lg-form{ border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:18px 20px; margin-top:12px; background:rgba(255,255,255,0.02); }
 .lg-form p{ margin:0 0 10px; }
+.lg-form-done{ border-color:rgba(0,216,138,0.4); }
+.lg-contact{ display:flex; flex-direction:column; gap:16px; margin-top:20px; max-width:520px; }
+.lg-contact label{ display:flex; flex-direction:column; gap:6px; }
+.lg-contact label span{ font-size:0.85rem; color:#9aa2af; }
+.lg-contact input, .lg-contact textarea{
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.14); border-radius:8px;
+  padding:11px 13px; color:#e8ebf0; font:inherit; font-size:0.95rem; resize:vertical;
+}
+.lg-contact input:focus, .lg-contact textarea:focus{ outline:none; border-color:#00D88A; }
+.lg-contact button{
+  align-self:flex-start; background:#00D88A; color:#06231a; border:none; border-radius:8px;
+  padding:12px 24px; font:inherit; font-weight:600; cursor:pointer; transition:opacity .2s;
+}
+.lg-contact button:hover{ opacity:0.9; }
+.lg-contact button:disabled{ opacity:0.55; cursor:default; }
+.lg-err{ color:#ff8080; font-size:0.9rem; margin:0; }
 .lg-nav{ display:flex; flex-wrap:wrap; gap:18px; margin-top:56px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); }
 .lg-nav a{ color:#9aa2af; text-decoration:none; font-size:0.9rem; }
 .lg-nav a:hover{ color:#00D88A; }

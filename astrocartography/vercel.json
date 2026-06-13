@@ -306,6 +306,15 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/kontakt",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

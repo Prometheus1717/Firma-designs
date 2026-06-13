@@ -339,6 +339,7 @@ export default function App() {
                 <Route path="/datenschutz" element={<LegalPage doc="datenschutz" />} />
                 <Route path="/agb" element={<LegalPage doc="agb" />} />
                 <Route path="/widerruf" element={<LegalPage doc="widerruf" />} />
+                <Route path="/kontakt" element={<LegalPage doc="kontakt" />} />
                 <Route path="*" element={<SmartRedirect />} />
               </Routes>
             </GlobalProfileGate>
