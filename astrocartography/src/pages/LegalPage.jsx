@@ -5,6 +5,13 @@
 // Supabase (auth + data), Stripe (payments), PostHog (analytics), Google Fonts +
 // Fontshare (fonts), OpenStreetMap/Nominatim (city search geocoding).
 import { useEffect, useState } from 'react';
+import { resetConsent } from '../lib/consent';
+
+function reopenConsent(e) {
+  e.preventDefault();
+  resetConsent();
+  window.location.reload();
+}
 
 const OPERATOR = {
   name: 'Sercan Yesilyurt',
@@ -123,6 +130,9 @@ const DOCS = {
           Interesses (Art. 6 Abs. 1 lit. f DSGVO). Da Vercel Daten auch in den USA
           verarbeiten kann, erfolgt eine etwaige Übermittlung in ein Drittland auf
           Grundlage geeigneter Garantien (Standardvertragsklauseln der EU-Kommission).
+          Zur anonymen Messung von Seitenaufrufen und Ladezeiten setzen wir zudem die
+          cookielosen Dienste Vercel Analytics und Vercel Speed Insights ein, die keine
+          personenbezogenen Profile bilden (Art. 6 Abs. 1 lit. f DSGVO).
         </p>
 
         <h3>4. Nutzerkonto und Geburtsdaten (Supabase)</h3>
@@ -506,6 +516,7 @@ export default function LegalPage({ doc }) {
           <a href="/agb">AGB</a>
           <a href="/widerruf">Widerruf</a>
           <a href="/kontakt">Kontakt</a>
+          <a href="/datenschutz" onClick={reopenConsent}>Cookie-Einstellungen</a>
         </nav>
       </main>
     </div>

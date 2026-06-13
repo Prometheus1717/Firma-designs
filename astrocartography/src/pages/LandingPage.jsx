@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { resetConsent } from '../lib/consent';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -672,6 +673,7 @@ export default function LandingPage() {
             <a href="/datenschutz">Datenschutz</a>
             <a href="/agb">AGB</a>
             <a href="/widerruf">Widerruf</a>
+            <a href="/datenschutz" onClick={(e) => { e.preventDefault(); resetConsent(); window.location.reload(); }}>Cookie-Einstellungen</a>
           </nav>
         </div>
         <div className="lp-wrap lp-footer-base">

@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import BirthDataModal from './components/BirthDataModal';
+import ConsentBanner from './components/ConsentBanner';
 import { initPostHog, trackPageView } from './lib/posthog';
 import { isLightMode, getTheme } from './lib/theme';
 
@@ -348,6 +349,7 @@ export default function App() {
       </ErrorBoundaryWithLocation>
       <Analytics />
       <SpeedInsights />
+      <ConsentBanner />
     </BrowserRouter>
   );
 }

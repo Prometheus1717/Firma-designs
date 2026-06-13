@@ -1,12 +1,17 @@
 import posthog from 'posthog-js';
+import { hasAnalyticsConsent } from './consent';
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com';
 
 let initialized = false;
 
+// Analytics must not start without explicit opt-in (TDDDG § 25). initPostHog is
+// a no-op until consent is granted; every tracking call below additionally
+// guards on `initialized`, so nothing is captured before the user agrees.
 export function initPostHog() {
   if (initialized || !POSTHOG_KEY) return;
+  if (!hasAnalyticsConsent()) return;
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
     capture_pageview: false, // we handle this manually for SPA
@@ -22,22 +27,22 @@ export function initPostHog() {
 }
 
 export function identifyUser(userId, properties = {}) {
-  if (!POSTHOG_KEY) return;
+  if (!initialized) return;
   posthog.identify(userId, properties);
 }
 
 export function resetUser() {
-  if (!POSTHOG_KEY) return;
+  if (!initialized) return;
   posthog.reset();
 }
 
 export function trackEvent(event, properties = {}) {
-  if (!POSTHOG_KEY) return;
+  if (!initialized) return;
   posthog.capture(event, properties);
 }
 
 export function trackPageView(path) {
-  if (!POSTHOG_KEY) return;
+  if (!initialized) return;
   posthog.capture('$pageview', { $current_url: window.location.href, path });
 }
 
