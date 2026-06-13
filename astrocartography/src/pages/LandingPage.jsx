@@ -111,27 +111,32 @@ export default function LandingPage() {
   const isRtl = RTL_LANGS.includes(lang);
   const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
-  // Hero word-cycler: advance the active word on an interval. The slot width is
-  // fixed to the WIDEST word, so the centred lead-in "See where you" never
-  // reflows — the word swaps in place with a fade + lift, nothing else moves.
+  // Hero word-cycler: advance the active word on an interval. The slot morphs
+  // its width to the active word (smooth CSS transition) so "See where you ___"
+  // reads as one naturally-spaced, centred phrase; the word swaps with a soft
+  // fade + lift on top of that.
   const [wi, setWi] = useState(0);
   const [cycleW, setCycleW] = useState(null);
   const wordRefs = useRef([]);
+  const wiRef = useRef(0);
+  useEffect(() => { wiRef.current = wi; }, [wi]);
   useEffect(() => {
     const id = setInterval(() => setWi(i => (i + 1) % CYCLE_WORDS.length), 2600);
     return () => clearInterval(id);
   }, []);
-  // Measure the widest word and lock the slot to it. Recomputed when the words
-  // change (language switch) and whenever a rendered width changes (font swap,
-  // resize), so the slot is always wide enough for every option.
-  const measureWidest = () => {
-    const widths = wordRefs.current.filter(Boolean).map(el => el.offsetWidth);
-    if (widths.length) setCycleW(Math.max(...widths));
-  };
-  useLayoutEffect(() => { measureWidest(); }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Measure the active word and set the slot width to it. Recomputed on each
+  // word change, on language switch, and whenever a rendered width changes
+  // (web-font swap, resize).
+  useLayoutEffect(() => {
+    const el = wordRefs.current[wi];
+    if (el) setCycleW(el.offsetWidth);
+  }, [wi, lang]);
   useEffect(() => {
     if (!window.ResizeObserver) return;
-    const ro = new ResizeObserver(() => measureWidest());
+    const ro = new ResizeObserver(() => {
+      const el = wordRefs.current[wiRef.current];
+      if (el) setCycleW(el.offsetWidth);
+    });
     wordRefs.current.forEach(el => el && ro.observe(el));
     return () => ro.disconnect();
   }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -716,13 +721,14 @@ const CSS = `
 .lp-h1-it{ display:flex; align-items:center; justify-content:center; gap:.26em; flex-wrap:wrap; }
 .lp-h1-it > em{ font-style:italic; color:var(--ink2); }
 
-/* The slot width is fixed to the WIDEST word (measured once in JS), so the
-   centred lead-in "See where you" never reflows — no horizontal jump, no GPU
-   ghost-trails. The active word is centred inside the fixed slot and swaps with
-   a soft fade + vertical lift; only opacity/transform animate (GPU-friendly). */
+/* The slot morphs its width to the ACTIVE word (measured in JS) so the lead-in
+   "See where you" sits one natural space before the word and the whole phrase
+   stays centred. The width eases smoothly (no instant snap → no jump), and the
+   word itself swaps with a soft fade + vertical lift centred inside the slot. */
 .lp-cycle{
   position:relative; display:inline-flex; align-items:center; justify-content:center;
   height:1.16em; vertical-align:baseline;
+  transition:width .5s cubic-bezier(.22,1,.36,1); will-change:width;
 }
 .lp-cw{
   position:absolute; left:50%; top:50%;
@@ -734,6 +740,7 @@ const CSS = `
 }
 .lp-cw-on{ opacity:1; transform:translate(-50%,-50%) translateY(0) scale(1); }
 @media (prefers-reduced-motion: reduce){
+  .lp-cycle{ transition:none; }
   .lp-cw{ transition:opacity .3s ease; transform:translate(-50%,-50%); }
   .lp-cw-on{ transform:translate(-50%,-50%); }
 }
