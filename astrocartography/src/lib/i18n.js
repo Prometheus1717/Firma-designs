@@ -21,8 +21,34 @@ const LANGUAGES = [
 export { LANGUAGES };
 
 // ── Persistence ──
+// Map the visitor's browser languages (navigator.languages) onto a supported
+// language on first visit, so the app appears in their language automatically.
+// This only sets the in-app UI language (localStorage) — it never redirects and
+// never changes the URL, so it is SEO-neutral. A manual choice via setLang()
+// always wins, because once 'nn_lang' is stored we stop auto-detecting.
+function detectLang() {
+  try {
+    const supported = new Set(LANGUAGES.map((l) => l.code));
+    const navs = (typeof navigator !== 'undefined' && (navigator.languages || [navigator.language])) || [];
+    for (const n of navs) {
+      if (!n) continue;
+      const base = String(n).toLowerCase().split('-')[0];
+      if (supported.has(base)) return base;
+    }
+  } catch { /* navigator unavailable */ }
+  return 'en';
+}
+
 export function getLang() {
-  try { return localStorage.getItem('nn_lang') || 'en'; } catch { return 'en'; }
+  try {
+    const stored = localStorage.getItem('nn_lang');
+    if (stored) return stored;
+    const detected = detectLang();
+    try { localStorage.setItem('nn_lang', detected); } catch { /* storage unavailable */ }
+    return detected;
+  } catch {
+    return 'en';
+  }
 }
 export function setLang(code) {
   try { localStorage.setItem('nn_lang', code); } catch {}
