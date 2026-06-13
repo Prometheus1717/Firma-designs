@@ -89,6 +89,18 @@ function ReadingMock({ m }) {
 }
 
 function FeatureMedia({ media, m }) {
+  if (media.type === 'video') {
+    return (
+      <div className={`lp-shot${media.portrait ? ' lp-shot-portrait' : ''}`}>
+        <video
+          src={media.src} poster={media.poster}
+          autoPlay muted loop playsInline preload="metadata"
+          width={media.portrait ? 714 : 2340} height={media.portrait ? 1103 : 1188}
+          aria-label={media.alt}
+        />
+      </div>
+    );
+  }
   if (media.type === 'img') {
     return <div className="lp-shot"><img src={media.src} alt={media.alt} loading="lazy" width="2000" height="1214" /></div>;
   }
@@ -959,8 +971,14 @@ const CSS = `
   box-shadow:0 30px 70px -30px rgba(24,28,35,.35);
   background:var(--night);
 }
-.lp-feat-media .lp-shot img{ width:100%; display:block; transition:transform .6s cubic-bezier(.2,.65,.25,1); }
-.lp-feat:hover .lp-shot img{ transform:scale(1.02); }
+.lp-feat-media .lp-shot img,
+.lp-feat-media .lp-shot video{ width:100%; display:block; transition:transform .6s cubic-bezier(.2,.65,.25,1); }
+.lp-feat:hover .lp-shot img,
+.lp-feat:hover .lp-shot video{ transform:scale(1.02); }
+/* Portrait media (e.g. the natal-report panel) — centre it on the dark card
+   instead of stretching full width, so the feature row keeps a sane height. */
+.lp-feat-media .lp-shot-portrait{ display:flex; justify-content:center; align-items:center; background:var(--night); padding:18px; }
+.lp-feat-media .lp-shot-portrait video{ width:auto; max-height:560px; border-radius:10px; }
 
 /* ratings + reading mocks */
 .lp-rate-box{
