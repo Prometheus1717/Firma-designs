@@ -205,6 +205,50 @@ In den Head des Landing-Builds (bzw. der prerenderten Seite):
   geographic path where Venus was rising, setting, culminating or anti-culminating
   at your birth — places along it emphasize love, beauty, ease and money themes."
 
+### P1-5: Automatische Spracherkennung (soft, SEO-sicher)
+
+Ziel des Betreibers: Ein Besucher soll die Seite beim Öffnen sofort in seiner
+Sprache sehen — **ohne** dass dadurch die Indexierung der Sprachversionen kaputtgeht.
+
+**Wichtig — kein Hard-Redirect:** Eine erzwungene Weiterleitung anhand von Sprache/IP
+ist von Google ausdrücklich abgeraten und gefährlich: Googlebot crawlt überwiegend
+aus den USA mit englischem `Accept-Language`. Würde die Seite jeden hart umleiten,
+sähe Googlebot die deutschen URLs (`/astrokartographie` + DE-Cluster) womöglich nie
+→ keine Indexierung → das gesamte DE-Cluster aus Phase 2 wäre für Google unsichtbar.
+
+**Befund Ist-Zustand:** `src/lib/i18n.js` unterstützt 14 UI-Sprachen, erkennt aber
+aktuell **nichts** automatisch — Default ist hart `'en'` aus `localStorage` (`nn_lang`).
+Die indexierbaren statischen Seiten existieren nur in EN/DE. Es gibt keine Middleware.
+
+**Umzusetzen — zwei getrennte Ebenen:**
+
+1. **App-/Landing-UI-Sprache (clientseitig, alle 14 Sprachen):** Beim ersten Aufruf,
+   wenn kein `nn_lang` gesetzt ist, die UI-Sprache aus `navigator.languages` ableiten
+   (auf eine unterstützte Sprache mappen, sonst `en`-Fallback) und in `localStorage`
+   merken. Manuelle Umschaltung hat immer Vorrang. Das ist **kein** Redirect und
+   SEO-neutral, weil dieselbe URL bleibt.
+2. **Statische SEO-Seiten EN↔DE (Vercel Edge Middleware, soft):** Eine
+   `middleware.js` (Vercel Edge) liest `Accept-Language`. Für **menschliche** Besucher,
+   die die x-default-/EN-URL ohne gesetzte Sprachpräferenz öffnen und `de` bevorzugen,
+   entweder (a) ein dezenter Sprach-Banner („Auf Deutsch lesen →") **oder** eine
+   einmalige 302-Weiterleitung auf das `/astrokartographie`-Pendant, gespeichert per
+   Cookie, jederzeit manuell zurückschaltbar.
+   **Bots (Googlebot, Bingbot, GPTBot, ClaudeBot, PerplexityBot u. a.) per User-Agent
+   von der Weiterleitung ausnehmen** — sie sehen immer die angefragte URL.
+
+**Pflicht-Begleitung:** hreflang-Paare und getrennte URLs bleiben die Basis der
+Sprachzuordnung für Google (nicht die Auto-Erkennung). Die Edge-Middleware darf die
+in `vercel.json` definierten Rewrites/Header und die `noindex`-Logik nicht brechen
+(Guardrail 9.8) und muss mit dem Host-Redirect aus P0-3 zusammenspielen.
+
+**Gilt auch für die Rechtsseiten:** Dieselbe soft-Sprachlogik greift später für die
+EN/DE-Versionen von Impressum/Datenschutz etc. — **die Seiten-Inhalte selbst sind
+nicht Teil dieses Auftrags** (Guardrail 9.11), nur der Detection-Mechanismus.
+
+**Akzeptanz:** `curl -A "Googlebot" https://natalnavigator.com/astrocartography` → 200,
+keine Weiterleitung; ein Browser mit `Accept-Language: de` ohne Cookie bekommt auf
+derselben URL den DE-Hinweis/-Redirect; manueller Sprachwechsel überschreibt dauerhaft.
+
 ---
 
 ## 5. Phase 2 — Content-Cluster (Wochen 1–6) — der eigentliche Hebel
@@ -431,6 +475,7 @@ neue Seiten auf Indexierung prüfen, eine AI-Engine-Stichprobe.
 - [ ] P1-2 Landing-Prerendering (Bots sehen Volltext ohne JS)
 - [ ] P1-3 FAQPage-, Organization-, BreadcrumbList-Schema
 - [ ] P1-4 llms.txt erweitern, llms-full.txt, Zitier-Absätze
+- [ ] P1-5 Auto-Spracherkennung: UI-Sprache aus navigator.languages + Edge-Middleware soft-redirect EN↔DE mit Bot-Ausnahme
 - [ ] P2 Cluster 1–4: ~35 statische Guide-/Intent-Seiten nach Muster, gestaffelt
 - [ ] P2 Interne Verlinkungs-Topologie (Footer „Learn", Pillar-Hub, Kreuzlinks)
 - [ ] P3 GEO: Fakten-Snippets, Entity-Konsistenz, Erwähnungs-Textentwürfe
