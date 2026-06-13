@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { resetConsent } from '../lib/consent';
 import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } from '../lib/landingContent';
 import { LANGUAGES } from '../lib/i18n';
+import ConsentBanner from '../components/ConsentBanner';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -556,6 +557,9 @@ export default function LandingPage() {
           <span>{C.footer.note}</span>
         </div>
       </footer>
+
+      {/* Analytics consent — landing page only (not inside the embedded demo) */}
+      <ConsentBanner />
     </div>
   );
 }
