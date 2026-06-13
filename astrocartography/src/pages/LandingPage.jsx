@@ -30,6 +30,11 @@ const STARS = [
   ['monroe', 'Marilyn Monroe'],
   ['jobs', 'Steve Jobs'],
   ['kahlo', 'Frida Kahlo'],
+  ['obama', 'Barack Obama'],
+  ['madonna', 'Madonna'],
+  ['jolie', 'Angelina Jolie'],
+  ['dicaprio', 'Leonardo DiCaprio'],
+  ['houston', 'Whitney Houston'],
 ];
 
 
@@ -110,33 +115,30 @@ export default function LandingPage() {
   const isRtl = RTL_LANGS.includes(lang);
   const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
-  // Hero word-cycler: advance the word, and morph the slot width to the active
-  // word so "See where you ___" reads as one naturally-spaced, centred phrase.
+  // Hero word-cycler: advance the active word on an interval. The slot width is
+  // fixed to the WIDEST word, so the centred lead-in "See where you" never
+  // reflows — the word swaps in place with a fade + lift, nothing else moves.
   const [wi, setWi] = useState(0);
   const [cycleW, setCycleW] = useState(null);
   const wordRefs = useRef([]);
-  const wiRef = useRef(0);
-  useEffect(() => { wiRef.current = wi; }, [wi]);
   useEffect(() => {
     const id = setInterval(() => setWi(i => (i + 1) % CYCLE_WORDS.length), 2600);
     return () => clearInterval(id);
   }, []);
-  // Measure the active word before paint on each change…
-  useLayoutEffect(() => {
-    const el = wordRefs.current[wi];
-    if (el) setCycleW(el.offsetWidth);
-  }, [wi]);
-  // …and re-measure whenever a word's rendered width changes (web-font swap,
-  // resize), so the slot can never end up too narrow for the word.
+  // Measure the widest word and lock the slot to it. Recomputed when the words
+  // change (language switch) and whenever a rendered width changes (font swap,
+  // resize), so the slot is always wide enough for every option.
+  const measureWidest = () => {
+    const widths = wordRefs.current.filter(Boolean).map(el => el.offsetWidth);
+    if (widths.length) setCycleW(Math.max(...widths));
+  };
+  useLayoutEffect(() => { measureWidest(); }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!window.ResizeObserver) return;
-    const ro = new ResizeObserver(() => {
-      const el = wordRefs.current[wiRef.current];
-      if (el) setCycleW(el.offsetWidth);
-    });
+    const ro = new ResizeObserver(() => measureWidest());
     wordRefs.current.forEach(el => el && ro.observe(el));
     return () => ro.disconnect();
-  }, []);
+  }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Title + meta description for the homepage (follows the chosen language)
   useEffect(() => {
@@ -280,14 +282,16 @@ export default function LandingPage() {
             {/* LEFT rail — switch chart */}
             <aside className="lp-rail lp-rail-l" role="group" aria-label="Choose a demo chart">
               <span className="lp-rail-label">{C.demo.chartLabel}</span>
-              {STARS.map(([key, name]) => (
-                <button
-                  key={key}
-                  className={`lp-star-pill${star === key ? ' lp-on' : ''}`}
-                  onClick={() => pickStar(key)}
-                  aria-pressed={star === key}
-                >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
-              ))}
+              <div className="lp-rail-scroll">
+                {STARS.map(([key, name]) => (
+                  <button
+                    key={key}
+                    className={`lp-star-pill${star === key ? ' lp-on' : ''}`}
+                    onClick={() => pickStar(key)}
+                    aria-pressed={star === key}
+                  >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
+                ))}
+              </div>
             </aside>
 
             {/* glass-framed live app */}
@@ -713,20 +717,27 @@ const CSS = `
 .lp-h1-it{ display:flex; align-items:center; justify-content:center; gap:.26em; flex-wrap:wrap; }
 .lp-h1-it > em{ font-style:italic; color:var(--ink2); }
 
-/* Width snaps instantly (no smooth transition) so the centred line never
-   slides — a sliding line leaves GPU ghost-trails of the text. The word swap
-   is a pure opacity crossfade; nothing moves continuously, so no traces. */
+/* The slot width is fixed to the WIDEST word (measured once in JS), so the
+   centred lead-in "See where you" never reflows — no horizontal jump, no GPU
+   ghost-trails. The active word is centred inside the fixed slot and swaps with
+   a soft fade + vertical lift; only opacity/transform animate (GPU-friendly). */
 .lp-cycle{
-  position:relative; display:inline-flex; align-items:center; height:1.16em;
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:1.16em; vertical-align:baseline;
 }
 .lp-cw{
-  position:absolute; left:0; top:50%; transform:translateY(-50%);
-  display:flex; align-items:center; justify-content:flex-start; height:1.16em;
+  position:absolute; left:50%; top:50%;
+  display:inline-flex; align-items:center; justify-content:center; height:1.16em;
   padding:0 .34em .06em; border-radius:.24em; font-style:italic; white-space:nowrap;
-  line-height:1.05; box-sizing:border-box;
-  opacity:0; transition:opacity .4s ease;
+  line-height:1.05; box-sizing:border-box; will-change:opacity, transform;
+  opacity:0; transform:translate(-50%,-50%) translateY(.32em) scale(.96);
+  transition:opacity .4s ease, transform .55s cubic-bezier(.16,1,.3,1);
 }
-.lp-cw-on{ opacity:1; }
+.lp-cw-on{ opacity:1; transform:translate(-50%,-50%) translateY(0) scale(1); }
+@media (prefers-reduced-motion: reduce){
+  .lp-cw{ transition:opacity .3s ease; transform:translate(-50%,-50%); }
+  .lp-cw-on{ transform:translate(-50%,-50%); }
+}
 .lp-cw-mint{ background:rgba(220,242,229,.9); color:var(--mint); }
 .lp-cw-rose{ background:rgba(249,227,224,.9); color:#B2543F; }
 .lp-cw-amber{ background:rgba(250,235,210,.9); color:var(--amber); }
@@ -802,7 +813,7 @@ const CSS = `
 .lp-stage-spacer{ position:relative; z-index:0; height:clamp(90px,22vh,260px); }
 
 .lp-demo-stage{
-  display:grid; grid-template-columns:176px minmax(0,1fr) 200px;
+  display:grid; grid-template-columns:200px minmax(0,1fr) 200px;
   gap:clamp(12px,1.4vw,24px); align-items:stretch;
   max-width:1520px; margin:0 auto; padding:0 clamp(12px,2vw,28px);
 }
@@ -819,6 +830,17 @@ const CSS = `
 .lp-rail-r{ gap:12px; }
 .lp-rail-note{ font-size:12px; color:var(--ink2); line-height:1.55; padding:2px 4px; }
 .lp-rail-cta{ margin-top:auto; width:100%; padding:11px 14px; font-size:13.5px; }
+.lp-rail-scroll{
+  display:flex; flex-direction:column; gap:8px;
+  max-height:clamp(248px,38vh,392px); overflow-y:auto; overflow-x:hidden;
+  padding:2px 6px 2px 2px; scrollbar-width:thin; scrollbar-color:rgba(24,28,35,.25) transparent;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image:linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+}
+.lp-rail-scroll::-webkit-scrollbar{ width:6px; }
+.lp-rail-scroll::-webkit-scrollbar-thumb{ background:rgba(24,28,35,.22); border-radius:99px; }
+.lp-rail-scroll::-webkit-scrollbar-thumb:hover{ background:rgba(24,28,35,.34); }
+.lp-rail-scroll::-webkit-scrollbar-track{ background:transparent; }
 
 .lp-star-pill{
   display:flex; align-items:center; gap:7px; width:100%; text-align:left;
@@ -1120,6 +1142,7 @@ const CSS = `
   .lp-rail-r{ order:3; }
   .lp-rail{ flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px 10px; padding:14px 16px; }
   .lp-rail-label{ width:100%; text-align:center; padding-bottom:2px; }
+  .lp-rail-scroll{ flex-direction:row; flex-wrap:wrap; justify-content:center; max-height:none; overflow:visible; gap:8px 10px; width:100%; padding:0; -webkit-mask-image:none; mask-image:none; }
   .lp-rail .lp-star-pill{ width:auto; }
   .lp-rail-note{ width:100%; text-align:center; order:5; }
   .lp-rail-cta{ width:auto; margin-top:0; }
