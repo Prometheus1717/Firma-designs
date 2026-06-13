@@ -322,11 +322,11 @@ aber **jetzt nicht gebaut**. Erst Baseline messen, dann ggf. testen.
 
 ---
 
-## 7b. Phase 5 — Preis, Recht & Checkout (Pflicht VOR breitem Traffic)
+## 7b. Phase 5 — Preis & Checkout (vor breitem Traffic abschließen)
 
-Diese Phase ist **nicht optional** und sollte zeitlich VOR Phase 2/3 abgeschlossen
-sein: Es ist sinnlos (und rechtlich riskant), erst Traffic auf einen Shop ohne
-Impressum/Datenschutz/Widerruf zu leiten.
+> **Hinweis zum Scope:** Rechtsseiten (Impressum/Datenschutz/AGB/Widerruf) und die
+> Social-Kanäle (Pinterest/Instagram) erledigt der Betreiber selbst und sind
+> **bewusst nicht Teil dieses Briefs**. Opus 4.8 fasst diese Themen nicht an.
 
 ### P5-1: Preis auf 9,99 € / $9.99 anheben — überall konsistent
 
@@ -351,31 +351,7 @@ GEO-kritisch — widersprüchliche Preise verwirren Antwort-Engines und Käufer)
 Verkaufspreis — in der EU nach Omnibus-Richtlinie abmahnfähig (siehe Guardrail 9.9).
 EU-Anzeigepreis ist immer **brutto inkl. MwSt.**
 
-### P5-2: Rechtsseiten anlegen (fehlen aktuell vollständig — verifiziert)
-
-Audit-Befund: Die App hat KEIN Impressum, KEINE Datenschutzerklärung, KEINE
-Widerrufsbelehrung, KEINE AGB; der Landing-Footer hat nur eine Mailadresse. Für
-einen deutschen B2C-Anbieter digitaler Inhalte ist das abmahnfähig.
-
-Vier statische Seiten erstellen (Muster: bestehende Guides; `noindex` via
-`vercel.json`-Header wie `/auth`), plus Footer-Links in `LandingPage.jsx`:
-- `/imprint` (Impressum, § 5 DDG — Inhaber, Adresse, Kontakt; Daten vom Betreiber einholen)
-- `/privacy` (DSGVO-Datenschutzerklärung — MUSS PostHog, Supabase, Stripe als
-  Auftragsverarbeiter nennen; der Betreiber trackt aktiv)
-- `/terms` (AGB)
-- `/refund` (Widerrufsbelehrung)
-- Inhalte beim Betreiber anfordern / aus dem hermeswriting.de-Bestand als Vorlage
-  nehmen, NICHT frei erfinden (Guardrail 9.3 — keine erfundenen Rechtsangaben).
-
-### P5-3: Widerruf bei digitalen Inhalten korrekt lösen
-
-Digitale Inhalte haben 14 Tage Widerrufsrecht, ES SEI DENN, der Käufer stimmt im
-Checkout der sofortigen Ausführung ausdrücklich zu UND bestätigt den Verlust des
-Widerrufsrechts. → Pflicht-Checkbox/Hinweis unmittelbar vor dem Stripe-Checkout
-einbauen. Empfehlung des Betreibers prüfen: zusätzlich freiwillige „14 Tage
-Geld-zurück"-Garantie als Conversion-Booster (bei 9,99 € risikoarm).
-
-### P5-4: Checkout-Hebel (Betreiber-Aufgabe in Stripe, KI dokumentiert)
+### P5-2: Checkout-Hebel (Betreiber-Aufgabe in Stripe, KI dokumentiert)
 
 - **Stripe Tax aktivieren** (EU-OSS: MwSt. des Käuferlandes wird automatisch korrekt
   berechnet/ausgewiesen — sonst Steuerproblem bei jedem Auslandsverkauf).
@@ -385,27 +361,17 @@ Geld-zurück"-Garantie als Conversion-Booster (bei 9,99 € risikoarm).
 - E-Mail-Hygiene: `info@natalnavigator.com` muss existieren/empfangen; SPF/DKIM für
   Stripe-Belege und Supabase-Mails (Reset-Templates liegen im Repo) sauber konfigurieren.
 
-### P5-5: Echte Bewertungen einsammeln (für späteres aggregateRating)
+### P5-3: Echte Bewertungen einsammeln (für späteres aggregateRating)
 
 Nach Kauf/PDF-Export dezenter Review-Prompt. Erst NACH ~20–30 echten Stimmen darf
 `aggregateRating` ins Schema (Guardrail 9.3 — vorher verboten). Liefert Sterne-Snippets
 in Google und Social Proof für die Landing.
 
-### P5-6: Code-Hygiene-Fix
+### P5-4: Code-Hygiene-Fix
 
 `LandingPage.jsx` Z. 313: Auth-Link ist als absolute URL
 `https://natalnavigator.com/auth` hartkodiert → auf relativ `/auth` ändern, damit
 Staging-/Preview-Deployments nicht auf die Produktionsdomain springen.
-
-### P5-7: Zusätzlicher Kanal — Pinterest/Instagram (Betreiber, KI bereitet vor)
-
-Die Zielgruppe (Frauen 30+) entdeckt Astrologie primär über Pinterest/Instagram/
-TikTok, nicht über Google. Pinterest ist faktisch eine zweite Suchmaschine mit
-langer Content-Lebensdauer und genau dieser Demografie. Jeder Phase-2-Guide lässt
-sich als 2–3 Pins verwerten (Karten-Visuals existieren in `public/landing/`). Die KI
-liefert dafür Pin-Titel/Beschreibungs-Entwürfe mit UTM-Links; der Betreiber postet.
-Konsequenz: **Mobile-Erlebnis von Landing + Demo-iframe muss explizit getestet werden**
-(Großteil dieses Traffics ist mobil).
 
 ---
 
@@ -433,11 +399,9 @@ neue Seiten auf Indexierung prüfen, eine AI-Engine-Stichprobe.
    Stadt-Seiten („Venus line in Lissabon" × 345 Städte) — das fällt unter Googles
    Scaled-Content-Abuse-Policy und gefährdet die ganze Domain. Deckel: ~35 Seiten,
    jede einzeln redigiert.
-3. **Kein Fake-E-E-A-T und keine erfundenen Angaben:** keine erfundenen
-   Bewertungen/`aggregateRating` (erst nach echten Stimmen, P5-5), keine erfundenen
-   Autoren-Personas, keine erfundenen Statistiken — und **keine erfundenen
-   Rechtsinhalte** (Impressum/Datenschutz/AGB-Daten beim Betreiber einholen, nicht
-   ausdenken). Astrologie wird als Reflexions-/Deutungswerkzeug beschrieben, nicht als
+3. **Kein Fake-E-E-A-T:** keine erfundenen Bewertungen/`aggregateRating` (erst nach
+   echten Stimmen, P5-3), keine erfundenen Autoren-Personas, keine erfundenen
+   Statistiken. Astrologie wird als Reflexions-/Deutungswerkzeug beschrieben, nicht als
    Vorhersagewissenschaft (so steht es korrekt in `llms.txt` — beibehalten).
 4. **Kein Posten auf fremden Plattformen** (Reddit/Quora/Foren) — nur Entwürfe für
    den Betreiber.
@@ -452,8 +416,8 @@ neue Seiten auf Indexierung prüfen, eine AI-Engine-Stichprobe.
    Stellen. Kein Fake-Streichpreis (EU-Omnibus). EU-Preise immer brutto inkl. MwSt.
 10. **Kein Freemium bauen.** Betreiber-Entscheidung: direkte Paywall, Freemium nur als
     späteres, separat freigegebenes Experiment.
-11. **Reihenfolge beachten:** Phase 5 (Recht + Preis + Checkout) MUSS abgeschlossen
-    sein, bevor breiter Traffic aus Phase 2/3 auf den Shop geleitet wird.
+11. **Rechtsseiten und Social-Kanäle (Pinterest/Instagram) NICHT anfassen** — die
+    erledigt der Betreiber selbst, sie sind nicht Teil dieses Auftrags.
 
 ---
 
@@ -472,10 +436,7 @@ neue Seiten auf Indexierung prüfen, eine AI-Engine-Stichprobe.
 - [ ] P3 GEO: Fakten-Snippets, Entity-Konsistenz, Erwähnungs-Textentwürfe
 - [ ] P4 PostHog-Funnel + UTM-Konvention (Distinct-ID über Tab-Wechsel halten)
 - [ ] **P5-1 Preis 9,99 €/$9.99 überall konsistent (Stripe, JSON-LD, Landing, llms.txt, Guides)**
-- [ ] **P5-2 Rechtsseiten /imprint /privacy /terms /refund + Footer-Links (noindex)**
-- [ ] **P5-3 Widerruf-Checkbox vor Checkout (+ optional 14-Tage-Garantie)**
-- [ ] **P5-4 Stripe Tax, PayPal/Apple Pay/Google Pay, Abandoned-Checkout, E-Mail/SPF/DKIM**
-- [ ] P5-5 Review-Prompt nach Kauf (aggregateRating erst nach echten Stimmen)
-- [ ] P5-6 Auth-Link in LandingPage.jsx Z.313 relativ machen
-- [ ] P5-7 Pinterest/Instagram-Pin-Entwürfe + Mobile-Test Landing/Demo
+- [ ] **P5-2 Stripe Tax, PayPal/Apple Pay/Google Pay, Abandoned-Checkout, E-Mail/SPF/DKIM**
+- [ ] P5-3 Review-Prompt nach Kauf (aggregateRating erst nach echten Stimmen)
+- [ ] P5-4 Auth-Link in LandingPage.jsx Z.313 relativ machen
 - [ ] Abschlussbericht mit allen Betreiber-To-dos (GSC/Bing/Vercel/Stripe-Dashboard)
