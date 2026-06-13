@@ -524,37 +524,37 @@ export default function LandingPage() {
         <div className="lp-wrap lp-footer-grid">
           <div className="lp-footer-brand">
             <a href="/" className="lp-logo"><span className="lp-logo-mark">{I.globe}</span>Natal&nbsp;Navigator</a>
-            <p>Astrocartography & relocation astrology on an interactive 3D globe. A reflection tool — the decisions stay yours.</p>
+            <p>{C.footer.tagline}</p>
           </div>
           <nav aria-label="Product">
-            <h4>Product</h4>
-            <a href="/demo">Live demo</a>
-            <a href="#pricing" onClick={scrollTo('pricing')}>Pricing</a>
-            <a href="/auth">Create account</a>
+            <h4>{C.footer.hProduct}</h4>
+            <a href="/demo">{C.nav.demo}</a>
+            <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
+            <a href="/auth">{C.footer.createAccount}</a>
           </nav>
           <nav aria-label="Learn">
-            <h4>Learn</h4>
+            <h4>{C.footer.hLearn}</h4>
             <a href="/astrocartography">Astrocartography guide</a>
             <a href="/astrocartography-calculator">Astrocartography calculator</a>
             <a href="/astrokartographie">Astrokartographie (DE)</a>
           </nav>
           <nav aria-label="Contact">
-            <h4>Contact</h4>
+            <h4>{C.footer.hContact}</h4>
             <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>
-            <a href="/kontakt">Kontaktformular</a>
+            <a href="/kontakt">{C.footer.contactForm}</a>
           </nav>
           <nav aria-label="Legal">
-            <h4>Legal</h4>
+            <h4>{C.footer.hLegal}</h4>
             <a href="/impressum">Impressum</a>
             <a href="/datenschutz">Datenschutz</a>
             <a href="/agb">AGB</a>
             <a href="/widerruf">Widerruf</a>
-            <a href="/datenschutz" onClick={(e) => { e.preventDefault(); resetConsent(); window.location.reload(); }}>Cookie-Einstellungen</a>
+            <a href="/datenschutz" onClick={(e) => { e.preventDefault(); resetConsent(); window.location.reload(); }}>{C.footer.cookieSettings}</a>
           </nav>
         </div>
         <div className="lp-wrap lp-footer-base">
-          <span>© 2026 Natal Navigator. All rights reserved.</span>
-          <span>Made with real ephemeris data — astrology is reflection, not prediction.</span>
+          <span>{C.footer.rights}</span>
+          <span>{C.footer.note}</span>
         </div>
       </footer>
     </div>

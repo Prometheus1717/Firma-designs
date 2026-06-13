@@ -143,6 +143,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Your stars are already aligned.<br /><em>See where.</em></>, sub: 'Two minutes from birth certificate to world map.', ctaCreate: 'Create my map', ctaDemo: 'Try the demo first' },
     meta: { title: 'Astrocartography Map & Calculator — Natal Navigator', desc: 'Turn your birth chart into a living map. Interactive astrocartography calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.' },
+    footer: { tagline: 'Astrocartography & relocation astrology on an interactive 3D globe. A reflection tool — the decisions stay yours.', hProduct: 'Product', hLearn: 'Learn', hContact: 'Contact', hLegal: 'Legal', createAccount: 'Create account', contactForm: 'Contact form', cookieSettings: 'Cookie settings', rights: '© 2026 Natal Navigator. All rights reserved.', note: 'Made with real ephemeris data — astrology is reflection, not prediction.' },
     mock: {
       thrive: 'Thrive', neutral: 'Neutral', caution: 'Caution',
       readingQuote: <>“Lisbon lies on your <strong>Venus MC</strong> line — one of the most graceful places for your public life. Work feels social, doors open through people who simply like you, and what you make here tends to be beautiful…”</>,
@@ -243,6 +244,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Deine Sterne stehen schon bereit.<br /><em>Sieh, wo.</em></>, sub: 'Zwei Minuten von der Geburtsurkunde zur Weltkarte.', ctaCreate: 'Meine Karte erstellen', ctaDemo: 'Erst die Demo testen' },
     meta: { title: 'Astrokartographie-Karte & Rechner — Natal Navigator', desc: 'Verwandle dein Geburtshoroskop in eine lebendige Karte. Interaktiver Astrokartographie-Rechner mit 3D-Globus, 40 Planetenlinien und 345+ Städten, bewertet für Karriere, Liebe und Zuhause.' },
+    footer: { tagline: 'Astrokartographie & Relocation-Astrologie auf einem interaktiven 3D-Globus. Ein Werkzeug zur Reflexion — die Entscheidungen bleiben deine.', hProduct: 'Produkt', hLearn: 'Wissen', hContact: 'Kontakt', hLegal: 'Rechtliches', createAccount: 'Konto erstellen', contactForm: 'Kontaktformular', cookieSettings: 'Cookie-Einstellungen', rights: '© 2026 Natal Navigator. Alle Rechte vorbehalten.', note: 'Mit echten Ephemeriden-Daten — Astrologie ist Reflexion, keine Vorhersage.' },
     mock: {
       thrive: 'Aufblühen', neutral: 'Neutral', caution: 'Vorsicht',
       readingQuote: <>„Lissabon liegt auf deiner <strong>Venus-MC</strong>-Linie — einer der anmutigsten Orte für dein öffentliches Leben. Arbeit fühlt sich sozial an, Türen öffnen sich durch Menschen, die dich einfach mögen, und was du hier erschaffst, wird meist schön…“</>,
@@ -343,6 +345,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Vos étoiles sont déjà alignées.<br /><em>Voyez où.</em></>, sub: 'Deux minutes, de l’acte de naissance à la carte du monde.', ctaCreate: 'Créer ma carte', ctaDemo: 'Essayer la démo d’abord' },
     meta: { title: 'Carte & calculateur d’astrocartographie — Natal Navigator', desc: 'Transformez votre thème natal en carte vivante. Calculateur d’astrocartographie interactif avec globe 3D, 40 lignes planétaires et 345+ villes notées pour la carrière, l’amour et le foyer.' },
+    footer: { tagline: 'Astrocartographie & astrologie de relocation sur un globe 3D interactif. Un outil de réflexion — les décisions restent les vôtres.', hProduct: 'Produit', hLearn: 'Apprendre', hContact: 'Contact', hLegal: 'Mentions légales', createAccount: 'Créer un compte', contactForm: 'Formulaire de contact', cookieSettings: 'Paramètres des cookies', rights: '© 2026 Natal Navigator. Tous droits réservés.', note: 'Fait avec de vraies données d’éphémérides — l’astrologie est réflexion, pas prédiction.' },
     mock: {
       thrive: 'Épanouissement', neutral: 'Neutre', caution: 'Prudence',
       readingQuote: <>« Lisbonne se trouve sur votre ligne <strong>Vénus MC</strong> — l’un des lieux les plus gracieux pour votre vie publique. Le travail y est social, les portes s’ouvrent par des gens qui vous apprécient, et ce que vous créez ici tend à être beau… »</>,
@@ -443,6 +446,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Tus estrellas ya están alineadas.<br /><em>Mira dónde.</em></>, sub: 'Dos minutos del acta de nacimiento al mapamundi.', ctaCreate: 'Crear mi mapa', ctaDemo: 'Probar la demo primero' },
     meta: { title: 'Mapa y calculadora de astrocartografía — Natal Navigator', desc: 'Convierte tu carta natal en un mapa vivo. Calculadora de astrocartografía interactiva con globo 3D, 40 líneas planetarias y 345+ ciudades valoradas para carrera, amor y hogar.' },
+    footer: { tagline: 'Astrocartografía y astrología de relocalización en un globo 3D interactivo. Una herramienta de reflexión: las decisiones siguen siendo tuyas.', hProduct: 'Producto', hLearn: 'Aprender', hContact: 'Contacto', hLegal: 'Legal', createAccount: 'Crear cuenta', contactForm: 'Formulario de contacto', cookieSettings: 'Configuración de cookies', rights: '© 2026 Natal Navigator. Todos los derechos reservados.', note: 'Hecho con datos reales de efemérides: la astrología es reflexión, no predicción.' },
     mock: {
       thrive: 'Prosperar', neutral: 'Neutral', caution: 'Precaución',
       readingQuote: <>«Lisboa está en tu línea <strong>Venus MC</strong>, uno de los lugares más gráciles para tu vida pública. El trabajo se siente social, las puertas se abren a través de gente que simplemente te aprecia, y lo que creas aquí tiende a ser bello…»</>,
@@ -543,6 +547,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Le tue stelle sono già allineate.<br /><em>Scopri dove.</em></>, sub: 'Due minuti dal certificato di nascita alla mappa del mondo.', ctaCreate: 'Crea la mia mappa', ctaDemo: 'Prova prima la demo' },
     meta: { title: 'Mappa e calcolatore di astrocartografia — Natal Navigator', desc: 'Trasforma il tuo tema natale in una mappa viva. Calcolatore di astrocartografia interattivo con globo 3D, 40 linee planetarie e 345+ città valutate per carriera, amore e casa.' },
+    footer: { tagline: 'Astrocartografia e astrologia di rilocazione su un globo 3D interattivo. Uno strumento di riflessione: le decisioni restano tue.', hProduct: 'Prodotto', hLearn: 'Impara', hContact: 'Contatti', hLegal: 'Note legali', createAccount: 'Crea account', contactForm: 'Modulo di contatto', cookieSettings: 'Impostazioni cookie', rights: '© 2026 Natal Navigator. Tutti i diritti riservati.', note: 'Realizzato con veri dati di effemeridi — l’astrologia è riflessione, non predizione.' },
     mock: {
       thrive: 'Prosperare', neutral: 'Neutro', caution: 'Cautela',
       readingQuote: <>«Lisbona si trova sulla tua linea <strong>Venere MC</strong>, uno dei luoghi più aggraziati per la tua vita pubblica. Il lavoro è sociale, le porte si aprono grazie a persone che semplicemente ti apprezzano, e ciò che crei qui tende a essere bello…»</>,
@@ -643,6 +648,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Suas estrelas já estão alinhadas.<br /><em>Veja onde.</em></>, sub: 'Dois minutos da certidão de nascimento ao mapa-múndi.', ctaCreate: 'Criar meu mapa', ctaDemo: 'Experimentar a demo primeiro' },
     meta: { title: 'Mapa e calculadora de astrocartografia — Natal Navigator', desc: 'Transforme seu mapa natal em um mapa vivo. Calculadora de astrocartografia interativa com globo 3D, 40 linhas planetárias e 345+ cidades avaliadas para carreira, amor e lar.' },
+    footer: { tagline: 'Astrocartografia e astrologia de relocação num globo 3D interativo. Uma ferramenta de reflexão — as decisões continuam suas.', hProduct: 'Produto', hLearn: 'Aprender', hContact: 'Contato', hLegal: 'Jurídico', createAccount: 'Criar conta', contactForm: 'Formulário de contato', cookieSettings: 'Configurações de cookies', rights: '© 2026 Natal Navigator. Todos os direitos reservados.', note: 'Feito com dados reais de efemérides — astrologia é reflexão, não previsão.' },
     mock: {
       thrive: 'Prosperar', neutral: 'Neutro', caution: 'Cautela',
       readingQuote: <>"Lisboa fica na sua linha <strong>Vênus MC</strong>, um dos lugares mais graciosos para a sua vida pública. O trabalho é social, portas se abrem por pessoas que simplesmente gostam de você, e o que você cria aqui tende a ser belo…"</>,
@@ -743,6 +749,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Je sterren staan al op één lijn.<br /><em>Zie waar.</em></>, sub: 'Twee minuten van geboorteakte tot wereldkaart.', ctaCreate: 'Maak mijn kaart', ctaDemo: 'Probeer eerst de demo' },
     meta: { title: 'Astrocartografie-kaart & rekenmachine — Natal Navigator', desc: 'Verander je geboortehoroscoop in een levende kaart. Interactieve astrocartografie-rekenmachine met 3D-globe, 40 planeetlijnen en 345+ steden beoordeeld voor carrière, liefde en thuis.' },
+    footer: { tagline: 'Astrocartografie & verhuisastrologie op een interactieve 3D-globe. Een hulpmiddel voor reflectie — de beslissingen blijven van jou.', hProduct: 'Product', hLearn: 'Leren', hContact: 'Contact', hLegal: 'Juridisch', createAccount: 'Account aanmaken', contactForm: 'Contactformulier', cookieSettings: 'Cookie-instellingen', rights: '© 2026 Natal Navigator. Alle rechten voorbehouden.', note: 'Gemaakt met echte efemeride-gegevens — astrologie is reflectie, geen voorspelling.' },
     mock: {
       thrive: 'Opbloeien', neutral: 'Neutraal', caution: 'Voorzichtig',
       readingQuote: <>"Lissabon ligt op je <strong>Venus MC</strong>-lijn, een van de meest gracieuze plekken voor je publieke leven. Werk voelt sociaal, deuren openen via mensen die je gewoon mogen, en wat je hier maakt is vaak mooi…"</>,
@@ -843,6 +850,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Twoje gwiazdy już są ustawione.<br /><em>Zobacz gdzie.</em></>, sub: 'Dwie minuty od aktu urodzenia do mapy świata.', ctaCreate: 'Stwórz moją mapę', ctaDemo: 'Najpierw wypróbuj demo' },
     meta: { title: 'Mapa i kalkulator astrokartografii — Natal Navigator', desc: 'Zamień horoskop urodzeniowy w żywą mapę. Interaktywny kalkulator astrokartografii z globusem 3D, 40 liniami planetarnymi i 345+ miastami ocenionymi pod kątem kariery, miłości i domu.' },
+    footer: { tagline: 'Astrokartografia i astrologia relokacji na interaktywnym globusie 3D. Narzędzie do refleksji — decyzje pozostają Twoje.', hProduct: 'Produkt', hLearn: 'Wiedza', hContact: 'Kontakt', hLegal: 'Informacje prawne', createAccount: 'Załóż konto', contactForm: 'Formularz kontaktowy', cookieSettings: 'Ustawienia plików cookie', rights: '© 2026 Natal Navigator. Wszelkie prawa zastrzeżone.', note: 'Stworzone z prawdziwych danych efemeryd — astrologia to refleksja, nie przepowiednia.' },
     mock: {
       thrive: 'Rozkwit', neutral: 'Neutralne', caution: 'Ostrożność',
       readingQuote: <>„Lizbona leży na Twojej linii <strong>Wenus MC</strong> — jednym z najbardziej pełnych wdzięku miejsc dla Twojego życia publicznego. Praca jest tu towarzyska, drzwi otwierają się dzięki ludziom, którzy po prostu Cię lubią, a to, co tworzysz, bywa piękne…”</>,
@@ -943,6 +951,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Yıldızların çoktan hizalandı.<br /><em>Nerede olduğunu gör.</em></>, sub: 'Doğum belgesinden dünya haritasına iki dakika.', ctaCreate: 'Haritamı oluştur', ctaDemo: 'Önce demoyu dene' },
     meta: { title: 'Astrokartografi haritası ve hesaplayıcısı — Natal Navigator', desc: 'Doğum haritanı yaşayan bir haritaya dönüştür. 3D küre, 40 gezegen hattı ve kariyer, aşk ve ev için puanlanmış 345+ şehirle etkileşimli astrokartografi hesaplayıcısı.' },
+    footer: { tagline: 'Etkileşimli 3D küre üzerinde astrokartografi ve relokasyon astrolojisi. Bir düşünme aracı — kararlar senin.', hProduct: 'Ürün', hLearn: 'Öğren', hContact: 'İletişim', hLegal: 'Yasal', createAccount: 'Hesap oluştur', contactForm: 'İletişim formu', cookieSettings: 'Çerez ayarları', rights: '© 2026 Natal Navigator. Tüm hakları saklıdır.', note: 'Gerçek efemeris verileriyle yapıldı — astroloji öngörü değil, düşünmedir.' },
     mock: {
       thrive: 'Gelişim', neutral: 'Nötr', caution: 'Dikkat',
       readingQuote: <>"Lizbon, kamusal hayatın için en zarif yerlerden biri olan <strong>Venüs MC</strong> hattının üzerinde. İş burada sosyal hissettirir, kapılar seni seven insanlar aracılığıyla açılır ve burada yarattığın şey genelde güzeldir…"</>,
@@ -1043,6 +1052,7 @@ export const CONTENT = {
     ],
     final: { h2: <>Ваши звёзды уже выстроились.<br /><em>Узнайте где.</em></>, sub: 'Две минуты от свидетельства о рождении до карты мира.', ctaCreate: 'Создать карту', ctaDemo: 'Сначала попробовать демо' },
     meta: { title: 'Карта и калькулятор астрокартографии — Natal Navigator', desc: 'Превратите свою натальную карту в живую карту мира. Интерактивный калькулятор астрокартографии с 3D-глобусом, 40 планетными линиями и 345+ городами, оценёнными для карьеры, любви и дома.' },
+    footer: { tagline: 'Астрокартография и астрология релокации на интерактивном 3D-глобусе. Инструмент рефлексии — решения остаются за вами.', hProduct: 'Продукт', hLearn: 'Узнать', hContact: 'Контакты', hLegal: 'Правовое', createAccount: 'Создать аккаунт', contactForm: 'Форма обратной связи', cookieSettings: 'Настройки cookie', rights: '© 2026 Natal Navigator. Все права защищены.', note: 'Сделано на настоящих данных эфемерид — астрология это рефлексия, а не предсказание.' },
     mock: {
       thrive: 'Расцвет', neutral: 'Нейтрально', caution: 'Осторожно',
       readingQuote: <>«Лиссабон лежит на вашей линии <strong>Венера MC</strong> — одно из самых изящных мест для вашей публичной жизни. Работа ощущается социальной, двери открывают люди, которым вы просто нравитесь, а то, что вы создаёте здесь, обычно красиво…»</>,
@@ -1143,6 +1153,7 @@ export const CONTENT = {
     ],
     final: { h2: <>あなたの星はもう整っています。<br /><em>どこかを見て。</em></>, sub: '出生証明書から世界地図まで2分。', ctaCreate: 'マップを作成', ctaDemo: 'まずデモを試す' },
     meta: { title: 'アストロカートグラフィー地図＆計算機 — Natal Navigator', desc: '出生図を生きた地図に変えましょう。3D地球儀、40本の惑星ライン、キャリア・愛・住まいで評価した345以上の都市を備えたインタラクティブなアストロカートグラフィー計算機。' },
+    footer: { tagline: 'インタラクティブな3D地球儀上のアストロカートグラフィーとリロケーション占星術。内省のためのツール — 決断はあなたのもの。', hProduct: 'プロダクト', hLearn: '学ぶ', hContact: 'お問い合わせ', hLegal: '法的事項', createAccount: 'アカウント作成', contactForm: 'お問い合わせフォーム', cookieSettings: 'クッキー設定', rights: '© 2026 Natal Navigator. 無断転載を禁じます。', note: '本物の天体暦データで作成 — 占星術は予言ではなく内省です。' },
     mock: {
       thrive: '繁栄', neutral: '中立', caution: '注意',
       readingQuote: <>「リスボンはあなたの<strong>金星MC</strong>ライン上にあります — 公的な人生にとって最も優美な場所のひとつ。仕事は社交的に感じられ、あなたを好ましく思う人を通して扉が開き、ここで生み出すものは美しくなりがちです…」</>,
@@ -1243,6 +1254,7 @@ export const CONTENT = {
     ],
     final: { h2: <>你的群星已经就位。<br /><em>看看在哪里。</em></>, sub: '从出生证明到世界地图，只需两分钟。', ctaCreate: '创建我的地图', ctaDemo: '先试用演示' },
     meta: { title: '星位天文地图与计算器 — Natal Navigator', desc: '把你的出生星盘变成一张活地图。交互式星位天文地图计算器，配备3D地球、40条行星线，以及为事业、爱情与家评分的345+ 座城市。' },
+    footer: { tagline: '交互式3D地球上的星位天文地图与迁居占星。一个反思工具——决定权始终在你。', hProduct: '产品', hLearn: '了解', hContact: '联系', hLegal: '法律', createAccount: '创建账户', contactForm: '联系表单', cookieSettings: 'Cookie 设置', rights: '© 2026 Natal Navigator。保留所有权利。', note: '以真实星历数据制作——占星是反思，而非预测。' },
     mock: {
       thrive: '兴旺', neutral: '中性', caution: '谨慎',
       readingQuote: <>"里斯本位于你的<strong>金星 MC</strong>线上——对你的公共生活而言最优雅的地方之一。这里的工作富有社交性，门会因单纯喜欢你的人而打开，你在此创造的东西往往很美……"</>,
@@ -1343,6 +1355,7 @@ export const CONTENT = {
     ],
     final: { h2: <>당신의 별들은 이미 정렬되어 있습니다.<br /><em>어디인지 보세요.</em></>, sub: '출생 증명서에서 세계 지도까지 2분.', ctaCreate: '내 지도 만들기', ctaDemo: '먼저 데모 체험' },
     meta: { title: '아스트로카토그래피 지도 & 계산기 — Natal Navigator', desc: '당신의 출생 차트를 살아있는 지도로 바꾸세요. 3D 지구본, 40개 행성 라인, 경력·사랑·집을 기준으로 평가된 345개 이상 도시를 갖춘 인터랙티브 아스트로카토그래피 계산기.' },
+    footer: { tagline: '인터랙티브 3D 지구본 위의 아스트로카토그래피와 이주 점성술. 성찰을 위한 도구 — 결정은 당신의 몫입니다.', hProduct: '제품', hLearn: '알아보기', hContact: '문의', hLegal: '법적 고지', createAccount: '계정 만들기', contactForm: '문의 양식', cookieSettings: '쿠키 설정', rights: '© 2026 Natal Navigator. 모든 권리 보유.', note: '실제 천체력 데이터로 제작 — 점성술은 예측이 아니라 성찰입니다.' },
     mock: {
       thrive: '번창', neutral: '중립', caution: '주의',
       readingQuote: <>"리스본은 당신의 <strong>금성 MC</strong> 라인 위에 있습니다 — 당신의 공적 삶에 가장 우아한 장소 중 하나입니다. 일은 사교적으로 느껴지고, 그저 당신을 좋아하는 사람들을 통해 문이 열리며, 여기서 만드는 것은 대체로 아름답습니다…"</>,
@@ -1443,6 +1456,7 @@ export const CONTENT = {
     ],
     final: { h2: <>نجومك مصطفّة بالفعل.<br /><em>انظر أين.</em></>, sub: 'دقيقتان من شهادة الميلاد إلى خريطة العالم.', ctaCreate: 'أنشئ خريطتي', ctaDemo: 'جرّب العرض أولًا' },
     meta: { title: 'خريطة وحاسبة الخرائط الفلكية — Natal Navigator', desc: 'حوّل خريطة ميلادك إلى خريطة حيّة. حاسبة خرائط فلكية تفاعلية بكرة أرضية ثلاثية الأبعاد وأربعين خطًّا كوكبيًّا وأكثر من 345 مدينة مُقيَّمة للمهنة والحب والبيت.' },
+    footer: { tagline: 'الخرائط الفلكية وتنجيم الانتقال على كرة أرضية ثلاثية الأبعاد تفاعلية. أداة للتأمل — القرارات تبقى لك.', hProduct: 'المنتج', hLearn: 'تعلّم', hContact: 'تواصل', hLegal: 'قانوني', createAccount: 'إنشاء حساب', contactForm: 'نموذج التواصل', cookieSettings: 'إعدادات ملفات تعريف الارتباط', rights: '© 2026 Natal Navigator. جميع الحقوق محفوظة.', note: 'صُنع ببيانات تقاويم حقيقية — التنجيم تأمّل وليس تنبؤًا.' },
     mock: {
       thrive: 'ازدهار', neutral: 'محايد', caution: 'حذر',
       readingQuote: <>«تقع لشبونة على خط <strong>الزهرة MC</strong> لديك — أحد أكثر الأماكن رشاقةً لحياتك العامة. يبدو العمل اجتماعيًّا، وتُفتح الأبواب عبر أناس يحبّونك ببساطة، وما تصنعه هنا يميل إلى أن يكون جميلًا…»</>,
