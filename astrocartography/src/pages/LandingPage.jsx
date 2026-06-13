@@ -665,6 +665,13 @@ export default function LandingPage() {
             <h4>Contact</h4>
             <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>
           </nav>
+          <nav aria-label="Legal">
+            <h4>Legal</h4>
+            <a href="/impressum">Impressum</a>
+            <a href="/datenschutz">Datenschutz</a>
+            <a href="/agb">AGB</a>
+            <a href="/widerruf">Widerruf</a>
+          </nav>
         </div>
         <div className="lp-wrap lp-footer-base">
           <span>© 2026 Natal Navigator. All rights reserved.</span>
@@ -1199,7 +1206,7 @@ const CSS = `
 
 /* ── footer ── */
 .lp-footer{ border-top:1px solid var(--line); background:#fff; padding:56px 0 0; }
-.lp-footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:36px; padding-bottom:44px; }
+.lp-footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr; gap:36px; padding-bottom:44px; }
 .lp-footer-brand p{ margin-top:16px; font-size:13.5px; color:var(--ink2); max-width:34ch; line-height:1.65; }
 .lp-footer nav{ display:flex; flex-direction:column; gap:10px; }
 .lp-footer nav h4{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }

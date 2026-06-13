@@ -21,6 +21,7 @@ const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 const ResetPasswordPage = lazyRetry(() => import('./pages/ResetPasswordPage'));
 const LandingPage = lazyRetry(() => import('./pages/LandingPage'));
+const LegalPage = lazyRetry(() => import('./pages/LegalPage'));
 
 // Warm the Dashboard chunk only on routes that will likely land there.
 // On /landing, /auth, /admin, /reset-password the user is unlikely to hit the
@@ -334,6 +335,10 @@ export default function App() {
                 <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                 <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
                 <Route path="/landing" element={<Navigate to="/" replace />} />
+                <Route path="/impressum" element={<LegalPage doc="impressum" />} />
+                <Route path="/datenschutz" element={<LegalPage doc="datenschutz" />} />
+                <Route path="/agb" element={<LegalPage doc="agb" />} />
+                <Route path="/widerruf" element={<LegalPage doc="widerruf" />} />
                 <Route path="*" element={<SmartRedirect />} />
               </Routes>
             </GlobalProfileGate>
