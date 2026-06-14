@@ -95,7 +95,7 @@ function FeatureMedia({ media, m }) {
         <video
           src={media.src} poster={media.poster}
           autoPlay muted loop playsInline preload="metadata"
-          width={media.portrait ? 714 : 2340} height={media.portrait ? 1103 : 1188}
+          width={media.portrait ? 1103 : 1920} height={media.portrait ? 1103 : 1163}
           aria-label={media.alt}
         />
       </div>
