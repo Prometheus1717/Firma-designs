@@ -91,11 +91,11 @@ function ReadingMock({ m }) {
 function FeatureMedia({ media, m }) {
   if (media.type === 'video') {
     return (
-      <div className={`lp-shot${media.portrait ? ' lp-shot-portrait' : ''}`}>
+      <div className="lp-shot">
         <video
           src={media.src} poster={media.poster}
           autoPlay muted loop playsInline preload="metadata"
-          width={media.portrait ? 1103 : 1828} height={media.portrait ? 1103 : 860}
+          width={media.w || 1828} height={media.h || 860}
           aria-label={media.alt}
         />
       </div>
