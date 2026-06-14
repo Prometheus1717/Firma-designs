@@ -972,7 +972,7 @@ const CSS = `
   background:var(--night);
 }
 .lp-feat-media .lp-shot img,
-.lp-feat-media .lp-shot video{ width:100%; display:block; transition:transform .6s cubic-bezier(.2,.65,.25,1); }
+.lp-feat-media .lp-shot video{ width:100%; height:auto; display:block; transition:transform .6s cubic-bezier(.2,.65,.25,1); }
 .lp-feat:hover .lp-shot img,
 .lp-feat:hover .lp-shot video{ transform:scale(1.02); }
 /* Portrait media (e.g. the natal-report panel) — centre it on the dark card
