@@ -243,31 +243,15 @@ function SmartRedirect() {
   return <Navigate to="/birth-data" replace />;
 }
 
-// Build-time flag. Only the dedicated "natal-landing" deployment is built with
-// VITE_IS_LANDING=1 — there the homepage is the marketing landing page.
-// On natalnavigator.com (the web app) the flag is unset, so anonymous "/"
-// stays the live demo dashboard exactly as before.
-const IS_LANDING = import.meta.env.VITE_IS_LANDING === '1' || import.meta.env.VITE_IS_LANDING === 'true';
-
+// natalnavigator.com is the marketing landing page: anonymous visitors at "/"
+// get the LandingPage, and the live web app lives at "/demo" (also embedded
+// into the landing via an iframe).
 function isEmbeddedDemoRequest() {
   try {
     const params = new URLSearchParams(window.location.search);
     return params.get('embed') === '1';
   } catch {
-    // If URLSearchParams is unavailable, fall back to the normal landing route.
-    return false;
-  }
-}
-
-// Opt-in preview override: "/?landing=1" forces the marketing landing page for
-// anonymous visitors even on builds where VITE_IS_LANDING is unset. Lets the
-// landing be reviewed on any branch/preview deployment. It only affects an
-// anonymous visitor who explicitly adds the param — default behaviour and SEO
-// (crawlers never add it) are unchanged.
-function isLandingPreviewRequest() {
-  try {
-    return new URLSearchParams(window.location.search).get('landing') === '1';
-  } catch {
+    // If URLSearchParams is unavailable, fall back to the landing route.
     return false;
   }
 }
@@ -275,12 +259,11 @@ function isLandingPreviewRequest() {
 function DemoOrDashboard() {
   const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
   if (loading) return <LoadingScreen />;
-  // Anonymous visitors: marketing landing page on the natal-landing build,
-  // the live demo dashboard on the app build. The demo lives at /demo and is
-  // embedded into the landing page via an iframe. If the embedded app ever
-  // navigates back to /, keep rendering the demo instead of nesting the landing
-  // page inside itself.
-  if (!user) return ((IS_LANDING || isLandingPreviewRequest()) && !isEmbeddedDemoRequest()) ? <LandingPage /> : <Dashboard demo />;
+  // Anonymous visitors → marketing landing page at "/". The live demo lives at
+  // "/demo" and is embedded into the landing via an iframe; if that embedded
+  // app ever navigates back to "/", keep rendering the demo instead of nesting
+  // the landing page inside itself.
+  if (!user) return isEmbeddedDemoRequest() ? <Dashboard demo /> : <LandingPage />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
   if (hasBirthData) return <Dashboard />;

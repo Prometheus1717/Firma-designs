@@ -215,7 +215,7 @@ export default function LandingPage() {
   }, []);
 
   const goAuth = () => {
-    window.location.href = 'https://natalnavigator.com/auth';
+    window.location.href = '/auth';
   };
   // Query the scroll container at click time (not via ref) so the handler
   // factory can safely run during render — see react-hooks/refs.
