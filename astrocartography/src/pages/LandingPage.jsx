@@ -33,6 +33,23 @@ const STARS = [
   ['kahlo', 'Frida Kahlo'],
 ];
 
+// Pricing currency: €9.99 for euro-area visitors, $9.99 for every other
+// currency/region (and as the fallback). Region is read from the browser
+// locale; language alone isn't enough (es-MX, pt-BR etc. are not euro).
+const EUROZONE = new Set(['AT','BE','HR','CY','EE','FI','FR','DE','GR','IE','IT','LV','LT','LU','MT','NL','PT','SK','SI','ES','AD','MC','SM','VA','ME','XK']);
+function priceLabel() {
+  try {
+    const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+    for (const l of langs) {
+      if (!l) continue;
+      let loc = new Intl.Locale(l);
+      let region = loc.region || (loc.maximize && loc.maximize().region);
+      if (region) return EUROZONE.has(region) ? '€9.99' : '$9.99';
+    }
+  } catch { /* ignore */ }
+  return '$9.99';
+}
+
 
 // FAQPage JSON-LD lives statically in index.html (same questions/answers),
 // where crawlers that don't execute JS can still read it.
@@ -120,6 +137,7 @@ export default function LandingPage() {
   const [lang, setLangState] = useState(getLandingLang);
   const C = landingContent(lang);
   const CYCLE_WORDS = C.hero.cycle;
+  const priceStr = priceLabel();
   const isRtl = RTL_LANGS.includes(lang);
   const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
@@ -479,25 +497,16 @@ export default function LandingPage() {
             <h2 className="lp-h2">{C.pricingHead.h2}</h2>
             <p className="lp-sec-sub">{C.pricingHead.sub}</p>
           </div>
-          <div className="lp-pricing">
-            <article className="lp-price-card lp-reveal">
-              <h3 className="lp-price-tier">{C.pricing.explorerTier}</h3>
-              <div className="lp-price-n">{C.pricing.demoWord}</div>
-              <p className="lp-price-sub">{C.pricing.explorerSub}</p>
-              <ul className="lp-price-list">
-                {C.pricing.explorerList.map((item) => <li key={item}>{I.check} {item}</li>)}
-              </ul>
-              <a className="lp-btn lp-btn-ghost lp-btn-full" href="/demo">{C.pricing.demoBtn}</a>
-            </article>
-            <article className="lp-price-card lp-price-featured lp-reveal" style={{ '--d': '100ms' }}>
-              <span className="lp-price-flag">{I.star} {C.pricing.flag}</span>
+          <div className="lp-pricing lp-pricing-single">
+            <article className="lp-price-card lp-price-featured lp-reveal">
               <h3 className="lp-price-tier">{C.pricing.navigatorTier}</h3>
-              <div className="lp-price-n">{C.pricing.price} <span>{C.pricing.oneTime}</span></div>
+              <div className="lp-price-n">{priceStr} <span>{C.pricing.oneTime}</span></div>
               <p className="lp-price-sub">{C.pricing.navigatorSub}</p>
               <ul className="lp-price-list">
                 {C.premiumFeatures.map(f => <li key={f}>{I.check} {f}</li>)}
               </ul>
-              <button className="lp-btn lp-btn-mint lp-btn-full" onClick={goAuth}>{C.pricing.navigatorBtn} <span className="lp-btn-ic">{I.arrow}</span></button>
+              <button className="lp-btn lp-btn-mint lp-btn-full" onClick={goAuth}>{C.pricing.navigatorBtn} — {priceStr} <span className="lp-btn-ic">{I.arrow}</span></button>
+              <a className="lp-price-demo-link" href="/demo">{C.pricing.demoBtn}</a>
             </article>
           </div>
         </div>
@@ -1073,6 +1082,9 @@ const CSS = `
 
 /* ── pricing ── */
 .lp-pricing{ display:grid; grid-template-columns:1fr 1.15fr; gap:20px; max-width:880px; margin:0 auto; align-items:start; }
+.lp-pricing-single{ grid-template-columns:1fr; max-width:460px; }
+.lp-price-demo-link{ display:block; text-align:center; margin-top:16px; font-size:13.5px; color:rgba(237,243,239,.72); transition:color .2s; }
+.lp-price-demo-link:hover{ color:#fff; }
 .lp-price-card{
   background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); padding:36px 32px;
   display:flex; flex-direction:column;
