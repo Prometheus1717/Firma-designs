@@ -1,6 +1,7 @@
 export default {
   "slug": "astrocartography/saturn-line",
   "lang": "en",
+  "alt": { "de": "astrokartographie/saturnlinie" },
   "title": "Saturn Line Astrocartography: Meaning & Best Places | Natal Navigator",
   "ogTitle": "The Saturn Line in Astrocartography",
   "description": "What a Saturn line means in astrocartography — discipline, structure, mastery and long-term work, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",

@@ -1,6 +1,7 @@
 export default {
   "slug": "astrocartography/jupiter-line",
   "lang": "en",
+  "alt": { "de": "astrokartographie/jupiterlinie" },
   "title": "Jupiter Line Astrocartography: Meaning & Best Places | Natal Navigator",
   "ogTitle": "The Jupiter Line in Astrocartography",
   "description": "What a Jupiter line means in astrocartography — growth, luck, opportunity and abundance themes, the MC/IC/ASC/DSC variants, the honest downsides, and how to read it on your map.",

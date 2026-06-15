@@ -1,6 +1,7 @@
 export default {
   "slug": "astrocartography/venus-line",
   "lang": "en",
+  "alt": { "de": "astrokartographie/venuslinie" },
   "title": "Venus Line Astrocartography: Meaning & Best Places | Natal Navigator",
   "ogTitle": "The Venus Line in Astrocartography",
   "description": "What a Venus line means in astrocartography — love, beauty, ease and money themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",

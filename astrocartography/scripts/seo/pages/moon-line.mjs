@@ -1,6 +1,7 @@
 export default {
   "slug": "astrocartography/moon-line",
   "lang": "en",
+  "alt": { "de": "astrokartographie/mondlinie" },
   "title": "Moon Line Astrocartography: Meaning & Best Places | Natal Navigator",
   "ogTitle": "The Moon Line in Astrocartography",
   "description": "What a Moon line means in astrocartography — home, belonging, emotion and family themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",

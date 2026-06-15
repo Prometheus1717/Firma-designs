@@ -1,6 +1,7 @@
 export default {
   "slug": "where-should-i-live-astrology",
   "lang": "en",
+  "alt": { "de": "astrokartographie/wo-soll-ich-leben-astrologie" },
   "title": "Where Should I Live? An Astrology & Birth Chart Guide | Natal Navigator",
   "ogTitle": "Where Should I Live? An Astrology & Birth Chart Guide",
   "description": "Wondering where you should live? Learn how astrocartography and your birth chart map career, love, home and peace onto real places — and how to use them as an honest tool to compare options.",
