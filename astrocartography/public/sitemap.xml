@@ -3,35 +3,44 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://natalnavigator.com/</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
   </url>
   <url>
     <loc>https://natalnavigator.com/astrocartography</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography" />
     <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography" />
   </url>
   <url>
     <loc>https://natalnavigator.com/astrocartography-calculator</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography-calculator" />
+    <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography-calculator" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography-calculator" />
   </url>
   <url>
     <loc>https://natalnavigator.com/astrokartographie</loc>
-    <lastmod>2026-05-04</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+    <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/astrocartography/venus-line</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography/venus-line" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography/venus-line" />
   </url>
 </urlset>

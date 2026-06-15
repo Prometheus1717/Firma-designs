@@ -1,4 +1,17 @@
 {
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "^(firma-designs|natal-landing|astrocartography-five)\\.vercel\\.app$"
+        }
+      ],
+      "destination": "https://natalnavigator.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/robots.txt",
