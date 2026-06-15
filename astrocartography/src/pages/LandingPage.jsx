@@ -3,6 +3,7 @@ import { resetConsent } from '../lib/consent';
 import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } from '../lib/landingContent';
 import { LANGUAGES } from '../lib/i18n';
 import ConsentBanner from '../components/ConsentBanner';
+import { trackEvent } from '../lib/posthog';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -214,9 +215,18 @@ export default function LandingPage() {
     return () => { io.disconnect(); root.removeEventListener('scroll', onScroll); };
   }, []);
 
+  // Top of the funnel: one landing_view per mount. trackEvent no-ops until
+  // analytics consent has initialised PostHog, so this is consent-safe.
+  useEffect(() => { trackEvent('landing_view'); }, []);
+
   const goAuth = () => {
+    trackEvent('cta_clicked', { destination: 'auth' });
     window.location.href = '/auth';
   };
+  // Funnel step between landing_view and checkout: the visitor engages the
+  // live demo. Fires on the demo-open CTAs (the embedded demo shares the same
+  // PostHog distinct_id, so the funnel stays connected across the new tab).
+  const goDemo = (source) => () => { trackEvent('demo_interact', { source }); };
   // Query the scroll container at click time (not via ref) so the handler
   // factory can safely run during render — see react-hooks/refs.
   const scrollTo = (id) => (e) => {
@@ -301,7 +311,7 @@ export default function LandingPage() {
             </span>
           </h1>
           <div className="lp-hero-cta lp-h-an" style={{ '--d': '200ms' }}>
-            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></a>
+            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener" onClick={goDemo('hero')}>{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></a>
           </div>
           <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>{C.stageHint} <span className="lp-hint-arrow">↓</span></div>
         </div>
@@ -331,7 +341,7 @@ export default function LandingPage() {
                 <div className="lp-frame-bar">
                   <span className="lp-frame-dots" aria-hidden="true"><i /><i /><i /></span>
                   <span className="lp-frame-url">{C.demo.frameUrl(starName)}</span>
-                  <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener">{C.demo.fullscreen} {I.open}</a>
+                  <a className="lp-frame-open" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener" onClick={goDemo('fullscreen')}>{C.demo.fullscreen} {I.open}</a>
                 </div>
                 <div className="lp-frame-body">
                   {demoOn ? (
@@ -506,7 +516,7 @@ export default function LandingPage() {
                 {C.premiumFeatures.map(f => <li key={f}>{I.check} {f}</li>)}
               </ul>
               <button className="lp-btn lp-btn-mint lp-btn-full" onClick={goAuth}>{C.pricing.navigatorBtn} — {priceStr} <span className="lp-btn-ic">{I.arrow}</span></button>
-              <a className="lp-price-demo-link" href="/demo">{C.pricing.demoBtn}</a>
+              <a className="lp-price-demo-link" href="/demo" onClick={goDemo('pricing')}>{C.pricing.demoBtn}</a>
             </article>
           </div>
         </div>
@@ -539,7 +549,7 @@ export default function LandingPage() {
             <p>{C.final.sub}</p>
             <div className="lp-hero-cta" style={{ justifyContent: 'center' }}>
               <button className="lp-btn lp-btn-mint" onClick={goAuth}>{C.final.ctaCreate} <span className="lp-btn-ic">{I.arrow}</span></button>
-              <a className="lp-btn lp-btn-night" href="/demo">{C.final.ctaDemo}</a>
+              <a className="lp-btn lp-btn-night" href="/demo" onClick={goDemo('final')}>{C.final.ctaDemo}</a>
             </div>
           </div>
         </div>
@@ -554,7 +564,7 @@ export default function LandingPage() {
           </div>
           <nav aria-label="Product">
             <h4>{C.footer.hProduct}</h4>
-            <a href="/demo">{C.nav.demo}</a>
+            <a href="/demo" onClick={goDemo('nav')}>{C.nav.demo}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
             <a href="/auth">{C.footer.createAccount}</a>
           </nav>

@@ -24,6 +24,33 @@ export function initPostHog() {
     persistence: 'localStorage',
   });
   initialized = true;
+  captureAcquisition();
+}
+
+// Capture UTM parameters + referrer as persisted super properties so every
+// subsequent event (including the landing → demo → checkout → purchase funnel)
+// can be segmented by acquisition source. capture_pageview is off, so PostHog
+// does not parse these automatically. persistence:'localStorage' keeps the same
+// distinct_id (and these props) when the demo opens in a new same-origin tab.
+function captureAcquisition() {
+  if (!initialized) return;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const utm = {};
+    for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
+      const v = params.get(k);
+      if (v) utm[k] = v;
+    }
+    // Initial-touch attribution (set once, never overwritten).
+    posthog.register_once({
+      initial_referrer: document.referrer || '$direct',
+      initial_landing_path: window.location.pathname,
+    });
+    // Last-touch UTM (updated whenever the visitor arrives with new params).
+    if (Object.keys(utm).length) posthog.register(utm);
+  } catch {
+    /* analytics optional */
+  }
 }
 
 export function identifyUser(userId, properties = {}) {
