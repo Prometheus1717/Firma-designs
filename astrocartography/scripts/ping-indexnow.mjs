@@ -24,6 +24,7 @@ const urlList = argPaths.length
   ? argPaths.map(url)
   : [
       url('/'),
+      url('blog'),
       url('astrocartography'),
       url('astrocartography-calculator'),
       url('astrokartographie'),
