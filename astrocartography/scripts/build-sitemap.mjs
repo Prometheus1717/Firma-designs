@@ -19,6 +19,7 @@ const url = (path) => (path === '/' ? ORIGIN + '/' : ORIGIN + '/' + path.replace
 // Hand-built routes that are not generated from content.mjs.
 const STATIC_ROUTES = [
   { loc: '/', priority: '1.0', changefreq: 'weekly', alt: { en: '/', 'x-default': '/' } },
+  { loc: 'blog', priority: '0.7', changefreq: 'weekly', alt: { en: 'blog', 'x-default': 'blog' } },
   {
     loc: 'astrocartography',
     priority: '0.9',

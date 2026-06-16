@@ -10,6 +10,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/" />
   </url>
   <url>
+    <loc>https://natalnavigator.com/blog</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog" />
+  </url>
+  <url>
     <loc>https://natalnavigator.com/astrocartography</loc>
     <lastmod>2026-06-16</lastmod>
     <changefreq>monthly</changefreq>
@@ -66,6 +74,56 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/astrocartography-for-love" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/astrocartography-for-love" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/anzeichen-falscher-wohnort</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/anzeichen-falscher-wohnort" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/blog/anzeichen-falscher-wohnort" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/signs-living-in-wrong-place" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/digital-nomad-astrology-guide</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/digital-nomad-astrology-guide" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/digital-nomad-astrology-guide" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/neu-anfangen-nach-trennung</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/neu-anfangen-nach-trennung" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/blog/neu-anfangen-nach-trennung" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/signs-living-in-wrong-place</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/signs-living-in-wrong-place" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/signs-living-in-wrong-place" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/blog/anzeichen-falscher-wohnort" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/starting-over-after-30-astrology</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/starting-over-after-30-astrology" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/starting-over-after-30-astrology" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/where-to-move-for-love</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/where-to-move-for-love" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/where-to-move-for-love" />
   </url>
   <url>
     <loc>https://natalnavigator.com/astrokartographie/jupiterlinie</loc>

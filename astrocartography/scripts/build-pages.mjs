@@ -198,6 +198,8 @@ const CSS = `:root { --bg:#0A1018; --ink:#C8D8E8; --dim:#8A9BB0; --accent:#00D88
     .cta:hover { background: #4FE8B0; text-decoration: none; }
     .callout { border: 1px solid var(--line); background: rgba(26,40,64,0.4); border-left: 3px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
     .callout h3 { margin-top: 0; color: var(--accent); }
+    .note { border: 1px solid var(--accent); background: rgba(0,216,138,0.08); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; font-size: 16px; color: #E8F0FA; }
+    .note strong { color: var(--accent); }
     table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
     th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
     th { color: var(--accent); font-family:'JetBrains Mono',monospace; font-weight: 700; letter-spacing: 1px; font-size: 12px; text-transform: uppercase; }
@@ -265,6 +267,7 @@ ${renderSchema(page)}
     <nav aria-label="Primary">
       <a href="/">${t.home}</a>
       <a href="/astrocartography-calculator">${t.calc}</a>
+      <a href="/blog">Blog</a>
       <a href="/${page.lang === 'de' ? 'astrocartography' : 'astrokartographie'}">${t.other}</a>
     </nav>
   </header>
@@ -277,7 +280,7 @@ ${renderSchema(page)}
     <article>
       <h1>${esc(page.h1)}</h1>
       <p class="lead">${page.lead}</p>
-
+${page.note ? `\n      <div class="note">${page.note}</div>\n` : ''}
       <p><a href="/demo" class="cta">${page.lang === 'de' ? 'Live-Demo öffnen' : 'Open the live demo'} &rarr;</a></p>
 
 ${sections}
@@ -312,6 +315,111 @@ ${related}
 `;
 }
 
+// ── Blog index (/blog) — hub listing every blog post ──
+function renderBlogIndex(posts) {
+  const ordered = [...posts].sort((a, b) =>
+    (b.datePublished || '').localeCompare(a.datePublished || '')
+  );
+  const items = ordered
+    .map(
+      (p) => `      <li class="post">
+        <a href="/${p.slug}"><h2>${esc(p.h1)}</h2></a>
+        <p class="post-date">${p.datePublished || ''}${p.lang === 'de' ? ' · DE' : ''}</p>
+        <p>${esc(plain(p.description))}</p>
+        <a href="/${p.slug}" class="post-more">${p.lang === 'de' ? 'Weiterlesen' : 'Read more'} &rarr;</a>
+      </li>`
+    )
+    .join('\n');
+
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': ORIGIN + '/blog#blog',
+    name: 'Natal Navigator — Astrocartography Blog',
+    url: ORIGIN + '/blog',
+    publisher: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
+    blogPost: ordered.map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.h1,
+      url: abs('/' + p.slug),
+      datePublished: p.datePublished,
+      inLanguage: p.lang,
+    })),
+  };
+
+  return `<!doctype html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astrocartography Blog — Where to Live, Love &amp; Thrive | Natal Navigator</title>
+  <meta name="description" content="Honest, practical guides to astrocartography and relocation astrology: where to live, where to find love, starting over, and reading your planetary lines." />
+  <meta name="author" content="Natal Navigator" />
+  <link rel="canonical" href="${ORIGIN}/blog" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#00D88A" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Natal Navigator" />
+  <meta property="og:title" content="Astrocartography Blog — Natal Navigator" />
+  <meta property="og:description" content="Honest, practical guides to astrocartography and relocation astrology." />
+  <meta property="og:url" content="${ORIGIN}/blog" />
+  <meta property="og:image" content="${ORIGIN}/og-image.png" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Astrocartography Blog — Natal Navigator" />
+  <meta name="twitter:image" content="${ORIGIN}/og-image.png" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <script type="application/ld+json">
+${JSON.stringify(itemListSchema, null, 2)}
+  </script>
+  <link rel="stylesheet" href="/fonts/fonts.css" />
+  <style>
+    ${CSS}
+    main.page { max-width: 760px; }
+    ul.posts { list-style: none; padding: 0; margin: 0; }
+    li.post { padding: 24px 0; border-bottom: 1px solid var(--line); }
+    li.post a { text-decoration: none; }
+    li.post h2 { border: none; padding: 0; margin: 0 0 4px; font-size: 22px; }
+    li.post:hover h2 { color: #4FE8B0; }
+    .post-date { ${''}font-family:'JetBrains Mono',monospace; font-size: 11px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; margin: 0 0 8px; }
+    .post-more { font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a href="/" class="brand" aria-label="Natal Navigator Home">NATAL NAVIGATOR</a>
+    <nav aria-label="Primary">
+      <a href="/">Globe</a>
+      <a href="/astrocartography">Astrocartography</a>
+      <a href="/astrocartography-calculator">Calculator</a>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+  <main class="page">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a> &rsaquo; Blog
+    </nav>
+    <h1>Astrocartography Blog</h1>
+    <p class="lead">Where to live, where to find love, where to start over — practical, honest guides to reading your planetary lines and choosing places with a little more self-knowledge.</p>
+    <ul class="posts">
+${items}
+    </ul>
+  </main>
+  <footer class="site">
+    <div>
+      <a href="/">Globe</a> &middot;
+      <a href="/astrocartography">Astrocartography</a> &middot;
+      <a href="/astrocartography-calculator">Calculator</a> &middot;
+      <a href="/astrokartographie">Astrokartographie</a>
+    </div>
+    <p>&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
+  </footer>
+</body>
+</html>
+`;
+}
+
 let count = 0;
 for (const page of PAGES) {
   const outDir = join(PUBLIC, page.slug);
@@ -319,4 +427,12 @@ for (const page of PAGES) {
   await writeFile(join(outDir, 'index.html'), renderPage(page), 'utf8');
   count++;
 }
-console.log(`build-pages: wrote ${count} static page(s).`);
+
+const blogPosts = PAGES.filter((p) => p.slug.startsWith('blog/'));
+if (blogPosts.length) {
+  await mkdir(join(PUBLIC, 'blog'), { recursive: true });
+  await writeFile(join(PUBLIC, 'blog', 'index.html'), renderBlogIndex(blogPosts), 'utf8');
+  console.log(`build-pages: wrote ${count} static page(s) + /blog index (${blogPosts.length} posts).`);
+} else {
+  console.log(`build-pages: wrote ${count} static page(s).`);
+}
