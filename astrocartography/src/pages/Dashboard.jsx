@@ -326,6 +326,7 @@ export default function Dashboard({ demo = false }) {
   const [announcement, setAnnouncement] = useState(null);
   const [lang, setLangState] = useState(() => getLang());
   const [showLangPicker, setShowLangPicker] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const changeLang = (code) => { persistLang(code); setLangState(code); setShowLangPicker(false); };
   // Continent filter
   const [selectedContinents, setSelectedContinents] = useState(new Set());
@@ -478,6 +479,7 @@ export default function Dashboard({ demo = false }) {
     if (except !== 'demoGate') setShowDemoGate(false);
     if (except !== 'settings') setShowSettings(false);
     if (except !== 'lang') setShowLangPicker(false);
+    if (except !== 'about') setShowAbout(false);
     if (except !== 'continent') setShowContinentFilter(false);
     if (except !== 'compare') { setShowCompare(false); setCompareMode(false); }
     if (except !== 'search') { setSearchActive(false); setSearchQuery(''); setSearchedCity(null); }
@@ -486,6 +488,7 @@ export default function Dashboard({ demo = false }) {
   // Clock — update via ref + DOM to avoid re-rendering; pauses when tab is hidden
   const clockRef = useRef(null);
   const langBtnRef = useRef(null);
+  const aboutBtnRef = useRef(null);
   useEffect(() => {
     const fmt = () => {
       if (document.hidden) return; // skip work when not visible
@@ -941,6 +944,12 @@ export default function Dashboard({ demo = false }) {
               {lang.toUpperCase()}
             </span>
           </div>
+          {/* Connect menu — X, email, landing page */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <span ref={aboutBtnRef} onClick={(e) => { e.stopPropagation(); closeAllPopups('about'); setShowAbout(!showAbout); }} title="Natal Navigator — connect" aria-label="Connect" style={{ ...F, color: showAbout ? T.ac : T.td, cursor: 'pointer', padding: mob ? '3px 6px' : '4px 8px', borderRadius: 4, border: `1px solid ${showAbout ? T.acBd : T.bd}`, background: showAbout ? T.acBg : 'transparent', display: 'flex', alignItems: 'center', userSelect: 'none' }}>
+              <svg width={mob ? 11 : 13} height={mob ? 11 : 13} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </span>
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: mob ? 6 : 12 }}>
           {mob && <span onClick={() => { closeAllPopups('guide'); setGuideTab(0); setShowGuide(true); }} style={{ ...F, fontSize: 7, fontWeight: 600, color: T.td, cursor: 'pointer', padding: '3px 6px', borderRadius: 4, border: `1px solid ${T.bd}`, letterSpacing: 0.5 }}>?</span>}
@@ -990,6 +999,33 @@ export default function Dashboard({ demo = false }) {
                 {lg.code === lang && <span style={{ marginLeft: 'auto', fontSize: 9, color: T.ac }}>✓</span>}
               </div>
             ))}
+          </div>
+        </>;
+      })()}
+
+      {/* Connect dropdown — rendered outside overflow:hidden topbar */}
+      {showAbout && (() => {
+        const r = aboutBtnRef.current?.getBoundingClientRect();
+        const row = { ...F, fontSize: 11, color: T.tm, padding: '9px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', transition: 'background .15s' };
+        const onEnter = (e) => { e.currentTarget.style.background = T.c; };
+        const onLeave = (e) => { e.currentTarget.style.background = 'transparent'; };
+        return <>
+          <div onClick={() => setShowAbout(false)} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, zIndex: 9998 }} />
+          <div style={{ position: 'fixed', top: (r?.bottom || 38) + 4, left: Math.max(8, r?.left || 120), background: T.pop, border: `1px solid ${T.bd}`, borderRadius: 8, boxShadow: T.sh, zIndex: 9999, minWidth: 230, padding: '4px 0' }}>
+            <a href="https://x.com/GhostOfKaido" target="_blank" rel="noopener noreferrer" onClick={() => setShowAbout(false)} onMouseEnter={onEnter} onMouseLeave={onLeave} style={{ ...row, color: T.tm }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span>@GhostOfKaido</span>
+              <span style={{ marginLeft: 'auto', fontSize: 9, color: T.td }}>↗</span>
+            </a>
+            <a href="mailto:info@natalnavigator.com" onClick={() => setShowAbout(false)} onMouseEnter={onEnter} onMouseLeave={onLeave} style={{ ...row, color: T.tm }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+              <span>info@natalnavigator.com</span>
+            </a>
+            <a href="/landing" onClick={() => setShowAbout(false)} onMouseEnter={onEnter} onMouseLeave={onLeave} style={{ ...row, color: T.tm }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+              <span>natalnavigator.com</span>
+              <span style={{ marginLeft: 'auto', fontSize: 9, color: T.td }}>↗</span>
+            </a>
           </div>
         </>;
       })()}

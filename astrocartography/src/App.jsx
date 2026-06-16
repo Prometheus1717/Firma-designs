@@ -330,7 +330,11 @@ export default function App() {
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                 <Route path="/reset-password" element={<ProtectedRoute><ResetPasswordPage /></ProtectedRoute>} />
-                <Route path="/landing" element={<Navigate to="/" replace />} />
+                {/* Stable landing preview: always renders the marketing page,
+                    even when signed in, so it can be reviewed without being
+                    bounced to the dashboard. noindex (vercel.json) keeps it from
+                    competing with "/" for ranking. */}
+                <Route path="/landing" element={<LandingPage />} />
                 <Route path="/impressum" element={<LegalPage doc="impressum" />} />
                 <Route path="/datenschutz" element={<LegalPage doc="datenschutz" />} />
                 <Route path="/agb" element={<LegalPage doc="agb" />} />
