@@ -30,12 +30,13 @@ async function readRawBody(req) {
 }
 
 // ─── Payment confirmation email ───
-async function sendPaymentConfirmationEmail(email, amount) {
+async function sendPaymentConfirmationEmail(email, amount, currency) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) { console.error('[stripe-webhook] No RESEND_API_KEY, skipping email'); return; }
 
   const resend = new Resend(apiKey);
-  const formattedAmount = amount ? `${(amount / 100).toFixed(2)} EUR` : '4.99 EUR';
+  const cur = (currency || 'eur').toUpperCase();
+  const formattedAmount = amount ? `${(amount / 100).toFixed(2)} ${cur}` : `9.99 ${cur}`;
 
   await resend.emails.send({
     from: 'NatalNavigator <info@natalnavigator.com>',
@@ -165,6 +166,7 @@ export default async function handler(req, res) {
     const customerEmail = session.customer_details?.email || session.customer_email;
     const stripeCustomerId = session.customer;
     const amountTotal = session.amount_total;
+    const currency = session.currency;
     const userId = session.metadata?.userId;
 
     if (session.payment_status && session.payment_status !== 'paid') {
@@ -199,7 +201,7 @@ export default async function handler(req, res) {
       console.log(`[stripe-webhook] Premium activated for user ${userId}`);
 
       // Send confirmation email (fire-and-forget)
-      if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal);
+      if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal, currency);
     } catch (err) {
       console.error('[stripe-webhook] Unexpected error:', err);
       return res.status(500).json({ error: 'Internal error' });
