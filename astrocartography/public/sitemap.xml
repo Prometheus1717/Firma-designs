@@ -330,6 +330,22 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://natalnavigator.com/astrokartographie/wo-soll-ich-leben-astrologie" />
   </url>
   <url>
+    <loc>https://natalnavigator.com/blog/astro-com-astrocartography</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/astro-com-astrocartography" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/astro-com-astrocartography" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/astro-seek-astrocartography</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/astro-seek-astrocartography" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/astro-seek-astrocartography" />
+  </url>
+  <url>
     <loc>https://natalnavigator.com/blog/astrocartography-for-beginners</loc>
     <lastmod>2026-06-20</lastmod>
     <changefreq>monthly</changefreq>
@@ -352,6 +368,14 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/astrocartography-myths-debunked" />
     <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/astrocartography-myths-debunked" />
+  </url>
+  <url>
+    <loc>https://natalnavigator.com/blog/astrocartography-reading</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/blog/astrocartography-reading" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://natalnavigator.com/blog/astrocartography-reading" />
   </url>
   <url>
     <loc>https://natalnavigator.com/blog/astrocartography-vs-relocation-astrology</loc>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-wf d-wf">
+  <title id="t-wf">Which astrocartography tool is right for you</title>
+  <desc id="d-wf">Decision guide. If you want to see your lines and compare cities visually, use Natal Navigator on a 3D globe. If you want maximum free classical depth like progressions and parans, use AstroSeek. If you want a goal-first mobile app, use Astroline. If you read charts professionally, use Astro Gold or Solar Fire.</desc>
+
+  <rect width="820" height="470" fill="#FBF8F1"/>
+  <text x="410" y="48" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="29" fill="#181C23">Which tool is actually right for you?</text>
+  <text x="410" y="74" text-anchor="middle" font-size="13" fill="#4C5563">Start with the question you actually have — not the longest feature list.</text>
+
+  <!-- start -->
+  <rect x="310" y="98" width="200" height="46" rx="23" fill="#181C23"/>
+  <text x="410" y="126" text-anchor="middle" font-size="14" fill="#FBF8F1" font-weight="600">What do you want?</text>
+
+  <!-- four branches -->
+  <g stroke="#DDD5C2" stroke-width="1.5" fill="none">
+    <path d="M410 144 L130 196"/><path d="M410 144 L350 196"/>
+    <path d="M410 144 L500 196"/><path d="M410 144 L700 196"/>
+  </g>
+
+  <!-- branch labels -->
+  <g font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#8A93A2" text-anchor="middle">
+    <text x="118" y="190">SEE + COMPARE</text>
+    <text x="330" y="190">FREE DEPTH</text>
+    <text x="520" y="190">GOAL-FIRST APP</text>
+    <text x="700" y="190">PRO / CLIENTS</text>
+  </g>
+
+  <!-- result cards -->
+  <rect x="34" y="202" width="176" height="150" rx="16" fill="#FFFFFF" stroke="#19C68B" stroke-width="2"/>
+  <text x="122" y="236" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#0E7C5B">Natal Navigator</text>
+  <text x="122" y="262" text-anchor="middle" font-size="12.5" fill="#4C5563">3D globe, free,</text>
+  <text x="122" y="280" text-anchor="middle" font-size="12.5" fill="#4C5563">345+ cities scored</text>
+  <text x="122" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#19C68B">★ EASIEST</text>
+  <text x="122" y="336" text-anchor="middle" font-size="11.5" fill="#8A93A2">for most people</text>
+
+  <rect x="262" y="202" width="176" height="150" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <text x="350" y="236" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">AstroSeek</text>
+  <text x="350" y="262" text-anchor="middle" font-size="12.5" fill="#4C5563">Free, deep,</text>
+  <text x="350" y="280" text-anchor="middle" font-size="12.5" fill="#4C5563">parans + progressions</text>
+  <text x="350" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#5D4FB8">COMPLETIST</text>
+
+  <rect x="462" y="202" width="176" height="150" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <text x="550" y="236" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Astroline</text>
+  <text x="550" y="262" text-anchor="middle" font-size="12.5" fill="#4C5563">Goal-first,</text>
+  <text x="550" y="280" text-anchor="middle" font-size="12.5" fill="#4C5563">freemium app</text>
+  <text x="550" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#A8650F">MOBILE</text>
+
+  <rect x="662" y="202" width="124" height="150" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <text x="724" y="236" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="19" fill="#181C23">Astro Gold</text>
+  <text x="724" y="262" text-anchor="middle" font-size="12" fill="#4C5563">Consultant-</text>
+  <text x="724" y="280" text-anchor="middle" font-size="12" fill="#4C5563">grade, paid</text>
+  <text x="724" y="316" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#B2543F">PROS</text>
+
+  <text x="410" y="398" text-anchor="middle" font-size="13" fill="#4C5563">All four read the same Swiss-Ephemeris data. You are choosing an <tspan font-style="italic">experience</tspan>, not accuracy.</text>
+  <text x="410" y="432" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B">Most people who arrive from AstroSeek for the map alone are happier on a globe.</text>
+</svg>

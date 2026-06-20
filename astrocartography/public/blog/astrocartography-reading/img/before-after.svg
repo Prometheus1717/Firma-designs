@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-ba d-ba">
+  <title id="t-ba">How people describe the shift after an astrocartography reading</title>
+  <desc id="d-ba">Before and after feeling states. Before a reading people describe feeling: stuck without knowing why, guessing at where to move, second-guessing every choice, vaguely restless. After understanding their lines they describe feeling: a reason for the restlessness, a shortlist of places, language for what each place offers, permission to choose. A reading reframes a vague ache into a concrete, answerable question.</desc>
+
+  <rect width="820" height="400" fill="#FBF8F1"/>
+  <text x="410" y="48" text-anchor="middle" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#181C23">What changes is not your chart — it's your clarity</text>
+
+  <!-- Before -->
+  <rect x="40" y="82" width="350" height="280" rx="18" fill="#FFFFFF" stroke="#F9E3E0"/>
+  <text x="64" y="118" font-family="'JetBrains Mono',monospace" font-size="12" fill="#B2543F" font-weight="700" letter-spacing="1">BEFORE</text>
+  <g font-size="14.5" fill="#4C5563">
+    <text x="64" y="158">“Stuck, and I can't say why.”</text>
+    <text x="64" y="196">“Maybe I should move… somewhere?”</text>
+    <text x="64" y="234">“I second-guess every choice.”</text>
+    <text x="64" y="272">“Restless, on a loop.”</text>
+    <text x="64" y="318" font-style="italic" fill="#8A93A2">A vague ache with no shape.</text>
+  </g>
+
+  <!-- arrow -->
+  <circle cx="410" cy="222" r="26" fill="#181C23"/>
+  <path d="M398 222 h20 M412 214 l8 8 l-8 8" stroke="#19C68B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- After -->
+  <rect x="430" y="82" width="350" height="280" rx="18" fill="#FFFFFF" stroke="#DCF2E5"/>
+  <text x="454" y="118" font-family="'JetBrains Mono',monospace" font-size="12" fill="#0E7C5B" font-weight="700" letter-spacing="1">AFTER</text>
+  <g font-size="14.5" fill="#181C23">
+    <text x="454" y="158">“There's a reason for the restlessness.”</text>
+    <text x="454" y="196">“I have a shortlist of real places.”</text>
+    <text x="454" y="234">“I have words for what each offers.”</text>
+    <text x="454" y="272">“I'm allowed to choose.”</text>
+    <text x="454" y="318" font-style="italic" fill="#0E7C5B">A question you can actually answer.</text>
+  </g>
+</svg>
