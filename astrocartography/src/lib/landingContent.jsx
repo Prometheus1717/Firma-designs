@@ -52,7 +52,7 @@ export function landingContent(lang) {
 
 export const CONTENT = {
   en: {
-    nav: { demo: 'Live demo', features: 'Features', forYou: "Who it’s for", lines: 'Line meanings', pricing: 'Pricing', faq: 'FAQ', cta: 'Create your map' },
+    nav: { demo: 'Live demo', features: 'Features', forYou: "Who it’s for", lines: 'Line meanings', pricing: 'Pricing', faq: 'FAQ', blog: 'Blog', cta: 'Create your map' },
     badge: 'Find your best places with astrocartography',
     hero: {
       sr: 'Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.',
@@ -153,7 +153,7 @@ export const CONTENT = {
   },
 
   de: {
-    nav: { demo: 'Live-Demo', features: 'Funktionen', forYou: 'Für wen', lines: 'Linien', pricing: 'Preis', faq: 'FAQ', cta: 'Karte erstellen' },
+    nav: { demo: 'Live-Demo', features: 'Funktionen', forYou: 'Für wen', lines: 'Linien', pricing: 'Preis', faq: 'FAQ', blog: 'Blog', cta: 'Karte erstellen' },
     badge: 'Finde deine besten Orte mit Astrokartographie',
     hero: {
       sr: 'Dein Geburtshoroskop ist insgeheim eine Landkarte — sieh, wo du aufblühst, dich verliebst, dich zuhause fühlst und wächst.',
@@ -254,7 +254,7 @@ export const CONTENT = {
   },
 
   fr: {
-    nav: { demo: 'Démo en direct', features: 'Fonctions', forYou: 'Pour qui', lines: 'Les lignes', pricing: 'Tarif', faq: 'FAQ', cta: 'Créer ma carte' },
+    nav: { demo: 'Démo en direct', features: 'Fonctions', forYou: 'Pour qui', lines: 'Les lignes', pricing: 'Tarif', faq: 'FAQ', blog: 'Blog', cta: 'Créer ma carte' },
     badge: 'Trouvez vos meilleurs lieux grâce à l’astrocartographie',
     hero: {
       sr: 'Votre thème natal est secrètement une carte — voyez où vous vous épanouissez, tombez amoureux·se, vous sentez chez vous et grandissez.',
@@ -355,7 +355,7 @@ export const CONTENT = {
   },
 
   es: {
-    nav: { demo: 'Demo en vivo', features: 'Funciones', forYou: 'Para quién', lines: 'Las líneas', pricing: 'Precio', faq: 'FAQ', cta: 'Crear mi mapa' },
+    nav: { demo: 'Demo en vivo', features: 'Funciones', forYou: 'Para quién', lines: 'Las líneas', pricing: 'Precio', faq: 'FAQ', blog: 'Blog', cta: 'Crear mi mapa' },
     badge: 'Encuentra tus mejores lugares con la astrocartografía',
     hero: {
       sr: 'Tu carta natal es secretamente un mapa: descubre dónde prosperas, te enamoras, te sientes en casa y creces.',
@@ -456,7 +456,7 @@ export const CONTENT = {
   },
 
   it: {
-    nav: { demo: 'Demo dal vivo', features: 'Funzioni', forYou: 'Per chi', lines: 'Le linee', pricing: 'Prezzo', faq: 'FAQ', cta: 'Crea la mia mappa' },
+    nav: { demo: 'Demo dal vivo', features: 'Funzioni', forYou: 'Per chi', lines: 'Le linee', pricing: 'Prezzo', faq: 'FAQ', blog: 'Blog', cta: 'Crea la mia mappa' },
     badge: 'Trova i tuoi luoghi migliori con l’astrocartografia',
     hero: {
       sr: 'Il tuo tema natale è segretamente una mappa: scopri dove prosperi, ti innamori, ti senti a casa e cresci.',
@@ -557,7 +557,7 @@ export const CONTENT = {
   },
 
   pt: {
-    nav: { demo: 'Demo ao vivo', features: 'Recursos', forYou: 'Para quem', lines: 'As linhas', pricing: 'Preço', faq: 'FAQ', cta: 'Criar meu mapa' },
+    nav: { demo: 'Demo ao vivo', features: 'Recursos', forYou: 'Para quem', lines: 'As linhas', pricing: 'Preço', faq: 'FAQ', blog: 'Blog', cta: 'Criar meu mapa' },
     badge: 'Encontre os seus melhores lugares com astrocartografia',
     hero: {
       sr: 'O seu mapa natal é secretamente um mapa: descubra onde você prospera, se apaixona, se sente em casa e cresce.',
@@ -658,7 +658,7 @@ export const CONTENT = {
   },
 
   nl: {
-    nav: { demo: 'Live demo', features: 'Functies', forYou: 'Voor wie', lines: 'De lijnen', pricing: 'Prijs', faq: 'FAQ', cta: 'Maak mijn kaart' },
+    nav: { demo: 'Live demo', features: 'Functies', forYou: 'Voor wie', lines: 'De lijnen', pricing: 'Prijs', faq: 'FAQ', blog: 'Blog', cta: 'Maak mijn kaart' },
     badge: 'Vind je beste plekken met astrocartografie',
     hero: {
       sr: 'Je geboortehoroscoop is stiekem een kaart — ontdek waar je opbloeit, verliefd wordt, je thuis voelt en groeit.',
@@ -759,7 +759,7 @@ export const CONTENT = {
   },
 
   pl: {
-    nav: { demo: 'Demo na żywo', features: 'Funkcje', forYou: 'Dla kogo', lines: 'Linie', pricing: 'Cena', faq: 'FAQ', cta: 'Stwórz moją mapę' },
+    nav: { demo: 'Demo na żywo', features: 'Funkcje', forYou: 'Dla kogo', lines: 'Linie', pricing: 'Cena', faq: 'FAQ', blog: 'Blog', cta: 'Stwórz moją mapę' },
     badge: 'Znajdź swoje najlepsze miejsca dzięki astrokartografii',
     hero: {
       sr: 'Twój horoskop urodzeniowy to potajemnie mapa — zobacz, gdzie rozkwitasz, zakochujesz się, czujesz się jak w domu i rośniesz.',
@@ -1062,7 +1062,7 @@ export const CONTENT = {
   },
 
   ja: {
-    nav: { demo: 'ライブデモ', features: '機能', forYou: '対象', lines: 'ライン', pricing: '料金', faq: 'FAQ', cta: 'マップを作成' },
+    nav: { demo: 'ライブデモ', features: '機能', forYou: '対象', lines: 'ライン', pricing: '料金', faq: 'FAQ', blog: 'Blog', cta: 'マップを作成' },
     badge: 'アストロカートグラフィーで最高の場所を見つけよう',
     hero: {
       sr: 'あなたの出生図は、ひそかに地図です。どこで花開き、恋に落ち、安らぎ、成長するかを見つけましょう。',
@@ -1264,7 +1264,7 @@ export const CONTENT = {
   },
 
   ko: {
-    nav: { demo: '라이브 데모', features: '기능', forYou: '대상', lines: '라인', pricing: '가격', faq: 'FAQ', cta: '내 지도 만들기' },
+    nav: { demo: '라이브 데모', features: '기능', forYou: '대상', lines: '라인', pricing: '가격', faq: 'FAQ', blog: 'Blog', cta: '내 지도 만들기' },
     badge: '아스트로카토그래피로 당신의 최고의 장소를 찾으세요',
     hero: {
       sr: '당신의 출생 차트는 사실 하나의 지도입니다 — 어디서 번창하고, 사랑에 빠지고, 집처럼 느끼고, 성장하는지 알아보세요.',

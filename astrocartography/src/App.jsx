@@ -246,12 +246,27 @@ function SmartRedirect() {
 // natalnavigator.com is the marketing landing page: anonymous visitors at "/"
 // get the LandingPage, and the live web app lives at "/demo" (also embedded
 // into the landing via an iframe).
+// The iframe that embeds the live demo loads "/demo?embed=1". Once that embedded
+// app navigates internally (brand logo, connect menu, etc.) the query string is
+// lost, so a naive ?embed=1 check would then render the landing page nested
+// inside its own demo window. We pin the embedded state to this browsing
+// context's sessionStorage the first time we see ?embed=1: the demo iframe is a
+// separate context from the top-level landing, so the flag stays set across the
+// iframe's internal navigations and never leaks to the real landing page (nor to
+// preview tools that merely frame the landing without ?embed=1).
+const EMBED_FLAG = 'nn_embedded_demo';
 function isEmbeddedDemoRequest() {
   try {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('embed') === '1';
+    if (new URLSearchParams(window.location.search).get('embed') === '1') {
+      try { window.sessionStorage.setItem(EMBED_FLAG, '1'); } catch { /* storage blocked */ }
+      return true;
+    }
   } catch {
-    // If URLSearchParams is unavailable, fall back to the landing route.
+    // URLSearchParams unavailable — fall through to the persisted flag.
+  }
+  try {
+    return window.sessionStorage.getItem(EMBED_FLAG) === '1';
+  } catch {
     return false;
   }
 }

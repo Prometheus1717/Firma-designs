@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 700" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-vc d-vc">
+  <title id="t-vc">The Astrocartography Vocabulary, Translated for Beginners</title>
+  <desc id="d-vc">A glossary card translating jargon astrocartographers use into plain English: planet, angle, line, MC, IC, ASC, DC, orb, paran, relocation chart, ephemeris.</desc>
+
+  <rect width="820" height="700" fill="#FBF8F1"/>
+
+  <defs>
+    <radialGradient id="aurora-vc" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#A8650F" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#A8650F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="820" height="180" fill="url(#aurora-vc)"/>
+
+  <text x="410" y="46" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#8A93A2" letter-spacing="4">★  TRANSLATE THE JARGON  ★</text>
+
+  <text x="410" y="98" font-family="'Instrument Serif',Georgia,serif" font-size="38" fill="#181C23" text-anchor="middle">Eleven words you need <tspan font-style="italic" fill="#4C5563">first.</tspan></text>
+  <text x="410" y="132" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#8A93A2" text-anchor="middle">Plain-English translations of the only vocabulary that matters.</text>
+
+  <line x1="60" y1="190" x2="760" y2="190" stroke="#DDD5C2" stroke-width="1"/>
+  <text x="60" y="214" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#8A93A2" letter-spacing="2.5">TERM · PLAIN ENGLISH</text>
+
+  <!-- Two columns of glossary entries -->
+  <!-- COL LEFT -->
+  <g>
+    <!-- Planet -->
+    <rect x="60" y="234" width="345" height="68" fill="#FFFFFF"/>
+    <text x="78" y="260" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">Planet</text>
+    <text x="78" y="282" font-size="13" fill="#4C5563">One of 10 bodies: Sun, Moon, Mercury,</text>
+    <text x="78" y="298" font-size="13" fill="#4C5563">Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto.</text>
+
+    <!-- Angle -->
+    <rect x="60" y="304" width="345" height="68" fill="#FBF8F1"/>
+    <text x="78" y="330" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">Angle</text>
+    <text x="78" y="352" font-size="13" fill="#4C5563">Where a planet sat at your birth — overhead,</text>
+    <text x="78" y="368" font-size="13" fill="#4C5563">below, rising, or setting. Four per planet.</text>
+
+    <!-- Line -->
+    <rect x="60" y="374" width="345" height="68" fill="#FFFFFF"/>
+    <text x="78" y="400" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">Line</text>
+    <text x="78" y="422" font-size="13" fill="#4C5563">A path across Earth where that planet+angle</text>
+    <text x="78" y="438" font-size="13" fill="#4C5563">combination was active at birth. 40 per chart.</text>
+
+    <!-- MC -->
+    <rect x="60" y="444" width="345" height="68" fill="#FBF8F1"/>
+    <text x="78" y="470" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">MC <tspan font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">(Midheaven)</tspan></text>
+    <text x="78" y="492" font-size="13" fill="#4C5563">Planet overhead. Career, public reputation,</text>
+    <text x="78" y="508" font-size="13" fill="#4C5563">where the world sees you.</text>
+
+    <!-- IC -->
+    <rect x="60" y="514" width="345" height="68" fill="#FFFFFF"/>
+    <text x="78" y="540" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">IC <tspan font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">(Nadir)</tspan></text>
+    <text x="78" y="562" font-size="13" fill="#4C5563">Planet directly below. Home, roots, family,</text>
+    <text x="78" y="578" font-size="13" fill="#4C5563">emotional foundation.</text>
+
+    <!-- ASC -->
+    <rect x="60" y="584" width="345" height="68" fill="#FBF8F1"/>
+    <text x="78" y="610" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#A8650F">ASC <tspan font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">(Ascendant)</tspan></text>
+    <text x="78" y="632" font-size="13" fill="#4C5563">Planet rising at the eastern horizon.</text>
+    <text x="78" y="648" font-size="13" fill="#4C5563">Identity, vitality, first impressions.</text>
+  </g>
+
+  <!-- COL RIGHT -->
+  <g>
+    <!-- DC -->
+    <rect x="415" y="234" width="345" height="68" fill="#FFFFFF"/>
+    <text x="433" y="260" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#5D4FB8">DC <tspan font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">(Descendant)</tspan></text>
+    <text x="433" y="282" font-size="13" fill="#4C5563">Planet setting at the western horizon.</text>
+    <text x="433" y="298" font-size="13" fill="#4C5563">Partnerships, close relationships.</text>
+
+    <!-- Orb -->
+    <rect x="415" y="304" width="345" height="68" fill="#FBF8F1"/>
+    <text x="433" y="330" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#5D4FB8">Orb</text>
+    <text x="433" y="352" font-size="13" fill="#4C5563">Distance you can be from a line and</text>
+    <text x="433" y="368" font-size="13" fill="#4C5563">still feel it. Roughly 500–1000 km.</text>
+
+    <!-- Paran -->
+    <rect x="415" y="374" width="345" height="68" fill="#FFFFFF"/>
+    <text x="433" y="400" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#5D4FB8">Paran</text>
+    <text x="433" y="422" font-size="13" fill="#4C5563">A crossing between two lines at your</text>
+    <text x="433" y="438" font-size="13" fill="#4C5563">latitude. Combines both planet energies.</text>
+
+    <!-- Relocation chart -->
+    <rect x="415" y="444" width="345" height="68" fill="#FBF8F1"/>
+    <text x="433" y="470" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#5D4FB8">Relocation chart</text>
+    <text x="433" y="492" font-size="13" fill="#4C5563">Your birth chart recalculated as if you</text>
+    <text x="433" y="508" font-size="13" fill="#4C5563">had been born in a new city. Deeper than lines.</text>
+
+    <!-- Ephemeris -->
+    <rect x="415" y="514" width="345" height="68" fill="#FFFFFF"/>
+    <text x="433" y="540" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#5D4FB8">Ephemeris</text>
+    <text x="433" y="562" font-size="13" fill="#4C5563">The math engine that knows where every</text>
+    <text x="433" y="578" font-size="13" fill="#4C5563">planet was on every day. Swiss Ephemeris = standard.</text>
+
+    <!-- Birth time! -->
+    <rect x="415" y="584" width="345" height="68" fill="#0B1118"/>
+    <text x="433" y="610" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="20" fill="#19C68B">Exact birth time</text>
+    <text x="433" y="632" font-size="13" fill="#C8D8E8">The single most important input.</text>
+    <text x="433" y="648" font-size="13" fill="#C8D8E8">"Around 3pm" can be 800 km off.</text>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 620" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-rm d-rm">
+  <title id="t-rm">From Zero to First Reading — 5 Steps in 10 Minutes</title>
+  <desc id="d-rm">Five sequential steps for a complete beginner to get their first astrocartography reading: enter exact birth data, open the calculator, identify your strongest 3 lines, find which lines cross cities you have lived in, decide what you want to do with the information.</desc>
+
+  <rect width="820" height="620" fill="#FBF8F1"/>
+
+  <defs>
+    <radialGradient id="aurora-rm" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#19C68B" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#19C68B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="820" height="180" fill="url(#aurora-rm)"/>
+
+  <text x="410" y="46" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#8A93A2" letter-spacing="4">★  ZERO TO FIRST READING  ★</text>
+
+  <text x="410" y="98" font-family="'Instrument Serif',Georgia,serif" font-size="38" fill="#181C23" text-anchor="middle">Five steps. <tspan font-style="italic" fill="#4C5563">Ten minutes.</tspan></text>
+  <text x="410" y="132" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#8A93A2" text-anchor="middle">The entire beginner workflow, end to end.</text>
+
+  <line x1="60" y1="190" x2="760" y2="190" stroke="#DDD5C2" stroke-width="1"/>
+
+  <!-- Step 1 -->
+  <g>
+    <circle cx="100" cy="246" r="32" fill="#19C68B"/>
+    <text x="100" y="254" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#06241A" text-anchor="middle" font-weight="600">1</text>
+    <text x="150" y="232" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Get your exact birth time</text>
+    <text x="150" y="258" font-size="13" fill="#4C5563">Find your birth certificate. Hospital records work. "Around 3pm" does not.</text>
+    <text x="150" y="276" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B" letter-spacing="1">~2 MINUTES</text>
+  </g>
+  <line x1="60" y1="296" x2="760" y2="296" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Step 2 -->
+  <g>
+    <circle cx="100" cy="332" r="32" fill="#FFFFFF" stroke="#19C68B" stroke-width="2"/>
+    <text x="100" y="340" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#0E7C5B" text-anchor="middle" font-weight="600">2</text>
+    <text x="150" y="318" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Open a calculator (free, 3D globe)</text>
+    <text x="150" y="344" font-size="13" fill="#4C5563">Use Natal Navigator. Enter date, time, birth city. Wait 30 seconds.</text>
+    <text x="150" y="362" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B" letter-spacing="1">~1 MINUTE</text>
+  </g>
+  <line x1="60" y1="382" x2="760" y2="382" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Step 3 -->
+  <g>
+    <circle cx="100" cy="418" r="32" fill="#FFFFFF" stroke="#19C68B" stroke-width="2"/>
+    <text x="100" y="426" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#0E7C5B" text-anchor="middle" font-weight="600">3</text>
+    <text x="150" y="404" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Find your strongest 3 lines</text>
+    <text x="150" y="430" font-size="13" fill="#4C5563">Read Sun line first, then Moon line, then your closest outer planet line.</text>
+    <text x="150" y="448" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B" letter-spacing="1">~3 MINUTES</text>
+  </g>
+  <line x1="60" y1="468" x2="760" y2="468" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Step 4 -->
+  <g>
+    <circle cx="100" cy="504" r="32" fill="#FFFFFF" stroke="#19C68B" stroke-width="2"/>
+    <text x="100" y="512" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#0E7C5B" text-anchor="middle" font-weight="600">4</text>
+    <text x="150" y="490" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Cross-check cities you have lived in</text>
+    <text x="150" y="516" font-size="13" fill="#4C5563">Which lines pass through them? Does the line description match your experience?</text>
+    <text x="150" y="534" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B" letter-spacing="1">~3 MINUTES</text>
+  </g>
+  <line x1="60" y1="554" x2="760" y2="554" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Step 5 -->
+  <g>
+    <circle cx="100" cy="590" r="32" fill="#0B1118"/>
+    <text x="100" y="598" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#19C68B" text-anchor="middle" font-weight="600">5</text>
+    <text x="150" y="578" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Decide what to do with the information</text>
+    <text x="150" y="603" font-size="13" fill="#4C5563">A move? A trip? Stay where you are? The map is the map — you are the territory.</text>
+  </g>
+</svg>

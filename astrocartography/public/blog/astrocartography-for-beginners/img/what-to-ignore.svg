@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 600" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-wi d-wi">
+  <title id="t-wi">Beginner Focus — What to Read First, What to Ignore for Now</title>
+  <desc id="d-wi">A two-column triage guide for absolute beginners: focus first on Sun line, Moon line and the nearest outer planet line; ignore for now midpoints, harmonics, asteroids, progressions, transits to relocation, fixed stars, and Vertex points.</desc>
+
+  <rect width="820" height="600" fill="#FBF8F1"/>
+
+  <defs>
+    <radialGradient id="aurora-wi" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#19C68B" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#19C68B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="820" height="180" fill="url(#aurora-wi)"/>
+
+  <text x="410" y="46" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#8A93A2" letter-spacing="4">★  BEGINNER TRIAGE  ★</text>
+
+  <text x="410" y="98" font-family="'Instrument Serif',Georgia,serif" font-size="36" fill="#181C23" text-anchor="middle">What to read, <tspan font-style="italic" fill="#4C5563">what to skip.</tspan></text>
+  <text x="410" y="130" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#8A93A2" text-anchor="middle">Astrocartography has fifty layers. You need three of them — for now.</text>
+
+  <!-- LEFT: READ THESE -->
+  <g>
+    <rect x="40" y="170" width="370" height="400" rx="22" fill="#FFFFFF" stroke="#DCF2E5" stroke-width="2"/>
+    <text x="225" y="204" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#0E7C5B" letter-spacing="2">─── READ FIRST ───</text>
+    <text x="225" y="240" font-family="'Instrument Serif',Georgia,serif" font-size="28" text-anchor="middle" fill="#181C23">Your three lines</text>
+
+    <g font-family="'Instrument Serif',Georgia,serif" fill="#181C23">
+      <text x="60" y="294" font-size="22"><tspan fill="#0E7C5B">✓</tspan>  Your Sun line</text>
+      <text x="60" y="316" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">Identity, vitality. Strongest single line.</text>
+
+      <text x="60" y="354" font-size="22"><tspan fill="#0E7C5B">✓</tspan>  Your Moon line</text>
+      <text x="60" y="376" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">Emotion, belonging. The quiet powerhouse.</text>
+
+      <text x="60" y="414" font-size="22"><tspan fill="#0E7C5B">✓</tspan>  Your closest outer line</text>
+      <text x="60" y="436" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">Saturn, Uranus, Neptune or Pluto — whichever</text>
+      <text x="60" y="452" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">passes nearest where you live or plan to go.</text>
+
+      <text x="60" y="492" font-size="22"><tspan fill="#0E7C5B">✓</tspan>  Which angle</text>
+      <text x="60" y="514" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">MC for career, IC for home, ASC for self,</text>
+      <text x="60" y="530" font-family="'General Sans',sans-serif" font-size="13" fill="#4C5563">DC for partners. The angle changes everything.</text>
+    </g>
+
+    <text x="225" y="554" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="14" text-anchor="middle" fill="#0E7C5B">Three layers explain 80% of your chart.</text>
+  </g>
+
+  <!-- RIGHT: SKIP THESE -->
+  <g>
+    <rect x="430" y="170" width="350" height="400" rx="22" fill="#FFFFFF" stroke="#F4DCB2" stroke-width="2"/>
+    <text x="605" y="204" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#A8650F" letter-spacing="2">─── SKIP FOR NOW ───</text>
+    <text x="605" y="240" font-family="'Instrument Serif',Georgia,serif" font-size="28" text-anchor="middle" fill="#181C23">These can wait</text>
+
+    <g font-family="'Instrument Serif',Georgia,serif" fill="#181C23">
+      <text x="450" y="280" font-size="18"><tspan fill="#A8650F">·</tspan>  Midpoints</text>
+      <text x="450" y="304" font-size="18"><tspan fill="#A8650F">·</tspan>  Harmonics</text>
+      <text x="450" y="328" font-size="18"><tspan fill="#A8650F">·</tspan>  Asteroids (Chiron, Lilith)</text>
+      <text x="450" y="352" font-size="18"><tspan fill="#A8650F">·</tspan>  Progressed astrocartography</text>
+      <text x="450" y="376" font-size="18"><tspan fill="#A8650F">·</tspan>  Transits to relocation chart</text>
+      <text x="450" y="400" font-size="18"><tspan fill="#A8650F">·</tspan>  Fixed stars on the angles</text>
+      <text x="450" y="424" font-size="18"><tspan fill="#A8650F">·</tspan>  Vertex / Anti-Vertex</text>
+      <text x="450" y="448" font-size="18"><tspan fill="#A8650F">·</tspan>  Parans (until comfortable with lines)</text>
+      <text x="450" y="472" font-size="18"><tspan fill="#A8650F">·</tspan>  Local space astrology</text>
+      <text x="450" y="496" font-size="18"><tspan fill="#A8650F">·</tspan>  Heliocentric overlay</text>
+    </g>
+
+    <text x="605" y="540" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="14" text-anchor="middle" fill="#A8650F">Useful eventually.</text>
+    <text x="605" y="558" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="14" text-anchor="middle" fill="#A8650F">Confusing at first.</text>
+  </g>
+</svg>

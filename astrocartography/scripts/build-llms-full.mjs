@@ -33,7 +33,11 @@ function toText(html) {
     .trim();
 }
 
-const enFirst = [...PAGES].sort((a, b) => (a.lang === b.lang ? 0 : a.lang === 'en' ? -1 : 1));
+// Prebuilt pages (landing-styled blog posts) ship their own HTML and carry no
+// `sections` body here, so they can't be flattened into llms-full text — skip them.
+const enFirst = [...PAGES]
+  .filter((p) => !p.prebuilt)
+  .sort((a, b) => (a.lang === b.lang ? 0 : a.lang === 'en' ? -1 : 1));
 
 const header = `# Natal Navigator — Full Guide Corpus
 

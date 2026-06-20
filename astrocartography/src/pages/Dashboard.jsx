@@ -34,11 +34,20 @@ const F = { fontFamily: 'JetBrains Mono, monospace' };
 const APP_AUTH_URL = 'https://natalnavigator.com/auth';
 
 function isEmbeddedDemo() {
-  try { return new URLSearchParams(window.location.search).get('embed') === '1'; }
-  catch {
-    // If parsing fails, keep the standard in-app auth navigation.
-    return false;
+  // ?embed=1 marks the initial iframe src, but that query string is lost once
+  // the embedded demo navigates internally. We pin the state to this browsing
+  // context's sessionStorage the first time we see it, so it survives the
+  // iframe's internal navigation without misfiring for the top-level landing.
+  try {
+    if (new URLSearchParams(window.location.search).get('embed') === '1') {
+      try { window.sessionStorage.setItem('nn_embedded_demo', '1'); } catch { /* storage blocked */ }
+      return true;
+    }
+  } catch {
+    // URLSearchParams unavailable — fall through to the persisted flag.
   }
+  try { return window.sessionStorage.getItem('nn_embedded_demo') === '1'; }
+  catch { return false; }
 }
 
 // Chrome leaves less vertical room than Safari (taller browser UI), so the globe

@@ -259,6 +259,7 @@ export default function LandingPage() {
             <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
+            <a href="/blog">{C.nav.blog}</a>
           </div>
           <div className="lp-nav-right">
             <label className="lp-lang" aria-label="Language">

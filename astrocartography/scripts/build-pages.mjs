@@ -422,6 +422,11 @@ ${items}
 
 let count = 0;
 for (const page of PAGES) {
+  // Prebuilt pages ship their own hand-authored index.html (e.g. the
+  // landing-styled astrocartography blog posts). We still want them listed in
+  // the /blog hub and the sitemap (so they stay in PAGES), but must NOT
+  // overwrite their HTML with the generic dark template here.
+  if (page.prebuilt) continue;
   const outDir = join(PUBLIC, page.slug);
   await mkdir(outDir, { recursive: true });
   await writeFile(join(outDir, 'index.html'), renderPage(page), 'utf8');
