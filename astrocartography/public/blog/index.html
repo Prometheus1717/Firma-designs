@@ -9,7 +9,7 @@
   <link rel="canonical" href="https://natalnavigator.com/blog" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <meta name="theme-color" content="#00D88A" />
+  <meta name="theme-color" content="#FBF8F1" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Natal Navigator" />
   <meta property="og:title" content="Astrocartography Blog — Natal Navigator" />
@@ -165,198 +165,199 @@
   </script>
   <link rel="stylesheet" href="/fonts/fonts.css" />
   <style>
-    :root { --bg:#0A1018; --ink:#C8D8E8; --dim:#8A9BB0; --accent:#00D88A; --blue:#7EB8FF; --yellow:#FACC15; --red:#F04060; --line:#1A2840; }
-    *,*::before,*::after { box-sizing: border-box; }
-    html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans',system-ui,-apple-system,sans-serif; line-height:1.7; -webkit-font-smoothing:antialiased; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
-    header.top { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
-    header.top .brand { font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:3px; font-size:14px; color:var(--accent); }
-    header.top nav a { margin-left: 20px; font-size: 13px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
-    header.top nav a:hover { color: var(--ink); }
-    main.page { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
-    nav.breadcrumb { font-size: 13px; color: var(--dim); margin-bottom: 24px; }
-    nav.breadcrumb a { color: var(--dim); }
-    h1 { font-family:'JetBrains Mono',monospace; font-size: 34px; line-height: 1.2; letter-spacing: 1px; color: var(--accent); margin: 0 0 12px; }
-    h2 { font-family:'JetBrains Mono',monospace; font-size: 22px; color: var(--accent); margin: 48px 0 12px; letter-spacing: 1px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-    h3 { font-size: 18px; color: var(--blue); margin: 28px 0 8px; font-weight: 600; }
-    p { color: var(--ink); font-size: 16px; margin: 12px 0; }
-    p.lead { font-size: 18px; color: var(--ink); }
-    ul, ol { padding-left: 22px; color: var(--ink); }
-    li { margin: 8px 0; font-size: 16px; }
-    strong { color: #E8F0FA; }
-    .cta { display: inline-block; background: var(--accent); color: #06131C; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; margin: 20px 0; font-family:'JetBrains Mono',monospace; }
-    .cta:hover { background: #4FE8B0; text-decoration: none; }
-    .callout { border: 1px solid var(--line); background: rgba(26,40,64,0.4); border-left: 3px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
-    .callout h3 { margin-top: 0; color: var(--accent); }
-    .note { border: 1px solid var(--accent); background: rgba(0,216,138,0.08); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; font-size: 16px; color: #E8F0FA; }
-    .note strong { color: var(--accent); }
-    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-    th { color: var(--accent); font-family:'JetBrains Mono',monospace; font-weight: 700; letter-spacing: 1px; font-size: 12px; text-transform: uppercase; }
-    td { color: var(--ink); }
-    .related { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); }
-    .related h2 { border: none; padding: 0; margin-top: 0; }
-    .related ul { list-style: none; padding: 0; }
-    .related li { margin: 10px 0; }
-    .lines-cluster { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
-    .lines-cluster h2 { border: none; padding: 0; margin: 0 0 14px; font-size: 18px; }
-    .lines-cluster ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 18px; }
-    .lines-cluster li { margin: 4px 0; font-size: 15px; }
-    .lines-cluster .cluster-guides { font-size: 14px; color: var(--dim); margin-top: 16px; }
-    footer.site { border-top: 1px solid var(--line); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--dim); }
-    footer.site a { color: var(--dim); margin: 0 10px; }
-    @media (max-width: 600px) {
-      h1 { font-size: 26px; }
-      h2 { font-size: 19px; }
-      header.top nav a { margin-left: 10px; font-size: 11px; }
+:root {
+      --paper:#FBF8F1; --paper2:#F4EFE3; --card:#FFFFFF;
+      --ink:#181C23; --ink2:#4C5563; --ink3:#8A93A2;
+      --line:#E7E0D1; --line2:#DDD5C2;
+      --mint:#0E7C5B; --mint-soft:#DCF2E5; --mint-bright:#19C68B;
+      --r-lg:26px;
+      --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --sans:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     }
-    main.page { max-width: 760px; }
-    ul.posts { list-style: none; padding: 0; margin: 0; }
-    li.post { padding: 24px 0; border-bottom: 1px solid var(--line); }
-    li.post a { text-decoration: none; }
-    li.post h2 { border: none; padding: 0; margin: 0 0 4px; font-size: 22px; }
-    li.post:hover h2 { color: #4FE8B0; }
-    .post-date { font-family:'JetBrains Mono',monospace; font-size: 11px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; margin: 0 0 8px; }
-    .post-more { font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: var(--ink); text-decoration: none; }
+    .nav-wrap { position: sticky; top: 0; z-index: 50; padding: 16px clamp(12px,3vw,28px) 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .nav { max-width: 1120px; margin: 0 auto; height: 60px; padding: 0 10px 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; box-shadow: 0 10px 34px -18px rgba(40,44,90,.32), inset 0 1px 0 rgba(255,255,255,.8); }
+    .logo { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15.5px; color: var(--ink); }
+    .logo-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--ink); color: #fff; font-family: var(--serif); font-size: 16px; font-style: italic; }
+    .nav-links { display: flex; gap: clamp(12px,2vw,26px); font-size: 14.5px; font-weight: 500; color: var(--ink2); }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 9px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--paper) !important; font-weight: 600; font-size: 14px; transition: transform .22s, box-shadow .22s; }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -10px rgba(24,28,35,.45); }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px,4vw,40px); }
+    .hero { padding: clamp(46px,7vh,84px) 0 clamp(20px,4vh,38px); position: relative; overflow: hidden; text-align: center; }
+    .hero-aurora { position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(680px 380px at 15% 4%, rgba(93,79,184,.18), transparent 64%), radial-gradient(760px 440px at 86% 0%, rgba(25,198,139,.16), transparent 64%); mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); -webkit-mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); }
+    .hero-inner { position: relative; z-index: 1; }
+    .breadcrumb { font-size: 13px; color: var(--ink3); margin-bottom: 22px; }
+    .breadcrumb a { color: var(--ink3); }
+    .breadcrumb a:hover { color: var(--ink); }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 18px; background: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; box-shadow: 0 6px 20px -12px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.8); font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--ink2); margin-bottom: 22px; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint-bright); box-shadow: 0 0 0 4px rgba(25,198,139,.22); }
+    h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(38px,5.4vw,68px); line-height: 1.08; letter-spacing: -.015em; color: var(--ink); margin: 0 auto 16px; }
+    .lead { font-size: clamp(17px,2vw,20px); line-height: 1.55; color: var(--ink2); max-width: 58ch; margin: 0 auto; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px,1fr)); gap: 22px; margin: 44px 0 70px; }
+    .blog-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 30px 28px; box-shadow: 0 14px 38px -28px rgba(40,44,90,.25); transition: transform .2s ease, box-shadow .2s ease; }
+    .blog-card:hover { transform: translateY(-3px); box-shadow: 0 22px 46px -24px rgba(40,44,90,.34); }
+    .blog-card .date { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+    .blog-card h2 { font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.18; color: var(--ink); margin: 9px 0 10px; }
+    .blog-card p { font-size: 15px; color: var(--ink2); margin: 0 0 16px; flex: 1; }
+    .blog-card .more { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--mint); }
+    footer.site { border-top: 1px solid var(--line); padding: 40px clamp(20px,4vw,40px); text-align: center; font-size: 14px; color: var(--ink3); background: var(--paper2); }
+    footer.site a { color: var(--ink2); margin: 0 12px; }
+    footer.site a:hover { color: var(--ink); }
+    footer.site .small { margin-top: 14px; font-size: 12.5px; }
+    @media (max-width: 600px) { .nav-links { display: none; } .blog-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <header class="top">
-    <a href="/" class="brand" aria-label="Natal Navigator Home">NATAL NAVIGATOR</a>
-    <nav aria-label="Primary">
-      <a href="/">Globe</a>
-      <a href="/astrocartography">Astrocartography</a>
-      <a href="/astrocartography-calculator">Calculator</a>
-      <a href="/blog">Blog</a>
+  <header class="nav-wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="/" class="logo"><span class="logo-mark">N</span><span>Natal Navigator</span></a>
+      <div class="nav-links">
+        <a href="/astrocartography">What is Astrocartography?</a>
+        <a href="/blog">Blog</a>
+        <a href="/landing">About</a>
+      </div>
+      <a href="/" class="nav-cta">Open the Globe →</a>
     </nav>
   </header>
-  <main class="page">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a> &rsaquo; Blog
-    </nav>
-    <h1>Astrocartography Blog</h1>
-    <p class="lead">Where to live, where to find love, where to start over — practical, honest guides to reading your planetary lines and choosing places with a little more self-knowledge.</p>
-    <ul class="posts">
-      <li class="post">
-        <a href="/blog/astro-com-astrocartography"><h2>Astro.com astrocartography, finally readable.</h2></a>
-        <p class="post-date">2026-06-20</p>
-        <p>How to read the Astro.com (AstroClickTravel) astrocartography map step by step — plus 5 simpler, modern alternatives for 2026, compared honestly.</p>
-        <a href="/blog/astro-com-astrocartography" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astro-seek-astrocartography"><h2>Astro-Seek astrocartography, reviewed honestly.</h2></a>
-        <p class="post-date">2026-06-20</p>
-        <p>A full walkthrough of Astro-Seek's free astrocartography map — what it does brilliantly, where it stops — plus 4 modern alternatives for 2026, compared.</p>
-        <a href="/blog/astro-seek-astrocartography" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astrocartography-reading"><h2>An astrocartography reading, through five lives.</h2></a>
-        <p class="post-date">2026-06-20</p>
-        <p>What an astrocartography reading actually reveals — told through 5 people and the lines they were looking for. How to read yours, and how it feels afterwards.</p>
-        <a href="/blog/astrocartography-reading" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/anzeichen-falscher-wohnort"><h2>7 Anzeichen, dass du am falschen Ort lebst (laut Astrokartographie)</h2></a>
-        <p class="post-date">2026-06-16 · DE</p>
-        <p>Alles fühlt sich wie Bergauf an, du träumst ständig von anderen Städten? 7 ehrliche Anzeichen, dass du am falschen Ort lebst — und was die Astrokartographie dazu sagt.</p>
-        <a href="/blog/anzeichen-falscher-wohnort" class="post-more">Weiterlesen &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/digital-nomad-astrology-guide"><h2>Digital Nomad Astrology: 9 Ways to Pick Your Next Base by Your Birth Chart</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Nine practical ways for remote workers to use astrocartography and your birth chart to pick your next base — match the line to your season, then test it on the ground.</p>
-        <a href="/blog/digital-nomad-astrology-guide" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/neu-anfangen-nach-trennung"><h2>Wo neu anfangen nach der Trennung? Was deine Venuslinie verrät</h2></a>
-        <p class="post-date">2026-06-16 · DE</p>
-        <p>Nach Trennung oder Scheidung an einem neuen Ort neu anfangen: Welche Linien — Venus-IC, Mond, Venus-ASZ — einen Neuanfang zum Heilen sanft unterstützen.</p>
-        <a href="/blog/neu-anfangen-nach-trennung" class="post-more">Weiterlesen &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/signs-living-in-wrong-place"><h2>7 Signs You're Living in the Wrong Place (and What Your Astrocartography Says)</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Restless where you live? Here are 7 honest signs you're in the wrong place — and how your astrocartography lines explain the friction and where it eases.</p>
-        <a href="/blog/signs-living-in-wrong-place" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/starting-over-after-30-astrology"><h2>Starting Over After 30: Your Birth Chart's 7-Step Map to a New City</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Divorce, burnout, a chapter ending? A grounded 7-step method to use astrocartography and your birth chart to choose where to begin again — across 345+ rated cities.</p>
-        <a href="/blog/starting-over-after-30-astrology" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/where-to-move-for-love"><h2>Where Should You Move for Love? 6 Astrocartography Lines That Help</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Six astrocartography lines that support love — Venus DSC, Venus ASC, Venus IC, Sun DSC, Moon and Jupiter — and an honest look at what a relocation can and can't do for your romantic life.</p>
-        <a href="/blog/where-to-move-for-love" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astrocartography-for-beginners"><h2>Astrocartography for beginners.</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Astrocartography explained from zero — no astrology background needed. 5-step roadmap to your first reading, plain-English glossary, and what to ignore at first.</p>
-        <a href="/blog/astrocartography-for-beginners" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astrocartography-myths-debunked"><h2>Seven astrocartography myths, calmly corrected.</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Seven persistent astrocartography myths — from</p>
-        <a href="/blog/astrocartography-myths-debunked" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astrocartography-vs-relocation-astrology"><h2>Astrocartography or relocation chart?</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Two locational astrology techniques compared on 8 dimensions. When to use which — and why most readings need both, in order.</p>
-        <a href="/blog/astrocartography-vs-relocation-astrology" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/best-astrocartography-calculators"><h2>Seven astrocartography calculators, compared.</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>Honest 2026 comparison of seven astrocartography calculators — AstroSeek, AstroChart, Astro.com, Astrology King, TimePassages, Solar Fire and Natal Navigator. Pick the right one for you.</p>
-        <a href="/blog/best-astrocartography-calculators" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/how-accurate-is-astrocartography"><h2>How accurate is astrocartography?</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>An honest answer to</p>
-        <a href="/blog/how-accurate-is-astrocartography" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/how-to-read-astrocartography-map"><h2>How to read an astrocartography map, step by step.</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>A clear seven-step reading order for any astrocartography map. Where to start, what to read in which order, and how to know if your interpretation is right.</p>
-        <a href="/blog/how-to-read-astrocartography-map" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/strongest-astrocartography-line"><h2>What is my strongest astrocartography line?</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>A simple three-factor method to identify your strongest astrocartography line: archetype rank × proximity to you × angle weight. Find yours in five minutes.</p>
-        <a href="/blog/strongest-astrocartography-line" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/sun-line-vs-moon-line"><h2>Sun line or Moon line — where should you live?</h2></a>
-        <p class="post-date">2026-06-16</p>
-        <p>The two strongest astrocartography lines, side by side. Nine life dimensions compared — when a Sun line city wins, when a Moon line city wins.</p>
-        <a href="/blog/sun-line-vs-moon-line" class="post-more">Read more &rarr;</a>
-      </li>
-      <li class="post">
-        <a href="/blog/astrocartography-lines-explained"><h2>All 10 astrocartography lines, explained.</h2></a>
-        <p class="post-date">2026-06-09</p>
-        <p>Every astrocartography line, explained: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto — with meaning, mythology, and where to live for each.</p>
-        <a href="/blog/astrocartography-lines-explained" class="post-more">Read more &rarr;</a>
-      </li>
-    </ul>
-  </main>
-  <footer class="site">
-    <div>
-      <a href="/">Globe</a> &middot;
-      <a href="/astrocartography">Astrocartography</a> &middot;
-      <a href="/astrocartography-calculator">Calculator</a> &middot;
-      <a href="/astrokartographie">Astrokartographie</a>
+
+  <main>
+    <section class="hero">
+      <div class="hero-aurora" aria-hidden="true"></div>
+      <div class="hero-inner wrap">
+        <p class="breadcrumb"><a href="/">Home</a> &rsaquo; Blog</p>
+        <div style="margin-bottom: 4px;"><span class="badge"><span class="badge-dot"></span>ASTROCARTOGRAPHY GUIDES</span></div>
+        <h1>Astrocartography Blog</h1>
+        <p class="lead">Where to live, where to find love, where to start over — practical, honest guides to reading your planetary lines and choosing places with a little more self-knowledge.</p>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="blog-grid">
+        <a class="blog-card" href="/blog/astro-com-astrocartography">
+          <span class="date">2026-06-20</span>
+          <h2>Astro.com astrocartography, finally readable.</h2>
+          <p>How to read the Astro.com (AstroClickTravel) astrocartography map step by step — plus 5 simpler, modern alternatives for 2026, compared honestly.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astro-seek-astrocartography">
+          <span class="date">2026-06-20</span>
+          <h2>Astro-Seek astrocartography, reviewed honestly.</h2>
+          <p>A full walkthrough of Astro-Seek's free astrocartography map — what it does brilliantly, where it stops — plus 4 modern alternatives for 2026, compared.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astrocartography-reading">
+          <span class="date">2026-06-20</span>
+          <h2>An astrocartography reading, through five lives.</h2>
+          <p>What an astrocartography reading actually reveals — told through 5 people and the lines they were looking for. How to read yours, and how it feels afterwards.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/anzeichen-falscher-wohnort">
+          <span class="date">2026-06-16 · DE</span>
+          <h2>7 Anzeichen, dass du am falschen Ort lebst (laut Astrokartographie)</h2>
+          <p>Alles fühlt sich wie Bergauf an, du träumst ständig von anderen Städten? 7 ehrliche Anzeichen, dass du am falschen Ort lebst — und was die Astrokartographie dazu sagt.</p>
+          <span class="more">Weiterlesen &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/digital-nomad-astrology-guide">
+          <span class="date">2026-06-16</span>
+          <h2>Digital Nomad Astrology: 9 Ways to Pick Your Next Base by Your Birth Chart</h2>
+          <p>Nine practical ways for remote workers to use astrocartography and your birth chart to pick your next base — match the line to your season, then test it on the ground.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/neu-anfangen-nach-trennung">
+          <span class="date">2026-06-16 · DE</span>
+          <h2>Wo neu anfangen nach der Trennung? Was deine Venuslinie verrät</h2>
+          <p>Nach Trennung oder Scheidung an einem neuen Ort neu anfangen: Welche Linien — Venus-IC, Mond, Venus-ASZ — einen Neuanfang zum Heilen sanft unterstützen.</p>
+          <span class="more">Weiterlesen &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/signs-living-in-wrong-place">
+          <span class="date">2026-06-16</span>
+          <h2>7 Signs You're Living in the Wrong Place (and What Your Astrocartography Says)</h2>
+          <p>Restless where you live? Here are 7 honest signs you're in the wrong place — and how your astrocartography lines explain the friction and where it eases.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/starting-over-after-30-astrology">
+          <span class="date">2026-06-16</span>
+          <h2>Starting Over After 30: Your Birth Chart's 7-Step Map to a New City</h2>
+          <p>Divorce, burnout, a chapter ending? A grounded 7-step method to use astrocartography and your birth chart to choose where to begin again — across 345+ rated cities.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/where-to-move-for-love">
+          <span class="date">2026-06-16</span>
+          <h2>Where Should You Move for Love? 6 Astrocartography Lines That Help</h2>
+          <p>Six astrocartography lines that support love — Venus DSC, Venus ASC, Venus IC, Sun DSC, Moon and Jupiter — and an honest look at what a relocation can and can't do for your romantic life.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astrocartography-for-beginners">
+          <span class="date">2026-06-16</span>
+          <h2>Astrocartography for beginners.</h2>
+          <p>Astrocartography explained from zero — no astrology background needed. 5-step roadmap to your first reading, plain-English glossary, and what to ignore at first.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astrocartography-myths-debunked">
+          <span class="date">2026-06-16</span>
+          <h2>Seven astrocartography myths, calmly corrected.</h2>
+          <p>Seven persistent astrocartography myths — from</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astrocartography-vs-relocation-astrology">
+          <span class="date">2026-06-16</span>
+          <h2>Astrocartography or relocation chart?</h2>
+          <p>Two locational astrology techniques compared on 8 dimensions. When to use which — and why most readings need both, in order.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/best-astrocartography-calculators">
+          <span class="date">2026-06-16</span>
+          <h2>Seven astrocartography calculators, compared.</h2>
+          <p>Honest 2026 comparison of seven astrocartography calculators — AstroSeek, AstroChart, Astro.com, Astrology King, TimePassages, Solar Fire and Natal Navigator. Pick the right one for you.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/how-accurate-is-astrocartography">
+          <span class="date">2026-06-16</span>
+          <h2>How accurate is astrocartography?</h2>
+          <p>An honest answer to</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/how-to-read-astrocartography-map">
+          <span class="date">2026-06-16</span>
+          <h2>How to read an astrocartography map, step by step.</h2>
+          <p>A clear seven-step reading order for any astrocartography map. Where to start, what to read in which order, and how to know if your interpretation is right.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/strongest-astrocartography-line">
+          <span class="date">2026-06-16</span>
+          <h2>What is my strongest astrocartography line?</h2>
+          <p>A simple three-factor method to identify your strongest astrocartography line: archetype rank × proximity to you × angle weight. Find yours in five minutes.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/sun-line-vs-moon-line">
+          <span class="date">2026-06-16</span>
+          <h2>Sun line or Moon line — where should you live?</h2>
+          <p>The two strongest astrocartography lines, side by side. Nine life dimensions compared — when a Sun line city wins, when a Moon line city wins.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+        <a class="blog-card" href="/blog/astrocartography-lines-explained">
+          <span class="date">2026-06-09</span>
+          <h2>All 10 astrocartography lines, explained.</h2>
+          <p>Every astrocartography line, explained: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto — with meaning, mythology, and where to live for each.</p>
+          <span class="more">Read more &rarr;</span>
+        </a>
+      </div>
     </div>
-    <p>&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
+  </main>
+
+  <footer class="site">
+    <p>
+      <a href="/">Globe</a> ·
+      <a href="/astrocartography">Astrocartography</a> ·
+      <a href="/astrocartography-calculator">Calculator</a> ·
+      <a href="/astrokartographie">Deutsch</a> ·
+      <a href="/blog">Blog</a>
+    </p>
+    <p class="small">© 2026 Natal Navigator — An interactive astrocartography globe</p>
   </footer>
 </body>
 </html>

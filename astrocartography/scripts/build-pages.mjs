@@ -356,18 +356,65 @@ ${linesCluster}
 }
 
 // ── Blog index (/blog) — hub listing every blog post ──
+// Rendered in the warm "landing" design (paper + Instrument Serif), matching
+// the individual landing-styled posts — NOT the dark webapp template.
+const BLOG_CSS = `:root {
+      --paper:#FBF8F1; --paper2:#F4EFE3; --card:#FFFFFF;
+      --ink:#181C23; --ink2:#4C5563; --ink3:#8A93A2;
+      --line:#E7E0D1; --line2:#DDD5C2;
+      --mint:#0E7C5B; --mint-soft:#DCF2E5; --mint-bright:#19C68B;
+      --r-lg:26px;
+      --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --sans:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: var(--ink); text-decoration: none; }
+    .nav-wrap { position: sticky; top: 0; z-index: 50; padding: 16px clamp(12px,3vw,28px) 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .nav { max-width: 1120px; margin: 0 auto; height: 60px; padding: 0 10px 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; box-shadow: 0 10px 34px -18px rgba(40,44,90,.32), inset 0 1px 0 rgba(255,255,255,.8); }
+    .logo { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15.5px; color: var(--ink); }
+    .logo-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--ink); color: #fff; font-family: var(--serif); font-size: 16px; font-style: italic; }
+    .nav-links { display: flex; gap: clamp(12px,2vw,26px); font-size: 14.5px; font-weight: 500; color: var(--ink2); }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 9px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--paper) !important; font-weight: 600; font-size: 14px; transition: transform .22s, box-shadow .22s; }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -10px rgba(24,28,35,.45); }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px,4vw,40px); }
+    .hero { padding: clamp(46px,7vh,84px) 0 clamp(20px,4vh,38px); position: relative; overflow: hidden; text-align: center; }
+    .hero-aurora { position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(680px 380px at 15% 4%, rgba(93,79,184,.18), transparent 64%), radial-gradient(760px 440px at 86% 0%, rgba(25,198,139,.16), transparent 64%); mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); -webkit-mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); }
+    .hero-inner { position: relative; z-index: 1; }
+    .breadcrumb { font-size: 13px; color: var(--ink3); margin-bottom: 22px; }
+    .breadcrumb a { color: var(--ink3); }
+    .breadcrumb a:hover { color: var(--ink); }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 18px; background: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; box-shadow: 0 6px 20px -12px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.8); font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--ink2); margin-bottom: 22px; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint-bright); box-shadow: 0 0 0 4px rgba(25,198,139,.22); }
+    h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(38px,5.4vw,68px); line-height: 1.08; letter-spacing: -.015em; color: var(--ink); margin: 0 auto 16px; }
+    .lead { font-size: clamp(17px,2vw,20px); line-height: 1.55; color: var(--ink2); max-width: 58ch; margin: 0 auto; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px,1fr)); gap: 22px; margin: 44px 0 70px; }
+    .blog-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 30px 28px; box-shadow: 0 14px 38px -28px rgba(40,44,90,.25); transition: transform .2s ease, box-shadow .2s ease; }
+    .blog-card:hover { transform: translateY(-3px); box-shadow: 0 22px 46px -24px rgba(40,44,90,.34); }
+    .blog-card .date { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+    .blog-card h2 { font-family: var(--serif); font-weight: 400; font-size: 25px; line-height: 1.18; color: var(--ink); margin: 9px 0 10px; }
+    .blog-card p { font-size: 15px; color: var(--ink2); margin: 0 0 16px; flex: 1; }
+    .blog-card .more { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--mint); }
+    footer.site { border-top: 1px solid var(--line); padding: 40px clamp(20px,4vw,40px); text-align: center; font-size: 14px; color: var(--ink3); background: var(--paper2); }
+    footer.site a { color: var(--ink2); margin: 0 12px; }
+    footer.site a:hover { color: var(--ink); }
+    footer.site .small { margin-top: 14px; font-size: 12.5px; }
+    @media (max-width: 600px) { .nav-links { display: none; } .blog-grid { grid-template-columns: 1fr; } }`;
+
 function renderBlogIndex(posts) {
   const ordered = [...posts].sort((a, b) =>
     (b.datePublished || '').localeCompare(a.datePublished || '')
   );
   const items = ordered
     .map(
-      (p) => `      <li class="post">
-        <a href="/${p.slug}"><h2>${esc(p.h1)}</h2></a>
-        <p class="post-date">${p.datePublished || ''}${p.lang === 'de' ? ' · DE' : ''}</p>
-        <p>${esc(plain(p.description))}</p>
-        <a href="/${p.slug}" class="post-more">${p.lang === 'de' ? 'Weiterlesen' : 'Read more'} &rarr;</a>
-      </li>`
+      (p) => `        <a class="blog-card" href="/${p.slug}">
+          <span class="date">${p.datePublished || ''}${p.lang === 'de' ? ' · DE' : ''}</span>
+          <h2>${esc(p.h1)}</h2>
+          <p>${esc(plain(p.description))}</p>
+          <span class="more">${p.lang === 'de' ? 'Weiterlesen' : 'Read more'} &rarr;</span>
+        </a>`
     )
     .join('\n');
 
@@ -398,7 +445,7 @@ function renderBlogIndex(posts) {
   <link rel="canonical" href="${ORIGIN}/blog" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <meta name="theme-color" content="#00D88A" />
+  <meta name="theme-color" content="#FBF8F1" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Natal Navigator" />
   <meta property="og:title" content="Astrocartography Blog — Natal Navigator" />
@@ -415,45 +462,49 @@ ${JSON.stringify(itemListSchema, null, 2)}
   </script>
   <link rel="stylesheet" href="/fonts/fonts.css" />
   <style>
-    ${CSS}
-    main.page { max-width: 760px; }
-    ul.posts { list-style: none; padding: 0; margin: 0; }
-    li.post { padding: 24px 0; border-bottom: 1px solid var(--line); }
-    li.post a { text-decoration: none; }
-    li.post h2 { border: none; padding: 0; margin: 0 0 4px; font-size: 22px; }
-    li.post:hover h2 { color: #4FE8B0; }
-    .post-date { ${''}font-family:'JetBrains Mono',monospace; font-size: 11px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; margin: 0 0 8px; }
-    .post-more { font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+${BLOG_CSS}
   </style>
 </head>
 <body>
-  <header class="top">
-    <a href="/" class="brand" aria-label="Natal Navigator Home">NATAL NAVIGATOR</a>
-    <nav aria-label="Primary">
-      <a href="/">Globe</a>
-      <a href="/astrocartography">Astrocartography</a>
-      <a href="/astrocartography-calculator">Calculator</a>
-      <a href="/blog">Blog</a>
+  <header class="nav-wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="/" class="logo"><span class="logo-mark">N</span><span>Natal Navigator</span></a>
+      <div class="nav-links">
+        <a href="/astrocartography">What is Astrocartography?</a>
+        <a href="/blog">Blog</a>
+        <a href="/landing">About</a>
+      </div>
+      <a href="/" class="nav-cta">Open the Globe →</a>
     </nav>
   </header>
-  <main class="page">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a> &rsaquo; Blog
-    </nav>
-    <h1>Astrocartography Blog</h1>
-    <p class="lead">Where to live, where to find love, where to start over — practical, honest guides to reading your planetary lines and choosing places with a little more self-knowledge.</p>
-    <ul class="posts">
+
+  <main>
+    <section class="hero">
+      <div class="hero-aurora" aria-hidden="true"></div>
+      <div class="hero-inner wrap">
+        <p class="breadcrumb"><a href="/">Home</a> &rsaquo; Blog</p>
+        <div style="margin-bottom: 4px;"><span class="badge"><span class="badge-dot"></span>ASTROCARTOGRAPHY GUIDES</span></div>
+        <h1>Astrocartography Blog</h1>
+        <p class="lead">Where to live, where to find love, where to start over — practical, honest guides to reading your planetary lines and choosing places with a little more self-knowledge.</p>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="blog-grid">
 ${items}
-    </ul>
-  </main>
-  <footer class="site">
-    <div>
-      <a href="/">Globe</a> &middot;
-      <a href="/astrocartography">Astrocartography</a> &middot;
-      <a href="/astrocartography-calculator">Calculator</a> &middot;
-      <a href="/astrokartographie">Astrokartographie</a>
+      </div>
     </div>
-    <p>&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
+  </main>
+
+  <footer class="site">
+    <p>
+      <a href="/">Globe</a> ·
+      <a href="/astrocartography">Astrocartography</a> ·
+      <a href="/astrocartography-calculator">Calculator</a> ·
+      <a href="/astrokartographie">Deutsch</a> ·
+      <a href="/blog">Blog</a>
+    </p>
+    <p class="small">© 2026 Natal Navigator — An interactive astrocartography globe</p>
   </footer>
 </body>
 </html>
