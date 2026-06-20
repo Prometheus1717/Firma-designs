@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { resetConsent } from '../lib/consent';
-import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } from '../lib/landingContent';
-import { LANGUAGES } from '../lib/i18n';
+import { getLandingLang, landingContent, RTL_LANGS } from '../lib/landingContent';
 import ConsentBanner from '../components/ConsentBanner';
 import { trackEvent } from '../lib/posthog';
 
@@ -133,14 +132,14 @@ export default function LandingPage() {
   const [star, setStar] = useState('musk');
   const [demoTheme, setDemoTheme] = useState('dark');
 
-  // Language: auto-detected from the visitor's browser on first load, switchable
-  // via the nav. English is the fallback. Same URL — no redirect (SEO-neutral).
-  const [lang, setLangState] = useState(getLandingLang);
+  // Language: auto-detected from the visitor's browser / search-engine locale.
+  // English is the fallback. Same URL — no redirect (SEO-neutral). No manual
+  // switcher: the page follows the visitor's language automatically.
+  const [lang] = useState(getLandingLang);
   const C = landingContent(lang);
   const CYCLE_WORDS = C.hero.cycle;
   const priceStr = priceLabel();
   const isRtl = RTL_LANGS.includes(lang);
-  const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
   // Hero word-cycler: advance the active word on an interval. The slot morphs
   // its width to the active word (smooth CSS transition) so "See where you ___"
@@ -262,14 +261,6 @@ export default function LandingPage() {
             <a href="/blog">{C.nav.blog}</a>
           </div>
           <div className="lp-nav-right">
-            <label className="lp-lang" aria-label="Language">
-              {I.globe}
-              <select value={lang} onChange={(e) => changeLang(e.target.value)}>
-                {LP_LANGS.map((code) => (
-                  <option key={code} value={code}>{(LANGUAGES.find((l) => l.code === code)?.name) || code.toUpperCase()}</option>
-                ))}
-              </select>
-            </label>
             <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>{C.nav.cta} <span className="lp-btn-ic">{I.arrow}</span></button>
           </div>
         </nav>
@@ -657,10 +648,6 @@ const CSS = `
 .lp-nav-links a{ transition:color .2s; white-space:nowrap; }
 .lp-nav-links a:hover{ color:var(--ink); }
 .lp-nav-right{ display:flex; align-items:center; gap:14px; }
-.lp-lang{ display:inline-flex; align-items:center; gap:5px; color:var(--ink2); cursor:pointer; }
-.lp-lang svg{ width:16px; height:16px; }
-.lp-lang select{ appearance:none; -webkit-appearance:none; background:transparent; border:1px solid var(--line); border-radius:8px; color:var(--ink2); font:inherit; font-size:13.5px; font-weight:500; padding:5px 10px; cursor:pointer; }
-.lp-lang select:hover{ color:var(--ink); border-color:var(--ink2); }
 [dir="rtl"] .lp-h1-it em{ font-style:normal; }
 
 /* ── buttons ── */
