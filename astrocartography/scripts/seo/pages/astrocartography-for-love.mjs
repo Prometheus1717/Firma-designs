@@ -79,6 +79,10 @@ export default {
     {
       "href": "/astrocartography",
       "label": "What is astrocartography? (full guide)"
+    },
+    {
+      "href": "/blog/where-to-move-for-love",
+      "label": "Where to move for love — a practical guide"
     }
   ],
   "definedTerm": {

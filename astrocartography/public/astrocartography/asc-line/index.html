@@ -201,6 +201,11 @@
     .related h2 { border: none; padding: 0; margin-top: 0; }
     .related ul { list-style: none; padding: 0; }
     .related li { margin: 10px 0; }
+    .lines-cluster { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .lines-cluster h2 { border: none; padding: 0; margin: 0 0 14px; font-size: 18px; }
+    .lines-cluster ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 18px; }
+    .lines-cluster li { margin: 4px 0; font-size: 15px; }
+    .lines-cluster .cluster-guides { font-size: 14px; color: var(--dim); margin-top: 16px; }
     footer.site { border-top: 1px solid var(--line); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--dim); }
     footer.site a { color: var(--dim); margin: 0 10px; }
     @media (max-width: 600px) {
@@ -295,6 +300,25 @@
           <li><a href="/astrocartography">What is astrocartography? (full guide)</a></li>
         </ul>
       </section>
+      <nav class="lines-cluster" aria-label="All planetary lines">
+        <h2>All planetary lines</h2>
+        <ul>
+          <li><a href="/astrocartography/dsc-line">Dsc Line</a></li>
+          <li><a href="/astrocartography/ic-line">Ic Line</a></li>
+          <li><a href="/astrocartography/jupiter-line">Jupiter Line</a></li>
+          <li><a href="/astrocartography/mars-line">Mars Line</a></li>
+          <li><a href="/astrocartography/mc-line">Mc Line</a></li>
+          <li><a href="/astrocartography/mercury-line">Mercury Line</a></li>
+          <li><a href="/astrocartography/moon-line">Moon Line</a></li>
+          <li><a href="/astrocartography/neptune-line">Neptune Line</a></li>
+          <li><a href="/astrocartography/pluto-line">Pluto Line</a></li>
+          <li><a href="/astrocartography/saturn-line">Saturn Line</a></li>
+          <li><a href="/astrocartography/sun-line">Sun Line</a></li>
+          <li><a href="/astrocartography/uranus-line">Uranus Line</a></li>
+          <li><a href="/astrocartography/venus-line">Venus Line</a></li>
+        </ul>
+        <p class="cluster-guides">Guides: <a href="/blog/astrocartography-lines-explained">Lines explained</a> &middot; <a href="/blog/how-to-read-astrocartography-map">How to read your map</a> &middot; <a href="/blog/strongest-astrocartography-line">Strongest line</a></p>
+      </nav>
     </article>
   </main>
 

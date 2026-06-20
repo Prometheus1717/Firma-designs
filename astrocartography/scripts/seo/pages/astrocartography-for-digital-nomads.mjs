@@ -65,6 +65,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/digital-nomad-astrology-guide",
+      "label": "Astrocartography for digital nomads — a practical guide"
+    },
+    {
       "href": "/astrocartography/jupiter-line",
       "label": "The Jupiter Line — luck and expansion"
     },

@@ -65,6 +65,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrocartography-vs-relocation-astrology",
+      "label": "Astrocartography vs. relocation astrology — which to use"
+    },
+    {
       "href": "/astrocartography",
       "label": "What is astrocartography? (full guide)"
     },

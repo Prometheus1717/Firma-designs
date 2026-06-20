@@ -133,6 +133,39 @@ function renderTable(t) {
   return `<table>${t.caption ? `<caption class="sr-only">${esc(t.caption)}</caption>` : ''}${head}${body}</table>`;
 }
 
+// ── Planetary-line cross-link cluster ──────────────────────────────────────
+// Line pages (astrocartography/<x>-line, astrokartographie/<x>linie) previously
+// cross-linked only via hand-picked `related` pairs, leaving several lines
+// reachable from the pillar alone (moon-line, mercury-line had a single inbound
+// link). This renders a full-mesh cluster — every line links to all its
+// siblings — plus a bridge to the evergreen blog guides for the EN set.
+const isEnLine = (slug) => /^astrocartography\/[a-z]+-line$/.test(slug);
+const isDeLine = (slug) => /^astrokartographie\/[a-z]+linie$/.test(slug);
+const LINE_PAGES = {
+  en: PAGES.filter((p) => isEnLine(p.slug)).map((p) => p.slug).sort(),
+  de: PAGES.filter((p) => isDeLine(p.slug)).map((p) => p.slug).sort(),
+};
+const lineLabel = (slug) => {
+  const seg = slug.split('/')[1];
+  return isEnLine(slug)
+    ? seg.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ')
+    : seg[0].toUpperCase() + seg.slice(1);
+};
+function renderLinesCluster(page) {
+  const de = isDeLine(page.slug);
+  if (!de && !isEnLine(page.slug)) return '';
+  const siblings = (de ? LINE_PAGES.de : LINE_PAGES.en).filter((s) => s !== page.slug);
+  if (!siblings.length) return '';
+  const heading = de ? 'Alle Planetenlinien' : 'All planetary lines';
+  const items = siblings
+    .map((s) => `          <li><a href="/${s}">${lineLabel(s)}</a></li>`)
+    .join('\n');
+  const guides = de
+    ? ''
+    : `\n        <p class="cluster-guides">Guides: <a href="/blog/astrocartography-lines-explained">Lines explained</a> &middot; <a href="/blog/how-to-read-astrocartography-map">How to read your map</a> &middot; <a href="/blog/strongest-astrocartography-line">Strongest line</a></p>`;
+  return `      <nav class="lines-cluster" aria-label="${heading}">\n        <h2>${heading}</h2>\n        <ul>\n${items}\n        </ul>${guides}\n      </nav>`;
+}
+
 function renderBody(page) {
   const isDe = page.lang === 'de';
   const t = {
@@ -208,6 +241,11 @@ const CSS = `:root { --bg:#0A1018; --ink:#C8D8E8; --dim:#8A9BB0; --accent:#00D88
     .related h2 { border: none; padding: 0; margin-top: 0; }
     .related ul { list-style: none; padding: 0; }
     .related li { margin: 10px 0; }
+    .lines-cluster { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .lines-cluster h2 { border: none; padding: 0; margin: 0 0 14px; font-size: 18px; }
+    .lines-cluster ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 18px; }
+    .lines-cluster li { margin: 4px 0; font-size: 15px; }
+    .lines-cluster .cluster-guides { font-size: 14px; color: var(--dim); margin-top: 16px; }
     footer.site { border-top: 1px solid var(--line); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--dim); }
     footer.site a { color: var(--dim); margin: 0 10px; }
     @media (max-width: 600px) {
@@ -218,6 +256,7 @@ const CSS = `:root { --bg:#0A1018; --ink:#C8D8E8; --dim:#8A9BB0; --accent:#00D88
 
 function renderPage(page) {
   const { t, crumb, sections, faq, related } = renderBody(page);
+  const linesCluster = renderLinesCluster(page);
   const ogLocale = page.lang === 'de' ? 'de_DE' : 'en_US';
   return `<!doctype html>
 <html lang="${page.lang}" prefix="og: https://ogp.me/ns#">
@@ -298,6 +337,7 @@ ${sections}
 ${faq}
 
 ${related}
+${linesCluster}
     </article>
   </main>
 

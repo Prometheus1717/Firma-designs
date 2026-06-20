@@ -79,6 +79,10 @@ export default {
     {
       "href": "/where-should-i-live-astrology",
       "label": "Where should I live? (astrology)"
+    },
+    {
+      "href": "/blog/astrocartography-myths-debunked",
+      "label": "Astrocartography myths, debunked"
     }
   ],
   "definedTerm": {

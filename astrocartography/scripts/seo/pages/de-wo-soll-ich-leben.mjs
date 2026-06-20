@@ -68,6 +68,14 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/anzeichen-falscher-wohnort",
+      "label": "Anzeichen, dass du am falschen Ort lebst"
+    },
+    {
+      "href": "/blog/neu-anfangen-nach-trennung",
+      "label": "Neu anfangen nach einer Trennung — Astrokartographie"
+    },
+    {
       "href": "/astrokartographie/venuslinie",
       "label": "Die Venuslinie — Liebe, Schönheit und Leichtigkeit"
     },

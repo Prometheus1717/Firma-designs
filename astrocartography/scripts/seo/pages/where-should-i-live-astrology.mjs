@@ -66,6 +66,14 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/signs-living-in-wrong-place",
+      "label": "Signs you're living in the wrong place"
+    },
+    {
+      "href": "/blog/starting-over-after-30-astrology",
+      "label": "Starting over after 30 — an astrology guide"
+    },
+    {
       "href": "/astrocartography/venus-line",
       "label": "The Venus Line — love and ease"
     },
