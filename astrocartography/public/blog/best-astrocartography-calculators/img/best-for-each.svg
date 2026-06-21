@@ -28,7 +28,7 @@
     <text x="84" y="282" font-size="13" fill="#4C5563">"I just want to see my chart on a globe and understand the lines."</text>
     <text x="500" y="262" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#0E7C5B">→ Natal Navigator</text>
     <rect x="500" y="276" width="120" height="20" rx="10" fill="#FFFFFF"/>
-    <text x="560" y="290" font-family="'JetBrains Mono',monospace" font-size="10" text-anchor="middle" fill="#0E7C5B" letter-spacing="0.5">FREE · 3D GLOBE</text>
+    <text x="560" y="290" font-family="'JetBrains Mono',monospace" font-size="10" text-anchor="middle" fill="#0E7C5B" letter-spacing="0.5">€9.99 · 3D GLOBE</text>
   </g>
   <line x1="60" y1="306" x2="760" y2="306" stroke="#C2E5D2" stroke-width="1"/>
 

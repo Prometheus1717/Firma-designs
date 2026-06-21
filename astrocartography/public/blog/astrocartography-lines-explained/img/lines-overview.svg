@@ -127,7 +127,7 @@
     <text x="665" y="635" font-family="'JetBrains Mono',monospace" font-size="10" fill="#06241A" text-anchor="middle" letter-spacing="2">⟨ NAVIGATOR ⟩</text>
     <text x="665" y="675" font-family="'Instrument Serif',Georgia,serif" font-size="26" fill="#06241A" text-anchor="middle" font-style="italic">Map yours.</text>
     <text x="665" y="704" font-size="13" fill="#06241A" text-anchor="middle">See your 10 lines on an</text>
-    <text x="665" y="722" font-size="13" fill="#06241A" text-anchor="middle">interactive 3D globe — free.</text>
+    <text x="665" y="722" font-size="13" fill="#06241A" text-anchor="middle">interactive 3D globe.</text>
   </g>
 
   <!-- Footer note -->

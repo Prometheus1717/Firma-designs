@@ -56,7 +56,7 @@ c.drawString(M+15*mm, H-19*mm, "Astrocartography Line Cheat Sheet")
 c.setFillColor(HexColor("#C2CDC8")); c.setFont("Helvetica", 10.5)
 c.drawString(M+15*mm, H-26*mm, "The 10 planetary lines & 4 angles — what each place amplifies in you.")
 c.setFillColor(MINTB); c.setFont("Helvetica-Bold", 9.5)
-c.drawString(M+15*mm, H-33*mm, "natalnavigator.com  ·  free 3D-globe reading")
+c.drawString(M+15*mm, H-33*mm, "natalnavigator.com  ·  3D-globe astrocartography")
 
 y = H - 52*mm
 # Section: 4 angles
@@ -154,7 +154,7 @@ for num, t, d in steps:
 y -= 2*mm
 c.setFillColor(NIGHT); c.roundRect(M, y-34*mm, W-2*M, 34*mm, 12, stroke=0, fill=1)
 c.setFillColor(PAPER); c.setFont("Helvetica-Bold", 15)
-c.drawCentredString(W/2, y-13*mm, "See your own lines — free, in 90 seconds")
+c.drawCentredString(W/2, y-13*mm, "See your own lines in 90 seconds")
 c.setFillColor(HexColor("#C2CDC8")); c.setFont("Helvetica", 9.5)
 c.drawCentredString(W/2, y-20*mm, "Enter your birth date, time & city. Watch 40 lines render on a 3D globe,")
 c.drawCentredString(W/2, y-25*mm, "with 345+ cities scored as thrive / neutral / caution for your chart.")

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 720" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-cm d-cm">
   <title id="t-cm">7 Astrocartography Calculators Compared — Feature Matrix 2026</title>
-  <desc id="d-cm">A comparison table of seven astrocartography calculators rated across six dimensions: AstroSeek, AstroChart.co, Astro.com AstroClick Travel, Astrology King, TimePassages app, Solar Fire, and Natal Navigator. Compared on map type (2D flat vs 3D globe), accuracy, mobile experience, free pricing, city detection, and modern UI design.</desc>
+  <desc id="d-cm">A comparison table of seven astrocartography calculators rated across six dimensions: AstroSeek, AstroChart.co, Astro.com AstroClick Travel, Astrology King, TimePassages app, Solar Fire, and Natal Navigator. Compared on map type (2D flat vs 3D globe), accuracy, mobile experience, pricing, city detection, and modern UI design.</desc>
 
   <rect width="820" height="720" fill="#FBF8F1"/>
 
@@ -24,7 +24,7 @@
     <text x="58" y="202">TOOL</text>
     <text x="320" y="202" text-anchor="middle">MAP</text>
     <text x="400" y="202" text-anchor="middle">ACCURACY</text>
-    <text x="500" y="202" text-anchor="middle">FREE</text>
+    <text x="500" y="202" text-anchor="middle">PRICE</text>
     <text x="580" y="202" text-anchor="middle">MOBILE</text>
     <text x="660" y="202" text-anchor="middle">CITIES</text>
     <text x="740" y="202" text-anchor="middle">UI 2026</text>
@@ -117,5 +117,5 @@
 
   <!-- FOOTER NOTE -->
   <text x="410" y="676" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">●●● = excellent · ●●○ = solid · ●○○ = basic · ○○○ = missing</text>
-  <text x="410" y="700" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" text-anchor="middle" letter-spacing="2">SCORED ON FREE ACCESS, MOBILE-FIRST UX, AND VISUAL DESIGN STANDARDS 2026</text>
+  <text x="410" y="700" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" text-anchor="middle" letter-spacing="2">SCORED ON PRICING, MOBILE-FIRST UX, AND VISUAL DESIGN STANDARDS 2026</text>
 </svg>

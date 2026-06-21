@@ -68,7 +68,7 @@ export default {
       "a": "No. Astrocartography is a reflective tool, not a prediction, and there is no soulmate coordinate waiting to be found. A line can support the conditions for connection — feeling open, meeting more people, bonding more safely — but it cannot deliver a person. People fall in love far from every Venus line, and the human part stays yours wherever you are."
     },
     {
-      "q": "How do I find my own love lines for free?",
+      "q": "How do I find my own love lines?",
       "a": "You can explore astrocartography in the Natal Navigator demo using example charts first, including the Venus, Moon, Sun and Jupiter lines, before entering any of your own details. Building your personal map from your own birth data is a one-time €9.99 / $9.99 with no subscription. Because birth time shifts the angles by about 1° for every 4 minutes, an accurate time makes your DSC and ASC lines much more precise."
     }
   ],
