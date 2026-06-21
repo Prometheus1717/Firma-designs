@@ -69,6 +69,14 @@ export default {
       "label": "Astrocartography for digital nomads — a practical guide"
     },
     {
+      "href": "/blog/astrocartography-for-entrepreneurs",
+      "label": "Astrocartography for entrepreneurs & indie hackers"
+    },
+    {
+      "href": "/blog/best-cities-for-astrocartography",
+      "label": "9 best cities for astrocartography"
+    },
+    {
       "href": "/astrocartography/jupiter-line",
       "label": "The Jupiter Line — luck and expansion"
     },

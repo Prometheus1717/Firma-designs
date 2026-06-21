@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-fl d-fl">
+  <title id="t-fl">The four lines founders and indie hackers look at</title>
+  <desc id="d-fl">Four planetary lines most relevant to entrepreneurs: the Jupiter line for opportunity, luck and growth; the Midheaven line for visibility, reputation and being seen; the Sun line for confidence, leadership and energy; the Mars line for drive, courage and shipping. Saturn is noted as the demanding line that builds discipline.</desc>
+
+  <rect width="820" height="480" fill="#FBF8F1"/>
+  <text x="40" y="50" font-family="'Instrument Serif',Georgia,serif" font-size="30" fill="#181C23">The founder's four lines</text>
+  <text x="40" y="76" font-size="13" fill="#4C5563">Where ambition tends to feel supported instead of resisted. (Your chart decides where they fall.)</text>
+
+  <!-- 4 cards 2x2 -->
+  <rect x="40" y="98" width="370" height="160" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <circle cx="74" cy="134" r="17" fill="#FAEBD2"/><text x="74" y="140" text-anchor="middle" font-size="17" fill="#A8650F">♃</text>
+  <text x="104" y="130" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Jupiter line</text>
+  <text x="104" y="153" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#A8650F">OPPORTUNITY · GROWTH</text>
+  <text x="58" y="186" font-size="13.5" fill="#4C5563">The luck line. Right rooms, right</text>
+  <text x="58" y="206" font-size="13.5" fill="#4C5563">timing, doors that open. Where</text>
+  <text x="58" y="226" font-size="13.5" fill="#4C5563">expansion feels natural — the</text>
+  <text x="58" y="246" font-size="13.5" fill="#4C5563">first place builders look.</text>
+
+  <rect x="430" y="98" width="370" height="160" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <circle cx="464" cy="134" r="17" fill="#FAEBD2"/><text x="464" y="140" text-anchor="middle" font-size="15" fill="#A8650F">MC</text>
+  <text x="494" y="130" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Midheaven line</text>
+  <text x="494" y="153" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#A8650F">VISIBILITY · REPUTATION</text>
+  <text x="448" y="186" font-size="13.5" fill="#4C5563">Where your work gets seen.</text>
+  <text x="448" y="206" font-size="13.5" fill="#4C5563">Launches land, audiences find</text>
+  <text x="448" y="226" font-size="13.5" fill="#4C5563">you, reputation compounds.</text>
+  <text x="448" y="246" font-size="13.5" fill="#4C5563">The marketing-tailwind line.</text>
+
+  <rect x="40" y="272" width="370" height="160" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <circle cx="74" cy="308" r="17" fill="#FAEBD2"/><text x="74" y="314" text-anchor="middle" font-size="17" fill="#A8650F">☉</text>
+  <text x="104" y="304" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Sun line</text>
+  <text x="104" y="327" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#A8650F">CONFIDENCE · LEADERSHIP</text>
+  <text x="58" y="360" font-size="13.5" fill="#4C5563">Energy and authority. You take</text>
+  <text x="58" y="380" font-size="13.5" fill="#4C5563">up space, lead more naturally,</text>
+  <text x="58" y="400" font-size="13.5" fill="#4C5563">show up as the founder the</text>
+  <text x="58" y="420" font-size="13.5" fill="#4C5563">company needs.</text>
+
+  <rect x="430" y="272" width="370" height="160" rx="16" fill="#FFFFFF" stroke="#E7E0D1"/>
+  <circle cx="464" cy="308" r="17" fill="#F9E3E0"/><text x="464" y="314" text-anchor="middle" font-size="17" fill="#B2543F">♂</text>
+  <text x="494" y="304" font-family="'Instrument Serif',Georgia,serif" font-size="22" fill="#181C23">Mars line</text>
+  <text x="494" y="327" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#B2543F">DRIVE · SHIPPING</text>
+  <text x="448" y="360" font-size="13.5" fill="#4C5563">Raw output. Courage, urgency,</text>
+  <text x="448" y="380" font-size="13.5" fill="#4C5563">the will to ship and push. Great</text>
+  <text x="448" y="400" font-size="13.5" fill="#4C5563">for sprints — watch for friction</text>
+  <text x="448" y="420" font-size="13.5" fill="#4C5563">and burnout if you overstay.</text>
+
+  <text x="410" y="464" text-anchor="middle" font-size="12" font-style="italic" fill="#8A93A2">Saturn lines are demanding — slower, harder, but where real discipline and mastery get built.</text>
+</svg>

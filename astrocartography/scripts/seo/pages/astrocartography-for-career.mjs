@@ -65,6 +65,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrocartography-for-entrepreneurs",
+      "label": "Astrocartography for entrepreneurs & indie hackers"
+    },
+    {
       "href": "/astrocartography/mc-line",
       "label": "The MC Line — career and public identity"
     },

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-lo d-lo">
+  <title id="t-lo">Which line tends to bring which kind of shift</title>
+  <desc id="d-lo">A guide mapping planetary lines to the themes people most often report near them: Jupiter and Midheaven lines to opportunity, growth and visibility; Venus and Descendant to warmth and partnership; Sun and Midheaven to recognition and confidence; Moon and IC to rest, safety and belonging; Neptune to creativity and inspiration; Saturn to discipline and mastery through challenge.</desc>
+
+  <rect width="820" height="420" fill="#FBF8F1"/>
+  <text x="40" y="48" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#181C23">The line behind the shift</text>
+  <text x="40" y="73" font-size="13" fill="#4C5563">Not a promise — a pattern. What people most often describe near each line.</text>
+
+  <g font-size="14">
+    <!-- rows -->
+    <rect x="40" y="92" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="115" r="6" fill="#A8650F"/>
+    <text x="86" y="120" fill="#181C23" font-weight="600">Jupiter / MC</text>
+    <text x="300" y="120" fill="#4C5563">Opportunity · growth · being in the right room</text>
+
+    <rect x="40" y="146" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="169" r="6" fill="#B2543F"/>
+    <text x="86" y="174" fill="#181C23" font-weight="600">Venus / DC</text>
+    <text x="300" y="174" fill="#4C5563">Warmth · attraction · partnership that lands</text>
+
+    <rect x="40" y="200" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="223" r="6" fill="#A8650F"/>
+    <text x="86" y="228" fill="#181C23" font-weight="600">Sun / MC</text>
+    <text x="300" y="228" fill="#4C5563">Recognition · confidence · being seen</text>
+
+    <rect x="40" y="254" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="277" r="6" fill="#5D4FB8"/>
+    <text x="86" y="282" fill="#181C23" font-weight="600">Moon / IC</text>
+    <text x="300" y="282" fill="#4C5563">Rest · safety · a place that feels like home</text>
+
+    <rect x="40" y="308" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="331" r="6" fill="#5D4FB8"/>
+    <text x="86" y="336" fill="#181C23" font-weight="600">Neptune</text>
+    <text x="300" y="336" fill="#4C5563">Creativity · inspiration · dreaming again</text>
+
+    <rect x="40" y="362" width="740" height="46" rx="10" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <circle cx="66" cy="385" r="6" fill="#4C5563"/>
+    <text x="86" y="390" fill="#181C23" font-weight="600">Saturn</text>
+    <text x="300" y="390" fill="#4C5563">Discipline · mastery — earned through the hard parts</text>
+  </g>
+</svg>
