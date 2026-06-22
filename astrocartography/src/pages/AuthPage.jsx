@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { isLightMode, getTheme } from '../lib/theme';
 import { t, getLang } from '../lib/i18n';
+import { useMobileFormViewport } from '../lib/mobileFormViewport';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -31,6 +32,7 @@ export default function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
   const lang = getLang();
+  const { containerRef, scrollFocusedField } = useMobileFormViewport();
 
   useEffect(() => {
     document.title = mode === 'login' ? 'Sign In \u2014 Natal Navigator' : mode === 'signup' ? 'Create Account \u2014 Natal Navigator' : 'Reset Password \u2014 Natal Navigator';
@@ -72,15 +74,31 @@ export default function AuthPage() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <main
+      ref={containerRef}
+      className="nn-form-shell nn-auth-shell"
+      style={{
+        height: 'var(--app-height, 100dvh)',
+        minHeight: 'var(--app-height, 100dvh)',
+        background: T.bg,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Logo */}
-      <header style={{ marginBottom: 40, textAlign: 'center' }}>
+      <header className="nn-auth-header" style={{ marginBottom: 40, textAlign: 'center' }}>
         <h1 style={{ ...F, fontSize: 22, fontWeight: 700, color: T.ac, letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
         <p style={{ ...F, fontSize: 10, color: T.td, letterSpacing: 2, margin: 0 }}>YOUR PERSONAL ASTROCARTOGRAPHY MAP</p>
       </header>
 
       {/* Card */}
-      <div style={{ width: '100%', maxWidth: 400, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, position: 'relative' }}>
+      <div className="nn-auth-card" style={{ width: '100%', maxWidth: 400, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, position: 'relative', boxSizing: 'border-box' }}>
         <span onClick={() => navigate('/')} style={{ position: 'absolute', top: 14, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: T.td, lineHeight: 1, zIndex: 1 }}>{'✕'}</span>
         <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, marginBottom: 20, textAlign: 'center' }}>
           {mode === 'login' ? t('welcomeBack', lang) : mode === 'signup' ? t('createAccount', lang) : t('resetPassword', lang)}
@@ -95,13 +113,20 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit}>
           <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>{t('emailLabel', lang)}</label>
           <input
+            className="nn-form-input"
             type="email"
+            autoComplete={mode === 'login' ? 'username' : 'email'}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            inputMode="email"
             required
             value={email}
+            onFocus={scrollFocusedField}
             onChange={e => setEmail(e.target.value)}
             style={{
               width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`,
-              borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 16, outline: 'none',
+              borderRadius: 6, color: T.tx, ...F, fontSize: 16, marginBottom: 16, outline: 'none',
               boxSizing: 'border-box',
             }}
             placeholder={t('emailPlaceholder', lang)}
@@ -111,14 +136,20 @@ export default function AuthPage() {
             <>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>{t('passwordLabel', lang)}</label>
               <input
+                className="nn-form-input"
                 type="password"
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 required
                 minLength={10}
                 value={password}
+                onFocus={scrollFocusedField}
                 onChange={e => setPassword(e.target.value)}
                 style={{
                   width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`,
-                  borderRadius: 6, color: T.tx, ...F, fontSize: 13, marginBottom: 20, outline: 'none',
+                  borderRadius: 6, color: T.tx, ...F, fontSize: 16, marginBottom: 20, outline: 'none',
                   boxSizing: 'border-box',
                 }}
                 placeholder={t('passwordPlaceholder', lang)}
@@ -200,7 +231,36 @@ export default function AuthPage() {
       </div>
 
       <div style={{ ...F, fontSize: 8, color: T.bd, marginTop: 32 }}>NATAL NAVIGATOR {'©'} 2026</div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .nn-form-input {
+          min-height: 48px;
+          caret-color: ${T.ac};
+          -webkit-text-size-adjust: 100%;
+          -webkit-appearance: none;
+          appearance: none;
+        }
+        .nn-form-input:-webkit-autofill {
+          -webkit-text-fill-color: ${T.tx};
+          box-shadow: 0 0 0 1000px ${T.bg} inset;
+          transition: background-color 999999s ease-out;
+        }
+        @media (max-width: 640px) {
+          .nn-auth-shell {
+            justify-content: flex-start !important;
+            padding-top: max(44px, calc(env(safe-area-inset-top) + 36px)) !important;
+            padding-bottom: calc(260px + env(safe-area-inset-bottom) + var(--keyboard-inset, 0px)) !important;
+            scroll-padding-top: 28px;
+            scroll-padding-bottom: calc(260px + env(safe-area-inset-bottom));
+          }
+          .nn-auth-header {
+            margin-bottom: 28px !important;
+          }
+          .nn-auth-card {
+            padding: 28px 20px !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

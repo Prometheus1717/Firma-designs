@@ -20,7 +20,8 @@ vi.mock('../hooks/useAuth', () => ({
 
 import AuthPage from '../pages/AuthPage';
 
-function renderAuthPage() {
+function renderAuthPage(mode = 'login') {
+  window.history.pushState({}, '', `/auth?mode=${mode}`);
   return render(
     <MemoryRouter>
       <AuthPage />
@@ -29,7 +30,11 @@ function renderAuthPage() {
 }
 
 describe('AuthPage', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    window.history.pushState({}, '', '/');
+  });
 
   it('renders login form with branding, fields, and footer', () => {
     renderAuthPage();
@@ -46,7 +51,7 @@ describe('AuthPage', () => {
   it('switches between login, signup, and reset modes', async () => {
     renderAuthPage();
     // → signup
-    await userEvent.click(screen.getByText('Sign up'));
+    await userEvent.click(screen.getByText('NEW HERE? CREATE ACCOUNT'));
     expect(screen.getByText('Create Your Account')).toBeInTheDocument();
     expect(screen.getByText('CREATE ACCOUNT')).toBeInTheDocument();
     // → back to login
@@ -73,8 +78,7 @@ describe('AuthPage', () => {
 
   it('calls signUp and shows confirmation with GO TO SIGN IN', async () => {
     mockSignUp.mockResolvedValue({ user: { id: '1' }, session: null });
-    renderAuthPage();
-    await userEvent.click(screen.getByText('Sign up'));
+    renderAuthPage('signup');
     await userEvent.type(screen.getByPlaceholderText('you@example.com'), 'new@test.com');
     await userEvent.type(screen.getByPlaceholderText('Min. 6 characters'), 'password123');
     await userEvent.click(screen.getByText('CREATE ACCOUNT'));
@@ -100,6 +104,6 @@ describe('AuthPage', () => {
     await userEvent.type(screen.getByPlaceholderText('you@example.com'), 'bad@test.com');
     await userEvent.type(screen.getByPlaceholderText('Min. 6 characters'), 'wrong');
     await userEvent.click(screen.getByText('SIGN IN'));
-    await waitFor(() => expect(screen.getByText('Invalid credentials')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/No account found with these credentials/)).toBeInTheDocument());
   });
 });

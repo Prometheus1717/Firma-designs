@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { isLightMode, getTheme } from '../lib/theme';
+import { useMobileFormViewport } from '../lib/mobileFormViewport';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -58,6 +59,7 @@ export default function BirthDataPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
+  const { containerRef, scrollFocusedField } = useMobileFormViewport();
 
   useEffect(() => { document.title = isEditing ? 'Edit Birth Data \u2014 Natal Navigator' : 'Enter Birth Data \u2014 Natal Navigator'; }, [isEditing]);
 
@@ -72,7 +74,7 @@ export default function BirthDataPage() {
     if (isEditing) return;
     if (profile?.is_admin) { navigate('/admin', { replace: true }); return; }
     if (hasBirthData) { navigate('/dashboard', { replace: true }); return; }
-    if (!user?.id) return;
+    if (!user?.id || typeof loadProfile !== 'function') return;
     // Profile is null or incomplete — force a fresh fetch from the DB.
     let cancelled = false;
     (async () => {
@@ -270,12 +272,28 @@ export default function BirthDataPage() {
 
   const inputStyle = {
     width: '100%', padding: '10px 12px', background: T.bg, border: `1px solid ${T.bd}`,
-    borderRadius: 6, color: T.tx, ...F, fontSize: 12, outline: 'none', boxSizing: 'border-box',
+    borderRadius: 6, color: T.tx, ...F, fontSize: 16, outline: 'none', boxSizing: 'border-box',
   };
 
   return (
-    <main style={{ minHeight: '100vh', background: T.bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <header style={{ marginBottom: 32, textAlign: 'center' }}>
+    <main
+      ref={containerRef}
+      className="nn-form-shell nn-birth-shell"
+      style={{
+        height: 'var(--app-height, 100dvh)',
+        minHeight: 'var(--app-height, 100dvh)',
+        background: T.bg,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        boxSizing: 'border-box',
+      }}
+    >
+      <header className="nn-birth-header" style={{ marginBottom: 32, textAlign: 'center' }}>
         <h1 style={{ ...F, fontSize: 18, fontWeight: 700, color: T.ac, letterSpacing: 6, margin: '0 0 8px' }}>NATAL NAVIGATOR</h1>
         <p style={{ ...F, fontSize: 10, color: T.td, letterSpacing: 2, margin: 0 }}>{isEditing ? 'EDIT YOUR BIRTH DATA' : 'ENTER YOUR BIRTH DATA'}</p>
       </header>
@@ -290,7 +308,7 @@ export default function BirthDataPage() {
         </div>
       )}
 
-      <div style={{ width: '100%', maxWidth: 460, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32 }}>
+      <div className="nn-birth-card" style={{ width: '100%', maxWidth: 460, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, boxSizing: 'border-box' }}>
         <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 20, lineHeight: 1.7 }}>
           For accurate astrocartography lines, we need your exact birth date, time, and location. The more precise, the better your chart.
         </div>
@@ -298,21 +316,28 @@ export default function BirthDataPage() {
         <form onSubmit={handleSubmit}>
           <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>YOUR NAME</label>
           <input
+            className="nn-form-input"
             type="text"
+            autoComplete="name"
             value={name}
+            onFocus={scrollFocusedField}
             onChange={e => setName(e.target.value)}
-            style={{ ...inputStyle, fontSize: 13, marginBottom: 16 }}
+            style={{ ...inputStyle, marginBottom: 16 }}
             placeholder="Optional"
           />
 
-          <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+          <div className="nn-birth-grid" style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
             <div style={{ flex: 1 }}>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH DATE * <span style={{ color: T.mu }}>(dd.mm.yyyy)</span></label>
               <input
+                className="nn-form-input"
                 type="text"
+                autoComplete="bday"
+                inputMode="numeric"
                 required
                 value={dateDisplay}
                 placeholder="18.03.1995"
+                onFocus={scrollFocusedField}
                 onChange={e => {
                   let v = e.target.value.replace(/[^0-9.]/g, '');
                   const digits = v.replace(/\./g, '');
@@ -328,10 +353,14 @@ export default function BirthDataPage() {
             <div style={{ flex: 1 }}>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: T.mu }}>(exact)</span></label>
               <input
+                className="nn-form-input"
                 type="text"
+                autoComplete="off"
+                inputMode="numeric"
                 required
                 value={timeDisplay}
                 placeholder="14:30"
+                onFocus={scrollFocusedField}
                 onChange={e => {
                   let v = e.target.value.replace(/[^0-9:]/g, '');
                   const digits = v.replace(/:/g, '');
@@ -355,10 +384,13 @@ export default function BirthDataPage() {
           </label>
           <div style={{ position: 'relative' }}>
             <input
+              className="nn-form-input"
               type="text"
+              autoComplete="address-level2"
               value={citySearch}
+              onFocus={scrollFocusedField}
               onChange={e => { setCitySearch(e.target.value); setSelectedCity(null); }}
-              style={{ ...inputStyle, fontSize: 13 }}
+              style={inputStyle}
               placeholder="London, New York, Sydney..."
             />
             {searching && (
@@ -425,6 +457,40 @@ export default function BirthDataPage() {
           <div onClick={async () => { await signOut(); window.location.href = '/'; }} style={{ ...F, fontSize: 9, color: T.mu, textAlign: 'center', marginTop: 16, cursor: 'pointer' }}>Sign out</div>
         )}
       </div>
+      <style>{`
+        .nn-form-input {
+          min-height: 48px;
+          caret-color: ${T.ac};
+          -webkit-text-size-adjust: 100%;
+          -webkit-appearance: none;
+          appearance: none;
+        }
+        .nn-form-input:-webkit-autofill {
+          -webkit-text-fill-color: ${T.tx};
+          box-shadow: 0 0 0 1000px ${T.bg} inset;
+          transition: background-color 999999s ease-out;
+        }
+        @media (max-width: 640px) {
+          .nn-birth-shell {
+            justify-content: flex-start !important;
+            padding-top: max(28px, calc(env(safe-area-inset-top) + 18px)) !important;
+            padding-bottom: calc(280px + env(safe-area-inset-bottom) + var(--keyboard-inset, 0px)) !important;
+            scroll-padding-top: 24px;
+            scroll-padding-bottom: calc(280px + env(safe-area-inset-bottom));
+          }
+          .nn-birth-header {
+            margin-bottom: 22px !important;
+          }
+          .nn-birth-card {
+            padding: 24px 18px !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .nn-birth-grid {
+            flex-direction: column !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
