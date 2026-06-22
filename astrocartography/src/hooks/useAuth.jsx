@@ -122,6 +122,19 @@ function setBirthModalDismissed(v) {
   } catch {}
 }
 
+async function notifySignup(user) {
+  if (!user?.id || !user?.email || typeof fetch !== 'function') return;
+  try {
+    await fetch('/api/telegram-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, email: user.email }),
+    });
+  } catch (err) {
+    console.warn('[signup] Telegram notification failed:', err?.message || err);
+  }
+}
+
 // ─── Shared robust profile fetcher ───
 // Single source of truth for "get this user's profile, but never silently
 // give up on a transient failure". Used by both loadProfile (inside the
@@ -421,6 +434,7 @@ export function AuthProvider({ children }) {
         // supabase-email-templates.html doubles as the welcome moment.
         identifyUser(data.user.id, { email: data.user.email });
         trackEvent('user_signed_up', { email: data.user.email });
+        notifySignup(data.user);
       }
       return data;
     } finally {

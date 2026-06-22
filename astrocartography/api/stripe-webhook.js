@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 import { applySecurityHeaders, isUuid } from './_security.js';
+import { buildPaymentMessage, sendTelegramMessage } from './_telegram.js';
 
 // Supabase admin client (service role — bypasses RLS)
 // Singleton: reuse across warm function invocations to avoid connection pool exhaustion
@@ -202,6 +203,16 @@ export default async function handler(req, res) {
 
       // Send confirmation email (fire-and-forget)
       if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal, currency);
+
+      // Notify the owner after entitlement was successfully activated.
+      sendTelegramMessage(buildPaymentMessage({
+        userId,
+        email: customerEmail,
+        amount: amountTotal,
+        currency,
+        stripeCustomerId,
+        sessionId: session.id,
+      })).catch(err => console.error('[stripe-webhook] Telegram notification failed:', err));
     } catch (err) {
       console.error('[stripe-webhook] Unexpected error:', err);
       return res.status(500).json({ error: 'Internal error' });
