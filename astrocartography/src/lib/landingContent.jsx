@@ -3,8 +3,7 @@
 // string in both languages plus the language detection/persistence. EN is the
 // default (and what crawlers with an English Accept-Language see). German
 // visitors get German automatically on first load; a manual switch wins and is
-// persisted. No redirect, same URL — SEO-neutral (the /astrokartographie guide
-// cluster + hreflang remain the basis of Google's language mapping).
+// persisted. No redirect, same URL.
 // Languages the landing is translated into. The landing auto-switches to the
 // visitor's browser language across all of these; anything else falls back to
 // English. Keep this in sync with the keys of CONTENT below.
@@ -52,7 +51,7 @@ export function landingContent(lang) {
 
 export const CONTENT = {
   en: {
-    nav: { demo: 'Live demo', features: 'Features', forYou: "Who it’s for", lines: 'Line meanings', pricing: 'Pricing', faq: 'FAQ', blog: 'Blog', cta: 'Create your map' },
+    nav: { demo: 'Live demo', features: 'Features', forYou: "Who it’s for", lines: 'Line meanings', pricing: 'Pricing', faq: 'FAQ', cta: 'Create your map' },
     badge: 'Find your best places with astrocartography',
     hero: {
       sr: 'Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.',
@@ -109,7 +108,7 @@ export const CONTENT = {
       ['Jupiter line', 'Luck and expansion. Opportunities, mentors and growth tend to arrive faster here.'],
       ['Saturn line', 'Discipline and tests. Demanding ground — slow, structural progress for those who stay.'],
     ],
-    more: <>Want the full theory? Read the <a href="/astrocartography">complete astrocartography guide</a>{' '}— also available <a href="/astrokartographie">auf Deutsch</a>.</>,
+    more: <>Want the full theory? Everything essential is now here on this page — start with the line meanings above and the FAQ below.</>,
     whyHead: { label: 'Why Natal Navigator', h2: <>There are other astrocartography calculators.<br /><em>Here’s the honest difference.</em></> },
     why: [
       'Interactive live demo with example charts before you create your personal map',
@@ -153,7 +152,7 @@ export const CONTENT = {
   },
 
   de: {
-    nav: { demo: 'Live-Demo', features: 'Funktionen', forYou: 'Für wen', lines: 'Linien', pricing: 'Preis', faq: 'FAQ', blog: 'Blog', cta: 'Karte erstellen' },
+    nav: { demo: 'Live-Demo', features: 'Funktionen', forYou: 'Für wen', lines: 'Linien', pricing: 'Preis', faq: 'FAQ', cta: 'Karte erstellen' },
     badge: 'Finde deine besten Orte mit Astrokartographie',
     hero: {
       sr: 'Dein Geburtshoroskop ist insgeheim eine Landkarte — sieh, wo du aufblühst, dich verliebst, dich zuhause fühlst und wächst.',
@@ -210,7 +209,7 @@ export const CONTENT = {
       ['Jupiterlinie', 'Glück und Expansion. Chancen, Mentoren und Wachstum kommen hier tendenziell schneller.'],
       ['Saturnlinie', 'Disziplin und Prüfungen. Forderndes Terrain — langsamer, struktureller Fortschritt für die, die bleiben.'],
     ],
-    more: <>Willst du die ganze Theorie? Lies den <a href="/astrokartographie">vollständigen Astrokartographie-Guide</a>{' '}— auch <a href="/astrocartography">in English</a> verfügbar.</>,
+    more: <>Willst du die ganze Theorie? Alles Wesentliche steht jetzt auf dieser Seite — starte mit den Linien oben und der FAQ unten.</>,
     whyHead: { label: 'Warum Natal Navigator', h2: <>Es gibt andere Astrokartographie-Rechner.<br /><em>Hier ist der ehrliche Unterschied.</em></> },
     why: [
       'Interaktive Live-Demo mit Beispiel-Horoskopen, bevor du deine persönliche Karte erstellst',
@@ -311,7 +310,7 @@ export const CONTENT = {
       ['Ligne de Jupiter', 'Chance et expansion. Opportunités, mentors et croissance arrivent souvent plus vite ici.'],
       ['Ligne de Saturne', 'Discipline et épreuves. Terrain exigeant — un progrès lent et structurel pour qui reste.'],
     ],
-    more: <>Vous voulez toute la théorie ? Lisez le <a href="/astrocartography">guide complet d’astrocartographie</a>{' '}— aussi disponible <a href="/astrokartographie">en allemand</a>.</>,
+    more: <>Vous voulez toute la théorie ? L’essentiel est maintenant sur cette page — commencez par les lignes ci-dessus et la FAQ ci-dessous.</>,
     whyHead: { label: 'Pourquoi Natal Navigator', h2: <>Il existe d’autres calculateurs d’astrocartographie.<br /><em>Voici la différence, honnêtement.</em></> },
     why: [
       'Démo interactive en direct avec des thèmes d’exemple avant de créer votre carte personnelle',
@@ -412,7 +411,7 @@ export const CONTENT = {
       ['Línea de Júpiter', 'Suerte y expansión. Oportunidades, mentores y crecimiento suelen llegar más rápido aquí.'],
       ['Línea de Saturno', 'Disciplina y pruebas. Terreno exigente: progreso lento y estructural para quien se queda.'],
     ],
-    more: <>¿Quieres toda la teoría? Lee la <a href="/astrocartography">guía completa de astrocartografía</a>{' '}— también disponible <a href="/astrokartographie">en alemán</a>.</>,
+    more: <>¿Quieres toda la teoría? Lo esencial está ahora en esta página: empieza por las líneas de arriba y la FAQ de abajo.</>,
     whyHead: { label: 'Por qué Natal Navigator', h2: <>Hay otros calculadores de astrocartografía.<br /><em>Esta es la diferencia honesta.</em></> },
     why: [
       'Demo interactiva en vivo con cartas de ejemplo antes de crear tu mapa personal',
@@ -513,7 +512,7 @@ export const CONTENT = {
       ['Linea di Giove', 'Fortuna ed espansione. Occasioni, mentori e crescita tendono ad arrivare più in fretta qui.'],
       ['Linea di Saturno', 'Disciplina e prove. Terreno esigente: progresso lento e strutturale per chi resta.'],
     ],
-    more: <>Vuoi tutta la teoria? Leggi la <a href="/astrocartography">guida completa all’astrocartografia</a>{' '}— disponibile anche <a href="/astrokartographie">in tedesco</a>.</>,
+    more: <>Vuoi tutta la teoria? L’essenziale è ora in questa pagina: inizia dalle linee sopra e dalle FAQ sotto.</>,
     whyHead: { label: 'Perché Natal Navigator', h2: <>Esistono altri calcolatori di astrocartografia.<br /><em>Ecco la differenza, onestamente.</em></> },
     why: [
       'Demo interattiva dal vivo con temi di esempio prima di creare la tua mappa personale',
@@ -614,7 +613,7 @@ export const CONTENT = {
       ['Linha de Júpiter', 'Sorte e expansão. Oportunidades, mentores e crescimento tendem a chegar mais rápido aqui.'],
       ['Linha de Saturno', 'Disciplina e provas. Terreno exigente: progresso lento e estrutural para quem fica.'],
     ],
-    more: <>Quer toda a teoria? Leia o <a href="/astrocartography">guia completo de astrocartografia</a>{' '}— também disponível <a href="/astrokartographie">em alemão</a>.</>,
+    more: <>Quer toda a teoria? O essencial está agora nesta página: comece pelas linhas acima e pela FAQ abaixo.</>,
     whyHead: { label: 'Por que Natal Navigator', h2: <>Existem outros calculadores de astrocartografia.<br /><em>Esta é a diferença, com honestidade.</em></> },
     why: [
       'Demo interativa ao vivo com mapas de exemplo antes de criar seu mapa pessoal',
@@ -715,7 +714,7 @@ export const CONTENT = {
       ['Jupiterlijn', 'Geluk en expansie. Kansen, mentoren en groei komen hier vaak sneller.'],
       ['Saturnuslijn', 'Discipline en beproevingen. Veeleisend terrein: trage, structurele vooruitgang voor wie blijft.'],
     ],
-    more: <>Wil je de volledige theorie? Lees de <a href="/astrocartography">complete astrocartografie-gids</a>{' '}— ook beschikbaar <a href="/astrokartographie">in het Duits</a>.</>,
+    more: <>Wil je de volledige theorie? Alles wat belangrijk is staat nu op deze pagina — begin met de lijnen hierboven en de FAQ hieronder.</>,
     whyHead: { label: 'Waarom Natal Navigator', h2: <>Er zijn andere astrocartografie-rekenmachines.<br /><em>Dit is het eerlijke verschil.</em></> },
     why: [
       'Interactieve live demo met voorbeeldhoroscopen voordat je je persoonlijke kaart maakt',
@@ -816,7 +815,7 @@ export const CONTENT = {
       ['Linia Jowisza', 'Szczęście i ekspansja. Okazje, mentorzy i rozwój zwykle przychodzą tu szybciej.'],
       ['Linia Saturna', 'Dyscyplina i próby. Wymagający grunt: powolny, strukturalny postęp dla tych, którzy zostają.'],
     ],
-    more: <>Chcesz pełnej teorii? Przeczytaj <a href="/astrocartography">kompletny przewodnik po astrokartografii</a>{' '}— dostępny też <a href="/astrokartographie">po niemiecku</a>.</>,
+    more: <>Chcesz pełnej teorii? Najważniejsze rzeczy są teraz na tej stronie — zacznij od linii powyżej i FAQ poniżej.</>,
     whyHead: { label: 'Dlaczego Natal Navigator', h2: <>Są inne kalkulatory astrokartografii.<br /><em>Oto uczciwa różnica.</em></> },
     why: [
       'Interaktywne demo na żywo z przykładowymi horoskopami, zanim stworzysz swoją mapę',
@@ -917,7 +916,7 @@ export const CONTENT = {
       ['Jüpiter hattı', 'Şans ve genişleme. Fırsatlar, mentorlar ve büyüme burada genelde daha hızlı gelir.'],
       ['Satürn hattı', 'Disiplin ve sınavlar. Zorlu zemin: kalanlar için yavaş, yapısal ilerleme.'],
     ],
-    more: <>Tüm teoriyi mi istiyorsun? <a href="/astrocartography">Eksiksiz astrokartografi rehberini</a> oku{' '}— <a href="/astrokartographie">Almanca</a> olarak da mevcut.</>,
+    more: <>Tüm teoriyi mi istiyorsun? Temel bilgiler artık bu sayfada — yukarıdaki çizgi anlamlarıyla ve aşağıdaki SSS ile başla.</>,
     whyHead: { label: 'Neden Natal Navigator', h2: <>Başka astrokartografi hesaplayıcıları var.<br /><em>İşte dürüst fark.</em></> },
     why: [
       'Kişisel haritanı oluşturmadan önce örnek haritalarla etkileşimli canlı demo',
@@ -1018,7 +1017,7 @@ export const CONTENT = {
       ['Линия Юпитера', 'Удача и расширение. Возможности, наставники и рост обычно приходят здесь быстрее.'],
       ['Линия Сатурна', 'Дисциплина и испытания. Требовательная почва: медленный, структурный прогресс для тех, кто остаётся.'],
     ],
-    more: <>Хотите всю теорию? Прочтите <a href="/astrocartography">полный гид по астрокартографии</a>{' '}— также доступен <a href="/astrokartographie">на немецком</a>.</>,
+    more: <>Хотите всю теорию? Всё главное теперь на этой странице — начните со значений линий выше и FAQ ниже.</>,
     whyHead: { label: 'Почему Natal Navigator', h2: <>Есть и другие калькуляторы астрокартографии.<br /><em>Вот честное отличие.</em></> },
     why: [
       'Интерактивное живое демо с примерами карт, прежде чем создавать свою личную карту',
@@ -1119,7 +1118,7 @@ export const CONTENT = {
       ['木星ライン', '幸運と拡大。機会、師、成長がここではより早く訪れがち。'],
       ['土星ライン', '規律と試練。要求の多い土地：留まる人にとっての、ゆっくりとした構造的な前進。'],
     ],
-    more: <>理論をすべて知りたいですか？ <a href="/astrocartography">アストロカートグラフィー完全ガイド</a>をどうぞ{' '}— <a href="/astrokartographie">ドイツ語</a>でも利用できます。</>,
+    more: <>理論を知りたいですか？重要な内容はこのページにまとまっています。上のライン解説と下のFAQから始めてください。</>,
     whyHead: { label: 'Natal Navigator を選ぶ理由', h2: <>ほかにもアストロカートグラフィーの計算機はあります。<br /><em>正直な違いはこちら。</em></> },
     why: [
       '個人マップを作る前に、サンプル図でのインタラクティブなライブデモ',
@@ -1220,7 +1219,7 @@ export const CONTENT = {
       ['木星线', '幸运与扩张。机会、导师与成长往往在此来得更快。'],
       ['土星线', '纪律与考验。要求严苛的土地：为留下者带来缓慢而结构性的进步。'],
     ],
-    more: <>想要完整理论？阅读<a href="/astrocartography">星位天文地图完整指南</a>{' '}——亦提供<a href="/astrokartographie">德文版</a>。</>,
+    more: <>想了解完整理论？核心内容现在都在本页：先看上方的行星线说明，再看下方 FAQ。</>,
     whyHead: { label: '为何选择 Natal Navigator', h2: <>还有别的星位天文地图计算器。<br /><em>这是诚实的区别。</em></> },
     why: [
       '在创建个人地图之前，先用示例星盘体验交互式在线演示',
@@ -1321,7 +1320,7 @@ export const CONTENT = {
       ['목성 라인', '행운과 확장. 기회, 멘토, 성장이 여기서 더 빨리 오는 경향이 있습니다.'],
       ['토성 라인', '규율과 시험. 까다로운 땅: 머무는 이들을 위한 느리고 구조적인 진전.'],
     ],
-    more: <>전체 이론을 원하시나요? <a href="/astrocartography">아스트로카토그래피 완전 가이드</a>를 읽어보세요{' '}— <a href="/astrokartographie">독일어</a>로도 제공됩니다.</>,
+    more: <>전체 이론이 궁금한가요? 핵심 내용은 이제 이 페이지에 있습니다. 위의 라인 설명과 아래 FAQ부터 보세요.</>,
     whyHead: { label: '왜 Natal Navigator인가', h2: <>다른 아스트로카토그래피 계산기도 있습니다.<br /><em>정직한 차이는 이것입니다.</em></> },
     why: [
       '개인 지도를 만들기 전, 예시 차트로 인터랙티브 라이브 데모',
@@ -1422,7 +1421,7 @@ export const CONTENT = {
       ['خط المشتري', 'الحظ والتوسّع. تميل الفرص والمرشدون والنمو إلى الوصول أسرع هنا.'],
       ['خط زحل', 'الانضباط والاختبارات. أرض متطلّبة: تقدّم بطيء وبنيوي لمن يبقى.'],
     ],
-    more: <>تريد النظرية كاملة؟ اقرأ <a href="/astrocartography">الدليل الكامل للخرائط الفلكية</a>{' '}— متاح أيضًا <a href="/astrokartographie">بالألمانية</a>.</>,
+    more: <>تريد النظرية كاملة؟ الأساسيات أصبحت الآن في هذه الصفحة — ابدأ بمعاني الخطوط أعلاه والأسئلة الشائعة أدناه.</>,
     whyHead: { label: 'لماذا Natal Navigator', h2: <>توجد حاسبات أخرى للخرائط الفلكية.<br /><em>هذا هو الفرق بصدق.</em></> },
     why: [
       'عرض مباشر تفاعلي بخرائط أمثلة قبل أن تنشئ خريطتك الشخصية',

@@ -1,6 +1,91 @@
 {
   "redirects": [
     {
+      "source": "/blog",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:path*",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography/:path*",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrokartographie",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrokartographie/:path*",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography-calculator",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/where-should-i-live-astrology",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/relocation-astrology",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/moving-abroad-astrology",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/free-astrocartography-chart",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/how-accurate-is-astrocartography",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography-for-career",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography-for-digital-nomads",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography-for-love",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/astrocartography-line-cheat-sheet.pdf",
+      "destination": "https://natalnavigator.com/",
+      "permanent": true
+    },
+    {
+      "source": "/llms-full.txt",
+      "destination": "https://natalnavigator.com/llms.txt",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -28,10 +113,6 @@
     {
       "source": "/llms.txt",
       "destination": "/llms.txt"
-    },
-    {
-      "source": "/llms-full.txt",
-      "destination": "/llms-full.txt"
     },
     {
       "source": "/21915b44130d4ed9a4a65a4221aeb56b.txt",
@@ -138,19 +219,6 @@
     },
     {
       "source": "/llms.txt",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        },
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/llms-full.txt",
       "headers": [
         {
           "key": "Cache-Control",

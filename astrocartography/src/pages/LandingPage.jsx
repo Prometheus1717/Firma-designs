@@ -261,7 +261,6 @@ export default function LandingPage() {
             <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
-            <a href="/blog">{C.nav.blog}</a>
           </div>
           <div className="lp-nav-right">
             <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>{C.nav.cta} <span className="lp-btn-ic">{I.arrow}</span></button>
@@ -565,9 +564,9 @@ export default function LandingPage() {
           </nav>
           <nav aria-label="Learn">
             <h4>{C.footer.hLearn}</h4>
-            <a href="/astrocartography">Astrocartography guide</a>
-            <a href="/astrocartography-calculator">Astrocartography calculator</a>
-            <a href="/astrokartographie">Astrokartographie (DE)</a>
+            <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
+            <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
+            <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </nav>
           <nav aria-label="Contact">
             <h4>{C.footer.hContact}</h4>
