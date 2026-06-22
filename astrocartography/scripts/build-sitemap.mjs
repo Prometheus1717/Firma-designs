@@ -33,6 +33,9 @@ const STATIC_ROUTES = [
     changefreq: 'monthly',
     alt: { en: 'astrocartography', de: 'astrokartographie', 'x-default': 'astrocartography' },
   },
+  // Downloadable lead magnet (PDF) — listed so Google can discover and index it
+  // without waiting for a manual request or for the linking blog posts to be crawled.
+  { loc: 'astrocartography-line-cheat-sheet.pdf', priority: '0.5', changefreq: 'yearly' },
 ];
 
 function pageToRoute(p) {
