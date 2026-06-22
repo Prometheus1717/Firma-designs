@@ -220,7 +220,10 @@ export default function LandingPage() {
 
   const goAuth = () => {
     trackEvent('cta_clicked', { destination: 'auth' });
-    window.location.href = '/auth';
+    // Conversion CTAs ("Create map", pricing, final) go straight to the register
+    // form — these are acquisition/purchase buttons. ?mode=signup overrides the
+    // returning-user default so a new visitor never lands on the login screen.
+    window.location.href = '/auth?mode=signup';
   };
   // Funnel step between landing_view and checkout: the visitor engages the
   // live demo. Fires on the demo-open CTAs (the embedded demo shares the same
@@ -558,7 +561,7 @@ export default function LandingPage() {
             <h4>{C.footer.hProduct}</h4>
             <a href="/demo" onClick={goDemo('nav')}>{C.nav.demo}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
-            <a href="/auth">{C.footer.createAccount}</a>
+            <a href="/auth?mode=signup">{C.footer.createAccount}</a>
           </nav>
           <nav aria-label="Learn">
             <h4>{C.footer.hLearn}</h4>
