@@ -11,7 +11,19 @@ export default function AuthPage() {
   const light = isLightMode();
   const T = getTheme(light);
   const btnTx = light ? '#FFFFFF' : '#0A1018';
-  const [mode, setMode] = useState('login');
+  // New / first-time visitors land on the register form so they can sign up in
+  // one step (better conversion into the purchase flow). Returning users — those
+  // who have signed in on this device before (nn_returning flag, set in useAuth)
+  // — get the familiar "Welcome back" login. An explicit ?mode=signup|login in
+  // the URL always wins.
+  const [mode, setMode] = useState(() => {
+    try {
+      const m = new URLSearchParams(window.location.search).get('mode');
+      if (m === 'signup' || m === 'login') return m;
+      if (localStorage.getItem('nn_returning') === '1') return 'login';
+    } catch { /* storage/URL unavailable — fall through */ }
+    return 'signup';
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

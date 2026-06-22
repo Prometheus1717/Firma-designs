@@ -253,6 +253,10 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       gotAuthRef.done = true;
       const u = session?.user ?? null;
+      // Mark this device as a returning account holder once any session exists.
+      // AuthPage uses this to default existing users to the "Welcome back" login
+      // while brand-new visitors get the register form (better signup conversion).
+      if (u) { try { localStorage.setItem('nn_returning', '1'); } catch { /* storage blocked */ } }
       // Keep user identity stable across TOKEN_REFRESHED / SIGNED_IN replays
       // for the same user — Supabase hands us a fresh object every time, but
       // React still re-renders the whole tree on `setUser` because identity
