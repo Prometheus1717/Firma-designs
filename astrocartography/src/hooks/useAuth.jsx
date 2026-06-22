@@ -205,6 +205,8 @@ export function AuthProvider({ children }) {
   // to /birth-data or back to the paywall after a transient blip).
   const [profileLoadFailed, setProfileLoadFailed] = useState(false);
   const [showBirthDataModal, setShowBirthDataModal] = useState(false);
+  // Fail closed: if settings cannot be read, payment remains required.
+  const [paywallEnabled, setPaywallEnabled] = useState(true);
   const fetchIdRef = useRef(0);
   const signingInRef = useRef(false);
 
@@ -344,7 +346,36 @@ export function AuthProvider({ children }) {
   // pre-empt the modal/demo path while profile is still loading on mobile.
   const isAdminKnown = isAdmin || getCachedIsAdmin(user?.id);
   const isPremium = profile?.is_premium === true;
+  const requiresPayment = !!user && paywallEnabled === true && !isAdminKnown && !isPremium;
   const loading = !ready;
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) {
+      setPaywallEnabled(true);
+      return () => { cancelled = true; };
+    }
+
+    Promise.resolve(supabase.from('app_settings').select('key, value'))
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error('[paywall] settings load failed:', error.message || error);
+          setPaywallEnabled(true);
+          return;
+        }
+        const row = (data || []).find(r => r.key === 'paywall_enabled');
+        setPaywallEnabled(row?.value !== 'false');
+      })
+      .catch(err => {
+        if (!cancelled) {
+          console.error('[paywall] settings load failed:', err?.message || err);
+          setPaywallEnabled(true);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [user?.id]);
 
   // The BirthDataModal does NOT auto-open on every sign-in. It only opens in
   // exactly one automatic situation: the user just confirmed their email and
@@ -584,6 +615,9 @@ export function AuthProvider({ children }) {
   }
 
   async function saveBirthData(birthData) {
+    if (requiresPayment) {
+      throw new Error('Payment required before entering birth data.');
+    }
     const { data, error } = await supabase
       .from('profiles')
       .upsert({
@@ -607,7 +641,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, profileResolved, profileLoadFailed, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, showBirthDataModal, dismissBirthDataModal, openBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
+    <AuthContext.Provider value={{ user, profile, profileResolved, profileLoadFailed, loading, hasBirthData, isAdmin, isAdminKnown, isPremium, paywallEnabled, requiresPayment, showBirthDataModal, dismissBirthDataModal, openBirthDataModal, signUp, signIn, signOut, deleteAccount, updateDisplayName, resetPassword, saveBirthData, loadProfile }}>
       {children}
     </AuthContext.Provider>
   );

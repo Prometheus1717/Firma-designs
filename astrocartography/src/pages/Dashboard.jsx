@@ -237,7 +237,7 @@ function getInitialChart(demo, profile) {
 }
 
 export default function Dashboard({ demo = false }) {
-  const { user, profile, hasBirthData, isPremium, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
+  const { user, profile, hasBirthData, isPremium, requiresPayment, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const goAuth = useCallback(() => {
@@ -281,8 +281,9 @@ export default function Dashboard({ demo = false }) {
     sh: '0 16px 48px rgba(0,0,0,.5)', shH: '0 8px 32px rgba(0,0,0,.6)',
     ov: 'rgba(5,10,16,.92)',
   }, [lightMode]);
+  const showPaywall = !demo && requiresPayment;
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
-  const [chartData, setChartData] = useState(() => getInitialChart(demo, profile));
+  const [chartData, setChartData] = useState(() => showPaywall ? null : getInitialChart(demo, profile));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('thrive');
@@ -328,7 +329,6 @@ export default function Dashboard({ demo = false }) {
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success' | 'cancelled'
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState('');
-  const [paywallEnabled, setPaywallEnabled] = useState(null);
   const [displayPrice, setDisplayPrice] = useState('3.99');
   const [displayCurrency, setDisplayCurrency] = useState('EUR');
   const [priceLabel, setPriceLabel] = useState('ONE-TIME · LIFETIME ACCESS');
@@ -383,7 +383,6 @@ export default function Dashboard({ demo = false }) {
           if (!data) return;
           const s = {};
           data.forEach(r => { s[r.key] = r.value; });
-          if (s.paywall_enabled !== undefined) setPaywallEnabled(s.paywall_enabled === 'true');
           if (s.display_price) setDisplayPrice(s.display_price);
           if (s.display_currency) setDisplayCurrency(s.display_currency);
           if (s.price_label) setPriceLabel(s.price_label);
@@ -393,14 +392,6 @@ export default function Dashboard({ demo = false }) {
         });
     });
   }, [demo]);
-
-  // Determine if user should see paywall.
-  // CRITICAL: we require `profile` to be loaded — never show paywall when
-  // profile is null. A paying user must never be confronted with the upgrade
-  // screen because of a transient profile-fetch failure. If `profile` is
-  // missing, the GlobalProfileGate or LoadingScreen will already be on top
-  // of this; the explicit guard here is belt-and-suspenders.
-  const showPaywall = !demo && !!profile && paywallEnabled === true && !isPremium && profile.is_admin !== true;
 
   // Track paywall impression once
   const paywallTracked = useRef(false);
@@ -559,6 +550,11 @@ export default function Dashboard({ demo = false }) {
   // Calculate chart — reads from localStorage cache first (pre-calculated by BirthDataPage),
   // falls back to direct main-thread calculation (~200ms, faster than Worker spawn on mobile).
   useEffect(() => {
+    if (showPaywall) {
+      setChartData(null);
+      setLoading(false);
+      return;
+    }
     const birthInput = demo
       ? { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }
       : (hasBirthData && profile?.birth_date)
@@ -586,7 +582,7 @@ export default function Dashboard({ demo = false }) {
       } catch (err) { setError(err.message); }
       finally { setLoading(false); }
     });
-  }, [demo, hasBirthData, profile]);
+  }, [demo, hasBirthData, profile, showPaywall]);
 
   // Natal readings are now imported directly via getNatalReadings(lang)
   // No lazy-load needed — the module is imported at top level
@@ -763,7 +759,7 @@ export default function Dashboard({ demo = false }) {
   // Safety timeout: if stuck loading for too long (e.g. profile never arrives),
   // reload the page once rather than showing "Connecting..." forever.
   const [loadingTooLong, setLoadingTooLong] = useState(false);
-  const isLoading = !chartData && (demo ? loading : (loading || hasBirthData || !profile));
+  const isLoading = !showPaywall && !chartData && (demo ? loading : (loading || hasBirthData || !profile));
   useEffect(() => {
     if (!isLoading) return;
     const t = setTimeout(() => setLoadingTooLong(true), 8000);

@@ -215,10 +215,11 @@ function ProtectedRoute({ children }) {
 // never see it. This eliminates the "why am I seeing Elon Musk's chart"
 // trap and removes the entire class of bugs around the welcome modal.
 function AuthRoute({ children }) {
-  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
+  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData, requiresPayment } = useAuth();
   if (loading) return <LoadingScreen />;
   if (user && isAdminKnown) return <Navigate to="/admin" replace />;
   if (user && !profile && !profileResolved) return <LoadingScreen />;
+  if (user && requiresPayment) return <Navigate to="/dashboard" replace />;
   if (user) return <Navigate to={hasBirthData ? '/dashboard' : '/birth-data'} replace />;
   return children;
 }
@@ -234,11 +235,12 @@ function AdminRoute({ children }) {
 }
 
 function SmartRedirect() {
-  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
+  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData, requiresPayment } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/" replace />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
+  if (requiresPayment) return <Navigate to="/dashboard" replace />;
   if (hasBirthData) return <Navigate to="/dashboard" replace />;
   return <Navigate to="/birth-data" replace />;
 }
@@ -272,7 +274,7 @@ function isEmbeddedDemoRequest() {
 }
 
 function DemoOrDashboard() {
-  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData } = useAuth();
+  const { user, profile, profileResolved, isAdminKnown, loading, hasBirthData, requiresPayment } = useAuth();
   if (loading) return <LoadingScreen />;
   // Anonymous visitors → marketing landing page at "/". The live demo lives at
   // "/demo" and is embedded into the landing via an iframe; if that embedded
@@ -281,6 +283,7 @@ function DemoOrDashboard() {
   if (!user) return isEmbeddedDemoRequest() ? <Dashboard demo /> : <LandingPage />;
   if (isAdminKnown) return <Navigate to="/admin" replace />;
   if (!profile && !profileResolved) return <LoadingScreen />;
+  if (requiresPayment) return <Dashboard />;
   if (hasBirthData) return <Dashboard />;
   // Signed-in user with no birth data → focused setup page, NOT the demo.
   return <Navigate to="/birth-data" replace />;
