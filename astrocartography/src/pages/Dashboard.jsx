@@ -358,19 +358,35 @@ export default function Dashboard({ demo = false }) {
     if (payment === 'success') {
       setPaymentStatus('success');
       trackEvent('payment_success');
-      // Refresh profile to pick up is_premium=true from webhook
-      if (user) {
-        // Small delay to let webhook process
-        const t = setTimeout(() => loadProfile(user.id), 1500);
-        return () => clearTimeout(t);
-      }
-      // Clean URL
-      setSearchParams({}, { replace: true });
+      // Poll the profile until the Stripe webhook has flipped is_premium=true.
+      // A single delayed fetch used to be enough only if the webhook beat the
+      // 1.5 s timer — when it didn't, the client kept a stale is_premium=false,
+      // requiresPayment stayed true, and the paid user was stuck on the paywall
+      // until a manual hard reload. We retry for ~20 s so entitlement lands
+      // without any reload, then clean the URL.
+      if (!user) { setSearchParams({}, { replace: true }); return; }
+      let cancelled = false;
+      let timer = null;
+      let attempts = 0;
+      const poll = async () => {
+        if (cancelled) return;
+        attempts += 1;
+        const fresh = await loadProfile(user.id);
+        if (cancelled) return;
+        if (fresh?.is_premium === true || attempts >= 10) {
+          setSearchParams({}, { replace: true });
+          return;
+        }
+        timer = setTimeout(poll, 2000);
+      };
+      timer = setTimeout(poll, 1200);
+      return () => { cancelled = true; if (timer) clearTimeout(timer); };
     } else if (payment === 'cancelled') {
       setPaymentStatus('cancelled');
       trackEvent('payment_cancelled');
       setSearchParams({}, { replace: true });
-      setTimeout(() => setPaymentStatus(null), 5000);
+      const t = setTimeout(() => setPaymentStatus(null), 5000);
+      return () => clearTimeout(t);
     }
   }, []);
 

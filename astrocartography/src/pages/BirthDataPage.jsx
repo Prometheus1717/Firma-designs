@@ -30,7 +30,7 @@ function writeDraft(userId, data) {
 function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
 
 export default function BirthDataPage() {
-  const { saveBirthData, signOut, hasBirthData, profile, user, loadProfile, requiresPayment } = useAuth();
+  const { saveBirthData, signOut, hasBirthData, profile, user, loadProfile } = useAuth();
   // Welcome hero: shown only for first-time visitors whose email was just
   // confirmed (< 5 min ago). Replaces the popup modal that used to do this.
   // Quiet for editing flows and returning users so the page never feels
@@ -63,11 +63,11 @@ export default function BirthDataPage() {
 
   useEffect(() => { document.title = isEditing ? 'Edit Birth Data \u2014 Natal Navigator' : 'Enter Birth Data \u2014 Natal Navigator'; }, [isEditing]);
 
-  useEffect(() => {
-    if (!isEditing && requiresPayment) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [isEditing, requiresPayment, navigate]);
+  // Birth data first, paywall after: unpaid users MUST be able to reach and
+  // submit this page. Payment is enforced later by `showPaywall` on the
+  // dashboard, not here. (Do not re-add a `requiresPayment -> /dashboard`
+  // redirect \u2014 it bounces unpaid users out of the setup form and traps paid
+  // users whose is_premium hasn't refreshed in the client yet.)
 
   // Bullet-proof guard: this page should NEVER be shown to admins or to
   // users who already have a chart. The route guards in App.jsx try to
@@ -78,7 +78,6 @@ export default function BirthDataPage() {
   // This is the safety net that catches the route-guard race once and for all.
   useEffect(() => {
     if (isEditing) return;
-    if (requiresPayment) { navigate('/dashboard', { replace: true }); return; }
     if (profile?.is_admin) { navigate('/admin', { replace: true }); return; }
     if (hasBirthData) { navigate('/dashboard', { replace: true }); return; }
     if (!user?.id || typeof loadProfile !== 'function') return;

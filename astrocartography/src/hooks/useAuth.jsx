@@ -615,9 +615,10 @@ export function AuthProvider({ children }) {
   }
 
   async function saveBirthData(birthData) {
-    if (requiresPayment) {
-      throw new Error('Payment required before entering birth data.');
-    }
+    // Birth data first, paywall after: saving a chart does NOT require payment.
+    // The paywall gates chart *display* on the dashboard (showPaywall), so
+    // there is no bypass here — an unpaid user who saves birth data still hits
+    // the paywall before seeing any premium content.
     const { data, error } = await supabase
       .from('profiles')
       .upsert({
