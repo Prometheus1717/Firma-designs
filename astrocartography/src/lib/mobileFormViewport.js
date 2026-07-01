@@ -21,6 +21,14 @@ export function useMobileFormViewport() {
           ? Math.max(0, Math.round(window.innerHeight - (vv.height + vv.offsetTop)))
           : 0;
         root.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
+
+        // Device-agnostic "keyboard is open" signal. The per-page media queries
+        // only top-align the form on phones (≤640px); iPad / desktop-width touch
+        // devices kept a centred card that clips its own top out of reach once
+        // the visual viewport shrinks. Toggling this class lets CSS top-align the
+        // form at ANY width while a keyboard is actually present. 80px clears
+        // browser-chrome jitter without missing a real keyboard.
+        root.classList.toggle('nn-keyboard-open', keyboardInset > 80);
       });
     };
 
@@ -41,6 +49,7 @@ export function useMobileFormViewport() {
       window.visualViewport?.removeEventListener('scroll', sync);
       root.classList.remove('nn-form-route');
       body.classList.remove('nn-form-route');
+      root.classList.remove('nn-keyboard-open');
       root.style.removeProperty('--keyboard-inset');
     };
   }, []);

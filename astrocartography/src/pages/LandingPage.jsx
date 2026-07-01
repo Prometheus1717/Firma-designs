@@ -305,7 +305,12 @@ export default function LandingPage() {
             </span>
           </h1>
           <div className="lp-hero-cta lp-h-an" style={{ '--d': '200ms' }}>
-            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener" onClick={goDemo('hero')}>{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></a>
+            {/* Primary hero action drives into the create funnel (was: open the
+                demo in a new tab, which leaked the most-prominent CTA away from
+                conversion and made the landing buttons inconsistent). The demo
+                stays reachable as an explicit secondary. */}
+            <button className="lp-btn lp-btn-mint" onClick={goAuth} style={{ background: 'var(--mint-bright, #19C68B)', color: '#06241A', boxShadow: '0 10px 26px -10px rgba(25,198,139,.6)' }}>{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></button>
+            <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener" onClick={goDemo('hero')}>{C.demo.posterCta}</a>
           </div>
           <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>{C.stageHint} <span className="lp-hint-arrow">↓</span></div>
         </div>

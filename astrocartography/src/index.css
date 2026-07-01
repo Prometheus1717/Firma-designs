@@ -50,3 +50,23 @@ button, a, [role="button"], [onclick] {
 html[data-theme="light"] *::-webkit-scrollbar-thumb {
   background: #D6D2CC;
 }
+
+/* ── On-screen keyboard: keep form pages reachable on ALL widths ──────────────
+   The auth / birth-data shells centre their card by default. When the soft
+   keyboard opens, `--app-height` shrinks to the visual viewport; a card taller
+   than that keeps its top clipped out of reach if it stays vertically centred.
+   Phones (≤640px) already top-align via each page's own media query, but iPad
+   and desktop-width touch devices were never covered — the user typed but
+   couldn't see the field, and every manual scroll snapped back to centre.
+   `nn-keyboard-open` is toggled from JS (useMobileFormViewport) whenever a
+   keyboard is genuinely present, so this is device-agnostic and does not touch
+   the resting (no-keyboard) centred layout. */
+.nn-keyboard-open .nn-form-shell {
+  justify-content: flex-start !important;
+}
+@media (min-width: 641px) {
+  .nn-keyboard-open .nn-form-shell {
+    padding-top: max(24px, env(safe-area-inset-top)) !important;
+    padding-bottom: calc(var(--keyboard-inset, 0px) + 32px) !important;
+  }
+}
