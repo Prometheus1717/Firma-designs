@@ -497,7 +497,7 @@ function SettingsTab({ settings, onSave, T }) {
   );
 }
 
-function UsersTab({ users, total, loading, selected, setSelected, premiumToggling, setPremiumToggling, page, setPage, pageSize, searchInput, setSearchInput, sortField, setSortField, sortAsc, setSortAsc, setUsers, T }) {
+function UsersTab({ users, total, loading, selected, setSelected, premiumToggling, setPremiumToggling, page, setPage, pageSize, searchInput, setSearchInput, sortField, setSortField, sortAsc, setSortAsc, setUsers, activatedOnly, setActivatedOnly, T }) {
   const totalPages = Math.ceil(total / pageSize);
 
   function handleSort(field) {
@@ -519,13 +519,24 @@ function UsersTab({ users, total, loading, selected, setSelected, premiumTogglin
 
   return (
     <>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <input
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
           placeholder="Search by name, email, or city..."
-          style={{ width: '100%', maxWidth: 400, padding: '10px 14px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
+          style={{ flex: '1 1 260px', maxWidth: 400, padding: '10px 14px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 11, outline: 'none', boxSizing: 'border-box' }}
         />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1 }}>SHOW</span>
+          <ToggleButton
+            active={activatedOnly}
+            onToggle={() => { setActivatedOnly(!activatedOnly); setPage(1); }}
+            activeLabel="ACTIVATED ONLY"
+            inactiveLabel="ALL SIGN-UPS"
+            activeColor="#E8A838"
+            inactiveColor="#00D88A"
+          />
+        </div>
       </div>
 
       <div style={{ background: T.p, border: `1px solid ${T.bd}`, borderRadius: 10, overflow: 'hidden' }}>
@@ -675,6 +686,9 @@ export default function AdminPage() {
   const [paywallEnabled, setPaywallEnabled] = useState(true);
   const [premiumToggling, setPremiumToggling] = useState(null);
   const [appSettings, setAppSettings] = useState(null);
+  // Default OFF so the list shows ALL sign-ups, including people who haven't
+  // entered birth data yet. Toggle it on to see only "activated" users.
+  const [activatedOnly, setActivatedOnly] = useState(false);
   const pageSize = 25;
 
   const load = useCallback(async () => {
@@ -682,7 +696,7 @@ export default function AdminPage() {
     try {
       const [s, u, pw, as] = await Promise.all([
         fetchAdminStats(),
-        fetchAllProfiles({ search, sortField, sortAsc, page, pageSize }),
+        fetchAllProfiles({ search, sortField, sortAsc, page, pageSize, activatedOnly }),
         fetchPaywallSetting(),
         fetchAllAppSettings(),
       ]);
@@ -695,7 +709,7 @@ export default function AdminPage() {
       console.error('Admin fetch error:', e);
     }
     setLoading(false);
-  }, [search, sortField, sortAsc, page]);
+  }, [search, sortField, sortAsc, page, activatedOnly]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -776,6 +790,8 @@ export default function AdminPage() {
             sortAsc={sortAsc}
             setSortAsc={setSortAsc}
             setUsers={setUsers}
+            activatedOnly={activatedOnly}
+            setActivatedOnly={setActivatedOnly}
             T={T}
           />
         )}

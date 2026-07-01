@@ -26,8 +26,10 @@ async function adminFetch(action, params = {}) {
 
 // ─── Profiles ───
 
-export async function fetchAllProfiles({ search = '', sortField = 'updated_at', sortAsc = false, page = 1, pageSize = 25 } = {}) {
-  const result = await adminFetch('fetchProfiles', { search, sortField, sortAsc, page, pageSize });
+export async function fetchAllProfiles({ search = '', sortField = 'updated_at', sortAsc = false, page = 1, pageSize = 25, activatedOnly = false } = {}) {
+  // activatedOnly=false → include sign-ups that haven't entered birth data yet
+  // (the API filters to "activated" users only when this is explicitly true).
+  const result = await adminFetch('fetchProfiles', { search, sortField, sortAsc, page, pageSize, activatedOnly });
   // result is { data: [...], total: N }
   return result;
 }
