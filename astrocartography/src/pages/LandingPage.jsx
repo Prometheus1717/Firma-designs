@@ -219,11 +219,11 @@ export default function LandingPage() {
   useEffect(() => { trackEvent('landing_view'); }, []);
 
   const goAuth = () => {
-    trackEvent('cta_clicked', { destination: 'auth' });
-    // Conversion CTAs ("Create map", pricing, final) go straight to the register
-    // form — these are acquisition/purchase buttons. ?mode=signup overrides the
-    // returning-user default so a new visitor never lands on the login screen.
-    window.location.href = '/auth?mode=signup';
+    trackEvent('cta_clicked', { destination: 'create' });
+    // Data-first funnel: conversion CTAs ("Create map", pricing, final) send the
+    // visitor to birth-data entry FIRST (/create) — no account, no card — so they
+    // reach a personalised teaser before being asked to sign up or pay.
+    window.location.href = '/create';
   };
   // Funnel step between landing_view and checkout: the visitor engages the
   // live demo. Fires on the demo-open CTAs (the embedded demo shares the same

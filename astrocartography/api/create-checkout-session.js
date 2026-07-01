@@ -75,7 +75,54 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Stripe not configured' });
   }
 
-  // ── Authenticate: derive identity from JWT, not client body ──
+  const stripe = new Stripe(stripeSecretKey);
+  const origin = getRequestOrigin(req);
+  const body = (req.body && typeof req.body === 'object') ? req.body : {};
+
+  // ── Guest checkout (data-first funnel) ──
+  // An anonymous visitor who entered birth data and saw the teaser can pay
+  // without an account. Identity = the email they type + the card they pay with;
+  // the webhook provisions the account + premium + saves the birth data. No
+  // account is ever created for an unpaid visitor. Rate-limited by IP above.
+  if (body.guest === true) {
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const birth = (body.birth && typeof body.birth === 'object') ? body.birth : null;
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+    if (!birth || !birth.date || !birth.time || birth.lat == null || birth.lng == null) {
+      return res.status(400).json({ error: 'Missing birth data — please re-enter your details.' });
+    }
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        customer_email: email,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: `${origin}/result?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/result?payment=cancelled`,
+        // Birth data rides in metadata (Stripe caps values at 500 chars) so the
+        // webhook can persist it onto the newly-provisioned profile.
+        metadata: {
+          guest: '1',
+          email,
+          birth_date: String(birth.date).slice(0, 20),
+          birth_time: String(birth.time).slice(0, 20),
+          birth_lat: String(birth.lat).slice(0, 32),
+          birth_lng: String(birth.lng).slice(0, 32),
+          birth_city: (typeof birth.city === 'string' ? birth.city : '').slice(0, 200),
+          display_name: (typeof birth.name === 'string' ? birth.name : '').slice(0, 120),
+        },
+      });
+      return res.status(200).json({ url: session.url });
+    } catch (err) {
+      console.error('[checkout] Error creating guest session:', err);
+      return res.status(500).json({ error: 'Failed to create checkout session' });
+    }
+  }
+
+  // ── Authenticated checkout: derive identity from JWT, not client body ──
   const user = await verifyAuth(req);
   if (!user) {
     return res.status(401).json({ error: 'Authentication required' });
@@ -90,9 +137,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    const stripe = new Stripe(stripeSecretKey);
-    const origin = getRequestOrigin(req);
-
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       customer_email: email,

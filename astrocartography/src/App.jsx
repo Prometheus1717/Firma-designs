@@ -16,6 +16,7 @@ function lazyRetry(fn) {
 }
 
 const AuthPage = lazyRetry(() => import('./pages/AuthPage'));
+const CreatePage = lazyRetry(() => import('./pages/CreatePage'));
 const BirthDataPage = lazyRetry(() => import('./pages/BirthDataPage'));
 const Dashboard = lazyRetry(() => import('./pages/Dashboard'));
 const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
@@ -348,6 +349,11 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<DemoOrDashboard />} />
                 <Route path="/demo" element={<Dashboard demo />} />
+                {/* Data-first funnel: anonymous visitors enter birth data (/create)
+                    and see a personalised teaser (/result) BEFORE any account or
+                    payment. Both are public. */}
+                <Route path="/create" element={<CreatePage />} />
+                <Route path="/result" element={<Dashboard teaser />} />
                 <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
                 <Route path="/birth-data" element={<ProtectedRoute><BirthDataPage /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
