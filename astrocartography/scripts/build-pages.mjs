@@ -320,7 +320,7 @@ ${renderSchema(page)}
       <h1>${esc(page.h1)}</h1>
       <p class="lead">${page.lead}</p>
 ${page.note ? `\n      <div class="note">${page.note}</div>\n` : ''}
-      <p><a href="/demo" class="cta">${page.lang === 'de' ? 'Live-Demo öffnen' : 'Open the live demo'} &rarr;</a></p>
+      <p><a href="/create" class="cta">${page.lang === 'de' ? 'Meine Karte erstellen — 9,99 €' : 'Create my map — €9.99'} &rarr;</a>&ensp;<a href="/demo">${page.lang === 'de' ? 'oder Live-Demo ansehen' : 'or try the live demo'} &rarr;</a></p>
 
 ${sections}
 
@@ -331,7 +331,7 @@ ${sections}
             ? 'Probiere die interaktive Demo mit Beispiel-Charts. Deine persönliche 40-Linien-Karte mit deinen eigenen Geburtsdaten gibt es für einmalig 9,99 € — ohne Abo.'
             : 'Explore the interactive demo with example charts. Your personal 40-line map, built from your own birth data, is a one-time €9.99 / $9.99 — no subscription.'
         }</p>
-        <p><a href="/demo" class="cta">${page.lang === 'de' ? 'Globus starten' : 'Launch the globe'} &rarr;</a></p>
+        <p><a href="/create" class="cta">${page.lang === 'de' ? 'Meine Karte erstellen' : 'Create my map'} &rarr;</a>&ensp;<a href="/demo">${page.lang === 'de' ? 'Live-Demo' : 'Live demo'} &rarr;</a></p>
       </div>
 
 ${faq}
@@ -474,7 +474,7 @@ ${BLOG_CSS}
         <a href="/blog">Blog</a>
         <a href="/landing">About</a>
       </div>
-      <a href="/" class="nav-cta">Open the Globe →</a>
+      <a href="/create" class="nav-cta">Create your map →</a>
     </nav>
   </header>
 

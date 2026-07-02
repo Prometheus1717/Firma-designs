@@ -32,7 +32,7 @@ const DEMO = (() => {
 })();
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
-const APP_AUTH_URL = 'https://natalnavigator.com/auth';
+const APP_ORIGIN_URL = 'https://natalnavigator.com';
 
 function isEmbeddedDemo() {
   // ?embed=1 marks the initial iframe src, but that query string is lost once
@@ -252,12 +252,22 @@ export default function Dashboard({ demo = false, teaser = false }) {
   const { user, profile, hasBirthData, isPremium, requiresPayment, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const goAuth = useCallback(() => {
+  // Demo conversion CTAs feed the purchase funnel (/create); the "already
+  // have an account" path goes to passwordless login. Embedded demo (landing
+  // iframe) must break out of the frame with absolute URLs.
+  const goCreate = useCallback(() => {
     if (isEmbeddedDemo()) {
-      window.top.location.href = APP_AUTH_URL;
+      window.top.location.href = `${APP_ORIGIN_URL}/create`;
       return;
     }
-    navigate('/auth');
+    navigate('/create');
+  }, [navigate]);
+  const goLogin = useCallback(() => {
+    if (isEmbeddedDemo()) {
+      window.top.location.href = `${APP_ORIGIN_URL}/auth?mode=login`;
+      return;
+    }
+    navigate('/auth?mode=login');
   }, [navigate]);
   const [lightMode, setLightMode] = useState(() => {
     try {
@@ -1120,7 +1130,7 @@ export default function Dashboard({ demo = false, teaser = false }) {
               <span onClick={openBirthDataModal} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('enterBirthDataBtn', lang) || 'Enter birth data'}</span>
               <span onClick={signOut} title={t('signOut', lang) || 'Sign out'} style={{ ...F, fontSize: mob ? 10 : 11, color: '#F04060', cursor: 'pointer', padding: mob ? '4px 6px' : '4px 10px', borderRadius: 4, border: '1px solid #F0406040', background: '#F0406010', whiteSpace: 'nowrap', flexShrink: 0, lineHeight: 1 }}>⏻</span>
             </> : (
-              <span onClick={goAuth} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
+              <span onClick={goCreate} style={{ ...F, fontSize: mob ? 8 : 9, fontWeight: 600, color: T.bg, background: T.ac, padding: mob ? '4px 8px' : '5px 14px', borderRadius: 4, cursor: 'pointer', letterSpacing: 1, whiteSpace: 'nowrap', flexShrink: 0 }}>{t('signUp', lang)}</span>
             )}
           </> : <>
             {profile?.is_admin && <span onClick={() => navigate('/admin')} style={{ ...F, fontSize: 9, color: '#D8A030', cursor: 'pointer', background: '#D8A03010', padding: '4px 10px', borderRadius: 4, border: '1px solid #2A2018', letterSpacing: 1 }}>ADMIN</span>}
@@ -2129,10 +2139,10 @@ export default function Dashboard({ demo = false, teaser = false }) {
                   {t('demoSignup', lang)}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <button onClick={goAuth} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
+                  <button onClick={goCreate} style={{ ...F, fontSize: 12, fontWeight: 700, color: T.bg, background: T.ac, border: 'none', borderRadius: 6, padding: '12px 0', cursor: 'pointer', letterSpacing: 1, width: '100%' }}>
                     {t('createMyChart', lang)}
                   </button>
-                  <button onClick={goAuth} style={{ ...F, fontSize: 11, color: T.tm, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
+                  <button onClick={goLogin} style={{ ...F, fontSize: 11, color: T.tm, background: 'transparent', border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 0', cursor: 'pointer', width: '100%' }}>
                     {t('alreadyAccount', lang)}
                   </button>
                 </div>
