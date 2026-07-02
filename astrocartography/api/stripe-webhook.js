@@ -1,23 +1,8 @@
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
 import { applySecurityHeaders, isUuid } from './_security.js';
 import { buildPaymentMessage, sendTelegramMessage } from './_telegram.js';
-
-// Supabase admin client (service role — bypasses RLS)
-// Singleton: reuse across warm function invocations to avoid connection pool exhaustion
-let _supabaseAdmin = null;
-function getSupabaseAdmin() {
-  if (_supabaseAdmin) return _supabaseAdmin;
-  // VITE_SUPABASE_URL preferred (frontend-confirmed); strip any /rest/v\d+ suffix
-  // mistakenly set in SUPABASE_URL — supabase-js expects the bare project URL.
-  const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '')
-    .replace(/\/+$/, '').replace(/\/rest\/v\d+$/, '');
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
-  _supabaseAdmin = createClient(url, key);
-  return _supabaseAdmin;
-}
+import { getSupabaseAdmin, provisionGuestAccount } from './_guestProvision.js';
 
 export const config = {
   api: { bodyParser: false }, // Stripe needs the raw body for signature verification
@@ -134,93 +119,6 @@ async function sendPaymentConfirmationEmail(email, amount, currency) {
   }).catch(err => console.error('[stripe-webhook] Email send failed:', err));
 }
 
-const APP_ORIGIN = 'https://natalnavigator.com';
-
-// ─── Guest one-tap login link ───
-// After a guest payment we provision the account server-side; the visitor's
-// browser has no session yet, so we email them a magic link to claim/access
-// their saved map on any device. Best-effort: a failure here never fails the
-// webhook (the local post-payment unlock already shows their result).
-async function sendGuestLoginLink(supabase, email) {
-  try {
-    const { data, error } = await supabase.auth.admin.generateLink({
-      type: 'magiclink',
-      email,
-      options: { redirectTo: `${APP_ORIGIN}/dashboard` },
-    });
-    const link = data?.properties?.action_link;
-    if (error || !link) {
-      console.error('[stripe-webhook] generateLink failed:', error?.message || 'no action_link');
-      return;
-    }
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) return;
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: 'NatalNavigator <info@natalnavigator.com>',
-      to: [email],
-      subject: 'Your Natal Navigator map is ready — one-tap login',
-      html: `<div style="font-family:Arial,Helvetica,sans-serif;background:#0A1018;color:#8A9BB0;padding:40px 16px;">
-  <div style="max-width:520px;margin:0 auto;background:#0D1520;border:1px solid #1A2840;border-radius:12px;padding:36px 28px;text-align:center;">
-    <div style="font-family:'Courier New',monospace;font-size:20px;font-weight:700;color:#00D88A;letter-spacing:5px;">NATAL&nbsp;NAVIGATOR</div>
-    <div style="font-size:26px;padding:22px 0 6px;">✨</div>
-    <div style="font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#00D88A;padding-bottom:14px;">Premium Activated!</div>
-    <p style="font-size:14px;line-height:1.7;color:#8A9BB0;margin:0 0 24px;">Your payment is confirmed and your personal astrocartography map is saved. Tap below to open it on any device — no password needed.</p>
-    <a href="${link}" style="display:inline-block;background:#00D88A;color:#0A1018;font-family:'Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:1px;text-decoration:none;padding:14px 34px;border-radius:8px;">OPEN MY MAP</a>
-    <p style="font-size:11px;color:#5A7088;margin:26px 0 0;">One-time purchase · lifetime access. If the button expires, use "Sign in" on natalnavigator.com with this email.</p>
-  </div>
-</div>`,
-    }).catch(err => console.error('[stripe-webhook] Login-link email failed:', err));
-  } catch (err) {
-    console.error('[stripe-webhook] sendGuestLoginLink error:', err);
-  }
-}
-
-// ─── Guest provisioning ───
-// Find-or-create the account for the paying email, mark it premium, persist the
-// birth data captured at checkout, and email the login link. Returns the userId.
-async function provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId) {
-  const email = String(meta.email || customerEmail || '').trim().toLowerCase();
-  if (!email) throw new Error('guest checkout: no email');
-
-  // Create the account (auto-confirmed — Stripe already verified a real email).
-  let userId = null;
-  const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-    email,
-    email_confirm: true,
-  });
-  if (!createErr && created?.user?.id) {
-    userId = created.user.id;
-  } else {
-    // Already registered (returning visitor / earlier sign-up) — the profile row
-    // (id = auth user id) is created for every user by the handle_new_user trigger.
-    const { data: existing } = await supabase
-      .from('profiles').select('id').eq('email', email).maybeSingle();
-    if (existing?.id) userId = existing.id;
-  }
-  if (!userId) throw new Error(`guest checkout: could not resolve account for ${email}`);
-
-  const { error: upErr } = await supabase
-    .from('profiles')
-    .upsert({
-      id: userId,
-      email,
-      is_premium: true,
-      stripe_customer_id: stripeCustomerId,
-      birth_date: meta.birth_date || null,
-      birth_time: meta.birth_time || null,
-      birth_city: meta.birth_city || null,
-      birth_lat: meta.birth_lat != null && meta.birth_lat !== '' ? parseFloat(meta.birth_lat) : null,
-      birth_lng: meta.birth_lng != null && meta.birth_lng !== '' ? parseFloat(meta.birth_lng) : null,
-      display_name: meta.display_name || null,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
-  if (upErr) throw upErr;
-
-  await sendGuestLoginLink(supabase, email);
-  return userId;
-}
-
 export default async function handler(req, res) {
   applySecurityHeaders(res);
 
@@ -267,9 +165,16 @@ export default async function handler(req, res) {
     if (meta.guest === '1') {
       try {
         const supabase = getSupabaseAdmin();
-        const provisionedId = await provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId);
+        const { userId: provisionedId, alreadyProvisioned } = await provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId);
+        if (alreadyProvisioned) {
+          // verify-session (the buyer's own return) won the race — account,
+          // emails and Telegram ping are already handled. Just acknowledge.
+          console.log(`[stripe-webhook] Guest ${provisionedId} already provisioned, skipping`);
+          return res.status(200).json({ received: true });
+        }
         console.log(`[stripe-webhook] Guest premium provisioned for ${provisionedId}`);
-        if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal, currency);
+        // Guests get exactly ONE email — the magic-link mail (sent inside
+        // provisionGuestAccount) doubles as the payment confirmation.
         sendTelegramMessage(buildPaymentMessage({
           userId: provisionedId, email: customerEmail, amount: amountTotal,
           currency, stripeCustomerId, sessionId: session.id,

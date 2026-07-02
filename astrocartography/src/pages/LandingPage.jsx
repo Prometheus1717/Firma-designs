@@ -309,7 +309,7 @@ export default function LandingPage() {
                 demo in a new tab, which leaked the most-prominent CTA away from
                 conversion and made the landing buttons inconsistent). The demo
                 stays reachable as an explicit secondary. */}
-            <button className="lp-btn lp-btn-mint" onClick={goAuth} style={{ background: 'var(--mint-bright, #19C68B)', color: '#06241A', boxShadow: '0 10px 26px -10px rgba(25,198,139,.6)' }}>{C.heroCta} <span className="lp-btn-ic">{I.arrow}</span></button>
+            <button className="lp-btn lp-btn-mint" onClick={goAuth} style={{ background: 'var(--mint-bright, #19C68B)', color: '#06241A', boxShadow: '0 10px 26px -10px rgba(25,198,139,.6)' }}>{C.heroCta} · {priceStr} <span className="lp-btn-ic">{I.arrow}</span></button>
             <a className="lp-btn lp-btn-glass" href={demoSrc.replace('embed=1&', '')} target="_blank" rel="noopener" onClick={goDemo('hero')}>{C.demo.posterCta}</a>
           </div>
           <div className="lp-stage-hint lp-h-an" style={{ '--d': '290ms' }}>{C.stageHint} <span className="lp-hint-arrow">↓</span></div>
@@ -547,7 +547,7 @@ export default function LandingPage() {
             <h2 className="lp-h2 lp-final-h">{C.final.h2}</h2>
             <p>{C.final.sub}</p>
             <div className="lp-hero-cta" style={{ justifyContent: 'center' }}>
-              <button className="lp-btn lp-btn-mint" onClick={goAuth}>{C.final.ctaCreate} <span className="lp-btn-ic">{I.arrow}</span></button>
+              <button className="lp-btn lp-btn-mint" onClick={goAuth}>{C.final.ctaCreate} · {priceStr} <span className="lp-btn-ic">{I.arrow}</span></button>
               <a className="lp-btn lp-btn-night" href="/demo" onClick={goDemo('final')}>{C.final.ctaDemo}</a>
             </div>
           </div>
@@ -565,7 +565,7 @@ export default function LandingPage() {
             <h4>{C.footer.hProduct}</h4>
             <a href="/demo" onClick={goDemo('nav')}>{C.nav.demo}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
-            <a href="/auth?mode=signup">{C.footer.createAccount}</a>
+            <a href="/create">{C.footer.createAccount}</a>
           </nav>
           <nav aria-label="Learn">
             <h4>{C.footer.hLearn}</h4>

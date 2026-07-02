@@ -349,9 +349,12 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<DemoOrDashboard />} />
                 <Route path="/demo" element={<Dashboard demo />} />
-                {/* Data-first funnel: anonymous visitors enter birth data (/create)
-                    and see a personalised teaser (/result) BEFORE any account or
-                    payment. Both are public. */}
+                {/* Purchase funnel: /create is the anonymous order form (birth
+                    data → straight to Stripe checkout; nothing personalised is
+                    rendered before payment). /result is the delivery page a
+                    buyer returns to — it server-verifies the checkout session
+                    and then shows their full map; unpaid visitors are sent
+                    back to /create. Both public. */}
                 <Route path="/create" element={<CreatePage />} />
                 <Route path="/result" element={<Dashboard teaser />} />
                 <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />

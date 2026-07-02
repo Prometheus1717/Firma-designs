@@ -31,16 +31,17 @@ export async function redirectToCheckout() {
 
 /**
  * Guest checkout for the data-first funnel: an anonymous visitor who has entered
- * birth data and seen the teaser can pay WITHOUT first creating an account. The
- * email + birth data travel to the server, which creates the Stripe session; the
- * webhook provisions the account + premium + saves the birth data on payment.
- * No JWT — identity is the email the visitor types and the card they pay with.
+ * birth data pays WITHOUT first creating an account. The birth data travels to
+ * the server, which creates the Stripe session; Stripe Checkout collects the
+ * email (pass one only to prefill it). After payment, webhook + verify-session
+ * provision the account + premium + birth data and email a one-tap login link.
+ * No JWT — identity is the email at checkout and the card they pay with.
  */
-export async function redirectToGuestCheckout(email, birth) {
+export async function redirectToGuestCheckout(birth, email = null) {
   const res = await fetch('/api/create-checkout-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ guest: true, email, birth }),
+    body: JSON.stringify({ guest: true, ...(email ? { email } : {}), birth }),
   });
 
   const data = await res.json();

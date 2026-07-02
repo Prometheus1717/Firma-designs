@@ -30,6 +30,11 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Passwordless is the default sign-in: guest buyers get their account
+  // provisioned at checkout and never set a password, so "email me a login
+  // link" must be the primary path. The password form stays one tap away for
+  // everyone who prefers one.
+  const [usePassword, setUsePassword] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
   const lang = getLang();
   const { containerRef, scrollFocusedField } = useMobileFormViewport();
@@ -51,7 +56,26 @@ export default function AuthPage() {
         // (configurable in dashboard), but we standardise on 10 client-side.
         throw new Error(t('passwordTooShort', lang) || 'Password must be at least 10 characters.');
       }
-      if (mode === 'login') {
+      if (mode === 'login' && !usePassword) {
+        // Magic-link login: an email with a one-tap link, no password involved.
+        // shouldCreateUser=false so a typo'd email cannot silently create an
+        // empty account — it errors instead, and we point to sign-up.
+        const { supabase } = await import('../lib/supabase');
+        const { error: otpErr } = await supabase.auth.signInWithOtp({
+          email: email.trim().toLowerCase(),
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            shouldCreateUser: false,
+          },
+        });
+        if (otpErr) {
+          if (/signups? not allowed/i.test(otpErr.message)) {
+            throw new Error(t('noAccountForEmail', lang));
+          }
+          throw otpErr;
+        }
+        setMessage(t('loginLinkSent', lang));
+      } else if (mode === 'login') {
         await signIn(email, password);
       } else if (mode === 'signup') {
         const data = await signUp(email, password);
@@ -132,7 +156,7 @@ export default function AuthPage() {
             placeholder={t('emailPlaceholder', lang)}
           />
 
-          {mode !== 'reset' && (
+          {mode !== 'reset' && (mode !== 'login' || usePassword) && (
             <>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>{t('passwordLabel', lang)}</label>
               <input
@@ -155,6 +179,11 @@ export default function AuthPage() {
                 placeholder={t('passwordPlaceholder', lang)}
               />
             </>
+          )}
+          {mode === 'login' && !usePassword && !message && (
+            <div style={{ ...F, fontSize: 10, color: T.td, marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
+              {t('loginLinkHint', lang)}
+            </div>
           )}
 
           {error && (
@@ -181,10 +210,10 @@ export default function AuthPage() {
               {submitting ? (
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                   <span style={{ display: 'inline-block', width: 12, height: 12, border: `2px solid ${btnTx}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin .6s linear infinite' }} />
-                  {mode === 'login' ? t('signingIn', lang) : t('creatingAccount', lang)}
+                  {mode === 'login' ? (usePassword ? t('signingIn', lang) : t('sendingLoginLink', lang)) : t('creatingAccount', lang)}
                 </span>
               ) : (
-                mode === 'login' ? t('signInBtn', lang) : mode === 'signup' ? t('createAccountBtn', lang) : t('sendResetLink', lang)
+                mode === 'login' ? (usePassword ? t('signInBtn', lang) : t('emailLoginLink', lang)) : mode === 'signup' ? t('createAccountBtn', lang) : t('sendResetLink', lang)
               )}
             </button>
           )}
@@ -207,15 +236,25 @@ export default function AuthPage() {
         <div style={{ marginTop: 20, textAlign: 'center', ...F, fontSize: 10 }}>
           {mode === 'login' && (
             <>
+              <div style={{ marginBottom: 12 }}>
+                <span
+                  onClick={() => { setUsePassword(v => !v); setError(''); setMessage(''); }}
+                  style={{ color: T.ac, cursor: 'pointer' }}
+                >
+                  {usePassword ? t('useLoginLinkInstead', lang) : t('usePasswordInstead', lang)}
+                </span>
+              </div>
               <div
                 onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
                 style={{ display: 'inline-block', padding: '10px 24px', border: `1px solid ${T.ac}`, borderRadius: 6, color: T.ac, cursor: 'pointer', marginBottom: 12, fontWeight: 600, letterSpacing: 1 }}
               >
                 {t('newHere', lang)}
               </div>
-              <div>
-                <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: T.td, cursor: 'pointer' }}>{t('forgotPassword', lang)}</span>
-              </div>
+              {usePassword && (
+                <div>
+                  <span onClick={() => { setMode('reset'); setError(''); setMessage(''); }} style={{ color: T.td, cursor: 'pointer' }}>{t('forgotPassword', lang)}</span>
+                </div>
+              )}
             </>
           )}
           {mode === 'signup' && !message && (

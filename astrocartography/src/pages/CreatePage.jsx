@@ -2,19 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
-import { saveGuestBirth } from '../lib/guestBirth';
+import { saveGuestBirth, readGuestBirth } from '../lib/guestBirth';
+import { redirectToGuestCheckout } from '../lib/stripe';
 import { isLightMode, getTheme } from '../lib/theme';
 import { useMobileFormViewport } from '../lib/mobileFormViewport';
 import { trackEvent } from '../lib/posthog';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
-// Anonymous, data-first entry point. A visitor enters their birth details with
-// NO account and NO payment; we compute the chart client-side, stash the input
-// as guest birth data, and send them to the personalised teaser (/result). This
-// is deliberately isolated from the authed BirthDataPage (which saves to
-// Supabase, retries, and is entangled with the paid flow) so the proven paid
-// path is never touched.
+// Anonymous order form — the single step between a conversion CTA and Stripe.
+// The visitor enters their exact birth details (order data, like a shipping
+// address — nothing personalised is rendered from it before payment) and goes
+// straight to the Stripe-hosted checkout, which also collects their email. The
+// chart is pre-computed and cached locally so /result can render the moment
+// they return paid. Deliberately isolated from the authed BirthDataPage so the
+// proven signed-in path is never touched.
 export default function CreatePage() {
   const navigate = useNavigate();
   const light = isLightMode();
@@ -22,23 +24,59 @@ export default function CreatePage() {
   const btnTx = light ? '#FFFFFF' : '#0A1018';
   const { containerRef, scrollFocusedField } = useMobileFormViewport();
 
-  const [name, setName] = useState('');
-  const [date, setDate] = useState('');
-  const [dateDisplay, setDateDisplay] = useState('');
-  const [time, setTime] = useState('');
-  const [timeDisplay, setTimeDisplay] = useState('');
-  const [citySearch, setCitySearch] = useState('');
-  const [selectedCity, setSelectedCity] = useState(null);
+  // Prefill from a previous visit (cancelled checkout, expired session) so
+  // nobody types their birth details twice. Read once per mount.
+  const [saved] = useState(() => readGuestBirth());
+
+  const [name, setName] = useState(saved?.name || '');
+  const [date, setDate] = useState(saved?.date || '');
+  const [dateDisplay, setDateDisplay] = useState(() => {
+    if (!saved?.date) return '';
+    const [y, mo, d] = saved.date.split('-');
+    return `${d}.${mo}.${y}`;
+  });
+  const [time, setTime] = useState(saved?.time || '');
+  const [timeDisplay, setTimeDisplay] = useState(saved?.time || '');
+  const [citySearch, setCitySearch] = useState(saved?.city || '');
+  const [selectedCity, setSelectedCity] = useState(() =>
+    saved ? { name: saved.city, displayName: saved.city, lat: saved.lat, lng: saved.lng } : null
+  );
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
+  // Price shown on the checkout button — same app_settings source as the
+  // dashboard paywall, with a safe static fallback while it loads.
+  const [displayPrice, setDisplayPrice] = useState('9.99');
+  const [displayCurrency, setDisplayCurrency] = useState('EUR');
+  // Returning from an abandoned checkout: keep their entered details and say so.
+  const [cancelled] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('payment') === 'cancelled';
+    } catch { return false; }
+  });
 
   useEffect(() => {
     document.title = 'Create Your Map — Natal Navigator';
     trackEvent('create_started');
+    if (cancelled) {
+      trackEvent('payment_cancelled');
+      try { window.history.replaceState({}, '', '/create'); } catch { /* cosmetic only */ }
+    }
+    import('../lib/supabase').then(({ supabase }) => {
+      supabase.from('app_settings').select('key, value').then(({ data }) => {
+        if (!data) return;
+        const s = {};
+        data.forEach(r => { s[r.key] = r.value; });
+        if (s.display_price) setDisplayPrice(s.display_price);
+        if (s.display_currency) setDisplayCurrency(s.display_currency);
+      });
+    }).catch(() => { /* fallback price stays */ });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const priceStr = `${displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF ' : '$'}${displayPrice}`;
 
   // City autocomplete via OpenStreetMap Nominatim (same source as the authed
   // birth-data form). Debounced; skipped once a city is selected.
@@ -81,29 +119,39 @@ export default function CreatePage() {
     return () => clearTimeout(debounceRef.current);
   }, [citySearch, selectedCity]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     if (!selectedCity) { setError('Please search and select your birth city.'); return; }
     if (!date || !time) { setError('Please enter your birth date and exact time.'); return; }
 
     setSubmitting(true);
+    const birth = {
+      name: name.trim(),
+      date, time,
+      city: selectedCity.name,
+      lat: selectedCity.lat,
+      lng: selectedCity.lng,
+    };
     try {
+      // Validate the input by computing the chart now (client-side astronomy,
+      // no network) and cache it — /result renders instantly after payment.
+      // Nothing personalised is shown before the checkout completes.
       const birthInput = { date, time, lat: selectedCity.lat, lng: selectedCity.lng };
-      // Client-side astronomy — no network, no account needed.
       const chartData = calculateChart(birthInput);
       setCachedChart(birthInput, chartData);
-      saveGuestBirth({
-        name: name.trim(),
-        date, time,
-        city: selectedCity.name,
-        lat: selectedCity.lat,
-        lng: selectedCity.lng,
-      });
-      trackEvent('create_completed');
-      navigate('/result');
+      saveGuestBirth(birth);
     } catch (err) {
       setError(err?.message || 'Could not calculate your chart. Please double-check your birth details.');
+      setSubmitting(false);
+      return;
+    }
+    try {
+      trackEvent('create_completed');
+      trackEvent('guest_checkout_started');
+      await redirectToGuestCheckout(birth); // navigates to Stripe on success
+    } catch (err) {
+      setError(err?.message || 'Could not start checkout. Please try again.');
       setSubmitting(false);
     }
   }
@@ -137,9 +185,14 @@ export default function CreatePage() {
       </header>
 
       <div className="nn-birth-card" style={{ width: '100%', maxWidth: 460, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 32, boxSizing: 'border-box' }}>
+        {cancelled && (
+          <div style={{ ...F, fontSize: 10, color: T.tx, background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, padding: '10px 12px', marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
+            Checkout cancelled &mdash; your details below are saved. Continue whenever you&apos;re ready.
+          </div>
+        )}
         <div style={{ ...F, fontSize: 15, fontWeight: 700, color: T.tx, marginBottom: 6, textAlign: 'center' }}>See your best places on Earth</div>
         <div style={{ ...F, fontSize: 11, color: T.tm, marginBottom: 22, lineHeight: 1.7, textAlign: 'center' }}>
-          Enter your exact birth date, time and city. No account, no card &mdash; your personal map is calculated instantly.
+          Enter your exact birth date, time and city &mdash; your full personal map is ready right after checkout. One-time {priceStr}, no subscription.
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -263,9 +316,13 @@ export default function CreatePage() {
               letterSpacing: 1, cursor: submitting ? 'wait' : 'pointer', transition: 'background .2s',
             }}
           >
-            {submitting ? 'CALCULATING…' : 'REVEAL MY MAP →'}
+            {submitting ? 'REDIRECTING…' : `CONTINUE TO CHECKOUT — ${priceStr} →`}
           </button>
         </form>
+
+        <div style={{ ...F, fontSize: 8, color: T.td, marginTop: 12, textAlign: 'center', lineHeight: 1.6 }}>
+          Secure payment via Stripe &middot; Apple Pay / Google Pay &middot; Your map + login link right after payment
+        </div>
       </div>
 
       <div

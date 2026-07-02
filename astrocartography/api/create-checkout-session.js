@@ -80,15 +80,17 @@ export default async function handler(req, res) {
   const body = (req.body && typeof req.body === 'object') ? req.body : {};
 
   // ── Guest checkout (data-first funnel) ──
-  // An anonymous visitor who entered birth data and saw the teaser can pay
-  // without an account. Identity = the email they type + the card they pay with;
-  // the webhook provisions the account + premium + saves the birth data. No
-  // account is ever created for an unpaid visitor. Rate-limited by IP above.
+  // An anonymous visitor who entered birth data pays without an account. The
+  // email is collected by Stripe Checkout itself (one field less on our side;
+  // an optional pre-known email may be passed to prefill it). Identity = that
+  // email + the card they pay with; provisioning (account + premium + birth
+  // data + login link) happens after payment via webhook AND verify-session.
+  // No account is ever created for an unpaid visitor. Rate-limited by IP above.
   if (body.guest === true) {
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
     const birth = (body.birth && typeof body.birth === 'object') ? body.birth : null;
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
     if (!birth || !birth.date || !birth.time || birth.lat == null || birth.lng == null) {
@@ -98,15 +100,17 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
-        customer_email: email,
+        ...(email ? { customer_email: email } : {}),
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${origin}/result?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/result?payment=cancelled`,
+        cancel_url: `${origin}/create?payment=cancelled`,
         // Birth data rides in metadata (Stripe caps values at 500 chars) so the
-        // webhook can persist it onto the newly-provisioned profile.
+        // provisioning step can persist it onto the newly-created profile. The
+        // paying email is NOT in metadata when Stripe collects it — provisioning
+        // falls back to session.customer_details.email.
         metadata: {
           guest: '1',
-          email,
+          ...(email ? { email } : {}),
           birth_date: String(birth.date).slice(0, 20),
           birth_time: String(birth.time).slice(0, 20),
           birth_lat: String(birth.lat).slice(0, 32),
