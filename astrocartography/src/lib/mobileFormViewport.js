@@ -22,6 +22,14 @@ export function useMobileFormViewport() {
           : 0;
         root.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
 
+        // iOS Safari PANS the visual viewport (offsetTop > 0) to reveal a
+        // focused input instead of resizing the layout viewport. The form
+        // shell lives in a fixed body at layout coordinates, so it must be
+        // translated by exactly this offset to stay aligned with what the
+        // user actually sees (CSS: .nn-keyboard-open .nn-form-shell).
+        const offsetTop = vv ? Math.max(0, Math.round(vv.offsetTop)) : 0;
+        root.style.setProperty('--vv-offset-top', `${offsetTop}px`);
+
         // Device-agnostic "keyboard is open" signal. The per-page media queries
         // only top-align the form on phones (≤640px); iPad / desktop-width touch
         // devices kept a centred card that clips its own top out of reach once
@@ -51,6 +59,7 @@ export function useMobileFormViewport() {
       body.classList.remove('nn-form-route');
       root.classList.remove('nn-keyboard-open');
       root.style.removeProperty('--keyboard-inset');
+      root.style.removeProperty('--vv-offset-top');
     };
   }, []);
 

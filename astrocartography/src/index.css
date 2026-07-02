@@ -63,6 +63,14 @@ html[data-theme="light"] *::-webkit-scrollbar-thumb {
    the resting (no-keyboard) centred layout. */
 .nn-keyboard-open .nn-form-shell {
   justify-content: flex-start !important;
+  /* iOS Safari pans the VISUAL viewport down inside the layout viewport when
+     it reveals a focused input (visualViewport.offsetTop > 0). The fixed body
+     keeps this shell glued to LAYOUT coordinates, so without compensation the
+     shell's lower part ends above the keyboard (form looks cut off, dead black
+     gap below) and typing appears to "jump". Tracking offsetTop pins the shell
+     to what the user actually sees; on browsers that resize instead of pan
+     (Chrome/Android, interactive-widget) offsetTop stays 0 and this is a no-op. */
+  transform: translateY(var(--vv-offset-top, 0px));
 }
 @media (min-width: 641px) {
   .nn-keyboard-open .nn-form-shell {
