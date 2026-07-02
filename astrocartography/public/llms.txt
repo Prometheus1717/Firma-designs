@@ -18,11 +18,50 @@ Astrocartography is also known as locational astrology or relocation astrology. 
 
 - Homepage with embedded live demo: https://natalnavigator.com/
 - Interactive demo with example charts: https://natalnavigator.com/demo
+- Astrocartography guide: https://natalnavigator.com/astrocartography
+- Astrocartography calculator: https://natalnavigator.com/astrocartography-calculator
+- German Astrokartographie guide: https://natalnavigator.com/astrokartographie
+- Full machine-readable corpus of all guides: https://natalnavigator.com/llms-full.txt
 
-### Content policy
+### Planetary line guides (each line's meaning, MC/IC/ASC/DSC variants)
 
-All educational and product explanation content is consolidated into the
-homepage. Legacy blog, guide and line URLs redirect to https://natalnavigator.com/.
+- Sun line: https://natalnavigator.com/astrocartography/sun-line
+- Moon line: https://natalnavigator.com/astrocartography/moon-line
+- Mercury line: https://natalnavigator.com/astrocartography/mercury-line
+- Venus line: https://natalnavigator.com/astrocartography/venus-line
+- Mars line: https://natalnavigator.com/astrocartography/mars-line
+- Jupiter line: https://natalnavigator.com/astrocartography/jupiter-line
+- Saturn line: https://natalnavigator.com/astrocartography/saturn-line
+- Uranus line: https://natalnavigator.com/astrocartography/uranus-line
+- Neptune line: https://natalnavigator.com/astrocartography/neptune-line
+- Pluto line: https://natalnavigator.com/astrocartography/pluto-line
+
+### Angle (line type) guides
+
+- MC / Midheaven line: https://natalnavigator.com/astrocartography/mc-line
+- IC / Imum Coeli line: https://natalnavigator.com/astrocartography/ic-line
+- ASC / Ascendant line: https://natalnavigator.com/astrocartography/asc-line
+- DSC / Descendant line: https://natalnavigator.com/astrocartography/dsc-line
+
+### Topic / intent guides
+
+- Where should I live (astrology): https://natalnavigator.com/where-should-i-live-astrology
+- Astrocartography for love: https://natalnavigator.com/astrocartography-for-love
+- Astrocartography for career: https://natalnavigator.com/astrocartography-for-career
+- Relocation astrology (relocated chart vs astrocartography): https://natalnavigator.com/relocation-astrology
+- Astrocartography for digital nomads: https://natalnavigator.com/astrocartography-for-digital-nomads
+- Moving abroad and astrology: https://natalnavigator.com/moving-abroad-astrology
+- How accurate is astrocartography (honest assessment): https://natalnavigator.com/blog/how-accurate-is-astrocartography
+- Free astrocartography chart (demo): https://natalnavigator.com/free-astrocartography-chart
+
+### German guides (Astrokartographie)
+
+- Venuslinie: https://natalnavigator.com/astrokartographie/venuslinie
+- Sonnenlinie: https://natalnavigator.com/astrokartographie/sonnenlinie
+- Mondlinie: https://natalnavigator.com/astrokartographie/mondlinie
+- Jupiterlinie: https://natalnavigator.com/astrokartographie/jupiterlinie
+- Saturnlinie: https://natalnavigator.com/astrokartographie/saturnlinie
+- Wo soll ich leben (Astrologie): https://natalnavigator.com/astrokartographie/wo-soll-ich-leben-astrologie
 
 ## Pricing
 

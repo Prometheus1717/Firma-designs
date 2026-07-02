@@ -8,10 +8,10 @@
       "port": 5173
     },
     {
-      "name": "landing-example",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8000"],
-      "port": 8000
+      "name": "nn-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "preview", "--port", "5187", "--strictPort"],
+      "port": 5187
     }
   ]
 }

@@ -573,6 +573,16 @@ export default function LandingPage() {
             <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </nav>
+          {/* Guide pages exist in EN + DE only, so their titles stay untranslated */}
+          <nav aria-label="Guides">
+            <h4>Guides</h4>
+            <a href="/astrocartography">What is astrocartography?</a>
+            <a href="/astrocartography-calculator">How the calculator works</a>
+            <a href="/where-should-i-live-astrology">Where should I live?</a>
+            <a href="/astrocartography-for-love">Astrocartography for love</a>
+            <a href="/blog">Blog</a>
+            <a href="/astrokartographie">Astrokartographie (DE)</a>
+          </nav>
           <nav aria-label="Contact">
             <h4>{C.footer.hContact}</h4>
             <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>
@@ -1154,7 +1164,7 @@ const CSS = `
 
 /* ── footer ── */
 .lp-footer{ border-top:1px solid var(--line); background:#fff; padding:56px 0 0; }
-.lp-footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr; gap:36px; padding-bottom:44px; }
+.lp-footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr 1fr; gap:36px; padding-bottom:44px; }
 .lp-footer-brand p{ margin-top:16px; font-size:13.5px; color:var(--ink2); max-width:34ch; line-height:1.65; }
 .lp-footer nav{ display:flex; flex-direction:column; gap:10px; }
 .lp-footer nav h4{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }

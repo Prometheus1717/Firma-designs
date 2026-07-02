@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 720" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-sm d-sm">
+  <title id="t-sm">Sun Line vs. Moon Line — A Side-by-Side Decision Matrix</title>
+  <desc id="d-sm">A clear comparison of Sun line versus Moon line in astrocartography across nine life dimensions: identity, daily energy, career visibility, emotional life, sleep quality, family closeness, social life, healing pace, and best life stage. Sun line for visibility and external growth, Moon line for healing and rootedness.</desc>
+
+  <rect width="820" height="720" fill="#FBF8F1"/>
+
+  <defs>
+    <radialGradient id="aurora-sm" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#A8650F" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#5D4FB8" stop-opacity="0.08"/>
+    </radialGradient>
+  </defs>
+  <rect width="820" height="180" fill="url(#aurora-sm)"/>
+
+  <text x="410" y="46" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#8A93A2" letter-spacing="4">★  THE LUMINARIES  ★</text>
+
+  <text x="410" y="98" font-family="'Instrument Serif',Georgia,serif" font-size="38" fill="#181C23" text-anchor="middle">Sun line <tspan font-style="italic" fill="#4C5563">or</tspan> Moon line?</text>
+  <text x="410" y="132" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#8A93A2" text-anchor="middle">Nine dimensions, two answers. Pick the column that sounds like your life right now.</text>
+
+  <!-- COLUMN HEADERS -->
+  <line x1="40" y1="190" x2="780" y2="190" stroke="#DDD5C2" stroke-width="1"/>
+  <text x="60" y="216" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2" letter-spacing="2">DIMENSION</text>
+  <text x="380" y="216" font-family="'JetBrains Mono',monospace" font-size="11" fill="#A8650F" letter-spacing="2" text-anchor="middle">☉  SUN LINE</text>
+  <text x="640" y="216" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5D4FB8" letter-spacing="2" text-anchor="middle">☽  MOON LINE</text>
+  <line x1="40" y1="226" x2="780" y2="226" stroke="#181C23" stroke-width="1.2"/>
+
+  <!-- Row 1: Identity -->
+  <rect x="40" y="230" width="740" height="48" fill="#FFFFFF"/>
+  <text x="60" y="260" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Identity</text>
+  <text x="380" y="260" font-size="14" fill="#181C23" text-anchor="middle">"More fully myself"</text>
+  <text x="640" y="260" font-size="14" fill="#181C23" text-anchor="middle">"Held by something"</text>
+  <line x1="40" y1="278" x2="780" y2="278" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 2: Daily energy -->
+  <rect x="40" y="280" width="740" height="48" fill="#FBF8F1"/>
+  <text x="60" y="310" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Daily energy</text>
+  <text x="380" y="310" font-size="14" fill="#181C23" text-anchor="middle">High, outward, bright</text>
+  <text x="640" y="310" font-size="14" fill="#181C23" text-anchor="middle">Soft, restorative, deep</text>
+  <line x1="40" y1="328" x2="780" y2="328" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 3: Career visibility -->
+  <rect x="40" y="330" width="740" height="48" fill="#FFFFFF"/>
+  <text x="60" y="360" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Career visibility</text>
+  <text x="380" y="360" font-size="14" fill="#A8650F" text-anchor="middle">★★★★★</text>
+  <text x="640" y="360" font-size="14" fill="#5D4FB8" text-anchor="middle">★★☆☆☆</text>
+  <line x1="40" y1="378" x2="780" y2="378" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 4: Emotional life -->
+  <rect x="40" y="380" width="740" height="48" fill="#FBF8F1"/>
+  <text x="60" y="410" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Emotional life</text>
+  <text x="380" y="410" font-size="14" fill="#A8650F" text-anchor="middle">★★☆☆☆</text>
+  <text x="640" y="410" font-size="14" fill="#5D4FB8" text-anchor="middle">★★★★★</text>
+  <line x1="40" y1="428" x2="780" y2="428" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 5: Sleep quality -->
+  <rect x="40" y="430" width="740" height="48" fill="#FFFFFF"/>
+  <text x="60" y="460" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Sleep quality</text>
+  <text x="380" y="460" font-size="14" fill="#A8650F" text-anchor="middle">Variable</text>
+  <text x="640" y="460" font-size="14" fill="#5D4FB8" text-anchor="middle">Markedly better</text>
+  <line x1="40" y1="478" x2="780" y2="478" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 6: Family closeness -->
+  <rect x="40" y="480" width="740" height="48" fill="#FBF8F1"/>
+  <text x="60" y="510" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Family closeness</text>
+  <text x="380" y="510" font-size="14" fill="#181C23" text-anchor="middle">Public, performative</text>
+  <text x="640" y="510" font-size="14" fill="#181C23" text-anchor="middle">Private, ancestral</text>
+  <line x1="40" y1="528" x2="780" y2="528" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 7: Social life -->
+  <rect x="40" y="530" width="740" height="48" fill="#FFFFFF"/>
+  <text x="60" y="560" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Social life</text>
+  <text x="380" y="560" font-size="14" fill="#181C23" text-anchor="middle">Many people, light</text>
+  <text x="640" y="560" font-size="14" fill="#181C23" text-anchor="middle">Few people, deep</text>
+  <line x1="40" y1="578" x2="780" y2="578" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- Row 8: Healing pace -->
+  <rect x="40" y="580" width="740" height="48" fill="#FBF8F1"/>
+  <text x="60" y="610" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#181C23">Healing pace</text>
+  <text x="380" y="610" font-size="14" fill="#A8650F" text-anchor="middle">Slow / overwhelming</text>
+  <text x="640" y="610" font-size="14" fill="#5D4FB8" text-anchor="middle">Faster / safer</text>
+  <line x1="40" y1="628" x2="780" y2="628" stroke="#181C23" stroke-width="1"/>
+
+  <!-- Row 9: Best life stage -->
+  <rect x="40" y="630" width="740" height="56" fill="#0B1118"/>
+  <text x="60" y="660" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="18" fill="#EAF2EE">Best for life stage</text>
+  <text x="380" y="660" font-size="14" fill="#19C68B" text-anchor="middle">Launch, recovery from invisibility</text>
+  <text x="640" y="660" font-size="14" fill="#19C68B" text-anchor="middle">Burnout, parenthood, grief</text>
+</svg>

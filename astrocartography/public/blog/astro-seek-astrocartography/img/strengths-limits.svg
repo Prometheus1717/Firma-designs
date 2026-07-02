@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-sl d-sl">
+  <title id="t-sl">What AstroSeek astrocartography does well and where it stops</title>
+  <desc id="d-sl">Two columns. AstroSeek strengths: completely free, Swiss Ephemeris accuracy, deep classical techniques including parans, detailed city lists per line. AstroSeek limits: flat 2D Mercator map, no city scoring against your chart, dated interface, only okay on mobile.</desc>
+
+  <rect width="820" height="460" fill="#FBF8F1"/>
+  <text x="40" y="50" font-family="'Instrument Serif',Georgia,serif" font-size="29" fill="#181C23">AstroSeek astrocartography: the honest split</text>
+  <text x="40" y="76" font-size="13" fill="#4C5563">One of the best free astrology sites — and exactly where it stops short for relocation decisions.</text>
+
+  <!-- Strengths panel -->
+  <rect x="40" y="100" width="360" height="320" rx="18" fill="#FFFFFF" stroke="#DCF2E5"/>
+  <rect x="40" y="100" width="360" height="52" rx="18" fill="#DCF2E5"/>
+  <text x="64" y="133" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0E7C5B" font-weight="700" letter-spacing="1">✓ WHAT IT NAILS</text>
+  <g font-size="14.5" fill="#181C23">
+    <text x="64" y="190">Completely free, no paywall</text>
+    <text x="64" y="232">Swiss Ephemeris accuracy</text>
+    <text x="64" y="274">Deep classical techniques</text>
+    <text x="64" y="316">Rare parans table</text>
+    <text x="64" y="358">Detailed city list per line</text>
+  </g>
+  <g fill="#0E7C5B" font-size="15">
+    <text x="372" y="190" text-anchor="end">✦</text><text x="372" y="232" text-anchor="end">✦</text>
+    <text x="372" y="274" text-anchor="end">✦</text><text x="372" y="316" text-anchor="end">✦</text>
+    <text x="372" y="358" text-anchor="end">✦</text>
+  </g>
+
+  <!-- Limits panel -->
+  <rect x="420" y="100" width="360" height="320" rx="18" fill="#FFFFFF" stroke="#F9E3E0"/>
+  <rect x="420" y="100" width="360" height="52" rx="18" fill="#F9E3E0"/>
+  <text x="444" y="133" font-family="'JetBrains Mono',monospace" font-size="13" fill="#B2543F" font-weight="700" letter-spacing="1">→ WHERE IT STOPS</text>
+  <g font-size="14.5" fill="#181C23">
+    <text x="444" y="190">Flat 2D Mercator map</text>
+    <text x="444" y="232">No scoring for your chart</text>
+    <text x="444" y="274">Dated, dense interface</text>
+    <text x="444" y="316">Only okay on mobile</text>
+    <text x="444" y="350">You still decide cities</text>
+    <text x="444" y="368" font-size="12" fill="#8A93A2">by hand</text>
+  </g>
+  <g fill="#B2543F" font-size="15">
+    <text x="752" y="190" text-anchor="end">·</text><text x="752" y="232" text-anchor="end">·</text>
+    <text x="752" y="274" text-anchor="end">·</text><text x="752" y="316" text-anchor="end">·</text>
+    <text x="752" y="358" text-anchor="end">·</text>
+  </g>
+</svg>

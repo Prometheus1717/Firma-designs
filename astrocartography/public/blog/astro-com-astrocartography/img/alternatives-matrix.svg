@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 470" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-am d-am">
+  <title id="t-am">Astro.com astrocartography compared with five alternatives</title>
+  <desc id="d-am">Comparison matrix of Astro.com (AstroClickTravel) against five alternatives across five criteria. Natal Navigator: 3D globe, very easy, free, 345+ rated cities, responsive mobile. Astro.com: 2D map, moderate ease, free, no city ratings, weak mobile. AstroSeek: 2D map, moderate, free, list only, okay mobile. Astroline: 2D map, easy, freemium, some cities, app. Astro Gold: 2D/3D desktop, hard, paid, manual, desktop only.</desc>
+
+  <rect width="860" height="470" fill="#FBF8F1"/>
+  <text x="40" y="48" font-family="'Instrument Serif',Georgia,serif" font-size="28" fill="#181C23">Astro.com vs. the alternatives</text>
+  <text x="40" y="74" font-size="13" fill="#4C5563">Same Swiss-Ephemeris-grade math underneath — the difference is how you see and use it.</text>
+
+  <!-- Column headers -->
+  <g font-family="'JetBrains Mono',monospace" font-size="11" letter-spacing="0.5">
+    <text x="250" y="112" text-anchor="middle" fill="#0E7C5B" font-weight="700">NATAL</text>
+    <text x="250" y="126" text-anchor="middle" fill="#0E7C5B" font-weight="700">NAVIGATOR</text>
+    <text x="378" y="119" text-anchor="middle" fill="#8A93A2">Astro.com</text>
+    <text x="486" y="119" text-anchor="middle" fill="#8A93A2">AstroSeek</text>
+    <text x="594" y="119" text-anchor="middle" fill="#8A93A2">Astroline</text>
+    <text x="710" y="119" text-anchor="middle" fill="#8A93A2">Astro Gold</text>
+  </g>
+  <!-- featured column highlight -->
+  <rect x="198" y="92" width="104" height="350" rx="12" fill="#DCF2E5" opacity="0.55"/>
+  <line x1="40" y1="138" x2="820" y2="138" stroke="#181C23" stroke-width="1.2"/>
+
+  <!-- rows -->
+  <g font-size="13.5">
+    <!-- Map -->
+    <text x="40" y="172" fill="#181C23" font-family="'Instrument Serif',Georgia,serif" font-size="17" font-style="italic">Map view</text>
+    <text x="250" y="172" text-anchor="middle" fill="#0E7C5B" font-weight="700">3D globe</text>
+    <text x="378" y="172" text-anchor="middle" fill="#4C5563">2D map</text>
+    <text x="486" y="172" text-anchor="middle" fill="#4C5563">2D map</text>
+    <text x="594" y="172" text-anchor="middle" fill="#4C5563">2D map</text>
+    <text x="710" y="172" text-anchor="middle" fill="#4C5563">2D desktop</text>
+    <line x1="40" y1="190" x2="820" y2="190" stroke="#E7E0D1"/>
+
+    <!-- Ease -->
+    <text x="40" y="224" fill="#181C23" font-family="'Instrument Serif',Georgia,serif" font-size="17" font-style="italic">Ease of use</text>
+    <text x="250" y="224" text-anchor="middle" fill="#0E7C5B" font-weight="700">Very easy</text>
+    <text x="378" y="224" text-anchor="middle" fill="#B2543F">Fiddly</text>
+    <text x="486" y="224" text-anchor="middle" fill="#4C5563">Moderate</text>
+    <text x="594" y="224" text-anchor="middle" fill="#4C5563">Easy</text>
+    <text x="710" y="224" text-anchor="middle" fill="#B2543F">Steep</text>
+    <line x1="40" y1="242" x2="820" y2="242" stroke="#E7E0D1"/>
+
+    <!-- Price -->
+    <text x="40" y="276" fill="#181C23" font-family="'Instrument Serif',Georgia,serif" font-size="17" font-style="italic">Price</text>
+    <text x="250" y="276" text-anchor="middle" fill="#0E7C5B" font-weight="700">€9.99</text>
+    <text x="378" y="276" text-anchor="middle" fill="#4C5563">Free</text>
+    <text x="486" y="276" text-anchor="middle" fill="#4C5563">Free</text>
+    <text x="594" y="276" text-anchor="middle" fill="#4C5563">Freemium</text>
+    <text x="710" y="276" text-anchor="middle" fill="#B2543F">$320</text>
+    <line x1="40" y1="294" x2="820" y2="294" stroke="#E7E0D1"/>
+
+    <!-- Cities -->
+    <text x="40" y="328" fill="#181C23" font-family="'Instrument Serif',Georgia,serif" font-size="17" font-style="italic">City ratings</text>
+    <text x="250" y="328" text-anchor="middle" fill="#0E7C5B" font-weight="700">345+ rated</text>
+    <text x="378" y="328" text-anchor="middle" fill="#B2543F">None</text>
+    <text x="486" y="328" text-anchor="middle" fill="#4C5563">List only</text>
+    <text x="594" y="328" text-anchor="middle" fill="#4C5563">Some</text>
+    <text x="710" y="328" text-anchor="middle" fill="#4C5563">Manual</text>
+    <line x1="40" y1="346" x2="820" y2="346" stroke="#E7E0D1"/>
+
+    <!-- Mobile -->
+    <text x="40" y="380" fill="#181C23" font-family="'Instrument Serif',Georgia,serif" font-size="17" font-style="italic">Mobile</text>
+    <text x="250" y="380" text-anchor="middle" fill="#0E7C5B" font-weight="700">Responsive</text>
+    <text x="378" y="380" text-anchor="middle" fill="#B2543F">Weak</text>
+    <text x="486" y="380" text-anchor="middle" fill="#4C5563">Okay</text>
+    <text x="594" y="380" text-anchor="middle" fill="#4C5563">App</text>
+    <text x="710" y="380" text-anchor="middle" fill="#B2543F">Desktop</text>
+    <line x1="40" y1="398" x2="820" y2="398" stroke="#E7E0D1"/>
+  </g>
+
+  <text x="250" y="428" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B">★ best modern experience for most people</text>
+  <text x="820" y="460" text-anchor="end" font-size="11" fill="#8A93A2">Snapshot June 2026 · features change — verify before relying on any single tool.</text>
+</svg>

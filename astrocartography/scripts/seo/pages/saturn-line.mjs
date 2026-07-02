@@ -70,7 +70,7 @@ export default {
       "label": "The Mars Line — drive and friction"
     },
     {
-      "href": "/how-accurate-is-astrocartography",
+      "href": "/blog/how-accurate-is-astrocartography",
       "label": "How accurate is astrocartography?"
     },
     {

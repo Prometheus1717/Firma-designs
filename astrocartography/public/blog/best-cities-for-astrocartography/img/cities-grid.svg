@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 560" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-cg d-cg">
+  <title id="t-cg">Nine cities the astrocartography community gravitates to</title>
+  <desc id="d-cg">Nine popular cities and the planetary energy people often seek there: Lisbon for Venus warmth and love, Mexico City for Neptune creativity, Bali Canggu for Jupiter growth, Chiang Mai for Saturn focus and low-burn building, Berlin for Uranus reinvention, Medellin for Sun vitality, Barcelona for Venus and Sun ease, Tbilisi for Pluto reinvention on a budget, Cape Town for Jupiter adventure. Whether a city sits on your line depends on your own chart.</desc>
+
+  <rect width="860" height="560" fill="#FBF8F1"/>
+  <text x="40" y="48" font-family="'Instrument Serif',Georgia,serif" font-size="30" fill="#181C23">Where the community keeps landing</text>
+  <text x="40" y="74" font-size="13" fill="#4C5563">Nine cities astrocartography fans talk about — and the energy they go chasing. (Your line, your chart.)</text>
+
+  <!-- 9 cards, 3x3 -->
+  <!-- row1 -->
+  <g>
+    <rect x="40" y="92" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="60" y="124" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Lisbon</text>
+    <text x="60" y="148" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#B2543F">VENUS · WARMTH &amp; LOVE</text>
+    <text x="60" y="176" font-size="12.5" fill="#4C5563">Light, ease, openness — the</text>
+    <text x="60" y="194" font-size="12.5" fill="#4C5563">classic soft-landing city for</text>
+    <text x="60" y="212" font-size="12.5" fill="#4C5563">relationships and rest.</text>
+
+    <rect x="305" y="92" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="325" y="124" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Mexico City</text>
+    <text x="325" y="148" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#5D4FB8">NEPTUNE · CREATIVITY</text>
+    <text x="325" y="176" font-size="12.5" fill="#4C5563">Colour, music, dream-logic —</text>
+    <text x="325" y="194" font-size="12.5" fill="#4C5563">a magnet for blocked artists</text>
+    <text x="325" y="212" font-size="12.5" fill="#4C5563">and makers.</text>
+
+    <rect x="570" y="92" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="590" y="124" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Bali · Canggu</text>
+    <text x="590" y="148" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#A8650F">JUPITER · GROWTH</text>
+    <text x="590" y="176" font-size="12.5" fill="#4C5563">Nomad density, optimism,</text>
+    <text x="590" y="194" font-size="12.5" fill="#4C5563">expansion — where ambition</text>
+    <text x="590" y="212" font-size="12.5" fill="#4C5563">feels contagious.</text>
+  </g>
+  <!-- row2 -->
+  <g>
+    <rect x="40" y="244" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="60" y="276" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Chiang Mai</text>
+    <text x="60" y="300" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#4C5563">SATURN · FOCUS</text>
+    <text x="60" y="328" font-size="12.5" fill="#4C5563">Low burn, few distractions —</text>
+    <text x="60" y="346" font-size="12.5" fill="#4C5563">the head-down city for</text>
+    <text x="60" y="364" font-size="12.5" fill="#4C5563">builders and writers.</text>
+
+    <rect x="305" y="244" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="325" y="276" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Berlin</text>
+    <text x="325" y="300" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#5D4FB8">URANUS · REINVENTION</text>
+    <text x="325" y="328" font-size="12.5" fill="#4C5563">Freedom, edge, permission to</text>
+    <text x="325" y="346" font-size="12.5" fill="#4C5563">break the old pattern and</text>
+    <text x="325" y="364" font-size="12.5" fill="#4C5563">become someone new.</text>
+
+    <rect x="570" y="244" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="590" y="276" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Medellín</text>
+    <text x="590" y="300" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#A8650F">SUN · VITALITY</text>
+    <text x="590" y="328" font-size="12.5" fill="#4C5563">Energy, spring-like climate,</text>
+    <text x="590" y="346" font-size="12.5" fill="#4C5563">visibility — a place to feel</text>
+    <text x="590" y="364" font-size="12.5" fill="#4C5563">switched on again.</text>
+  </g>
+  <!-- row3 -->
+  <g>
+    <rect x="40" y="396" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="60" y="428" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Barcelona</text>
+    <text x="60" y="452" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#B2543F">VENUS + SUN · EASE</text>
+    <text x="60" y="480" font-size="12.5" fill="#4C5563">Beauty, sociability, sun —</text>
+    <text x="60" y="498" font-size="12.5" fill="#4C5563">a balanced base for work</text>
+    <text x="60" y="516" font-size="12.5" fill="#4C5563">and a life around it.</text>
+
+    <rect x="305" y="396" width="250" height="138" rx="14" fill="#FFFFFF" stroke="#E7E0D1"/>
+    <text x="325" y="428" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#181C23">Tbilisi</text>
+    <text x="325" y="452" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#4C5563">PLUTO · REBUILD</text>
+    <text x="325" y="480" font-size="12.5" fill="#4C5563">Cheap, intense, transformative</text>
+    <text x="325" y="498" font-size="12.5" fill="#4C5563">— a place to rebuild from</text>
+    <text x="325" y="516" font-size="12.5" fill="#4C5563">the ground up.</text>
+
+    <rect x="570" y="396" width="250" height="138" rx="14" fill="#0B1118"/>
+    <text x="590" y="428" font-family="'Instrument Serif',Georgia,serif" font-size="21" fill="#EAF2EE">Cape Town</text>
+    <text x="590" y="452" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#19C68B">JUPITER · ADVENTURE</text>
+    <text x="590" y="480" font-size="12.5" fill="#C2CDC8">Big nature, big horizons —</text>
+    <text x="590" y="498" font-size="12.5" fill="#C2CDC8">expansion for people who</text>
+    <text x="590" y="516" font-size="12.5" fill="#C2CDC8">need room to breathe.</text>
+  </g>
+</svg>

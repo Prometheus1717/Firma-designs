@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 720" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-cm d-cm">
+  <title id="t-cm">7 Astrocartography Calculators Compared — Feature Matrix 2026</title>
+  <desc id="d-cm">A comparison table of seven astrocartography calculators rated across six dimensions: AstroSeek, AstroChart.co, Astro.com AstroClick Travel, Astrology King, TimePassages app, Solar Fire, and Natal Navigator. Compared on map type (2D flat vs 3D globe), accuracy, mobile experience, pricing, city detection, and modern UI design.</desc>
+
+  <rect width="820" height="720" fill="#FBF8F1"/>
+
+  <defs>
+    <radialGradient id="aurora-cm" cx="50%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#5D4FB8" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#5D4FB8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="820" height="200" fill="url(#aurora-cm)"/>
+
+  <!-- HEADER -->
+  <text x="410" y="46" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle" fill="#8A93A2" letter-spacing="4">★  THE 2026 LANDSCAPE  ★</text>
+
+  <text x="410" y="98" font-family="'Instrument Serif',Georgia,serif" font-size="38" fill="#181C23" text-anchor="middle">Seven calculators, <tspan font-style="italic" fill="#4C5563">one matrix.</tspan></text>
+  <text x="410" y="130" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="16" fill="#8A93A2" text-anchor="middle">A side-by-side reading of every notable astrocartography tool — and what it gets right.</text>
+
+  <!-- TABLE HEADERS -->
+  <line x1="40" y1="180" x2="780" y2="180" stroke="#DDD5C2" stroke-width="1"/>
+  <g font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">
+    <text x="58" y="202">TOOL</text>
+    <text x="320" y="202" text-anchor="middle">MAP</text>
+    <text x="400" y="202" text-anchor="middle">ACCURACY</text>
+    <text x="500" y="202" text-anchor="middle">PRICE</text>
+    <text x="580" y="202" text-anchor="middle">MOBILE</text>
+    <text x="660" y="202" text-anchor="middle">CITIES</text>
+    <text x="740" y="202" text-anchor="middle">UI 2026</text>
+  </g>
+  <line x1="40" y1="216" x2="780" y2="216" stroke="#181C23" stroke-width="1.2"/>
+
+  <!-- ROW 1: Natal Navigator (highlight in mint) -->
+  <rect x="40" y="220" width="740" height="56" fill="#DCF2E5"/>
+  <text x="58" y="244" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#0E7C5B">Natal Navigator</text>
+  <text x="58" y="266" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0E7C5B" letter-spacing="1">natalnavigator.com</text>
+  <text x="320" y="256" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#0E7C5B" text-anchor="middle">3D globe</text>
+  <text x="400" y="256" font-size="18" fill="#0E7C5B" text-anchor="middle">●●●</text>
+  <text x="500" y="256" font-size="18" fill="#0E7C5B" text-anchor="middle">✓</text>
+  <text x="580" y="256" font-size="18" fill="#0E7C5B" text-anchor="middle">●●●</text>
+  <text x="660" y="256" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#0E7C5B" text-anchor="middle">345+</text>
+  <text x="740" y="256" font-size="18" fill="#0E7C5B" text-anchor="middle">●●●</text>
+  <line x1="40" y1="278" x2="780" y2="278" stroke="#C2E5D2" stroke-width="1"/>
+
+  <!-- ROW 2: AstroSeek -->
+  <rect x="40" y="280" width="740" height="56" fill="#FFFFFF"/>
+  <text x="58" y="304" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">AstroSeek</text>
+  <text x="58" y="326" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">astro-seek.com</text>
+  <text x="320" y="316" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="316" font-size="18" fill="#4C5563" text-anchor="middle">●●○</text>
+  <text x="500" y="316" font-size="18" fill="#0E7C5B" text-anchor="middle">✓</text>
+  <text x="580" y="316" font-size="18" fill="#4C5563" text-anchor="middle">●○○</text>
+  <text x="660" y="316" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">~200</text>
+  <text x="740" y="316" font-size="18" fill="#4C5563" text-anchor="middle">●○○</text>
+  <line x1="40" y1="338" x2="780" y2="338" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- ROW 3: AstroChart.co -->
+  <rect x="40" y="340" width="740" height="56" fill="#FBF8F1"/>
+  <text x="58" y="364" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">AstroChart</text>
+  <text x="58" y="386" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">astrochart.co</text>
+  <text x="320" y="376" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="376" font-size="18" fill="#4C5563" text-anchor="middle">●●●</text>
+  <text x="500" y="376" font-size="18" fill="#0E7C5B" text-anchor="middle">✓</text>
+  <text x="580" y="376" font-size="18" fill="#4C5563" text-anchor="middle">●●○</text>
+  <text x="660" y="376" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">limited</text>
+  <text x="740" y="376" font-size="18" fill="#4C5563" text-anchor="middle">●●○</text>
+  <line x1="40" y1="398" x2="780" y2="398" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- ROW 4: Astro.com AstroClick Travel -->
+  <rect x="40" y="400" width="740" height="56" fill="#FFFFFF"/>
+  <text x="58" y="424" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">AstroClick Travel</text>
+  <text x="58" y="446" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">astro.com</text>
+  <text x="320" y="436" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="436" font-size="18" fill="#4C5563" text-anchor="middle">●●●</text>
+  <text x="500" y="436" font-size="18" fill="#0E7C5B" text-anchor="middle">✓</text>
+  <text x="580" y="436" font-size="18" fill="#B2543F" text-anchor="middle">●○○</text>
+  <text x="660" y="436" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">clickable</text>
+  <text x="740" y="436" font-size="18" fill="#B2543F" text-anchor="middle">●○○</text>
+  <line x1="40" y1="458" x2="780" y2="458" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- ROW 5: Astrology King -->
+  <rect x="40" y="460" width="740" height="56" fill="#FBF8F1"/>
+  <text x="58" y="484" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">Astrology King</text>
+  <text x="58" y="506" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">astrologyking.com</text>
+  <text x="320" y="496" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="496" font-size="18" fill="#4C5563" text-anchor="middle">●●○</text>
+  <text x="500" y="496" font-size="18" fill="#0E7C5B" text-anchor="middle">✓</text>
+  <text x="580" y="496" font-size="18" fill="#4C5563" text-anchor="middle">●○○</text>
+  <text x="660" y="496" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">no</text>
+  <text x="740" y="496" font-size="18" fill="#4C5563" text-anchor="middle">●○○</text>
+  <line x1="40" y1="518" x2="780" y2="518" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- ROW 6: TimePassages -->
+  <rect x="40" y="520" width="740" height="56" fill="#FFFFFF"/>
+  <text x="58" y="544" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">TimePassages</text>
+  <text x="58" y="566" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">iOS / Android · paid</text>
+  <text x="320" y="556" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="556" font-size="18" fill="#4C5563" text-anchor="middle">●●●</text>
+  <text x="500" y="556" font-size="18" fill="#B2543F" text-anchor="middle">$$</text>
+  <text x="580" y="556" font-size="18" fill="#0E7C5B" text-anchor="middle">●●●</text>
+  <text x="660" y="556" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">add-on</text>
+  <text x="740" y="556" font-size="18" fill="#4C5563" text-anchor="middle">●●○</text>
+  <line x1="40" y1="578" x2="780" y2="578" stroke="#E7E0D1" stroke-width="1"/>
+
+  <!-- ROW 7: Solar Fire (paid pro) -->
+  <rect x="40" y="580" width="740" height="56" fill="#FBF8F1"/>
+  <text x="58" y="604" font-family="'Instrument Serif',Georgia,serif" font-size="20" fill="#181C23">Solar Fire</text>
+  <text x="58" y="626" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" letter-spacing="1">desktop · pro · $$$</text>
+  <text x="320" y="616" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">2D flat</text>
+  <text x="400" y="616" font-size="18" fill="#4C5563" text-anchor="middle">●●●</text>
+  <text x="500" y="616" font-size="18" fill="#B2543F" text-anchor="middle">$$$</text>
+  <text x="580" y="616" font-size="18" fill="#B2543F" text-anchor="middle">○○○</text>
+  <text x="660" y="616" font-family="'Instrument Serif',Georgia,serif" font-size="15" fill="#4C5563" text-anchor="middle">database</text>
+  <text x="740" y="616" font-size="18" fill="#4C5563" text-anchor="middle">●○○</text>
+  <line x1="40" y1="638" x2="780" y2="638" stroke="#DDD5C2" stroke-width="1"/>
+
+  <!-- FOOTER NOTE -->
+  <text x="410" y="676" font-family="'Instrument Serif',Georgia,serif" font-style="italic" font-size="15" fill="#4C5563" text-anchor="middle">●●● = excellent · ●●○ = solid · ●○○ = basic · ○○○ = missing</text>
+  <text x="410" y="700" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8A93A2" text-anchor="middle" letter-spacing="2">SCORED ON PRICING, MOBILE-FIRST UX, AND VISUAL DESIGN STANDARDS 2026</text>
+</svg>
