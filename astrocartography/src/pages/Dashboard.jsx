@@ -8,7 +8,8 @@ import NatalWheelZoom from '../components/NatalWheelZoom';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
-import { redirectToCheckout } from '../lib/stripe';
+import { readGuestBirth } from '../lib/guestBirth';
+import { redirectToCheckout, redirectToGuestCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
 import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
 import { getCityReading } from '../lib/cityReadingsI18n.js';
@@ -224,19 +225,30 @@ function getAllLinesForCity(city, lines, threshold = 5) {
 }
 
 // Try to hydrate chart from cache synchronously — avoids flash of loading screen
-function getInitialChart(demo, profile) {
+// Resolve the birth input a Dashboard render should chart:
+//  - demo   → the sample celebrity (Elon Musk et al.)
+//  - teaser → the anonymous visitor's own guest birth data (data-first funnel)
+//  - normal → the signed-in user's saved profile
+function resolveBirthInput(demo, profile, teaser) {
+  if (demo) return { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng };
+  if (teaser) {
+    const g = readGuestBirth();
+    return g ? { date: g.date, time: g.time, lat: g.lat, lng: g.lng } : null;
+  }
+  return (profile?.birth_date && profile?.birth_time && profile?.birth_lat != null)
+    ? { date: profile.birth_date, time: profile.birth_time, lat: profile.birth_lat, lng: profile.birth_lng }
+    : null;
+}
+
+function getInitialChart(demo, profile, teaser) {
   try {
-    const birthInput = demo
-      ? { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }
-      : (profile?.birth_date && profile?.birth_time && profile?.birth_lat != null)
-        ? { date: profile.birth_date, time: profile.birth_time, lat: profile.birth_lat, lng: profile.birth_lng }
-        : null;
+    const birthInput = resolveBirthInput(demo, profile, teaser);
     if (!birthInput) return null;
     return getCachedChart(birthInput);
   } catch { return null; }
 }
 
-export default function Dashboard({ demo = false }) {
+export default function Dashboard({ demo = false, teaser = false }) {
   const { user, profile, hasBirthData, isPremium, requiresPayment, signOut, deleteAccount, updateDisplayName, loadProfile, openBirthDataModal } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -281,9 +293,11 @@ export default function Dashboard({ demo = false }) {
     sh: '0 16px 48px rgba(0,0,0,.5)', shH: '0 8px 32px rgba(0,0,0,.6)',
     ov: 'rgba(5,10,16,.92)',
   }, [lightMode]);
-  const showPaywall = !demo && requiresPayment;
+  // Teaser (anonymous, data-first funnel) renders the visitor's own chart with
+  // an unlock bar — it never shows the logged-in paywall screen.
+  const showPaywall = !demo && !teaser && requiresPayment;
   // Hydrate chart from localStorage cache on first render — zero loading screen for returning users
-  const [chartData, setChartData] = useState(() => showPaywall ? null : getInitialChart(demo, profile));
+  const [chartData, setChartData] = useState(() => showPaywall ? null : getInitialChart(demo, profile, teaser));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('thrive');
@@ -331,6 +345,33 @@ export default function Dashboard({ demo = false }) {
   const [upgradeError, setUpgradeError] = useState('');
   const [displayPrice, setDisplayPrice] = useState('3.99');
   const [displayCurrency, setDisplayCurrency] = useState('EUR');
+  // Anonymous teaser → guest checkout modal (email capture).
+  const [showGuestUnlock, setShowGuestUnlock] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestUnlockErr, setGuestUnlockErr] = useState('');
+  const [guestUnlockBusy, setGuestUnlockBusy] = useState(false);
+  // Set once a returning-from-Stripe guest session is server-verified as paid —
+  // reveals the full result locally (their chart is already computed client-side)
+  // while the emailed login link lets them access it on any device.
+  const [teaserUnlocked, setTeaserUnlocked] = useState(false);
+  const priceStr = `${displayCurrency === 'EUR' ? '€' : displayCurrency === 'GBP' ? '£' : displayCurrency === 'CHF' ? 'CHF ' : '$'}${displayPrice}`;
+
+  async function handleGuestUnlock(e) {
+    e?.preventDefault?.();
+    const email = guestEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setGuestUnlockErr('Please enter a valid email address.'); return; }
+    const birth = readGuestBirth();
+    if (!birth) { setGuestUnlockErr('Your birth details expired — please re-enter them.'); navigate('/create'); return; }
+    setGuestUnlockBusy(true);
+    setGuestUnlockErr('');
+    try {
+      trackEvent('guest_checkout_started');
+      await redirectToGuestCheckout(email, birth); // redirects to Stripe on success
+    } catch (err) {
+      setGuestUnlockErr(err?.message || 'Could not start checkout. Please try again.');
+      setGuestUnlockBusy(false);
+    }
+  }
   const [priceLabel, setPriceLabel] = useState('ONE-TIME · LIFETIME ACCESS');
   const [announcement, setAnnouncement] = useState(null);
   const [lang, setLangState] = useState(() => getLang());
@@ -364,7 +405,22 @@ export default function Dashboard({ demo = false }) {
       // requiresPayment stayed true, and the paid user was stuck on the paywall
       // until a manual hard reload. We retry for ~20 s so entitlement lands
       // without any reload, then clean the URL.
-      if (!user) { setSearchParams({}, { replace: true }); return; }
+      if (!user) {
+        // Guest (data-first) checkout return: verify the session server-side, then
+        // reveal the full result locally. The account + premium are provisioned by
+        // the webhook; a one-tap login link is emailed for other devices.
+        if (teaser) {
+          const sid = searchParams.get('session_id');
+          if (sid) {
+            fetch(`/api/verify-session?session_id=${encodeURIComponent(sid)}`)
+              .then(r => r.json())
+              .then(d => { if (d?.paid) setTeaserUnlocked(true); })
+              .catch(() => {});
+          }
+        }
+        setSearchParams({}, { replace: true });
+        return;
+      }
       let cancelled = false;
       let timer = null;
       let attempts = 0;
@@ -452,6 +508,7 @@ export default function Dashboard({ demo = false }) {
   // suppresses. We read URL params at mount time (not via the React Router
   // hook) to avoid resetting the timer on unrelated query-string changes.
   useEffect(() => {
+    if (teaser) return; // teaser funnel: keep focus on the unlock, no tour
     const params = new URLSearchParams(window.location.search);
     const force = params.get('tutorial');
     if (force === '0') return;
@@ -459,7 +516,7 @@ export default function Dashboard({ demo = false }) {
     const delay = force === '1' ? 300 : 4000;
     const t = setTimeout(() => setShowTutorial(true), delay);
     return () => clearTimeout(t);
-  }, []);
+  }, [teaser]);
 
   // Demo sign-up gate timing:
   //  • First-time visitors (regardless of Yes/No on the tour): fires
@@ -558,10 +615,16 @@ export default function Dashboard({ demo = false }) {
   // Redirect if no birth data (skip in demo mode)
   useEffect(() => {
     if (demo) return;
+    // Teaser: an anonymous visitor with no guest birth data has nothing to show —
+    // send them to the entry form. Otherwise render their teaser.
+    if (teaser) {
+      if (!readGuestBirth()) navigate('/create', { replace: true });
+      return;
+    }
     if (!hasBirthData && profile !== null) {
       navigate('/birth-data', { replace: true });
     }
-  }, [demo, hasBirthData, profile, navigate]);
+  }, [demo, teaser, hasBirthData, profile, navigate]);
 
   // Calculate chart — reads from localStorage cache first (pre-calculated by BirthDataPage),
   // falls back to direct main-thread calculation (~200ms, faster than Worker spawn on mobile).
@@ -571,11 +634,7 @@ export default function Dashboard({ demo = false }) {
       setLoading(false);
       return;
     }
-    const birthInput = demo
-      ? { date: DEMO.date, time: DEMO.time, lat: DEMO.lat, lng: DEMO.lng }
-      : (hasBirthData && profile?.birth_date)
-        ? { date: profile.birth_date, time: profile.birth_time, lat: profile.birth_lat, lng: profile.birth_lng }
-        : null;
+    const birthInput = resolveBirthInput(demo, (hasBirthData && profile?.birth_date) ? profile : null, teaser);
     if (!birthInput) return;
 
     // 1. Check localStorage cache — instant for returning users and users coming from BirthDataPage
@@ -598,7 +657,7 @@ export default function Dashboard({ demo = false }) {
       } catch (err) { setError(err.message); }
       finally { setLoading(false); }
     });
-  }, [demo, hasBirthData, profile, showPaywall]);
+  }, [demo, teaser, hasBirthData, profile, showPaywall]);
 
   // Natal readings are now imported directly via getNatalReadings(lang)
   // No lazy-load needed — the module is imported at top level
@@ -2245,9 +2304,90 @@ export default function Dashboard({ demo = false }) {
         </div>
       </div>
 
+      {/* Post-payment success banner (guest funnel). */}
+      {teaser && teaserUnlocked && (
+        <div style={{ position: 'fixed', top: 'max(10px, env(safe-area-inset-top))', left: '50%', transform: 'translateX(-50%)', zIndex: 10001, maxWidth: 'calc(100% - 24px)', background: T.ac, color: L ? '#FFFFFF' : '#06241A', ...F, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, padding: '10px 16px', borderRadius: 8, boxShadow: T.sh, textAlign: 'center', lineHeight: 1.5 }}>
+          ✓ Premium unlocked — check your email for a one-tap login link to open your map on any device.
+        </div>
+      )}
+
+      {/* Guest unlock modal — email capture → guest Stripe checkout. */}
+      {teaser && showGuestUnlock && (
+        <div
+          onClick={() => !guestUnlockBusy && setShowGuestUnlock(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 10000, background: 'rgba(5,10,16,.7)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="nn-keyboard-modal-card"
+            style={{ width: '100%', maxWidth: 380, background: T.p, border: `1px solid ${T.bd}`, borderRadius: 12, padding: 28, boxShadow: T.sh, position: 'relative' }}
+          >
+            <span onClick={() => !guestUnlockBusy && setShowGuestUnlock(false)} style={{ position: 'absolute', top: 12, right: 16, cursor: 'pointer', ...F, fontSize: 18, color: T.td, lineHeight: 1 }}>{'✕'}</span>
+            <div style={{ ...F, fontSize: 14, fontWeight: 700, color: T.tx, marginBottom: 6, textAlign: 'center' }}>Unlock your full map</div>
+            <div style={{ ...F, fontSize: 10, color: T.tm, marginBottom: 18, lineHeight: 1.6, textAlign: 'center' }}>
+              Full city guide, personal readings & downloadable map. One-time {priceStr} — lifetime access. We'll email you a one-tap login link.
+            </div>
+            <form onSubmit={handleGuestUnlock}>
+              <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>YOUR EMAIL</label>
+              <input
+                className="nn-form-input"
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                value={guestEmail}
+                onChange={e => setGuestEmail(e.target.value)}
+                placeholder="you@example.com"
+                style={{ width: '100%', padding: '11px 12px', background: T.bg, border: `1px solid ${T.bd}`, borderRadius: 6, color: T.tx, ...F, fontSize: 16, outline: 'none', boxSizing: 'border-box', marginBottom: 14 }}
+              />
+              {guestUnlockErr && (
+                <div style={{ ...F, fontSize: 10, color: '#F04060', marginBottom: 12, lineHeight: 1.5 }}>{guestUnlockErr}</div>
+              )}
+              <button
+                type="submit"
+                disabled={guestUnlockBusy}
+                style={{ width: '100%', padding: '13px 0', background: guestUnlockBusy ? T.bd : T.ac, border: 'none', borderRadius: 6, color: L ? '#FFFFFF' : '#0A1018', ...F, fontSize: 12, fontWeight: 700, letterSpacing: 1, cursor: guestUnlockBusy ? 'wait' : 'pointer' }}
+              >
+                {guestUnlockBusy ? 'REDIRECTING…' : `PAY ${priceStr} — SECURE CHECKOUT`}
+              </button>
+            </form>
+            <div style={{ ...F, fontSize: 8, color: T.td, marginTop: 12, textAlign: 'center', lineHeight: 1.5 }}>
+              Secure payment via Stripe · No account needed to pay
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* BOTTOM PANEL — Bloomberg-style. Kept compact so the globe/map stays the
           hero of the screen; the city table scrolls internally for more rows. */}
-      <div style={{ minHeight: mob ? 138 : (IS_CHROME ? 150 : 168), maxHeight: mob ? 138 : (IS_CHROME ? 150 : 168), background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+      <div style={{ position: 'relative', minHeight: mob ? 138 : (IS_CHROME ? 150 : 168), maxHeight: mob ? 138 : (IS_CHROME ? 150 : 168), background: T.p, borderTop: `1px solid ${T.bd}`, display: 'flex', flexShrink: 0, zIndex: 200, overflow: 'hidden', minWidth: 0 }}>
+        {/* Teaser gate: the personalised city ratings are the paid product, so in
+            the anonymous data-first preview we blur them behind an unlock CTA.
+            The globe above stays fully interactive — that's the free aha-moment.
+            Once a returning-from-Stripe session is verified paid, the gate lifts. */}
+        {teaser && !teaserUnlocked && (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 20,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            gap: 8, textAlign: 'center', padding: '10px 16px',
+            background: L ? 'rgba(242,240,237,.72)' : 'rgba(10,16,24,.72)',
+            backdropFilter: 'blur(7px)', WebkitBackdropFilter: 'blur(7px)',
+          }}>
+            <div style={{ ...F, fontSize: 11, fontWeight: 700, color: T.tx, letterSpacing: 1 }}>
+              🔒 {onLines.length} {t('cities', lang)} on your lines — {thriveC.length} thrive zones
+            </div>
+            <div style={{ ...F, fontSize: 9, color: T.tm, maxWidth: 360, lineHeight: 1.5 }}>
+              Your full city guide, readings & downloadable map are one step away.
+            </div>
+            <button
+              onClick={() => { trackEvent('teaser_unlock_clicked'); setShowGuestUnlock(true); }}
+              style={{ marginTop: 2, padding: '10px 22px', background: T.ac, border: 'none', borderRadius: 6, color: L ? '#FFFFFF' : '#0A1018', ...F, fontSize: 11, fontWeight: 700, letterSpacing: 1, cursor: 'pointer' }}
+            >
+              UNLOCK MY FULL MAP — {priceStr} →
+            </button>
+          </div>
+        )}
         {/* Left: City table */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs */}
