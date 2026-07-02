@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { saveGuestBirth, readGuestBirth } from '../lib/guestBirth';
@@ -23,6 +24,16 @@ export default function CreatePage() {
   const T = getTheme(light);
   const btnTx = light ? '#FFFFFF' : '#0A1018';
   const { containerRef, scrollFocusedField } = useMobileFormViewport();
+  const { user, hasBirthData, loading: authLoading } = useAuth();
+
+  // Every landing CTA points here, including for returning customers. A
+  // signed-in visitor doesn't belong on the order form — send them into the
+  // app (dashboard if they have a chart, otherwise the authed setup page,
+  // where the paywall handles non-premium accounts).
+  useEffect(() => {
+    if (authLoading || !user) return;
+    navigate(hasBirthData ? '/dashboard' : '/birth-data', { replace: true });
+  }, [authLoading, user, hasBirthData, navigate]);
 
   // Prefill from a previous visit (cancelled checkout, expired session) so
   // nobody types their birth details twice. Read once per mount.
@@ -322,6 +333,11 @@ export default function CreatePage() {
 
         <div style={{ ...F, fontSize: 8, color: T.td, marginTop: 12, textAlign: 'center', lineHeight: 1.6 }}>
           Secure payment via Stripe &middot; Apple Pay / Google Pay &middot; Your map + login link right after payment
+        </div>
+
+        <div style={{ ...F, fontSize: 10, color: T.tm, marginTop: 16, textAlign: 'center' }}>
+          Already have your map?{' '}
+          <span onClick={() => navigate('/auth?mode=login')} style={{ color: T.ac, cursor: 'pointer' }}>Sign in</span>
         </div>
       </div>
 

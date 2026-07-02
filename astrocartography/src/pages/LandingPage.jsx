@@ -263,6 +263,9 @@ export default function LandingPage() {
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </div>
           <div className="lp-nav-right">
+            {/* Returning customers need a visible way back in — every other
+                CTA on this page funnels into the purchase flow. */}
+            <a className="lp-nav-signin" href="/auth?mode=login">{C.nav.signIn}</a>
             <button className="lp-btn lp-btn-ink lp-btn-sm" onClick={goAuth}>{C.nav.cta} <span className="lp-btn-ic">{I.arrow}</span></button>
           </div>
         </nav>
@@ -566,6 +569,7 @@ export default function LandingPage() {
             <a href="/demo" onClick={goDemo('nav')}>{C.nav.demo}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
             <a href="/create">{C.footer.createAccount}</a>
+            <a href="/auth?mode=login">{C.nav.signIn}</a>
           </nav>
           <nav aria-label="Learn">
             <h4>{C.footer.hLearn}</h4>
@@ -665,6 +669,8 @@ const CSS = `
 .lp-nav-links a{ transition:color .2s; white-space:nowrap; }
 .lp-nav-links a:hover{ color:var(--ink); }
 .lp-nav-right{ display:flex; align-items:center; gap:14px; }
+.lp-nav-signin{ font-size:14.5px; font-weight:500; color:var(--ink2); white-space:nowrap; transition:color .2s; }
+.lp-nav-signin:hover{ color:var(--ink); }
 [dir="rtl"] .lp-h1-it em{ font-style:normal; }
 
 /* ── buttons ── */
