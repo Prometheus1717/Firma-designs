@@ -175,7 +175,7 @@ export default async function handler(req, res) {
         console.log(`[stripe-webhook] Guest premium provisioned for ${provisionedId}`);
         // Guests get exactly ONE email — the magic-link mail (sent inside
         // provisionGuestAccount) doubles as the payment confirmation.
-        sendTelegramMessage(buildPaymentMessage({
+        await sendTelegramMessage(buildPaymentMessage({
           userId: provisionedId, email: customerEmail, amount: amountTotal,
           currency, stripeCustomerId, sessionId: session.id,
         })).catch(err => console.error('[stripe-webhook] Telegram notification failed:', err));
@@ -184,7 +184,7 @@ export default async function handler(req, res) {
         // Payment succeeded but provisioning failed — alert the owner and return
         // 5xx so Stripe retries. The buyer already sees their result locally.
         console.error('[stripe-webhook] Guest provisioning failed:', err);
-        sendTelegramMessage(`⚠️ Guest checkout paid but provisioning FAILED for ${customerEmail || meta.email || 'unknown'} (session ${session.id}): ${err?.message || err}`)
+        await sendTelegramMessage(`⚠️ Guest checkout paid but provisioning FAILED for ${customerEmail || meta.email || 'unknown'} (session ${session.id}): ${err?.message || err}`)
           .catch(() => {});
         return res.status(500).json({ error: 'Guest provisioning failed' });
       }
@@ -217,10 +217,10 @@ export default async function handler(req, res) {
       console.log(`[stripe-webhook] Premium activated for user ${userId}`);
 
       // Send confirmation email (fire-and-forget)
-      if (customerEmail) sendPaymentConfirmationEmail(customerEmail, amountTotal, currency);
+      if (customerEmail) await sendPaymentConfirmationEmail(customerEmail, amountTotal, currency);
 
       // Notify the owner after entitlement was successfully activated.
-      sendTelegramMessage(buildPaymentMessage({
+      await sendTelegramMessage(buildPaymentMessage({
         userId,
         email: customerEmail,
         amount: amountTotal,

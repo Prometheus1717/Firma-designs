@@ -54,7 +54,7 @@ export default async function handler(req, res) {
         provisioned = true;
         if (!alreadyProvisioned) {
           console.log(`[verify-session] Guest premium provisioned for ${userId} (claim winner)`);
-          sendTelegramMessage(buildPaymentMessage({
+          await sendTelegramMessage(buildPaymentMessage({
             userId, email, amount: session.amount_total,
             currency: session.currency, stripeCustomerId: session.customer, sessionId: session.id,
           })).catch(err => console.error('[verify-session] Telegram notification failed:', err));
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
         }
       } catch (err) {
         console.error('[verify-session] Fallback provisioning failed:', err);
-        sendTelegramMessage(`⚠️ verify-session: guest paid but fallback provisioning failed for ${email || 'unknown'} (session ${sessionId}): ${err?.message || err}`)
+        await sendTelegramMessage(`⚠️ verify-session: guest paid but fallback provisioning failed for ${email || 'unknown'} (session ${sessionId}): ${err?.message || err}`)
           .catch(() => {});
       }
     }
