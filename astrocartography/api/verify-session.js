@@ -44,19 +44,35 @@ export default async function handler(req, res) {
     // hiccup break the buyer's unlock — their entitlement is Stripe's payment
     // record; the webhook retries independently.
     let provisioned = false;
+    let tokenHash = null;
     if (paid && session.metadata?.guest === '1') {
       try {
         const supabase = getSupabaseAdmin();
-        const { userId, alreadyProvisioned } = await provisionGuestAccount(
-          supabase, session.metadata, email, session.customer
+        const { userId, email: accountEmail, alreadyProvisioned } = await provisionGuestAccount(
+          supabase, session.metadata, email, session.customer, session.id
         );
         provisioned = true;
         if (!alreadyProvisioned) {
-          console.log(`[verify-session] Guest premium provisioned for ${userId} (webhook pending/down)`);
+          console.log(`[verify-session] Guest premium provisioned for ${userId} (claim winner)`);
           sendTelegramMessage(buildPaymentMessage({
             userId, email, amount: session.amount_total,
             currency: session.currency, stripeCustomerId: session.customer, sessionId: session.id,
           })).catch(err => console.error('[verify-session] Telegram notification failed:', err));
+        }
+        // Auto-login for the purchase device: mint a one-time token the client
+        // exchanges via verifyOtp — the buyer lands signed-in on /dashboard
+        // with their name and saved chart, no email round-trip. The Stripe
+        // session id (unguessable, known only to the buyer's browser) is the
+        // bearer secret guarding this endpoint.
+        try {
+          const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+            type: 'magiclink',
+            email: accountEmail,
+          });
+          if (!linkErr) tokenHash = linkData?.properties?.hashed_token || null;
+          else console.error('[verify-session] generateLink failed:', linkErr.message);
+        } catch (err) {
+          console.error('[verify-session] auto-login token error:', err);
         }
       } catch (err) {
         console.error('[verify-session] Fallback provisioning failed:', err);
@@ -65,7 +81,7 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ paid, provisioned, email });
+    return res.status(200).json({ paid, provisioned, email, token_hash: tokenHash });
   } catch (err) {
     console.error('[verify-session] Error:', err);
     return res.status(500).json({ error: 'Verification failed' });

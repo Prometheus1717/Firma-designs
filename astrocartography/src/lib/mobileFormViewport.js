@@ -58,13 +58,24 @@ export function useMobileFormViewport() {
     const field = event.currentTarget;
     const scroll = () => {
       const container = containerRef.current;
-      if (!container || !field) return;
+      if (!container || !field || !field.isConnected) return;
 
       const containerRect = container.getBoundingClientRect();
       const fieldRect = field.getBoundingClientRect();
-      const targetTop = container.scrollTop + fieldRect.top - containerRect.top - containerRect.height * 0.28;
 
+      // Only scroll when the field is actually hidden (behind the keyboard or
+      // outside the container). Unconditional scrolling made every focus jump
+      // the whole form to a fixed position — visually "everything leaps up" on
+      // each field tap even when the field was already perfectly visible.
+      const vv = window.visualViewport;
+      const visibleBottom = vv ? vv.height + vv.offsetTop : window.innerHeight;
+      const topBound = Math.max(containerRect.top, 0) + 8;
+      const bottomBound = Math.min(containerRect.bottom, visibleBottom) - 8;
+      if (fieldRect.top >= topBound && fieldRect.bottom <= bottomBound) return;
+
+      const targetTop = container.scrollTop + fieldRect.top - containerRect.top - containerRect.height * 0.28;
       const top = Math.max(0, targetTop);
+      if (Math.abs(top - container.scrollTop) < 4) return;
       if (typeof container.scrollTo === 'function') {
         container.scrollTo({ top, behavior: 'smooth' });
       } else {
@@ -73,7 +84,8 @@ export function useMobileFormViewport() {
     };
 
     // iOS Safari updates visualViewport in stages when the keyboard/password
-    // accessory appears. Re-run after each stage so the final position is clean.
+    // accessory appears. Re-run after each stage so the final position is clean
+    // (each pass is a no-op once the field is visible).
     window.setTimeout(scroll, 80);
     window.setTimeout(scroll, 320);
     window.setTimeout(scroll, 650);

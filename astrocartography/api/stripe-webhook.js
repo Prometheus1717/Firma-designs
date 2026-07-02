@@ -165,7 +165,7 @@ export default async function handler(req, res) {
     if (meta.guest === '1') {
       try {
         const supabase = getSupabaseAdmin();
-        const { userId: provisionedId, alreadyProvisioned } = await provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId);
+        const { userId: provisionedId, alreadyProvisioned } = await provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId, session.id);
         if (alreadyProvisioned) {
           // verify-session (the buyer's own return) won the race — account,
           // emails and Telegram ping are already handled. Just acknowledge.

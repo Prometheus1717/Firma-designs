@@ -24,25 +24,18 @@ export function getSupabaseAdmin() {
 
 const APP_ORIGIN = 'https://natalnavigator.com';
 
-// ─── Guest one-tap login link ───
-// The buyer's browser has no session after a guest payment, so we email a
-// magic link to claim/access the saved map on any device. Best-effort: a
-// failure here never fails provisioning (the local post-payment page already
-// shows their result, and "Sign in" → email link works any time later).
-async function sendGuestLoginLink(supabase, email) {
+// ─── Guest welcome email ───
+// The buyer is auto-signed-in on the purchase device (verify-session returns a
+// one-time login token), so this email is the access path for OTHER devices.
+// Its button carries NO one-time token — it opens the passwordless sign-in
+// page with the email prefilled, which mints a fresh link every time and can
+// therefore never be "expired". Best-effort: a failure here never fails
+// provisioning.
+async function sendGuestWelcomeEmail(email) {
   try {
-    const { data, error } = await supabase.auth.admin.generateLink({
-      type: 'magiclink',
-      email,
-      options: { redirectTo: `${APP_ORIGIN}/dashboard` },
-    });
-    const link = data?.properties?.action_link;
-    if (error || !link) {
-      console.error('[guest-provision] generateLink failed:', error?.message || 'no action_link');
-      return;
-    }
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) return;
+    const signinUrl = `${APP_ORIGIN}/auth?mode=login&email=${encodeURIComponent(email)}`;
     const resend = new Resend(apiKey);
     await resend.emails.send({
       from: 'NatalNavigator <info@natalnavigator.com>',
@@ -53,30 +46,33 @@ async function sendGuestLoginLink(supabase, email) {
     <div style="font-family:'Courier New',monospace;font-size:20px;font-weight:700;color:#00D88A;letter-spacing:5px;">NATAL&nbsp;NAVIGATOR</div>
     <div style="font-size:26px;padding:22px 0 6px;">✨</div>
     <div style="font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#00D88A;padding-bottom:14px;">Premium Activated!</div>
-    <p style="font-size:14px;line-height:1.7;color:#8A9BB0;margin:0 0 24px;">Your payment is confirmed and your personal astrocartography map is saved. Tap below to open it on any device — no password needed.</p>
-    <a href="${link}" style="display:inline-block;background:#00D88A;color:#0A1018;font-family:'Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:1px;text-decoration:none;padding:14px 34px;border-radius:8px;">OPEN MY MAP</a>
-    <p style="font-size:11px;color:#5A7088;margin:26px 0 0;">One-time purchase · lifetime access. If the button expires, use "Sign in" on natalnavigator.com with this email — a fresh login link is sent every time.</p>
+    <p style="font-size:14px;line-height:1.7;color:#8A9BB0;margin:0 0 24px;">Your payment is confirmed and your personal astrocartography map is saved to your account. Open it on any device — no password needed: tap below and a one-tap sign-in link lands in this inbox.</p>
+    <a href="${signinUrl}" style="display:inline-block;background:#00D88A;color:#0A1018;font-family:'Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:1px;text-decoration:none;padding:14px 34px;border-radius:8px;">OPEN MY MAP</a>
+    <p style="font-size:11px;color:#5A7088;margin:26px 0 0;">One-time purchase · lifetime access. This button never expires — it signs you in with ${email}.</p>
   </div>
 </div>`,
-    }).catch(err => console.error('[guest-provision] Login-link email failed:', err));
+    }).catch(err => console.error('[guest-provision] Welcome email failed:', err));
   } catch (err) {
-    console.error('[guest-provision] sendGuestLoginLink error:', err);
+    console.error('[guest-provision] sendGuestWelcomeEmail error:', err);
   }
 }
 
 // ─── Guest provisioning ───
-// Find-or-create the account for the paying email, mark it premium, persist the
-// birth data captured at checkout, and email the login link. Idempotent: when
-// the profile is already premium with this Stripe customer (the other delivery
-// path won the race), it returns without re-writing or re-emailing.
-// Returns { userId, alreadyProvisioned }.
-export async function provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId) {
+// Find-or-create the account for the paying email, mark it premium, persist
+// the birth data captured at checkout, and send the welcome email. Runs from
+// BOTH the webhook and verify-session, often within the same second, so:
+//  - account + profile writes are idempotent and always executed (whichever
+//    caller runs, the buyer ends up provisioned), and
+//  - one-time side effects (email, Telegram) belong to the caller that wins
+//    the atomic per-session claim in guest_provision_claims.
+// Returns { userId, email, alreadyProvisioned } — alreadyProvisioned=true
+// means another caller owns the side effects.
+export async function provisionGuestAccount(supabase, meta, customerEmail, stripeCustomerId, sessionId) {
   const email = String(meta.email || customerEmail || '').trim().toLowerCase();
   if (!email) throw new Error('guest checkout: no email');
 
   // Create the account (auto-confirmed — Stripe already verified a real email).
   let userId = null;
-  let existingProfile = null;
   const { data: created, error: createErr } = await supabase.auth.admin.createUser({
     email,
     email_confirm: true,
@@ -88,25 +84,10 @@ export async function provisionGuestAccount(supabase, meta, customerEmail, strip
     // delivery path was faster) — the profile row (id = auth user id) exists
     // for every user via the handle_new_user trigger.
     const { data: existing } = await supabase
-      .from('profiles')
-      .select('id, is_premium, stripe_customer_id, birth_date')
-      .eq('email', email)
-      .maybeSingle();
-    if (existing?.id) {
-      userId = existing.id;
-      existingProfile = existing;
-    }
+      .from('profiles').select('id').eq('email', email).maybeSingle();
+    if (existing?.id) userId = existing.id;
   }
   if (!userId) throw new Error(`guest checkout: could not resolve account for ${email}`);
-
-  // Already fully provisioned for this purchase → nothing to do, no duplicate
-  // emails. (Same customer id, premium set — the other path completed.)
-  if (
-    existingProfile?.is_premium === true &&
-    stripeCustomerId && existingProfile?.stripe_customer_id === stripeCustomerId
-  ) {
-    return { userId, alreadyProvisioned: true };
-  }
 
   const update = {
     id: userId,
@@ -128,6 +109,23 @@ export async function provisionGuestAccount(supabase, meta, customerEmail, strip
   const { error: upErr } = await supabase.from('profiles').upsert(update, { onConflict: 'id' });
   if (upErr) throw upErr;
 
-  await sendGuestLoginLink(supabase, email);
-  return { userId, alreadyProvisioned: false };
+  // Atomic claim: exactly one caller per checkout session sends the email.
+  // ignoreDuplicates makes the losing insert return zero rows instead of an
+  // error. If the claim itself fails (e.g. table unreachable) we still send —
+  // a duplicate email beats a customer who never gets access instructions.
+  let claimed = true;
+  if (sessionId) {
+    try {
+      const { data: claim, error: claimErr } = await supabase
+        .from('guest_provision_claims')
+        .upsert({ session_id: sessionId, user_id: userId }, { onConflict: 'session_id', ignoreDuplicates: true })
+        .select('session_id');
+      if (!claimErr) claimed = Array.isArray(claim) && claim.length > 0;
+    } catch (err) {
+      console.error('[guest-provision] claim check failed, sending anyway:', err);
+    }
+  }
+
+  if (claimed) await sendGuestWelcomeEmail(email);
+  return { userId, email, alreadyProvisioned: !claimed };
 }

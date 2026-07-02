@@ -25,7 +25,13 @@ export default function AuthPage() {
     } catch { /* storage/URL unavailable — fall through */ }
     return 'signup';
   });
-  const [email, setEmail] = useState('');
+  // The welcome email's "Open my map" button links here with ?email= so the
+  // buyer only has to tap the login-link button — no typing on any device.
+  const [email, setEmail] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('email') || '';
+    } catch { return ''; }
+  });
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');

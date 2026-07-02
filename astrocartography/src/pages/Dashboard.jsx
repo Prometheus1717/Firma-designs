@@ -8,7 +8,7 @@ import NatalWheelZoom from '../components/NatalWheelZoom';
 import { calculateChart } from '../lib/calculateChart';
 import { ALL_CITIES, CITIES_T1, CITIES_T2, CITIES_T3, CITY_COUNTRY, CITY_CONTINENT } from '../data/cities';
 import { getCachedChart, setCachedChart } from '../lib/chartCache';
-import { readGuestBirth } from '../lib/guestBirth';
+import { readGuestBirth, clearGuestBirth } from '../lib/guestBirth';
 import { redirectToCheckout } from '../lib/stripe';
 import { trackEvent } from '../lib/posthog';
 import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
@@ -398,6 +398,23 @@ export default function Dashboard({ demo = false, teaser = false }) {
           const d = await r.json();
           if (cancelled) return;
           if (d?.paid) {
+            // Auto-login on the purchase device: exchange the one-time token
+            // for a real session and land on /dashboard as a signed-in user
+            // (name, saved chart — no email round-trip needed). Hard
+            // navigation so useAuth boots cleanly with the fresh session.
+            if (d.token_hash) {
+              try {
+                const { supabase } = await import('../lib/supabase');
+                const { error: otpErr } = await supabase.auth.verifyOtp({ type: 'email', token_hash: d.token_hash });
+                if (!otpErr) {
+                  clearGuestBirth();
+                  window.location.replace('/dashboard?payment=success');
+                  return;
+                }
+                console.error('[result] verifyOtp failed:', otpErr.message);
+              } catch { /* fall back to the local unlock below */ }
+            }
+            if (cancelled) return;
             setTeaserUnlocked(true);
             setTeaserVerifyState('paid');
             setSearchParams({}, { replace: true });
@@ -2357,7 +2374,7 @@ export default function Dashboard({ demo = false, teaser = false }) {
       {/* Post-payment success banner (guest funnel). */}
       {teaser && teaserUnlocked && (
         <div style={{ position: 'fixed', top: 'max(10px, env(safe-area-inset-top))', left: '50%', transform: 'translateX(-50%)', zIndex: 10001, maxWidth: 'calc(100% - 24px)', background: T.ac, color: L ? '#FFFFFF' : '#06241A', ...F, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, padding: '10px 16px', borderRadius: 8, boxShadow: T.sh, textAlign: 'center', lineHeight: 1.5 }}>
-          ✓ Premium unlocked — check your email for a one-tap login link to open your map on any device.
+          ✓ Payment confirmed — your map is saved to your account.
         </div>
       )}
 
