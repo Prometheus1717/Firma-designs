@@ -78,6 +78,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/signs-living-in-wrong-place",
+      "label": "Signs you are living in the wrong place"
+    },
+    {
       "href": "/where-should-i-live-astrology",
       "label": "Where should I live? An astrology guide"
     },

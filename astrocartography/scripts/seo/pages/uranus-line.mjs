@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/uranus-line",
   "lang": "en",
-  "title": "Uranus Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Uranus Line Astrocartography: Change, Freedom & Reinvention | Natal Navigator",
   "ogTitle": "The Uranus Line in Astrocartography",
   "description": "What a Uranus line means in astrocartography — freedom, change, reinvention and awakening themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "uranus line, uranus line astrocartography, uranus line meaning, uranus mc line, uranus asc line, uranus dc line, reinvention astrology relocation, freedom astrology line",

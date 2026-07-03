@@ -4,7 +4,7 @@ export default {
   "alt": {
     "en": "astrocartography/sun-line"
   },
-  "title": "Sonnenlinie Astrokartographie: Bedeutung & beste Orte | Natal Navigator",
+  "title": "Sonnenlinie Astrokartographie: Selbstvertrauen & Sichtbarkeit | Natal Navigator",
   "ogTitle": "Die Sonnenlinie in der Astrokartographie",
   "description": "Was eine Sonnenlinie in der Astrokartographie bedeutet — Identität, Vitalität, Selbstvertrauen und Sichtbarkeit, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
   "keywords": "sonnenlinie, sonnenlinie astrokartographie, sonnenlinie bedeutung, astrokartographie sonne, sonne mc linie, sonne ac linie, sonne dc linie, wo strahle ich astrologie",

@@ -4,7 +4,7 @@ export default {
   "alt": {
     "en": "astrocartography/venus-line"
   },
-  "title": "Venuslinie Astrokartographie: Bedeutung & beste Orte | Natal Navigator",
+  "title": "Venuslinie Astrokartographie: Liebe, Schönheit & Leichtigkeit | Natal Navigator",
   "ogTitle": "Die Venuslinie in der Astrokartographie",
   "description": "Was eine Venuslinie in der Astrokartographie bedeutet — Liebe, Schönheit, Genuss, Geld und Leichtigkeit, die Varianten MC/IC/ASZ/DSZ, für wen sie passt und wie du sie auf deiner Karte liest.",
   "keywords": "venuslinie, venuslinie astrokartographie, venuslinie bedeutung, liebe astrologie umzug, astrokartographie liebe",

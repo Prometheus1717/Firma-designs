@@ -2,7 +2,7 @@ export default {
   "slug": "astrocartography/venus-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/venuslinie" },
-  "title": "Venus Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Venus Line Astrocartography: Love, Beauty & Social Ease | Natal Navigator",
   "ogTitle": "The Venus Line in Astrocartography",
   "description": "What a Venus line means in astrocartography — love, beauty, ease and money themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "venus line, venus line astrocartography, venus line meaning, venus mc line, venus asc line, venus dc line, love astrology relocation, where to find love astrology",
@@ -61,6 +61,10 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/blog/where-to-move-for-love",
+      "label": "Where to move to find love"
+    },
     {
       "href": "/astrocartography/jupiter-line",
       "label": "The Jupiter Line — luck and expansion"

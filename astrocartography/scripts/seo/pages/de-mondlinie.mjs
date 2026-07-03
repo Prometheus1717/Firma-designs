@@ -4,7 +4,7 @@ export default {
   "alt": {
     "en": "astrocartography/moon-line"
   },
-  "title": "Mondlinie Astrokartographie: Bedeutung & beste Orte | Natal Navigator",
+  "title": "Mondlinie Astrokartographie: Zuhause, Geborgenheit & Gefühl | Natal Navigator",
   "ogTitle": "Die Mondlinie in der Astrokartographie",
   "description": "Was eine Mondlinie in der Astrokartographie bedeutet — Gefühl, Geborgenheit, Zuhause und Zugehörigkeit, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
   "keywords": "mondlinie, mondlinie astrokartographie, mondlinie bedeutung, astrokartographie mond zuhause",

@@ -65,6 +65,14 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/digital-nomad-astrology-guide",
+      "label": "The digital nomad astrology guide"
+    },
+    {
+      "href": "/blog/astrocartography-vs-relocation-astrology",
+      "label": "Astrocartography vs relocation astrology"
+    },
+    {
       "href": "/relocation-astrology",
       "label": "Relocation astrology — the bigger picture"
     },

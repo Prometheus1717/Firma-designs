@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/mars-line",
   "lang": "en",
-  "title": "Mars Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Mars Line Astrocartography: Drive, Ambition & Raw Energy | Natal Navigator",
   "ogTitle": "The Mars Line in Astrocartography",
   "description": "What a Mars line means in astrocartography — drive, courage, energy and ambition themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "mars line, mars line astrocartography, mars line meaning, mars mc line, mars asc line, mars dc line, ambition astrology relocation, energy astrology line",

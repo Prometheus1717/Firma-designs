@@ -78,6 +78,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/anzeichen-falscher-wohnort",
+      "label": "Anzeichen, dass du am falschen Ort lebst"
+    },
+    {
       "href": "/astrokartographie/venuslinie",
       "label": "Die Venuslinie — Liebe, Schönheit und Leichtigkeit"
     },

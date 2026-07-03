@@ -2,7 +2,7 @@ export default {
   "slug": "astrocartography/sun-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/sonnenlinie" },
-  "title": "Sun Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Sun Line Astrocartography: Confidence, Visibility & Where You Shine | Natal Navigator",
   "ogTitle": "The Sun Line in Astrocartography",
   "description": "What a Sun line means in astrocartography — identity, vitality, confidence and recognition themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "sun line, sun line astrocartography, sun line meaning, sun mc line, sun asc line, sun ic line, identity astrology relocation, where to feel confident astrology",

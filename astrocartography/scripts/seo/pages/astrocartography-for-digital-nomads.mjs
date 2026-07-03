@@ -65,6 +65,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/moving-abroad-astrology",
+      "label": "Moving abroad with astrology"
+    },
+    {
       "href": "/blog/digital-nomad-astrology-guide",
       "label": "Astrocartography for digital nomads — a practical guide"
     },

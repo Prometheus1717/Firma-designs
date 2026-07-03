@@ -74,6 +74,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrocartography-success-stories",
+      "label": "Real astrocartography success stories"
+    },
+    {
       "href": "/astrocartography-for-love",
       "label": "Astrocartography for love — the full guide"
     },

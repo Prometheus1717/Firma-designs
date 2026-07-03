@@ -86,6 +86,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/best-cities-for-astrocartography",
+      "label": "The best cities for your lines"
+    },
+    {
       "href": "/astrocartography-for-digital-nomads",
       "label": "Astrocartography for digital nomads — full guide"
     },

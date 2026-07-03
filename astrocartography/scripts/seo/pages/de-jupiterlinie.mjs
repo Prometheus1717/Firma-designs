@@ -4,7 +4,7 @@ export default {
   "alt": {
     "en": "astrocartography/jupiter-line"
   },
-  "title": "Jupiterlinie Astrokartographie: Bedeutung & beste Orte | Natal Navigator",
+  "title": "Jupiterlinie Astrokartographie: Glück, Wachstum & Chancen | Natal Navigator",
   "ogTitle": "Die Jupiterlinie in der Astrokartographie",
   "description": "Was eine Jupiterlinie in der Astrokartographie bedeutet — Expansion, Glück, Chancen und Wachstum, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
   "keywords": "jupiterlinie, jupiterlinie astrokartographie, jupiterlinie bedeutung, astrokartographie glück, jupiter mc linie, jupiter ac linie, wo soll ich leben astrologie",

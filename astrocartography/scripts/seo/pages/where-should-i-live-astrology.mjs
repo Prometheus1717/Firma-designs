@@ -66,6 +66,14 @@ export default {
   ],
   "related": [
     {
+      "href": "/moving-abroad-astrology",
+      "label": "Moving abroad? What your chart says"
+    },
+    {
+      "href": "/blog/best-cities-for-astrocartography",
+      "label": "The best cities for your lines"
+    },
+    {
       "href": "/blog/signs-living-in-wrong-place",
       "label": "Signs you're living in the wrong place"
     },

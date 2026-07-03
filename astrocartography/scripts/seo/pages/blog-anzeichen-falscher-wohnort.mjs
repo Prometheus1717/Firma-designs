@@ -81,6 +81,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/neu-anfangen-nach-trennung",
+      "label": "Neu anfangen nach der Trennung — wohin?"
+    },
+    {
       "href": "/astrokartographie/wo-soll-ich-leben-astrologie",
       "label": "Wo soll ich leben? — die ehrliche Methode"
     },

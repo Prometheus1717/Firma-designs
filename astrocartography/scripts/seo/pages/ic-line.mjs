@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/ic-line",
   "lang": "en",
-  "title": "IC Line Astrocartography: Imum Coeli Line Meaning | Natal Navigator",
+  "title": "IC Line Astrocartography: Home, Family & Inner Foundations | Natal Navigator",
   "ogTitle": "The IC Line (Imum Coeli) in Astrocartography",
   "description": "What an IC line means in astrocartography — the Imum Coeli or Nadir line of home, roots, family and belonging, what each planet's IC line feels like, and how it differs from the MC line.",
   "keywords": "ic line, ic line astrocartography, imum coeli line, nadir line astrocartography, ic line meaning, moon ic line, venus ic line, home astrology relocation, where to put down roots astrology",

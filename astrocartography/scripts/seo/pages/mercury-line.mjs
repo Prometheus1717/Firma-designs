@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/mercury-line",
   "lang": "en",
-  "title": "Mercury Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Mercury Line Astrocartography: Communication, Trade & Quick Minds | Natal Navigator",
   "ogTitle": "The Mercury Line in Astrocartography",
   "description": "What a Mercury line means in astrocartography — communication, learning, writing and networking themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "mercury line, mercury line astrocartography, mercury line meaning, mercury mc line, mercury asc line, mercury dc line, communication astrology relocation, where to write astrology",

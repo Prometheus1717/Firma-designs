@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/mc-line",
   "lang": "en",
-  "title": "MC Line Astrocartography: Midheaven Line Meaning | Natal Navigator",
+  "title": "MC Line Astrocartography: Career Peaks & Public Recognition | Natal Navigator",
   "ogTitle": "The MC Line (Midheaven) in Astrocartography",
   "description": "What an MC line (Midheaven line) means in astrocartography — career, reputation, visibility and life direction, what each planet's MC line emphasises, and how it differs from the IC line.",
   "keywords": "mc line, midheaven line, mc line astrocartography, midheaven astrocartography, sun mc line, saturn mc line, jupiter mc line, astrocartography career line",
@@ -64,6 +64,10 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/blog/astrocartography-for-entrepreneurs",
+      "label": "Astrocartography for entrepreneurs"
+    },
     {
       "href": "/astrocartography/ic-line",
       "label": "The IC Line — home and roots"

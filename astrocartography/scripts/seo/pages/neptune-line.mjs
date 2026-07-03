@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/neptune-line",
   "lang": "en",
-  "title": "Neptune Line Astrocartography: Meaning & Best Places | Natal Navigator",
+  "title": "Neptune Line Astrocartography: Dreams, Intuition & Blurred Edges | Natal Navigator",
   "ogTitle": "The Neptune Line in Astrocartography",
   "description": "What a Neptune line means in astrocartography — imagination, spirituality, art and dreams, the MC/IC/ASC/DSC variants, its honest downsides, and how to read it on your map.",
   "keywords": "neptune line, neptune line astrocartography, neptune line meaning, neptune mc line, neptune asc line, neptune dc line, spiritual astrology relocation, artistic astrocartography line",

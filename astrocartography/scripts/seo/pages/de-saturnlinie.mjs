@@ -4,7 +4,7 @@ export default {
   "alt": {
     "en": "astrocartography/saturn-line"
   },
-  "title": "Saturnlinie Astrokartographie: Bedeutung & beste Orte | Natal Navigator",
+  "title": "Saturnlinie Astrokartographie: Disziplin, Reife & Aufbau | Natal Navigator",
   "ogTitle": "Die Saturnlinie in der Astrokartographie",
   "description": "Was eine Saturnlinie in der Astrokartographie bedeutet — Disziplin, Struktur, Verantwortung und Reife, die MC/IC/AC/DC-Varianten, für wen sie passt und wie du sie auf deiner Karte liest.",
   "keywords": "saturnlinie, saturnlinie astrokartographie, saturnlinie bedeutung, astrokartographie saturn, saturn mc linie, saturn ic linie",
