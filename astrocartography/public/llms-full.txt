@@ -1002,7 +1002,7 @@ Sun line
 visibility, vitality, recognition
 Influence band: strongest within ~100 km of a line, fading out to a few hundred km.
 
-Figure 1. Your three "lucky" geographies — the countries these lines cross are astrology's answer to "which country is lucky for me".
+Your three "lucky" geographies — the countries these lines cross are astrology's answer to "which country is lucky for me".
 Classical astrology calls Jupiter the Greater Benefic — the planet of expansion, opportunity, generosity and yes, luck — and Venus the Lesser Benefic, ruling love, pleasure and ease. When you were born, each planet stood at a specific angle to every point on Earth. The places where Jupiter or Venus sat exactly on an angle (rising, setting, culminating or anti-culminating) become the lines astrocartography treats as your naturally fortunate geography.
 
 'Lucky' here has a concrete flavour per line. Jupiter lines: doors open, strangers help, risks pay off more often, growth compounds — the classic emigrate-and-flourish line. Venus lines: social luck — love, allies, aesthetics and money-through-relationships. Sun lines: the luck of being noticed — recognition arrives faster than it does at home.
@@ -1995,7 +1995,7 @@ DSC line — the partnership doorway
 
 where both overlap: your strongest meeting geography
 
-Figure 1. "Where will I meet my soulmate?" — astrocartography's answer: the cities where your Venus and Descendant lines run, and above all where they overlap.
+"Where will I meet my soulmate?" — astrocartography's answer: the cities where your Venus and Descendant lines run, and above all where they overlap.
 Your Venus lines. Venus rules attraction, affection and being enjoyed. Along a Venus line — especially Venus rising (ASC) or Venus setting (DSC) — you tend to feel more open and more attractive, social life warms, and romantic chemistry appears with less effort. It's the classic 'find love here' geography.
 
 Your Descendant (DSC) lines. The Descendant is the partnership angle of your chart — the doorway through which significant others arrive. Any planet's DSC line colours the kind of partner and meeting: Venus DSC is the storybook version; Sun DSC brings partners who see you; Jupiter DSC favours meeting someone while travelling or learning. People repeatedly report that their defining relationships trace back to places near their DSC lines — which is exactly what the technique predicts.
@@ -2039,7 +2039,7 @@ each with its own geography
 ♈♉♊♋♌♍♎♏♐♑♒♓
 FireEarthAirWater
 
-Figure 1. The zodiac wheel by element — fire needs momentum, earth needs quality, air needs ideas, water needs depth. Each element asks something different of a city.
+The zodiac wheel by element — fire needs momentum, earth needs quality, air needs ideas, water needs depth. Each element asks something different of a city.
 
 - Aries (Mar 21 – Apr 19) — Tel Aviv, Hong Kong, Austin and more, chosen for drive, independence and a need for momentum.
 
@@ -2109,7 +2109,7 @@ Ruled by Uranus
 The 7 cities from this guide
 BerlinSan FranciscoReykjavikTallinnRotterdamTaipeiBrighton
 
-Figure 1. Aquarius at a glance — element, ruling planet and the seven cities recommended below.
+Aquarius at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Aquarius energy (fixed air) tends to land on its feet:
 
 ### 1. Berlin
@@ -2182,7 +2182,7 @@ Ruled by Mars
 The 7 cities from this guide
 Tel AvivHong KongAustinSeoulDenverBerlinJohannesburg
 
-Figure 1. Aries at a glance — element, ruling planet and the seven cities recommended below.
+Aries at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Aries energy (cardinal fire) tends to land on its feet:
 
 ### 1. Tel Aviv
@@ -2255,7 +2255,7 @@ Ruled by Moon
 The 7 cities from this guide
 CopenhagenVancouverGalwayCharlestonSan SebastiánWellingtonAnnecy
 
-Figure 1. Cancer at a glance — element, ruling planet and the seven cities recommended below.
+Cancer at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Cancer energy (cardinal water) tends to land on its feet:
 
 ### 1. Copenhagen
@@ -2328,7 +2328,7 @@ Ruled by Saturn
 The 7 cities from this guide
 FrankfurtBostonChicagoOsloShanghaiThe HagueZurich
 
-Figure 1. Capricorn at a glance — element, ruling planet and the seven cities recommended below.
+Capricorn at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Capricorn energy (cardinal earth) tends to land on its feet:
 
 ### 1. Frankfurt
@@ -2401,7 +2401,7 @@ Ruled by Mercury
 The 7 cities from this guide
 LondonNew YorkSingaporeAmsterdamBuenos AiresTorontoBangkok
 
-Figure 1. Gemini at a glance — element, ruling planet and the seven cities recommended below.
+Gemini at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Gemini energy (mutable air) tends to land on its feet:
 
 ### 1. London
@@ -2474,7 +2474,7 @@ Ruled by Sun
 The 7 cities from this guide
 Los AngelesMadridRomeRio de JaneiroMiamiSydneyCape Town
 
-Figure 1. Leo at a glance — element, ruling planet and the seven cities recommended below.
+Leo at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Leo energy (fixed fire) tends to land on its feet:
 
 ### 1. Los Angeles
@@ -2547,7 +2547,7 @@ Ruled by Venus
 The 7 cities from this guide
 ParisFlorenceStockholmMontrealPragueSavannahAdelaide
 
-Figure 1. Libra at a glance — element, ruling planet and the seven cities recommended below.
+Libra at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Libra energy (cardinal air) tends to land on its feet:
 
 ### 1. Paris
@@ -2620,7 +2620,7 @@ Ruled by Neptune
 The 7 cities from this guide
 UbudVeniceSintraByron BaySanta CruzGoaHoi An
 
-Figure 1. Pisces at a glance — element, ruling planet and the seven cities recommended below.
+Pisces at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Pisces energy (mutable water) tends to land on its feet:
 
 ### 1. Ubud
@@ -2693,7 +2693,7 @@ Ruled by Jupiter
 The 7 cities from this guide
 LisbonChiang MaiQueenstownMedellínMarrakechAthensBrisbane
 
-Figure 1. Sagittarius at a glance — element, ruling planet and the seven cities recommended below.
+Sagittarius at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Sagittarius energy (mutable fire) tends to land on its feet:
 
 ### 1. Lisbon
@@ -2766,7 +2766,7 @@ Ruled by Pluto
 The 7 cities from this guide
 Mexico CityNew OrleansIstanbulNaplesBudapestEdinburghVaranasi
 
-Figure 1. Scorpio at a glance — element, ruling planet and the seven cities recommended below.
+Scorpio at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Scorpio energy (fixed water) tends to land on its feet:
 
 ### 1. Mexico City
@@ -2839,7 +2839,7 @@ Ruled by Venus
 The 7 cities from this guide
 ViennaBolognaLyonMelbourneBordeauxKyotoPortland
 
-Figure 1. Taurus at a glance — element, ruling planet and the seven cities recommended below.
+Taurus at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Taurus energy (fixed earth) tends to land on its feet:
 
 ### 1. Vienna
@@ -2912,7 +2912,7 @@ Ruled by Mercury
 The 7 cities from this guide
 ZurichMunichTokyoHelsinkiGenevaUtrechtMinneapolis
 
-Figure 1. Virgo at a glance — element, ruling planet and the seven cities recommended below.
+Virgo at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Virgo energy (mutable earth) tends to land on its feet:
 
 ### 1. Zurich
