@@ -989,6 +989,20 @@ URL: https://natalnavigator.com/lucky-places-astrology  ·  Language: en
 In astrology, your "lucky" places aren't random — they're the regions where your most benefic planets were angular at the moment of your birth. Astrocartography draws these as lines on a world map: your Jupiter lines for opportunity and growth, your Venus lines for love and ease, your Sun line for visibility and vitality. Where those lines cross a country, tradition reads that country as fortunate for you.
 
 ### What makes a place 'lucky' in astrology
+-
+Jupiter line
+opportunity, growth, well-timed help
+
+-
+Venus line
+love, allies, ease and money
+
+-
+Sun line
+visibility, vitality, recognition
+Influence band: strongest within ~100 km of a line, fading out to a few hundred km.
+
+Figure 1. Your three "lucky" geographies — the countries these lines cross are astrology's answer to "which country is lucky for me".
 Classical astrology calls Jupiter the Greater Benefic — the planet of expansion, opportunity, generosity and yes, luck — and Venus the Lesser Benefic, ruling love, pleasure and ease. When you were born, each planet stood at a specific angle to every point on Earth. The places where Jupiter or Venus sat exactly on an angle (rising, setting, culminating or anti-culminating) become the lines astrocartography treats as your naturally fortunate geography.
 
 'Lucky' here has a concrete flavour per line. Jupiter lines: doors open, strangers help, risks pay off more often, growth compounds — the classic emigrate-and-flourish line. Venus lines: social luck — love, allies, aesthetics and money-through-relationships. Sun lines: the luck of being noticed — recognition arrives faster than it does at home.
@@ -1976,6 +1990,12 @@ URL: https://natalnavigator.com/where-will-i-meet-my-soulmate-astrology  ·  Lan
 Most soulmate astrology answers when or who. Astrocartography answers the question you actually typed: where. Your birth chart, projected onto a world map, draws specific lines — above all your Venus lines and your Descendant (DSC) lines — along which meeting, attraction and partnership are traditionally read as coming easier. Those lines cross real countries and real cities. That's your where.
 
 ### The two lines that answer 'where'
+Venus line — attraction & openness
+DSC line — the partnership doorway
+
+where both overlap: your strongest meeting geography
+
+Figure 1. "Where will I meet my soulmate?" — astrocartography's answer: the cities where your Venus and Descendant lines run, and above all where they overlap.
 Your Venus lines. Venus rules attraction, affection and being enjoyed. Along a Venus line — especially Venus rising (ASC) or Venus setting (DSC) — you tend to feel more open and more attractive, social life warms, and romantic chemistry appears with less effort. It's the classic 'find love here' geography.
 
 Your Descendant (DSC) lines. The Descendant is the partnership angle of your chart — the doorway through which significant others arrive. Any planet's DSC line colours the kind of partner and meeting: Venus DSC is the storybook version; Sun DSC brings partners who see you; Jupiter DSC favours meeting someone while travelling or learning. People repeatedly report that their defining relationships trace back to places near their DSC lines — which is exactly what the technique predicts.
@@ -2014,6 +2034,13 @@ URL: https://natalnavigator.com/where-to-live-by-zodiac-sign  ·  Language: en
 Where you live shapes who you get to be — and each zodiac sign flourishes in a different kind of place. Fire signs need momentum and audiences, earth signs need quality and stability, air signs need conversation and ideas, water signs need depth and belonging. Below: honest city guides for all twelve signs, written by the team behind an actual astrocartography calculator — plus the reason a sun-sign list is only the first step.
 
 ### All 12 signs — pick yours
+12 signs &middot; 4 elements
+each with its own geography
+♈♉♊♋♌♍♎♏♐♑♒♓
+FireEarthAirWater
+
+Figure 1. The zodiac wheel by element — fire needs momentum, earth needs quality, air needs ideas, water needs depth. Each element asks something different of a city.
+
 - Aries (Mar 21 – Apr 19) — Tel Aviv, Hong Kong, Austin and more, chosen for drive, independence and a need for momentum.
 
 - Taurus (Apr 20 – May 20) — Vienna, Bologna, Lyon and more, chosen for comfort, stability and sensory quality of life.
@@ -2070,6 +2097,19 @@ The best places to live for an Aquarius are cities running a few years ahead of 
 Aquarius builds identity through difference and belonging through ideas. Your city needs functioning strangeness: co-ops and collectives, niche scenes with open doors, technology and counterculture sharing the same cafés. Tradition-heavy societies with one script for adulthood will politely erase you. The paradox to honour: fixed air also needs stability — the right city lets you be radical on a reliable grid.
 
 ### The 7 best cities for a Aquarius
+♒
+Aquarius
+Jan 20 – Feb 18
+
+Air sign
+
+Ruled by Uranus
+
+-
+The 7 cities from this guide
+BerlinSan FranciscoReykjavikTallinnRotterdamTaipeiBrighton
+
+Figure 1. Aquarius at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Aquarius energy (fixed air) tends to land on its feet:
 
 ### 1. Berlin
@@ -2130,6 +2170,19 @@ The best places to live for an Aries are cities that move at your speed — comp
 Aries runs on ignition. You are happiest where a decision made at breakfast can be underway by lunch — places with a startup pulse, real competition and space to burn energy off physically. Long winters spent indoors, bureaucratic cultures and towns where ambition reads as rudeness all grind against the Mars engine. What looks like restlessness in the wrong city becomes leadership in the right one.
 
 ### The 7 best cities for a Aries
+♈
+Aries
+Mar 21 – Apr 19
+
+Fire sign
+
+Ruled by Mars
+
+-
+The 7 cities from this guide
+Tel AvivHong KongAustinSeoulDenverBerlinJohannesburg
+
+Figure 1. Aries at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Aries energy (cardinal fire) tends to land on its feet:
 
 ### 1. Tel Aviv
@@ -2190,6 +2243,19 @@ The best places to live for a Cancer are cities that can actually be inhabited �
 For Cancer the question is never 'what can I do here?' but 'can this place hold me?' You read a city emotionally: the light, the water, whether neighbours become people who feed your cat. Community forms slowly around you but permanently, so places with rooted populations beat expat revolving doors. And water is non-negotiable — coast, harbour, lake or river, the Moon wants to see it.
 
 ### The 7 best cities for a Cancer
+♋
+Cancer
+Jun 21 – Jul 22
+
+Water sign
+
+Ruled by Moon
+
+-
+The 7 cities from this guide
+CopenhagenVancouverGalwayCharlestonSan SebastiánWellingtonAnnecy
+
+Figure 1. Cancer at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Cancer energy (cardinal water) tends to land on its feet:
 
 ### 1. Copenhagen
@@ -2250,6 +2316,19 @@ The best places to live for a Capricorn are cities where effort compounds — se
 Capricorn asks one thing of a city: that the mountain be real. You'll pay any cost in winters and rent if mastery is genuinely rewarded — finance, law, government, engineering, legacy industries with deep ladders. You also age in reverse socially: the same seriousness that made you 'too intense' at 25 makes you the person everyone trusts at 40. Choose the city where that arc pays out, not the one optimised for endless twenties.
 
 ### The 7 best cities for a Capricorn
+♑
+Capricorn
+Dec 22 – Jan 19
+
+Earth sign
+
+Ruled by Saturn
+
+-
+The 7 cities from this guide
+FrankfurtBostonChicagoOsloShanghaiThe HagueZurich
+
+Figure 1. Capricorn at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Capricorn energy (cardinal earth) tends to land on its feet:
 
 ### 1. Frankfurt
@@ -2310,6 +2389,19 @@ The best places to live for a Gemini are cities with more inputs than you can ev
 Gemini's real hunger is novelty of thought. You want to overhear four languages on one train, switch scenes without switching cities, and live where ideas circulate as fast as people. Isolation is the enemy — remote paradises that thrill a Pisces read to you as sensory deprivation. The right city is a permanent conversation.
 
 ### The 7 best cities for a Gemini
+♊
+Gemini
+May 21 – Jun 20
+
+Air sign
+
+Ruled by Mercury
+
+-
+The 7 cities from this guide
+LondonNew YorkSingaporeAmsterdamBuenos AiresTorontoBangkok
+
+Figure 1. Gemini at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Gemini energy (mutable air) tends to land on its feet:
 
 ### 1. London
@@ -2370,6 +2462,19 @@ The best places to live for a Leo are cities with sunshine, spectacle and a cult
 Leo doesn't just tolerate attention — you metabolise it into generosity, creativity and leadership. The right city has stages in every sense: creative industries, nightlife with glamour, street life where dressing up is normal. It also has literal sun; Leos underestimate how much their mood tracks the sky. In muted, modest cultures your natural warmth gets misread, and you shrink. Never choose a city that asks you to shrink.
 
 ### The 7 best cities for a Leo
+♌
+Leo
+Jul 23 – Aug 22
+
+Fire sign
+
+Ruled by Sun
+
+-
+The 7 cities from this guide
+Los AngelesMadridRomeRio de JaneiroMiamiSydneyCape Town
+
+Figure 1. Leo at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Leo energy (fixed fire) tends to land on its feet:
 
 ### 1. Los Angeles
@@ -2430,6 +2535,19 @@ The best places to live for a Libra are cities where aesthetics are taken seriou
 Libra experiences environment as relationship: a graceful city is a considerate partner, an ugly one a daily argument. You want evenings with company, galleries within walking distance and a culture of appearances in the best sense — people making an effort for each other. Harsh, purely utilitarian places starve the Venus half of you even when the career maths works.
 
 ### The 7 best cities for a Libra
+♎
+Libra
+Sep 23 – Oct 22
+
+Air sign
+
+Ruled by Venus
+
+-
+The 7 cities from this guide
+ParisFlorenceStockholmMontrealPragueSavannahAdelaide
+
+Figure 1. Libra at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Libra energy (cardinal air) tends to land on its feet:
 
 ### 1. Paris
@@ -2490,6 +2608,19 @@ The best places to live for a Pisces are gentle, porous, water-adjacent places w
 Pisces has the most permeable boundaries in the zodiac, which makes location a health decision. Around aggression you fray; around beauty, music and kindness you quietly bloom. You need water within sight, creative or spiritual community within reach, and an economy that doesn't demand constant self-promotion. The world calls these places escapist. For a Pisces they are simply correctly calibrated.
 
 ### The 7 best cities for a Pisces
+♓
+Pisces
+Feb 19 – Mar 20
+
+Water sign
+
+Ruled by Neptune
+
+-
+The 7 cities from this guide
+UbudVeniceSintraByron BaySanta CruzGoaHoi An
+
+Figure 1. Pisces at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Pisces energy (mutable water) tends to land on its feet:
 
 ### 1. Ubud
@@ -2550,6 +2681,19 @@ The best places to live for a Sagittarius aren't really destinations — they're
 Sagittarius is the sign of the horizon: philosophy, travel, luck and the growing edge. A city works for you when it keeps promising more — more trails, more cultures passing through, more reasons to say yes. International crowds beat homogeneous ones; you learn by friction with difference. And weight matters: low bureaucracy, low pretension, easy exits. The moment a place demands you settle down and specialise, the fire goes out.
 
 ### The 7 best cities for a Sagittarius
+♐
+Sagittarius
+Nov 22 – Dec 21
+
+Fire sign
+
+Ruled by Jupiter
+
+-
+The 7 cities from this guide
+LisbonChiang MaiQueenstownMedellínMarrakechAthensBrisbane
+
+Figure 1. Sagittarius at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Sagittarius energy (mutable fire) tends to land on its feet:
 
 ### 1. Lisbon
@@ -2610,6 +2754,19 @@ The best places to live for a Scorpio are cities with layers — history you can
 Scorpio needs a city that admits life is intense. You're drawn to places with ghosts and rebirths — quarters that burned and rose again, cultures that talk honestly about death, desire and power. Depth of community matters more than breadth: three loyal friends in a mysterious city beat three hundred acquaintances in a sunny suburb. Transformation is your climate; pick a city that's undergone some itself.
 
 ### The 7 best cities for a Scorpio
+♏
+Scorpio
+Oct 23 – Nov 21
+
+Water sign
+
+Ruled by Pluto
+
+-
+The 7 cities from this guide
+Mexico CityNew OrleansIstanbulNaplesBudapestEdinburghVaranasi
+
+Figure 1. Scorpio at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Scorpio energy (fixed water) tends to land on its feet:
 
 ### 1. Mexico City
@@ -2670,6 +2827,19 @@ The best places to live for a Taurus are cities where daily life itself is the l
 Taurus measures a city by texture: the bread, the parks, the reliability of things working. You need somewhere worth committing to, because commit is what you do — Taurus moves rarely and hates moving twice. Boomtowns with churning populations and ugly-but-efficient infrastructure leave you quietly miserable; places with orchards, ovens and old walls make you rich in the ways you actually count.
 
 ### The 7 best cities for a Taurus
+♉
+Taurus
+Apr 20 – May 20
+
+Earth sign
+
+Ruled by Venus
+
+-
+The 7 cities from this guide
+ViennaBolognaLyonMelbourneBordeauxKyotoPortland
+
+Figure 1. Taurus at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Taurus energy (fixed earth) tends to land on its feet:
 
 ### 1. Vienna
@@ -2730,6 +2900,19 @@ The best places to live for a Virgo are cities of quiet competence — punctual 
 Virgo's love language with a city is maintenance. You notice everything — the broken tile, the late train, the queue with no logic — and noticing costs energy. In a well-run city that energy is freed for craft, health and service, the things Virgo actually cares about. Add strong outdoors access and food you can trust, and the inner critic finally goes quiet enough to enjoy life.
 
 ### The 7 best cities for a Virgo
+♍
+Virgo
+Aug 23 – Sep 22
+
+Earth sign
+
+Ruled by Mercury
+
+-
+The 7 cities from this guide
+ZurichMunichTokyoHelsinkiGenevaUtrechtMinneapolis
+
+Figure 1. Virgo at a glance — element, ruling planet and the seven cities recommended below.
 Seven places where Virgo energy (mutable earth) tends to land on its feet:
 
 ### 1. Zurich
