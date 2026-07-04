@@ -66,6 +66,14 @@ export default {
   ],
   "related": [
     {
+      "href": "/where-to-live-by-zodiac-sign",
+      "label": "Where to live, by zodiac sign \u2014 all 12 signs"
+    },
+    {
+      "href": "/lucky-places-astrology",
+      "label": "Which country is lucky for me?"
+    },
+    {
       "href": "/moving-abroad-astrology",
       "label": "Moving abroad? What your chart says"
     },

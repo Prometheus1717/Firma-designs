@@ -65,6 +65,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/where-will-i-meet-my-soulmate-astrology",
+      "label": "Where will I meet my soulmate?"
+    },
+    {
       "href": "/astrocartography/venus-line",
       "label": "The Venus Line — love, beauty and ease"
     },
