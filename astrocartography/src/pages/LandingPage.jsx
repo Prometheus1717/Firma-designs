@@ -219,30 +219,21 @@ export default function LandingPage() {
   }, []);
 
   // Load the embedded live app on the visitor's FIRST interaction (pointer,
-  // wheel, key, touch, scroll) or when the demo stage nears the viewport —
-  // whichever comes first. The previous 650ms auto-load pulled the entire
+  // wheel, key, touch, scroll). The previous 650ms auto-load pulled the entire
   // dashboard app (~9 MB incl. WebGL globe, i18n, cities, Supabase) into every
-  // landing view before the visitor did anything, wrecking mobile LCP/TTI.
+  // landing view before the visitor did anything, wrecking LCP/TTI.
   // Real users interact within ~1s, so the demo still feels instant; the
   // poster with its play button is visible the whole time either way.
+  // Deliberately NO viewport-based fallback: on desktop the demo stage sits
+  // inside the initial viewport, so an IntersectionObserver fires on load and
+  // reintroduces the full ~9 MB cost. First-interaction alone covers every
+  // real visitor (mouse move, wheel, touch, key, scroll) — and the poster's
+  // play button stays clickable regardless.
   useEffect(() => {
-    let io;
     const evs = ['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart', 'scroll'];
-    const cleanup = () => {
-      evs.forEach(e => window.removeEventListener(e, arm, true));
-      io?.disconnect();
-    };
+    const cleanup = () => evs.forEach(e => window.removeEventListener(e, arm, true));
     const arm = () => { setDemoOn(true); cleanup(); };
     evs.forEach(e => window.addEventListener(e, arm, { passive: true, capture: true }));
-    if (typeof IntersectionObserver !== 'undefined') {
-      const stage = rootRef.current?.querySelector('.lp-glass');
-      if (stage) {
-        io = new IntersectionObserver((entries) => {
-          if (entries.some(en => en.isIntersecting)) arm();
-        }, { root: rootRef.current, rootMargin: '200px 0px' });
-        io.observe(stage);
-      }
-    }
     return cleanup;
   }, []);
 
