@@ -124,11 +124,17 @@ function LazyVideo({ media }) {
     io.observe(v);
     return () => io.disconnect();
   }, [media.src]);
+  // Explicit aspect-ratio: with no src attached yet, Lighthouse flags the
+  // element as "unsized media" (CLS culprit) despite width/height attributes —
+  // the inline ratio reserves the exact box from the very first layout.
+  const w = media.w || 1828;
+  const h = media.h || 860;
   return (
     <video
       ref={ref} poster={media.poster}
       muted loop playsInline preload="none"
-      width={media.w || 1828} height={media.h || 860}
+      width={w} height={h}
+      style={{ aspectRatio: `${w} / ${h}` }}
       aria-label={media.alt}
     />
   );
@@ -666,6 +672,25 @@ const CSS = `
   descent-override:24%;
   line-gap-override:0%;
 }
+/* Same treatment for the self-hosted fonts: since they stopped being inlined
+   into the CSS they load async like any web font, and their swap re-wrapped
+   the hero badge / section headings (the second CLS source on mobile). */
+@font-face{
+  font-family:'Instrument Serif Fallback';
+  src:local('Georgia'), local('Times New Roman');
+  size-adjust:94%;
+  ascent-override:96%;
+  descent-override:24%;
+  line-gap-override:0%;
+}
+@font-face{
+  font-family:'JetBrains Mono Fallback';
+  src:local('Courier New'), local('Menlo');
+  size-adjust:100%;
+  ascent-override:102%;
+  descent-override:30%;
+  line-gap-override:0%;
+}
 .lp-root{
   --paper:#FBF8F1; --paper2:#F4EFE3; --card:#FFFFFF;
   --ink:#181C23; --ink2:#4C5563; --ink3:#8A93A2;
@@ -675,9 +700,9 @@ const CSS = `
   --lav:#5D4FB8; --lav-soft:#E9E5F9;
   --night:#0B1118; --night2:#101826;
   --r:18px; --r-lg:26px;
-  --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --serif:'Instrument Serif', 'Instrument Serif Fallback', Georgia, 'Times New Roman', serif;
   --sans:'General Sans', 'General Sans Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --mono:'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, SFMono-Regular, monospace;
   position:fixed; inset:0; z-index:9999; overflow-y:auto; overflow-x:hidden;
   background:var(--paper); color:var(--ink);
   font-family:var(--sans); font-size:16px; line-height:1.6;
