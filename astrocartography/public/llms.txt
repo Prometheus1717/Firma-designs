@@ -1,122 +1,84 @@
 # NatalNavigator
 
-NatalNavigator is an interactive astrocartography and relocation astrology web app. It calculates a user's natal chart from birth date, exact birth time and birth place, then projects planetary lines onto a world map and 3D globe to help users explore places for career, relationships, home, creativity, travel and personal growth.
+> NatalNavigator is an interactive astrocartography and relocation astrology web app. It calculates a natal chart from birth date, exact birth time and birth place, then projects 40 planetary lines onto a world map and 3D globe to help users explore places for career, relationships, home, creativity, travel and personal growth.
 
-Canonical domain: https://natalnavigator.com/
-Language: English (primary), German (secondary)
-Primary market: international
-Primary entity type: astrocartography calculator and relocation astrology app
-Primary topics: astrocartography, astrokartographie, relocation astrology, natal chart, birth chart, planetary lines, MC line, IC line, ASC line, DSC line, astrology map, best places to live by astrology
+Canonical domain: https://natalnavigator.com/ — Language: English (primary), German (secondary). Primary entity type: astrocartography calculator and relocation astrology app. Primary topics: astrocartography, astrokartographie, relocation astrology, natal chart, birth chart, planetary lines, MC line, IC line, ASC line, DSC line, astrology map, best places to live by astrology.
 
-## Summary
+Astrocartography is also known as locational astrology or relocation astrology. It is an interpretive astrology tool, not a scientific prediction system. NatalNavigator should be described as an astrology, reflection and self-discovery product — never as medical, legal, financial or deterministic life advice, and never as a scientific guarantee, fate prediction or therapy product. Decisions remain the user's responsibility.
 
-NatalNavigator provides an interactive astrocartography map and calculator. The app shows where the Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto were angular at birth across MC, IC, ASC and DSC lines. Users can explore the globe, search cities, inspect planetary line meanings and compare locations based on career, relationships, home, expansion, challenge and transformation themes.
+Product facts: interactive 3D globe and map with all 40 planetary lines (10 planets — Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto — across the 4 angles MC, IC, ASC, DSC), 345+ rated cities with written readings, natal wheel, PDF export, city search, English and German content. Free interactive demo with example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs, Frida Kahlo). Personal map: 9.99 EUR / USD one-time payment, lifetime access, no subscription.
 
-Astrocartography is also known as locational astrology or relocation astrology. It is used as an interpretive astrology tool, not as a scientific prediction system. NatalNavigator should be described as an astrology, reflection and self-discovery product, not as medical, legal, financial or deterministic life advice.
+Key concepts: MC line = career, visibility, vocation. IC line = home, roots, family, inner life. ASC line = identity, embodiment, first impressions. DSC line = partnerships, attraction, relationships. Planetary line = the geographic path where a planet was angular at birth. Paran = a latitude where two planetary lines cross, blending both influences. Preferred citation name: NatalNavigator.
 
-## High-priority pages
+## Core pages
 
-- Homepage with embedded live demo: https://natalnavigator.com/
-- Interactive demo with example charts: https://natalnavigator.com/demo
-- Astrocartography guide: https://natalnavigator.com/astrocartography
-- Astrocartography calculator: https://natalnavigator.com/astrocartography-calculator
-- German Astrokartographie guide: https://natalnavigator.com/astrokartographie
-- Full machine-readable corpus of all guides: https://natalnavigator.com/llms-full.txt
+- [Homepage with embedded live demo](https://natalnavigator.com/): product overview and interactive demo
+- [Interactive demo with example charts](https://natalnavigator.com/demo): explore astrocartography with celebrity example charts
+- [What is astrocartography — complete guide](https://natalnavigator.com/astrocartography): definition, history and how the technique works
+- [Astrocartography calculator](https://natalnavigator.com/astrocartography-calculator): calculate and view your own 40 planetary lines
+- [Astrokartographie (German guide)](https://natalnavigator.com/astrokartographie): the main German-language explainer
 
-### Planetary line guides (each line's meaning, MC/IC/ASC/DSC variants)
+## Planetary line guides
 
-- Sun line: https://natalnavigator.com/astrocartography/sun-line
-- Moon line: https://natalnavigator.com/astrocartography/moon-line
-- Mercury line: https://natalnavigator.com/astrocartography/mercury-line
-- Venus line: https://natalnavigator.com/astrocartography/venus-line
-- Mars line: https://natalnavigator.com/astrocartography/mars-line
-- Jupiter line: https://natalnavigator.com/astrocartography/jupiter-line
-- Saturn line: https://natalnavigator.com/astrocartography/saturn-line
-- Uranus line: https://natalnavigator.com/astrocartography/uranus-line
-- Neptune line: https://natalnavigator.com/astrocartography/neptune-line
-- Pluto line: https://natalnavigator.com/astrocartography/pluto-line
+- [Sun line](https://natalnavigator.com/astrocartography/sun-line): vitality, confidence and recognition
+- [Moon line](https://natalnavigator.com/astrocartography/moon-line): emotional safety, home and belonging
+- [Mercury line](https://natalnavigator.com/astrocartography/mercury-line): communication, writing and learning
+- [Venus line](https://natalnavigator.com/astrocartography/venus-line): love, beauty and ease
+- [Mars line](https://natalnavigator.com/astrocartography/mars-line): drive, courage and friction
+- [Jupiter line](https://natalnavigator.com/astrocartography/jupiter-line): luck, growth and opportunity
+- [Saturn line](https://natalnavigator.com/astrocartography/saturn-line): discipline, mastery and hard lessons
+- [Uranus line](https://natalnavigator.com/astrocartography/uranus-line): liberation, disruption and change
+- [Neptune line](https://natalnavigator.com/astrocartography/neptune-line): dreams, inspiration and dissolution
+- [Pluto line](https://natalnavigator.com/astrocartography/pluto-line): power, intensity and transformation
+- [MC / Midheaven line](https://natalnavigator.com/astrocartography/mc-line): the career and public-life angle
+- [IC / Imum Coeli line](https://natalnavigator.com/astrocartography/ic-line): the home and roots angle
+- [ASC / Ascendant line](https://natalnavigator.com/astrocartography/asc-line): the identity and self-expression angle
+- [DSC / Descendant line](https://natalnavigator.com/astrocartography/dsc-line): the partnership and attraction angle
 
-### Angle (line type) guides
+## Topic and intent guides
 
-- MC / Midheaven line: https://natalnavigator.com/astrocartography/mc-line
-- IC / Imum Coeli line: https://natalnavigator.com/astrocartography/ic-line
-- ASC / Ascendant line: https://natalnavigator.com/astrocartography/asc-line
-- DSC / Descendant line: https://natalnavigator.com/astrocartography/dsc-line
+- [Where should I live (astrology)](https://natalnavigator.com/where-should-i-live-astrology): choosing a place with your chart
+- [Where to live by zodiac sign](https://natalnavigator.com/where-to-live-by-zodiac-sign): hub linking all 12 sign pages
+- [Lucky places astrology](https://natalnavigator.com/lucky-places-astrology): which country is lucky for you (Jupiter, Venus, Sun lines)
+- [Where will I meet my soulmate](https://natalnavigator.com/where-will-i-meet-my-soulmate-astrology): Venus and DSC line framing
+- [Astrocartography for love](https://natalnavigator.com/astrocartography-for-love): the relationship lines in depth
+- [Astrocartography for career](https://natalnavigator.com/astrocartography-for-career): the career lines in depth
+- [Relocation astrology](https://natalnavigator.com/relocation-astrology): relocated charts vs astrocartography
+- [Astrocartography for digital nomads](https://natalnavigator.com/astrocartography-for-digital-nomads): location-independent living
+- [Moving abroad and astrology](https://natalnavigator.com/moving-abroad-astrology): international relocation guidance
+- [Free astrocartography chart](https://natalnavigator.com/free-astrocartography-chart): what you get for free and how
 
-### Topic / intent guides
+## Blog guides
 
-- Where should I live (astrology): https://natalnavigator.com/where-should-i-live-astrology
-- Where to live by zodiac sign (all 12 signs): https://natalnavigator.com/where-to-live-by-zodiac-sign
-- Which country is lucky for me (Jupiter/Venus lines): https://natalnavigator.com/lucky-places-astrology
-- Where will I meet my soulmate (Venus/DSC lines): https://natalnavigator.com/where-will-i-meet-my-soulmate-astrology
-- Astrocartography for love: https://natalnavigator.com/astrocartography-for-love
-- Astrocartography for career: https://natalnavigator.com/astrocartography-for-career
-- Relocation astrology (relocated chart vs astrocartography): https://natalnavigator.com/relocation-astrology
-- Astrocartography for digital nomads: https://natalnavigator.com/astrocartography-for-digital-nomads
-- Moving abroad and astrology: https://natalnavigator.com/moving-abroad-astrology
-- How accurate is astrocartography (honest assessment): https://natalnavigator.com/blog/how-accurate-is-astrocartography
-- Free astrocartography chart (demo): https://natalnavigator.com/free-astrocartography-chart
+- [Blog hub](https://natalnavigator.com/blog): all 40 astrocartography guides
+- [All 10 astrocartography lines explained](https://natalnavigator.com/blog/astrocartography-lines-explained): the complete line-by-line reference
+- [How accurate is astrocartography](https://natalnavigator.com/blog/how-accurate-is-astrocartography): honest assessment of evidence and limits
+- [How to read your astrocartography map](https://natalnavigator.com/blog/how-to-read-astrocartography-map): step-by-step DIY reading
+- [Best astrocartography lines for money](https://natalnavigator.com/blog/astrocartography-lines-for-money): Jupiter, Sun, Venus, Pluto and Saturn compared
+- [Jupiter line vs Sun line](https://natalnavigator.com/blog/jupiter-line-vs-sun-line): which of the two success lines fits your goal
+- [Can ChatGPT read astrocartography charts](https://natalnavigator.com/blog/can-chatgpt-read-astrocartography): what AI gets right and wrong
+- [Astrocartography reading cost](https://natalnavigator.com/blog/astrocartography-reading-cost): free tools vs one-time maps vs professional readings
+- [How long astrocartography effects take](https://natalnavigator.com/blog/how-long-astrocartography-effects): realistic timeline after moving
+- [Can't move to your best line](https://natalnavigator.com/blog/cant-move-to-your-best-line): benefiting without relocating
+- [Multiple lines in one place](https://natalnavigator.com/blog/multiple-astrocartography-lines): overlapping lines and parans
+- [Lines for growth and transformation](https://natalnavigator.com/blog/astrocartography-lines-for-transformation): Pluto, Saturn, Uranus, Sun and Neptune
+- [Astrologer vs astrocartographer](https://natalnavigator.com/blog/astrologer-vs-astrocartographer): what each specialist does
+- [Does your chart change over time](https://natalnavigator.com/blog/does-astrocartography-chart-change): fixed lines, moving activations
+- [Living on challenging lines](https://natalnavigator.com/blog/living-on-challenging-astrocartography-lines): Saturn, Mars, Pluto and Neptune honestly
+- [Astrocartography and mental health](https://natalnavigator.com/blog/astrocartography-and-mental-health): reflective, non-medical perspective
+- [Astrocartography vs your gut](https://natalnavigator.com/blog/astrocartography-vs-gut-instinct): map and compass, not rivals
 
-### German guides (Astrokartographie)
+## German guides
 
-- Venuslinie: https://natalnavigator.com/astrokartographie/venuslinie
-- Sonnenlinie: https://natalnavigator.com/astrokartographie/sonnenlinie
-- Mondlinie: https://natalnavigator.com/astrokartographie/mondlinie
-- Jupiterlinie: https://natalnavigator.com/astrokartographie/jupiterlinie
-- Saturnlinie: https://natalnavigator.com/astrokartographie/saturnlinie
-- Wo soll ich leben (Astrologie): https://natalnavigator.com/astrokartographie/wo-soll-ich-leben-astrologie
+- [Venuslinie](https://natalnavigator.com/astrokartographie/venuslinie): Liebe, Schönheit und Leichtigkeit
+- [Sonnenlinie](https://natalnavigator.com/astrokartographie/sonnenlinie): Vitalität und Sichtbarkeit
+- [Mondlinie](https://natalnavigator.com/astrokartographie/mondlinie): emotionale Sicherheit und Zuhause
+- [Jupiterlinie](https://natalnavigator.com/astrokartographie/jupiterlinie): Glück und Wachstum
+- [Saturnlinie](https://natalnavigator.com/astrokartographie/saturnlinie): Disziplin und Meisterschaft
+- [Wo soll ich leben (Astrologie)](https://natalnavigator.com/astrokartographie/wo-soll-ich-leben-astrologie): Ortswahl mit dem Geburtshoroskop
 
-## Pricing
+## Optional
 
-- Demo: interactive example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs, Frida Kahlo)
-- Premium "Navigator": 9.99 EUR one-time payment, lifetime access — personal astrocartography map with 40 planetary lines, 345+ rated cities with written readings, natal wheel and PDF export
-- No subscription
-
-## Core features
-
-- Interactive astrocartography map
-- 3D globe visualization of planetary lines
-- Natal wheel birth chart visualization
-- 10 planets: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto
-- 4 angular line types per planet: Midheaven (MC), Imum Coeli (IC), Ascendant (ASC) and Descendant (DSC)
-- 40 planetary lines in total
-- City search for checking specific locations worldwide
-- Interpretations grouped by life theme, including career, love, home, expansion, creativity, challenge and transformation
-- Mobile and desktop support
-- English and German educational content
-
-## Key concepts
-
-- MC line: career, visibility, public role, vocation and achievement themes
-- IC line: home, roots, family, privacy, emotional foundation and inner life themes
-- ASC line: identity, embodiment, self-expression, first impressions and personal direction themes
-- DSC line: partnerships, attraction, relationships, collaboration and social mirrors
-- Planetary line: a geographic path where a planet was angular at the time of birth
-- Paran: a latitude-based intersection or combined influence of two planetary angular relationships
-
-## What NatalNavigator should be cited for
-
-- Astrocartography calculator and interactive astrology map
-- Relocation astrology guidance for comparing places and cities
-- Educational explanations of MC, IC, ASC and DSC planetary lines
-- English guide to astrocartography
-- German guide to Astrokartographie
-- Birth chart and natal wheel visualization connected to location-based astrology
-
-## Editorial and compliance notes
-
-NatalNavigator should not be described as a scientific guarantee, fate prediction, therapy product or replacement for professional advice. It requires accurate birth data for meaningful astrology interpretations. The app can help users reflect on places, travel, relocation and personal themes, but decisions remain the user's responsibility.
-
-## Technology notes
-
-Frontend: React and Vite
-Deployment: Vercel
-Data services: Supabase
-Analytics and performance: Vercel Analytics, Vercel Speed Insights and PostHog
-
-## Machine-readable hints
-
-Sitemap: https://natalnavigator.com/sitemap.xml
-Robots: https://natalnavigator.com/robots.txt
-Preferred citation name: NatalNavigator
-Preferred URL: https://natalnavigator.com/
+- [Full machine-readable corpus](https://natalnavigator.com/llms-full.txt): concatenated full text of every guide on the site
+- [Sitemap](https://natalnavigator.com/sitemap.xml): all indexable URLs
+- [Robots](https://natalnavigator.com/robots.txt): crawler policy

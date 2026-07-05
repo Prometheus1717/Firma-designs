@@ -28,10 +28,26 @@ const LegalPage = lazyRetry(() => import('./pages/LegalPage'));
 // On /landing, /auth, /admin, /reset-password the user is unlikely to hit the
 // Dashboard before the chunk loads naturally, so we skip the eager prefetch
 // and save ~480 KB of parse work on low-powered devices.
+// '/' serves the LANDING to anonymous visitors since the landing
+// consolidation — only signed-in users get redirected into the app. So the
+// eager Dashboard prefetch on '/' is gated on an existing Supabase session
+// (sb-*-auth-token in localStorage); anonymous landing views skip the ~480 KB.
 if (typeof window !== 'undefined') {
   const p = window.location.pathname;
-  if (p === '/' || p.startsWith('/dashboard') || p.startsWith('/birth-data')) {
+  const hasSession = (() => {
+    try {
+      return Object.keys(window.localStorage).some(k => k.startsWith('sb-') && k.includes('auth-token'));
+    } catch { return false; }
+  })();
+  if ((p === '/' && hasSession) || p.startsWith('/dashboard') || p.startsWith('/birth-data')) {
     setTimeout(() => import('./pages/Dashboard').catch(() => {}), 1);
+  }
+  // Anonymous visitors on '/' render the LandingPage. Kick its lazy chunk off
+  // NOW, in parallel with React bootstrapping, instead of waiting for the
+  // first render to discover it — removes one full network round-trip from
+  // the landing's LCP chain. lazy() reuses the same in-flight module promise.
+  if (p === '/' && !hasSession) {
+    import('./pages/LandingPage').catch(() => {});
   }
 }
 

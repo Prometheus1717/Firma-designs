@@ -105,16 +105,40 @@ function ReadingMock({ m }) {
   );
 }
 
+// Feature videos are multi-MB screen recordings far below the fold. `autoPlay`
+// + `src` would force the browser to download them all during initial load
+// (~8 MB), so the <video> mounts WITHOUT src (poster only, preload="none") and
+// only attaches + plays once it scrolls near the viewport.
+function LazyVideo({ media }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) {
+        if (!v.src) v.src = media.src;
+        v.play().catch(() => {});
+        io.disconnect();
+      }
+    }, { rootMargin: '300px 0px' });
+    io.observe(v);
+    return () => io.disconnect();
+  }, [media.src]);
+  return (
+    <video
+      ref={ref} poster={media.poster}
+      muted loop playsInline preload="none"
+      width={media.w || 1828} height={media.h || 860}
+      aria-label={media.alt}
+    />
+  );
+}
+
 function FeatureMedia({ media, m }) {
   if (media.type === 'video') {
     return (
       <div className="lp-shot">
-        <video
-          src={media.src} poster={media.poster}
-          autoPlay muted loop playsInline preload="metadata"
-          width={media.w || 1828} height={media.h || 860}
-          aria-label={media.alt}
-        />
+        <LazyVideo media={media} />
       </div>
     );
   }
@@ -194,11 +218,32 @@ export default function LandingPage() {
     });
   }, []);
 
-  // Auto-load the embedded live app shortly after first paint, so the hero
-  // shows the real, clickable demo (poster first for a fast LCP, then swap).
+  // Load the embedded live app on the visitor's FIRST interaction (pointer,
+  // wheel, key, touch, scroll) or when the demo stage nears the viewport —
+  // whichever comes first. The previous 650ms auto-load pulled the entire
+  // dashboard app (~9 MB incl. WebGL globe, i18n, cities, Supabase) into every
+  // landing view before the visitor did anything, wrecking mobile LCP/TTI.
+  // Real users interact within ~1s, so the demo still feels instant; the
+  // poster with its play button is visible the whole time either way.
   useEffect(() => {
-    const t = setTimeout(() => setDemoOn(true), 650);
-    return () => clearTimeout(t);
+    let io;
+    const evs = ['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart', 'scroll'];
+    const cleanup = () => {
+      evs.forEach(e => window.removeEventListener(e, arm, true));
+      io?.disconnect();
+    };
+    const arm = () => { setDemoOn(true); cleanup(); };
+    evs.forEach(e => window.addEventListener(e, arm, { passive: true, capture: true }));
+    if (typeof IntersectionObserver !== 'undefined') {
+      const stage = rootRef.current?.querySelector('.lp-glass');
+      if (stage) {
+        io = new IntersectionObserver((entries) => {
+          if (entries.some(en => en.isIntersecting)) arm();
+        }, { root: rootRef.current, rootMargin: '200px 0px' });
+        io.observe(stage);
+      }
+    }
+    return cleanup;
   }, []);
 
   // Scroll-triggered reveals + nav shadow
@@ -323,7 +368,7 @@ export default function LandingPage() {
           <div className="lp-demo-stage lp-h-an" style={{ '--d': '360ms' }}>
 
             {/* LEFT rail — switch chart */}
-            <aside className="lp-rail lp-rail-l" role="group" aria-label="Choose a demo chart">
+            <div className="lp-rail lp-rail-l" role="group" aria-label="Choose a demo chart">
               <span className="lp-rail-label">{C.demo.chartLabel}</span>
               <div className="lp-rail-scroll">
                 {STARS.map(([key, name]) => (
@@ -335,7 +380,7 @@ export default function LandingPage() {
                   >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
                 ))}
               </div>
-            </aside>
+            </div>
 
             {/* glass-framed live app */}
             <figure className="lp-glass">
@@ -355,7 +400,7 @@ export default function LandingPage() {
                     />
                   ) : (
                     <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label={C.demo.posterCta}>
-                      <img src="/landing/app-globe.webp" alt={C.demo.posterAlt} width="2000" height="1214" fetchPriority="high" />
+                      <img src="/landing/app-globe-1400.webp" alt={C.demo.posterAlt} width="2000" height="1214" fetchPriority="high" />
                       <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> {C.demo.posterCta}</span>
                     </button>
                   )}
@@ -364,7 +409,7 @@ export default function LandingPage() {
             </figure>
 
             {/* RIGHT rail — theme + hint */}
-            <aside className="lp-rail lp-rail-r" role="group" aria-label="Demo theme">
+            <div className="lp-rail lp-rail-r" role="group" aria-label="Demo theme">
               <span className="lp-rail-label">{C.demo.themeLabel}</span>
               <div className="lp-mode lp-mode-col">
                 <button className={demoTheme === 'dark' ? 'lp-on' : ''} onClick={() => pickTheme('dark')} aria-pressed={demoTheme === 'dark'}>{I.moon} {C.demo.dark}</button>
@@ -372,7 +417,7 @@ export default function LandingPage() {
               </div>
               <p className="lp-rail-note">{C.demo.railNote}</p>
               <button className="lp-btn lp-btn-mint lp-rail-cta" onClick={goAuth}>{C.demo.railCta} <span className="lp-btn-ic">{I.arrow}</span></button>
-            </aside>
+            </div>
           </div>
         </div>
 
@@ -565,21 +610,21 @@ export default function LandingPage() {
             <p>{C.footer.tagline}</p>
           </div>
           <nav aria-label="Product">
-            <h4>{C.footer.hProduct}</h4>
+            <h3>{C.footer.hProduct}</h3>
             <a href="/demo" onClick={goDemo('nav')}>{C.nav.demo}</a>
             <a href="#pricing" onClick={scrollTo('pricing')}>{C.nav.pricing}</a>
             <a href="/create">{C.footer.createAccount}</a>
             <a href="/auth?mode=login">{C.nav.signIn}</a>
           </nav>
           <nav aria-label="Learn">
-            <h4>{C.footer.hLearn}</h4>
+            <h3>{C.footer.hLearn}</h3>
             <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
             <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </nav>
           {/* Guide pages exist in EN + DE only, so their titles stay untranslated */}
           <nav aria-label="Guides">
-            <h4>Guides</h4>
+            <h3>Guides</h3>
             <a href="/astrocartography">What is astrocartography?</a>
             <a href="/astrocartography-calculator">How the calculator works</a>
             <a href="/where-should-i-live-astrology">Where should I live?</a>
@@ -589,12 +634,12 @@ export default function LandingPage() {
             <a href="/astrokartographie">Astrokartographie (DE)</a>
           </nav>
           <nav aria-label="Contact">
-            <h4>{C.footer.hContact}</h4>
+            <h3>{C.footer.hContact}</h3>
             <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>
             <a href="/kontakt">{C.footer.contactForm}</a>
           </nav>
           <nav aria-label="Legal">
-            <h4>{C.footer.hLegal}</h4>
+            <h3>{C.footer.hLegal}</h3>
             <a href="/impressum">Impressum</a>
             <a href="/datenschutz">Datenschutz</a>
             <a href="/agb">AGB</a>
@@ -618,6 +663,18 @@ export default function LandingPage() {
 //  Styles — scoped under .lp-
 // ════════════════════════════════════════════════════════════════
 const CSS = `
+/* Metric-compatible fallback for General Sans (loads async from Fontshare).
+   Without this, the swap re-wraps the hero headline and shifts the whole demo
+   stage below it — the single biggest CLS contributor on the landing page.
+   Overrides approximate General Sans metrics on top of Arial/Helvetica. */
+@font-face{
+  font-family:'General Sans Fallback';
+  src:local('Arial'), local('Helvetica');
+  size-adjust:104%;
+  ascent-override:96%;
+  descent-override:24%;
+  line-gap-override:0%;
+}
 .lp-root{
   --paper:#FBF8F1; --paper2:#F4EFE3; --card:#FFFFFF;
   --ink:#181C23; --ink2:#4C5563; --ink3:#8A93A2;
@@ -628,7 +685,7 @@ const CSS = `
   --night:#0B1118; --night2:#101826;
   --r:18px; --r-lg:26px;
   --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --sans:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sans:'General Sans', 'General Sans Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
   position:fixed; inset:0; z-index:9999; overflow-y:auto; overflow-x:hidden;
   background:var(--paper); color:var(--ink);
@@ -1174,7 +1231,7 @@ const CSS = `
 .lp-footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr 1fr; gap:36px; padding-bottom:44px; }
 .lp-footer-brand p{ margin-top:16px; font-size:13.5px; color:var(--ink2); max-width:34ch; line-height:1.65; }
 .lp-footer nav{ display:flex; flex-direction:column; gap:10px; }
-.lp-footer nav h4{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
+.lp-footer nav h3{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
 .lp-footer nav a{ font-size:14px; color:var(--ink2); transition:color .2s; }
 .lp-footer nav a:hover{ color:var(--ink); }
 .lp-footer-base{

@@ -53,7 +53,7 @@ const CSS = `
   display:flex; flex-direction:column; gap:14px; line-height:1.55;
 }
 .nn-consent-text{ margin:0; font-size:13.5px; }
-.nn-consent-text a{ color:#00D88A; }
+.nn-consent-text a{ color:#00D88A; text-decoration:underline; text-underline-offset:2px; }
 .nn-consent-btns{ display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
 .nn-consent button{
   font:inherit; font-size:13px; font-weight:600; border-radius:8px; padding:9px 18px; cursor:pointer;

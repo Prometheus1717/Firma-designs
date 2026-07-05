@@ -34,6 +34,15 @@ export default defineConfig({
         },
       },
     },
-    assetsInlineLimit: 8192,
+    // Inline small assets EXCEPT fonts. @fontsource ships every unicode-range
+    // subset (latin, cyrillic, vietnamese, …) as a small woff/woff2 that fell
+    // under the 8 KB limit — Vite inlined them ALL as base64 into the main CSS
+    // (~100 KB of render-blocking data: URIs, dozens of console font errors,
+    // and the browser decodes every subset instead of fetching only latin via
+    // unicode-range). Keeping fonts as files restores lazy per-subset loading.
+    assetsInlineLimit: (filePath, content) => {
+      if (/\.(woff2?|ttf|otf|eot)(\?|$)/i.test(filePath)) return false;
+      return content.length < 8192;
+    },
   },
 })

@@ -31,6 +31,13 @@
     <meta name="theme-color" content="#00D88A" />
     <!-- General Sans for landing page (non-blocking) -->
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <!-- The font FILES are served from cdn.fontshare.com (the api host only
+         serves the CSS) — preconnect both so the woff2 fetch skips a full
+         DNS+TLS round-trip on the LCP-critical hero headline. Same for
+         cdn.jsdelivr.net, which serves the world-atlas JSON the landing's
+         hero globe draws from. -->
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Natal Navigator" />
