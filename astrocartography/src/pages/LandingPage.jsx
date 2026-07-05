@@ -979,7 +979,9 @@ const CSS = `
 .lp-frame-dots i:nth-child(2){ background:#F2D49B; }
 .lp-frame-dots i:last-child{ background:#A8DDBA; }
 .lp-frame-url{
-  flex:1; text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--ink3);
+  /* --ink2 (not --ink3): 11.5px text needs >=4.5:1 contrast on white — ink3
+     (#8A93A2) is ~3.5:1 and failed the a11y color-contrast audit on desktop. */
+  flex:1; text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--ink2);
   letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .lp-frame-open{
