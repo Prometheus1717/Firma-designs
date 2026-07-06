@@ -2,7 +2,9 @@ export default {
   "slug": "astrokartographie/wo-soll-ich-leben-astrologie",
   "lang": "de",
   "alt": {
-    "en": "where-should-i-live-astrology"
+    "en": "where-should-i-live-astrology",
+    "es": "es/donde-deberia-vivir-astrologia",
+    "pt": "pt/onde-devo-morar-astrologia"
   },
   "title": "Wo soll ich leben? Astrologie & Geburtshoroskop | Natal Navigator",
   "ogTitle": "Wo soll ich leben? Was die Astrologie wirklich sagen kann",

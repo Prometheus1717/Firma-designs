@@ -43,9 +43,13 @@ const abs = (path) => (path.startsWith('http') ? path : ORIGIN + (path.startsWit
 
 function renderHreflang(page) {
   const self = abs('/' + page.slug);
+  // x-default must point at the EN member of the cluster, not at self —
+  // otherwise every translation claims to be the default and the cluster
+  // sends Google conflicting signals.
+  const xDefault = page.lang === 'en' ? self : (page.alt?.en ? abs('/' + page.alt.en) : self);
   const links = [
     `<link rel="canonical" href="${self}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${self}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${xDefault}" />`,
     `<link rel="alternate" hreflang="${page.lang}" href="${self}" />`,
   ];
   if (page.alt) {
@@ -168,16 +172,15 @@ function renderLinesCluster(page) {
 
 function renderBody(page) {
   const isDe = page.lang === 'de';
+  const u = tr(page.lang);
   const t = {
-    home: isDe ? 'Globus' : 'Globe',
-    calc: isDe ? 'Rechner' : 'Calculator',
-    other: isDe ? 'EN' : 'DE',
-    crumbHome: 'Home',
-    faqHeading: isDe ? 'Häufige Fragen' : 'Frequently asked questions',
-    relatedHeading: isDe ? 'Weiterlesen' : 'Keep exploring',
-    footerNote: isDe
-      ? 'Astrokartographie zu Bildungs- und Reflexionszwecken.'
-      : 'Astrocartography for educational and reflective purposes.',
+    home: u.home,
+    calc: u.calc,
+    other: u.langToggle,
+    crumbHome: u.crumbHome,
+    faqHeading: u.faqHeading,
+    relatedHeading: u.relatedHeading,
+    footerNote: u.footerNote,
   };
 
   const crumb = page.breadcrumb
@@ -355,6 +358,71 @@ function accentFor(page) {
   return LINE_ACCENT[seg] || '#0E7C5B';
 }
 
+// ── UI strings per language. Any language missing a key falls back to EN. ──
+const I18N = {
+  en: {
+    whatIs: 'What is Astrocartography?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator',
+    langToggle: 'DE', langToggleHref: '/astrokartographie',
+    navCta: 'Create your map', crumbHome: 'Home', home: 'Globe', calc: 'Calculator',
+    faqHeading: 'Frequently asked questions', relatedHeading: 'Keep exploring',
+    footerNote: 'Astrocartography for educational and reflective purposes.',
+    shortAnswer: 'The short answer', ctaPrimary: 'Create my map — €9.99', ctaSecondary: 'Try the live demo',
+    badge: 'ASTROCARTOGRAPHY GUIDE', minRead: 'MIN READ', published: 'Published', editorial: 'Editorial',
+    locale: 'en-GB', ogLocale: 'en_US',
+    calloutH: 'See it on your own chart',
+    calloutP: 'Explore the interactive demo with example charts. Your personal 40-line map, built from your own birth data, is a one-time €9.99 / $9.99 — no subscription.',
+    calloutCta: 'Create my map', calloutDemo: 'Live demo',
+    figProjCap: "<strong>Figure {n}.</strong> Astrocartography projects your birth chart onto the planet — each planet's position becomes a line across the world map.",
+    figBirthChart: 'YOUR BIRTH CHART', figLinesOnEarth: 'YOUR LINES ON EARTH',
+  },
+  de: {
+    whatIs: 'Was ist Astrokartographie?', pillar: '/astrokartographie', calcHref: '/astrocartography-calculator',
+    langToggle: 'EN', langToggleHref: '/astrocartography',
+    navCta: 'Karte erstellen', crumbHome: 'Home', home: 'Globus', calc: 'Rechner',
+    faqHeading: 'Häufige Fragen', relatedHeading: 'Weiterlesen',
+    footerNote: 'Astrokartographie zu Bildungs- und Reflexionszwecken.',
+    shortAnswer: 'Kurz erklärt', ctaPrimary: 'Meine Karte erstellen — 9,99 €', ctaSecondary: 'Live-Demo ansehen',
+    badge: 'ASTROKARTOGRAPHIE', minRead: 'MIN READ', published: 'Veröffentlicht', editorial: 'Redaktion',
+    locale: 'de-DE', ogLocale: 'de_DE',
+    calloutH: 'Deine eigene Karte',
+    calloutP: 'Probiere die interaktive Demo mit Beispiel-Charts. Deine persönliche 40-Linien-Karte mit deinen eigenen Geburtsdaten gibt es für einmalig 9,99 € — ohne Abo.',
+    calloutCta: 'Meine Karte erstellen', calloutDemo: 'Live-Demo',
+    figProjCap: '<strong>Abbildung {n}.</strong> Astrokartographie projiziert dein Geburtshoroskop auf die Erde — jede Planetenposition wird zu einer Linie über der Weltkarte.',
+    figBirthChart: 'GEBURTSHOROSKOP', figLinesOnEarth: 'DEINE LINIEN AUF DER ERDE',
+  },
+  es: {
+    whatIs: '¿Qué es la astrocartografía?', pillar: '/es/astrocartografia', calcHref: '/es/calculadora-de-astrocartografia',
+    langToggle: 'EN', langToggleHref: '/astrocartography',
+    navCta: 'Crear mi mapa', crumbHome: 'Inicio', home: 'Globo', calc: 'Calculadora',
+    faqHeading: 'Preguntas frecuentes', relatedHeading: 'Sigue explorando',
+    footerNote: 'Astrocartografía con fines educativos y de reflexión.',
+    shortAnswer: 'La respuesta corta', ctaPrimary: 'Crear mi mapa — 9,99 €', ctaSecondary: 'Probar la demo',
+    badge: 'GUÍA DE ASTROCARTOGRAFÍA', minRead: 'MIN DE LECTURA', published: 'Publicado', editorial: 'Redacción',
+    locale: 'es-ES', ogLocale: 'es_ES',
+    calloutH: 'Míralo en tu propia carta',
+    calloutP: 'Explora la demo interactiva con cartas de ejemplo. Tu mapa personal de 40 líneas, calculado con tus propios datos de nacimiento, cuesta 9,99 € / $9.99 una sola vez — sin suscripción.',
+    calloutCta: 'Crear mi mapa', calloutDemo: 'Demo en vivo',
+    figProjCap: '<strong>Figura {n}.</strong> La astrocartografía proyecta tu carta natal sobre el planeta — la posición de cada planeta se convierte en una línea sobre el mapa del mundo.',
+    figBirthChart: 'TU CARTA NATAL', figLinesOnEarth: 'TUS LÍNEAS SOBRE LA TIERRA',
+  },
+  pt: {
+    whatIs: 'O que é astrocartografia?', pillar: '/pt/astrocartografia', calcHref: '/pt/calculadora-de-astrocartografia',
+    langToggle: 'EN', langToggleHref: '/astrocartography',
+    navCta: 'Criar meu mapa', crumbHome: 'Início', home: 'Globo', calc: 'Calculadora',
+    faqHeading: 'Perguntas frequentes', relatedHeading: 'Continue explorando',
+    footerNote: 'Astrocartografia para fins educativos e de reflexão.',
+    shortAnswer: 'A resposta curta', ctaPrimary: 'Criar meu mapa — €9,99', ctaSecondary: 'Testar a demo',
+    badge: 'GUIA DE ASTROCARTOGRAFIA', minRead: 'MIN DE LEITURA', published: 'Publicado', editorial: 'Redação',
+    locale: 'pt-BR', ogLocale: 'pt_BR',
+    calloutH: 'Veja no seu próprio mapa',
+    calloutP: 'Explore a demo interativa com mapas de exemplo. Seu mapa pessoal de 40 linhas, calculado com seus dados de nascimento, custa €9,99 / US$9,99 — pagamento único, sem assinatura.',
+    calloutCta: 'Criar meu mapa', calloutDemo: 'Demo ao vivo',
+    figProjCap: '<strong>Figura {n}.</strong> A astrocartografia projeta seu mapa astral sobre o planeta — a posição de cada planeta vira uma linha no mapa-múndi.',
+    figBirthChart: 'SEU MAPA ASTRAL', figLinesOnEarth: 'SUAS LINHAS NA TERRA',
+  },
+};
+const tr = (lang) => ({ ...I18N.en, ...(I18N[lang] || {}) });
+
 function figAngles(accent, n, isDe) {
   const cap = isDe
     ? `<strong>Abbildung ${n}.</strong> Ein Planet, vier Türen. Jeder Planet kann an jeder der vier Achsen stehen — die Achse entscheidet, <em>in welchem Lebensbereich</em> sein Thema auftaucht.`
@@ -399,24 +467,23 @@ function figBand(accent, n, isDe) {
 </figure>`;
 }
 
-function figProjection(n, isDe) {
-  const cap = isDe
-    ? `<strong>Abbildung ${n}.</strong> Astrokartographie projiziert dein Geburtshoroskop auf die Erde — jede Planetenposition wird zu einer Linie über der Weltkarte.`
-    : `<strong>Figure ${n}.</strong> Astrocartography projects your birth chart onto the planet — each planet's position becomes a line across the world map.`;
+function figProjection(n, lang) {
+  const u = tr(lang);
+  const cap = u.figProjCap.replace('{n}', n);
   return `<figure>
 <svg viewBox="0 0 720 300" role="img" aria-label="A birth chart projected onto a world map">
   <rect width="720" height="300" fill="#FFFFFF"/>
   <g transform="translate(120,150)">
     <circle r="84" fill="#FBF8F1" stroke="#E7E0D1" stroke-width="2"/><circle r="58" fill="none" stroke="#DDD5C2" stroke-width="1"/>
     <circle cx="0" cy="-71" r="5" fill="#A8650F"/><circle cx="62" cy="-30" r="5" fill="#0E7C5B"/><circle cx="-55" cy="42" r="5" fill="#5D4FB8"/><circle cx="38" cy="60" r="5" fill="#B2543F"/>
-    <text x="0" y="112" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">${isDe ? 'GEBURTSHOROSKOP' : 'YOUR BIRTH CHART'}</text>
+    <text x="0" y="112" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">${u.figBirthChart}</text>
   </g>
   <g transform="translate(228,150)"><line x1="0" y1="0" x2="44" y2="0" stroke="#19C68B" stroke-width="2.5"/><path d="M44 -6 L56 0 L44 6 Z" fill="#19C68B"/></g>
   <g transform="translate(300,46)">
     <rect width="380" height="208" rx="14" fill="#FBF8F1" stroke="#E7E0D1" stroke-width="2"/>
     <g fill="#E7E0D1"><path d="M40 60 q30 -20 70 -8 q24 8 18 36 q-8 30 -50 30 q-46 -2 -52 -28 q-4 -22 14 -30Z"/><path d="M150 100 q40 -26 92 -10 q34 12 22 52 q-16 40 -78 36 q-52 -6 -54 -42 q-2 -24 16 -36Z"/><path d="M300 56 q34 -10 50 14 q12 26 -16 40 q-34 14 -48 -10 q-10 -30 14 -44Z"/></g>
     <path d="M92 8 q-10 100 6 192" fill="none" stroke="#A8650F" stroke-width="2.5"/><path d="M188 8 q14 100 -4 192" fill="none" stroke="#0E7C5B" stroke-width="2.5"/><path d="M276 8 q-12 100 8 192" fill="none" stroke="#5D4FB8" stroke-width="2.5"/><path d="M340 8 q10 100 -6 192" fill="none" stroke="#B2543F" stroke-width="2.5"/>
-    <text x="190" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">${isDe ? 'DEINE LINIEN AUF DER ERDE' : 'YOUR LINES ON EARTH'}</text>
+    <text x="190" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">${u.figLinesOnEarth}</text>
   </g>
 </svg>
 <figcaption>${cap}</figcaption>
@@ -429,40 +496,40 @@ function figuresFor(page) {
     const accent = accentFor(page);
     return [figAngles(accent, 1, isDe), figBand(accent, 2, isDe)];
   }
-  return [figProjection(1, isDe)];
+  return [figProjection(1, page.lang)];
 }
 
 function answerCard(page) {
-  const isDe = page.lang === 'de';
+  const u = tr(page.lang);
   const txt = page.definedTerm?.description || plain(page.lead);
   return `      <div class="answer-card">
-        <div class="label">${isDe ? 'Kurz erklärt' : 'The short answer'}</div>
+        <div class="label">${u.shortAnswer}</div>
         <p>${txt}</p>
       </div>`;
 }
 
 function heroButtons(page) {
-  const isDe = page.lang === 'de';
+  const u = tr(page.lang);
     return `        <div class="cta-row">
-          <a href="/create" class="btn btn-ink">${isDe ? 'Meine Karte erstellen — 9,99 €' : 'Create my map — €9.99'} &rarr;</a>
-          <a href="/demo" class="btn btn-ghost">${isDe ? 'Live-Demo ansehen' : 'Try the live demo'}</a>
+          <a href="/create" class="btn btn-ink">${u.ctaPrimary} &rarr;</a>
+          <a href="/demo" class="btn btn-ghost">${u.ctaSecondary}</a>
         </div>`;
 }
 
 function heroBadge(page) {
-  const isDe = page.lang === 'de';
-  let label = isDe ? 'ASTROKARTOGRAPHIE' : 'ASTROCARTOGRAPHY GUIDE';
+  const u = tr(page.lang);
+  let label = u.badge;
   if (isEnLine(page.slug)) label = 'PLANETARY LINE';
   if (isDeLine(page.slug)) label = 'PLANETENLINIE';
-  return `${label} &middot; ${readMins(page)} MIN READ`;
+  return `${label} &middot; ${readMins(page)} ${u.minRead}`;
 }
 
 function metaLine(page) {
-  const isDe = page.lang === 'de';
+  const u = tr(page.lang);
   const d = page.datePublished || page.dateModified || '2026-05-01';
   let fmt = d;
-  try { fmt = new Date(d).toLocaleDateString(isDe ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { /* keep raw */ }
-  return `${isDe ? 'Veröffentlicht' : 'Published'} ${fmt} &middot; Natal Navigator ${isDe ? 'Redaktion' : 'Editorial'}`;
+  try { fmt = new Date(d).toLocaleDateString(u.locale, { day: 'numeric', month: 'long', year: 'numeric' }); } catch { /* keep raw */ }
+  return `${u.published} ${fmt} &middot; Natal Navigator ${u.editorial}`;
 }
 
 // Build the article sections with figures interleaved after the 1st and 3rd h2.
@@ -486,7 +553,8 @@ function renderPage(page) {
   const linesCluster = renderLinesCluster(page);
   const sections = sectionsWithFigures(page);
   const isDe = page.lang === 'de';
-  const ogLocale = page.lang === 'de' ? 'de_DE' : 'en_US';
+  const u = tr(page.lang);
+  const ogLocale = u.ogLocale;
   return `<!doctype html>
 <html lang="${page.lang}" prefix="og: https://ogp.me/ns#">
 <head>
@@ -532,12 +600,12 @@ ${renderSchema(page)}
     <nav class="nav" aria-label="Primary">
       <a href="/" class="logo"><span class="logo-mark">N</span> Natal Navigator</a>
       <div class="nav-links">
-        <a href="/astrocartography">${isDe ? 'Was ist Astrokartographie?' : 'What is Astrocartography?'}</a>
+        <a href="${u.pillar}">${u.whatIs}</a>
         <a href="/blog">Blog</a>
-        <a href="/astrocartography-calculator">${t.calc}</a>
-        <a href="/${isDe ? 'astrocartography' : 'astrokartographie'}">${t.other}</a>
+        <a href="${u.calcHref}">${t.calc}</a>
+        <a href="${u.langToggleHref}">${t.other}</a>
       </div>
-      <a href="/create" class="nav-cta">${isDe ? 'Karte erstellen' : 'Create your map'} &rarr;</a>
+      <a href="/create" class="nav-cta">${u.navCta} &rarr;</a>
     </nav>
   </header>
 
@@ -563,13 +631,9 @@ ${page.note ? `\n      <div class="note">${page.note}</div>\n` : ''}
 ${sections}
 
       <div class="callout">
-        <h3>${isDe ? 'Deine eigene Karte' : 'See it on your own chart'}</h3>
-        <p>${
-          isDe
-            ? 'Probiere die interaktive Demo mit Beispiel-Charts. Deine persönliche 40-Linien-Karte mit deinen eigenen Geburtsdaten gibt es für einmalig 9,99 € — ohne Abo.'
-            : 'Explore the interactive demo with example charts. Your personal 40-line map, built from your own birth data, is a one-time €9.99 / $9.99 — no subscription.'
-        }</p>
-        <p><a href="/create" class="cta">${isDe ? 'Meine Karte erstellen' : 'Create my map'} &rarr;</a>&ensp;<a href="/demo">${isDe ? 'Live-Demo' : 'Live demo'} &rarr;</a></p>
+        <h3>${u.calloutH}</h3>
+        <p>${u.calloutP}</p>
+        <p><a href="/create" class="cta">${u.calloutCta} &rarr;</a>&ensp;<a href="/demo">${u.calloutDemo} &rarr;</a></p>
       </div>
 
 ${faq}
@@ -581,10 +645,10 @@ ${linesCluster}
 
   <footer class="site">
     <div>
-      <a href="/">${isDe ? 'Globus' : 'Globe'}</a>
-      <a href="/astrocartography">Astrocartography</a>
-      <a href="/astrocartography-calculator">${t.calc}</a>
-      <a href="/astrokartographie">Astrokartographie</a>
+      <a href="/">${t.home}</a>
+      <a href="${u.pillar}">${u.whatIs}</a>
+      <a href="${u.calcHref}">${t.calc}</a>
+      <a href="${u.langToggleHref}">${t.other}</a>
       <a href="/blog">Blog</a>
     </div>
     <p class="small">&copy; 2026 Natal Navigator. ${t.footerNote}</p>

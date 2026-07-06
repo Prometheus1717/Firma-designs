@@ -73,5 +73,9 @@ export default {
       "label": "Moving abroad with astrology"
     }
   ],
-  "note": "<strong>Key takeaway:</strong> “Lucky” has an address in astrology: the countries crossed by your Jupiter, Venus and Sun lines. A benefic line is a tailwind, not a lottery ticket — but tailwinds compound."
+  "note": "<strong>Key takeaway:</strong> “Lucky” has an address in astrology: the countries crossed by your Jupiter, Venus and Sun lines. A benefic line is a tailwind, not a lottery ticket — but tailwinds compound.",
+  "alt": {
+    "es": "es/lugares-de-suerte-astrologia",
+    "pt": "pt/lugares-de-sorte-astrologia"
+  }
 };

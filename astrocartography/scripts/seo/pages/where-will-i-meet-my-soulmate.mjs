@@ -69,5 +69,9 @@ export default {
       "label": "Where to move to find love"
     }
   ],
-  "note": "<strong>Key takeaway:</strong> Astrology's answer to “where will I meet them” is your Venus and Descendant lines — and you don’t have to move there. A trip taken along your Venus geography counts."
+  "note": "<strong>Key takeaway:</strong> Astrology's answer to “where will I meet them” is your Venus and Descendant lines — and you don’t have to move there. A trip taken along your Venus geography counts.",
+  "alt": {
+    "es": "es/donde-conocere-a-mi-alma-gemela",
+    "pt": "pt/onde-vou-conhecer-minha-alma-gemea"
+  }
 };

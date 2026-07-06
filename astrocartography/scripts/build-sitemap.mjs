@@ -24,14 +24,14 @@ const STATIC_ROUTES = [
     loc: 'astrocartography',
     priority: '0.9',
     changefreq: 'monthly',
-    alt: { en: 'astrocartography', de: 'astrokartographie', 'x-default': 'astrocartography' },
+    alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
   },
-  { loc: 'astrocartography-calculator', priority: '0.8', changefreq: 'monthly', alt: { en: 'astrocartography-calculator', 'x-default': 'astrocartography-calculator' } },
+  { loc: 'astrocartography-calculator', priority: '0.8', changefreq: 'monthly', alt: { en: 'astrocartography-calculator', es: 'es/calculadora-de-astrocartografia', pt: 'pt/calculadora-de-astrocartografia', 'x-default': 'astrocartography-calculator' } },
   {
     loc: 'astrokartographie',
     priority: '0.8',
     changefreq: 'monthly',
-    alt: { en: 'astrocartography', de: 'astrokartographie', 'x-default': 'astrocartography' },
+    alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
   },
   // Downloadable lead magnet (PDF) — listed so Google can discover and index it
   // without waiting for a manual request or for the linking blog posts to be crawled.
@@ -39,7 +39,9 @@ const STATIC_ROUTES = [
 ];
 
 function pageToRoute(p) {
-  const alt = { 'x-default': p.slug, [p.lang]: p.slug };
+  // x-default = the EN member of the hreflang cluster (self only for EN pages).
+  const xDefault = p.lang === 'en' ? p.slug : (p.alt?.en || p.slug);
+  const alt = { 'x-default': xDefault, [p.lang]: p.slug };
   if (p.alt) for (const [lang, slug] of Object.entries(p.alt)) alt[lang] = slug;
   return { loc: p.slug, priority: '0.7', changefreq: 'monthly', alt };
 }

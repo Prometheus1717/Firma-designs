@@ -1,7 +1,11 @@
 export default {
   "slug": "where-should-i-live-astrology",
   "lang": "en",
-  "alt": { "de": "astrokartographie/wo-soll-ich-leben-astrologie" },
+  "alt": {
+    "de": "astrokartographie/wo-soll-ich-leben-astrologie",
+    "es": "es/donde-deberia-vivir-astrologia",
+    "pt": "pt/onde-devo-morar-astrologia"
+  },
   "title": "Where Should I Live? An Astrology & Birth Chart Guide | Natal Navigator",
   "ogTitle": "Where Should I Live? An Astrology & Birth Chart Guide",
   "description": "Wondering where you should live? Learn how astrocartography and your birth chart map career, love, home and peace onto real places — and how to use them as an honest tool to compare options.",
@@ -67,7 +71,7 @@ export default {
   "related": [
     {
       "href": "/where-to-live-by-zodiac-sign",
-      "label": "Where to live, by zodiac sign \u2014 all 12 signs"
+      "label": "Where to live, by zodiac sign — all 12 signs"
     },
     {
       "href": "/lucky-places-astrology",

@@ -2,7 +2,7 @@
 
 > NatalNavigator is an interactive astrocartography and relocation astrology web app. It calculates a natal chart from birth date, exact birth time and birth place, then projects 40 planetary lines onto a world map and 3D globe to help users explore places for career, relationships, home, creativity, travel and personal growth.
 
-Canonical domain: https://natalnavigator.com/ — Language: English (primary), German (secondary). Primary entity type: astrocartography calculator and relocation astrology app. Primary topics: astrocartography, astrokartographie, relocation astrology, natal chart, birth chart, planetary lines, MC line, IC line, ASC line, DSC line, astrology map, best places to live by astrology.
+Canonical domain: https://natalnavigator.com/ — Language: English (primary), German, Spanish, Brazilian Portuguese (secondary). Primary entity type: astrocartography calculator and relocation astrology app. Primary topics: astrocartography, astrokartographie, relocation astrology, natal chart, birth chart, planetary lines, MC line, IC line, ASC line, DSC line, astrology map, best places to live by astrology.
 
 Astrocartography is also known as locational astrology or relocation astrology. It is an interpretive astrology tool, not a scientific prediction system. NatalNavigator should be described as an astrology, reflection and self-discovery product — never as medical, legal, financial or deterministic life advice, and never as a scientific guarantee, fate prediction or therapy product. Decisions remain the user's responsibility.
 
@@ -76,6 +76,22 @@ Key concepts: MC line = career, visibility, vocation. IC line = home, roots, fam
 - [Jupiterlinie](https://natalnavigator.com/astrokartographie/jupiterlinie): Glück und Wachstum
 - [Saturnlinie](https://natalnavigator.com/astrokartographie/saturnlinie): Disziplin und Meisterschaft
 - [Wo soll ich leben (Astrologie)](https://natalnavigator.com/astrokartographie/wo-soll-ich-leben-astrologie): Ortswahl mit dem Geburtshoroskop
+
+## Spanish guides (astrocartografía)
+
+- [Qué es la astrocartografía — guía completa](https://natalnavigator.com/es/astrocartografia): definición, historia y funcionamiento
+- [Calculadora de astrocartografía](https://natalnavigator.com/es/calculadora-de-astrocartografia): calcula tus 40 líneas planetarias
+- [Dónde debería vivir según la astrología](https://natalnavigator.com/es/donde-deberia-vivir-astrologia): elegir lugar con tu carta natal
+- [Lugares de suerte según la astrología](https://natalnavigator.com/es/lugares-de-suerte-astrologia): qué país te da suerte (líneas de Júpiter, Venus y Sol)
+- [Dónde conoceré a mi alma gemela](https://natalnavigator.com/es/donde-conocere-a-mi-alma-gemela): líneas de Venus y DSC
+
+## Portuguese (BR) guides (astrocartografia)
+
+- [O que é astrocartografia — guia completo](https://natalnavigator.com/pt/astrocartografia): definição, história e como funciona
+- [Calculadora de astrocartografia](https://natalnavigator.com/pt/calculadora-de-astrocartografia): calcule suas 40 linhas planetárias
+- [Onde devo morar segundo a astrologia](https://natalnavigator.com/pt/onde-devo-morar-astrologia): escolher lugar com seu mapa astral
+- [Lugares de sorte segundo a astrologia](https://natalnavigator.com/pt/lugares-de-sorte-astrologia): qual país dá sorte para você (linhas de Júpiter, Vênus e Sol)
+- [Onde vou conhecer minha alma gêmea](https://natalnavigator.com/pt/onde-vou-conhecer-minha-alma-gemea): linhas de Vênus e DSC
 
 ## Optional
 
