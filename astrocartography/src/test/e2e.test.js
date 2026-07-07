@@ -49,12 +49,28 @@ describe('Production build', () => {
 });
 
 describe('Vercel configuration', () => {
-  it('has SPA rewrite rule', () => {
+  // A blanket /((?!api/).*) fallback made every unknown URL a soft 404 (200 +
+  // homepage canonical), so the rewrite now enumerates the app routes and
+  // everything else falls through to the static 404.
+  it('has SPA rewrite rule covering every client route', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
-    expect(config.rewrites).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ source: '/((?!api/).*)', destination: '/index.html' }),
-      ])
-    );
+    const spa = config.rewrites.find((r) => r.destination === '/index.html');
+    expect(spa).toBeDefined();
+    expect(spa.source).not.toContain('(?!api/)');
+    for (const route of [
+      'demo', 'create', 'result', 'auth', 'birth-data', 'dashboard', 'admin',
+      'reset-password', 'landing', 'impressum', 'datenschutz', 'agb', 'widerruf', 'kontakt',
+    ]) {
+      expect(spa.source).toContain(route);
+    }
+  });
+
+  it('redirects the retired /en and /de folders', () => {
+    const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
+    for (const source of ['/en', '/en/(.*)', '/de', '/de/(.*)']) {
+      expect(config.redirects).toEqual(
+        expect.arrayContaining([expect.objectContaining({ source, permanent: true })])
+      );
+    }
   });
 });

@@ -209,53 +209,6 @@ function renderBody(page) {
   return { t, crumb, sections, faq, related };
 }
 
-const CSS = `:root { --bg:#0A1018; --ink:#C8D8E8; --dim:#8A9BB0; --accent:#00D88A; --blue:#7EB8FF; --yellow:#FACC15; --red:#F04060; --line:#1A2840; }
-    *,*::before,*::after { box-sizing: border-box; }
-    html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans',system-ui,-apple-system,sans-serif; line-height:1.7; -webkit-font-smoothing:antialiased; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
-    header.top { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
-    header.top .brand { font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:3px; font-size:14px; color:var(--accent); }
-    header.top nav a { margin-left: 20px; font-size: 13px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
-    header.top nav a:hover { color: var(--ink); }
-    main.page { max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; }
-    nav.breadcrumb { font-size: 13px; color: var(--dim); margin-bottom: 24px; }
-    nav.breadcrumb a { color: var(--dim); }
-    h1 { font-family:'JetBrains Mono',monospace; font-size: 34px; line-height: 1.2; letter-spacing: 1px; color: var(--accent); margin: 0 0 12px; }
-    h2 { font-family:'JetBrains Mono',monospace; font-size: 22px; color: var(--accent); margin: 48px 0 12px; letter-spacing: 1px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-    h3 { font-size: 18px; color: var(--blue); margin: 28px 0 8px; font-weight: 600; }
-    p { color: var(--ink); font-size: 16px; margin: 12px 0; }
-    p.lead { font-size: 18px; color: var(--ink); }
-    ul, ol { padding-left: 22px; color: var(--ink); }
-    li { margin: 8px 0; font-size: 16px; }
-    strong { color: #E8F0FA; }
-    .cta { display: inline-block; background: var(--accent); color: #06131C; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; margin: 20px 0; font-family:'JetBrains Mono',monospace; }
-    .cta:hover { background: #4FE8B0; text-decoration: none; }
-    .callout { border: 1px solid var(--line); background: rgba(26,40,64,0.4); border-left: 3px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; }
-    .callout h3 { margin-top: 0; color: var(--accent); }
-    .note { border: 1px solid var(--accent); background: rgba(0,216,138,0.08); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 24px 0; font-size: 16px; color: #E8F0FA; }
-    .note strong { color: var(--accent); }
-    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-    th { color: var(--accent); font-family:'JetBrains Mono',monospace; font-weight: 700; letter-spacing: 1px; font-size: 12px; text-transform: uppercase; }
-    td { color: var(--ink); }
-    .related { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); }
-    .related h2 { border: none; padding: 0; margin-top: 0; }
-    .related ul { list-style: none; padding: 0; }
-    .related li { margin: 10px 0; }
-    .lines-cluster { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
-    .lines-cluster h2 { border: none; padding: 0; margin: 0 0 14px; font-size: 18px; }
-    .lines-cluster ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 18px; }
-    .lines-cluster li { margin: 4px 0; font-size: 15px; }
-    .lines-cluster .cluster-guides { font-size: 14px; color: var(--dim); margin-top: 16px; }
-    footer.site { border-top: 1px solid var(--line); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--dim); }
-    footer.site a { color: var(--dim); margin: 0 10px; }
-    @media (max-width: 600px) {
-      h1 { font-size: 26px; }
-      h2 { font-size: 19px; }
-      header.top nav a { margin-left: 10px; font-size: 11px; }
-    }`;
 
 // ── Paper "landing" design (matches the blog posts) ───────────────────────
 const PAPER_CSS = `
