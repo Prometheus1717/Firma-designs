@@ -100,6 +100,11 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
+        // Force a Stripe Customer so session.customer is populated and can be
+        // persisted as stripe_customer_id. Without this, one-time payment mode
+        // defaults to 'if_required' and no Customer is created. Purely additive:
+        // entitlement never depends on this id — it only aids later lookups.
+        customer_creation: 'always',
         ...(email ? { customer_email: email } : {}),
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${origin}/result?payment=success&session_id={CHECKOUT_SESSION_ID}`,
@@ -143,6 +148,9 @@ export default async function handler(req, res) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      // Force a Stripe Customer (see guest branch above) so the webhook can
+      // persist stripe_customer_id. Additive — does not affect entitlement.
+      customer_creation: 'always',
       customer_email: email,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/dashboard?payment=success`,
