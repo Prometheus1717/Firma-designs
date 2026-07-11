@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/build-pages.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms-full.mjs",
-    "build": "vite build",
+    "build": "vite build && node scripts/inject-lp-preload.mjs",
     "indexnow": "node scripts/ping-indexnow.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
