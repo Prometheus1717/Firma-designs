@@ -39,6 +39,9 @@
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <!-- LCP: das Demo-Poster wird sonst erst nach React-Mount entdeckt (~+3s auf
+         Mobile). Früher Preload nur auf der Landing — App-Routen laden es nicht. -->
+    <script>if(location.pathname==='/'){document.head.insertAdjacentHTML('beforeend','<link rel="preload" as="image" fetchpriority="high" imagesrcset="/landing/app-globe-sm.webp 1000w, /landing/app-globe-1400.webp 1400w" imagesizes="(max-width: 760px) 92vw, 1200px">');}</script>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Natal Navigator" />
     <meta name="application-name" content="Natal Navigator" />

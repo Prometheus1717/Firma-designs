@@ -397,7 +397,7 @@ export default function LandingPage() {
                     />
                   ) : (
                     <button className="lp-poster" onClick={() => setDemoOn(true)} aria-label={C.demo.posterCta}>
-                      <img src="/landing/app-globe-1400.webp" alt={C.demo.posterAlt} width="2000" height="1214" fetchPriority="high" />
+                      <img src="/landing/app-globe-1400.webp" srcSet="/landing/app-globe-sm.webp 1000w, /landing/app-globe-1400.webp 1400w" sizes="(max-width: 760px) 92vw, 1200px" alt={C.demo.posterAlt} width="2000" height="1214" fetchPriority="high" />
                       <span className="lp-poster-cta"><span className="lp-poster-play">{I.play}</span> {C.demo.posterCta}</span>
                     </button>
                   )}
