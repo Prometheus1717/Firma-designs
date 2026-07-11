@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/mars-line",
   "lang": "en",
-  "title": "Mars Line Astrocartography: Drive, Ambition & Raw Energy | Natal Navigator",
+  "title": "Mars Line Astrocartography: Drive, Ambition & Raw Energy",
   "ogTitle": "The Mars Line in Astrocartography",
   "description": "What a Mars line means in astrocartography — drive, courage, energy and ambition themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "mars line, mars line astrocartography, mars line meaning, mars mc line, mars asc line, mars dc line, ambition astrology relocation, energy astrology line",
@@ -85,6 +85,6 @@ export default {
       "mars DC line",
       "mars energy line"
     ],
-    "description": "A Mars line is the geographic path in astrocartography where Mars was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Mars line are interpreted as amplifying drive, ambition, courage, physical energy and assertion, along with the friction of conflict and impatience."
+    "description": "A Mars line is the geographic path in astrocartography where Mars was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth."
   }
 };

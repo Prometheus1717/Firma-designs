@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/neptune-line",
   "lang": "en",
-  "title": "Neptune Line Astrocartography: Dreams, Intuition & Blurred Edges | Natal Navigator",
+  "title": "Neptune Line Astrocartography: Dreams, Intuition & Blurred Edges",
   "ogTitle": "The Neptune Line in Astrocartography",
-  "description": "What a Neptune line means in astrocartography — imagination, spirituality, art and dreams, the MC/IC/ASC/DSC variants, its honest downsides, and how to read it on your map.",
+  "description": "What a Neptune line means in astrocartography — imagination, spirituality, art and dreams, the MC/IC/ASC/DSC variants, its honest downsides.",
   "keywords": "neptune line, neptune line astrocartography, neptune line meaning, neptune mc line, neptune asc line, neptune dc line, spiritual astrology relocation, artistic astrocartography line",
   "articleHeadline": "The Neptune Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -85,6 +85,6 @@ export default {
       "neptune DC line",
       "neptune spiritual line"
     ],
-    "description": "A Neptune line is the geographic path in astrocartography where Neptune was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Neptune line are interpreted as emphasising imagination, spirituality, dreams, art, compassion and transcendence, while also dissolving boundaries in ways that can bring confusion, escapism or illusion."
+    "description": "A Neptune line is the geographic path in astrocartography where Neptune was on the Midheaven (MC), Nadir (IC)."
   }
 };

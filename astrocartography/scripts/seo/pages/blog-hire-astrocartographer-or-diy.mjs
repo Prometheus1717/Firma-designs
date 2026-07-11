@@ -1,9 +1,9 @@
 export default {
   slug: `blog/hire-astrocartographer-or-diy`,
   lang: `en`,
-  title: `Should You Hire an Astrocartographer or Do It Yourself? | Natal Navigator`,
+  title: `Should You Hire an Astrocartographer or Do It Yourself?`,
   ogTitle: `Hire an Astrocartographer or DIY?`,
-  description: `Should you hire an astrocartographer or read your own chart? An honest decision guide: what you can easily do yourself for free, when paying a professional is genuinely worth it, and how to tell which camp you're in.`,
+  description: `Should you hire an astrocartographer or read your own chart? An honest decision guide: what you can easily do yourself for free.`,
   keywords: `hire astrocartographer or diy, should I hire an astrocartographer, do astrocartography myself, astrocartography reading yourself, diy astrocartography`,
   articleHeadline: `Should I Hire an Astrocartographer or Interpret My Chart Myself?`,
   datePublished: `2026-07-05`,

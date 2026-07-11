@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/dsc-line",
   "lang": "en",
-  "title": "DSC Line Astrocartography: Partnership, Marriage & the People You Meet | Natal Navigator",
+  "title": "DSC Line Astrocartography: Partnership & Who You Meet",
   "ogTitle": "The DSC Line (Descendant) in Astrocartography",
-  "description": "What a DSC line (Descendant line) means in astrocartography — partnership, marriage, what and whom you attract — and what each planet's Descendant line emphasises, from Venus to Pluto.",
+  "description": "What a DSC line (Descendant line) means in astrocartography — partnership, marriage, what and whom you attract.",
   "keywords": "dsc line, descendant line astrocartography, dsc line meaning, venus dsc line, sun descendant line, saturn dsc line, relationship astrocartography, what you attract astrology",
   "articleHeadline": "The DSC Line in Astrocartography: Descendant Line Meaning Across the Planets",
   "datePublished": "2026-06-15",
@@ -85,6 +85,6 @@ export default {
       "DSC astrocartography line",
       "relationship line"
     ],
-    "description": "A DSC line (Descendant line) is the geographic path in astrocartography where a planet was setting on the western horizon — on the Descendant — at the moment of birth. Places along a DSC line are interpreted as emphasising partnership, marriage, collaboration and what and whom a person attracts."
+    "description": "A DSC line (Descendant line) is the geographic path in astrocartography where a planet was setting on the western horizon — on the Descendant."
   }
 };

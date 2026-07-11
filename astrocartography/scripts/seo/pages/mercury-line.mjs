@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/mercury-line",
   "lang": "en",
-  "title": "Mercury Line Astrocartography: Communication, Trade & Quick Minds | Natal Navigator",
+  "title": "Mercury Line Astrocartography: Communication, Trade & Quick Minds",
   "ogTitle": "The Mercury Line in Astrocartography",
-  "description": "What a Mercury line means in astrocartography — communication, learning, writing and networking themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
+  "description": "What a Mercury line means in astrocartography — communication, learning, writing and networking themes, the MC/IC/ASC/DSC variants, who it suits.",
   "keywords": "mercury line, mercury line astrocartography, mercury line meaning, mercury mc line, mercury asc line, mercury dc line, communication astrology relocation, where to write astrology",
   "articleHeadline": "The Mercury Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -85,6 +85,6 @@ export default {
       "mercury DC line",
       "mercury communication line"
     ],
-    "description": "A Mercury line is the geographic path in astrocartography where Mercury was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Mercury line are interpreted as emphasising communication, intellect, learning, writing, networking and trade themes."
+    "description": "A Mercury line is the geographic path in astrocartography where Mercury was on the Midheaven (MC), Nadir (IC)."
   }
 };

@@ -1,9 +1,9 @@
 export default {
   slug: `blog/can-chatgpt-read-astrocartography`,
   lang: `en`,
-  title: `Can ChatGPT Read Your Astrocartography Chart Accurately? | Natal Navigator`,
+  title: `Can ChatGPT Read Your Astrocartography Chart Accurately?`,
   ogTitle: `Can ChatGPT Read an Astrocartography Chart?`,
-  description: `Can AI tools like ChatGPT read astrocartography charts accurately? An honest breakdown of what AI does brilliantly (interpretation) and what it gets dangerously wrong (the astronomy) — and the workflow that actually works.`,
+  description: `Can ChatGPT read astrocartography charts accurately? An honest look at what AI gets right, where it hallucinates lines, and what to check before trusting it.`,
   keywords: `chatgpt astrocartography, can chatgpt read astrocartography, ai astrocartography reading, ai vs astrologer astrocartography, chatgpt birth chart accuracy, astrocartography ai tool`,
   articleHeadline: `Can AI Tools Like ChatGPT Read Astrocartography Charts Accurately?`,
   datePublished: `2026-07-04`,

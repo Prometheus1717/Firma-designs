@@ -6,9 +6,9 @@ export default {
     "es": "es/donde-deberia-vivir-astrologia",
     "pt": "pt/onde-devo-morar-astrologia"
   },
-  "title": "Where Should I Live? An Astrology & Birth Chart Guide | Natal Navigator",
+  "title": "Where Should I Live? An Astrology & Birth Chart Guide",
   "ogTitle": "Where Should I Live? An Astrology & Birth Chart Guide",
-  "description": "Wondering where you should live? Learn how astrocartography and your birth chart map career, love, home and peace onto real places — and how to use them as an honest tool to compare options.",
+  "description": "Wondering where you should live? Learn how astrocartography and your birth chart map career, love, home and peace onto real places.",
   "keywords": "where should i live astrology, where should i live based on birth chart, best place to live astrology, astrocartography where to live",
   "articleHeadline": "Where Should I Live? Using Astrology and Your Birth Chart to Choose a Place",
   "datePublished": "2026-06-15",
@@ -69,6 +69,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/lucky-places-astrology", "label": "Lucky places astrology — your Jupiter and Venus spots" },
     {
       "href": "/where-to-live-by-zodiac-sign",
       "label": "Where to live, by zodiac sign — all 12 signs"
@@ -117,6 +118,6 @@ export default {
       "locational astrology",
       "astro mapping"
     ],
-    "description": "Relocation astrology is the practice of using a birth chart to understand how different places on Earth may emphasise different life themes. Astrocartography is its map-based form, drawing planetary lines across the globe to show where career (MC), home (IC), identity (ASC), love (DSC) and other themes are amplified, as a reflective tool for comparing where to live."
+    "description": "Relocation astrology is the practice of using a birth chart to understand how different places on Earth may emphasise different life themes."
   }
 };

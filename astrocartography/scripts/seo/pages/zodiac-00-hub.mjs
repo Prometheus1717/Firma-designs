@@ -1,7 +1,7 @@
 export default {
   "slug": "where-to-live-by-zodiac-sign",
   "lang": "en",
-  "title": "Where to Live Based on Your Zodiac Sign: All 12 Signs, Real Cities | Natal Navigator",
+  "title": "Where to Live by Zodiac Sign: All 12, Real Cities",
   "ogTitle": "Where to Live, by Zodiac Sign",
   "description": "Where should you live based on your zodiac sign? Honest city guides for all 12 signs — and how astrocartography turns a sun-sign list into your personal map.",
   "keywords": "where to live based on zodiac sign, best place to live zodiac, zodiac sign city, which city should I live in astrology, best cities for my sign",
@@ -48,6 +48,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/lucky-places-astrology", "label": "Which country is lucky for you? Jupiter & Venus places" },
     {
       "href": "/where-should-i-live-astrology",
       "label": "Where should I live? The full astrology guide"

@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-with-other-life-planning`,
   lang: `en`,
-  title: `How to Combine Astrocartography With Your Other Life-Planning Tools | Natal Navigator`,
+  title: `Combining Astrocartography With Other Planning Tools`,
   ogTitle: `Astrocartography + Your Other Tools`,
-  description: `Astrocartography works best as one voice among many. Here's how to combine it with practical research, your values, trusted people and your gut — and a simple framework for weighing each without letting any single system run your life.`,
+  description: `Astrocartography works best as one voice among many. Here's how to combine it with practical research, your values, trusted people and your gut.`,
   keywords: `combine astrocartography with other methods, astrocartography life planning, holistic relocation decision, astrocartography and gut, how to make a location decision`,
   articleHeadline: `How to Combine Astrocartography With Other Life-Planning Methods`,
   datePublished: `2026-07-05`,

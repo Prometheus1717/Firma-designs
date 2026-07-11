@@ -6,7 +6,7 @@ export default {
     "de": "astrokartographie/wo-soll-ich-leben-astrologie",
     "es": "es/donde-deberia-vivir-astrologia"
   },
-  "title": "Onde devo morar? A resposta da astrologia e do seu mapa astral | Natal Navigator",
+  "title": "Onde devo morar? A resposta da astrologia e do seu mapa astral",
   "ogTitle": "Onde devo morar, segundo a astrologia?",
   "description": "Onde você deveria morar segundo a astrologia? Como seu mapa astral e suas linhas astrocartográficas apontam suas melhores cidades para carreira, amor e lar.",
   "keywords": "onde devo morar astrologia, mapa astral onde morar, melhor cidade para mim astrologia, astrologia de relocação, onde morar mapa astral",

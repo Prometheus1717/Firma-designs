@@ -2,9 +2,9 @@ export default {
   "slug": "astrocartography/sun-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/sonnenlinie" },
-  "title": "Sun Line Astrocartography: Confidence, Visibility & Where You Shine | Natal Navigator",
+  "title": "Sun Line Astrocartography: Where You Shine Brightest",
   "ogTitle": "The Sun Line in Astrocartography",
-  "description": "What a Sun line means in astrocartography — identity, vitality, confidence and recognition themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
+  "description": "What a Sun line means in astrocartography — identity, vitality, confidence and recognition themes, the MC/IC/ASC/DSC variants, who it suits.",
   "keywords": "sun line, sun line astrocartography, sun line meaning, sun mc line, sun asc line, sun ic line, identity astrology relocation, where to feel confident astrology",
   "articleHeadline": "The Sun Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -86,6 +86,6 @@ export default {
       "sun IC line",
       "sun identity line"
     ],
-    "description": "A Sun line is the geographic path in astrocartography where the Sun was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Sun line are interpreted as emphasising identity, vitality, confidence, self-expression and recognition themes."
+    "description": "A Sun line is the geographic path in astrocartography where the Sun was on the Midheaven (MC), Nadir (IC)."
   }
 };

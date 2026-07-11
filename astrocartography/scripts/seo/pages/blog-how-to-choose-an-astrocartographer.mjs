@@ -1,9 +1,9 @@
 export default {
   slug: `blog/how-to-choose-an-astrocartographer`,
   lang: `en`,
-  title: `How to Choose an Astrocartographer (and the Truth About "Certified") | Natal Navigator`,
+  title: `How to Choose an Astrocartographer (Honest Guide)`,
   ogTitle: `How to Choose an Astrocartographer`,
-  description: `How to choose a good astrocartographer — the honest truth about "certified" astrologers, the green flags and red flags to watch for, and the exact questions to ask before you book a reading.`,
+  description: `How to choose a good astrocartographer — the honest truth about "certified" astrologers, the green flags and red flags to watch for.`,
   keywords: `how to choose an astrocartographer, certified astrocartographer, find a good astrocartographer, best astrocartographer, questions to ask an astrologer, astrocartographer red flags`,
   articleHeadline: `How to Choose a Certified Astrocartographer`,
   datePublished: `2026-07-05`,

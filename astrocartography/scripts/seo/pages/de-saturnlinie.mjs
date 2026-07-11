@@ -4,9 +4,9 @@ export default {
   "alt": {
     "en": "astrocartography/saturn-line"
   },
-  "title": "Saturnlinie Astrokartographie: Disziplin, Reife & Aufbau | Natal Navigator",
+  "title": "Saturnlinie Astrokartographie: Disziplin, Reife & Aufbau",
   "ogTitle": "Die Saturnlinie in der Astrokartographie",
-  "description": "Was eine Saturnlinie in der Astrokartographie bedeutet — Disziplin, Struktur, Verantwortung und Reife, die MC/IC/AC/DC-Varianten, für wen sie passt und wie du sie auf deiner Karte liest.",
+  "description": "Was eine Saturnlinie in der Astrokartographie bedeutet — Disziplin, Struktur, Verantwortung und Reife, die MC/IC/AC/DC-Varianten.",
   "keywords": "saturnlinie, saturnlinie astrokartographie, saturnlinie bedeutung, astrokartographie saturn, saturn mc linie, saturn ic linie",
   "articleHeadline": "Die Saturnlinie in der Astrokartographie: Bedeutung und beste Orte zum Leben",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "saturn IC linie",
       "saturn arbeitslinie"
     ],
-    "description": "Eine Saturnlinie ist der geografische Pfad in der Astrokartographie, auf dem Saturn im Moment der Geburt am Medium Coeli (MC), Imum Coeli (IC), Aszendenten (AC) oder Deszendenten (DC) stand. Orte entlang einer Saturnlinie werden so gedeutet, dass sie Disziplin, Struktur, Verantwortung, Reife und langfristige Arbeit betonen."
+    "description": "Eine Saturnlinie ist der geografische Pfad in der Astrokartographie, auf dem Saturn im Moment der Geburt am Medium Coeli (MC), Imum Coeli (IC)."
   }
 };

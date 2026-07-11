@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/aries",
   "lang": "en",
-  "title": "Best Places to Live for an Aries: 7 Cities With Real Momentum | Natal Navigator",
+  "title": "Best Places to Live for an Aries: 7 Cities With Real Momentum",
   "ogTitle": "Best Places to Live for a Aries",
-  "description": "Where should a Aries live? The 7 best cities for Aries (Mar 21 – Apr 19) based on drive, independence and a need for momentum — plus how your full birth chart refines the answer.",
+  "description": "Where should a Aries live? The 7 best cities for Aries (Mar 21 – Apr 19) based on drive, independence and a need for momentum.",
   "keywords": "best places to live for a aries, where should a aries live, aries best cities, aries where to live, aries zodiac city, aries relocation astrology",
   "articleHeadline": "Best Places to Live for an Aries: 7 Cities With Real Momentum",
   "datePublished": "2026-07-04",

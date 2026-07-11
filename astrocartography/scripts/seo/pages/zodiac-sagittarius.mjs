@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/sagittarius",
   "lang": "en",
-  "title": "Best Places to Live for a Sagittarius: 7 Base Camps for a Big Life | Natal Navigator",
+  "title": "Best Places to Live for a Sagittarius: 7 Base Camps",
   "ogTitle": "Best Places to Live for a Sagittarius",
-  "description": "Where should a Sagittarius live? The 7 best cities for Sagittarius (Nov 22 – Dec 21) based on freedom, horizon and a base camp for a bigger life — plus how your full birth chart refines the answer.",
+  "description": "Where should a Sagittarius live? The 7 best cities for Sagittarius (Nov 22 – Dec 21) based on freedom, horizon and a base camp for a bigger life.",
   "keywords": "best places to live for a sagittarius, where should a sagittarius live, sagittarius best cities, sagittarius where to live, sagittarius zodiac city, sagittarius relocation astrology",
   "articleHeadline": "Best Places to Live for a Sagittarius: 7 Base Camps for a Big Life",
   "datePublished": "2026-07-04",

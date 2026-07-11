@@ -6,7 +6,7 @@ export default {
     "de": "astrokartographie/wo-soll-ich-leben-astrologie",
     "pt": "pt/onde-devo-morar-astrologia"
   },
-  "title": "¿Dónde debería vivir? La respuesta de la astrología y tu carta natal | Natal Navigator",
+  "title": "¿Dónde debería vivir? La respuesta de tu carta natal",
   "ogTitle": "¿Dónde debería vivir, según la astrología?",
   "description": "¿Dónde deberías vivir según la astrología? Cómo tu carta natal y tus líneas astrocartográficas señalan tus mejores ciudades para carrera, amor y hogar.",
   "keywords": "dónde debería vivir astrología, donde vivir según astrología, mejor ciudad para mí astrología, carta natal dónde vivir, astrología de reubicación",

@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-reading-cost`,
   lang: `en`,
-  title: `How Much Does an Astrocartography Reading Cost? (2026) | Natal Navigator`,
+  title: `How Much Does an Astrocartography Reading Cost? (2026)`,
   ogTitle: `How Much Does an Astrocartography Reading Cost?`,
-  description: `What an astrocartography reading actually costs in 2026 — from free calculators to €9.99 interactive maps to $75–$300+ professional consultations — and how to know which one is worth paying for.`,
+  description: `What an astrocartography reading actually costs in 2026 — from free calculators to €9.99 interactive maps to $75–$300+ professional consultations.`,
   keywords: `astrocartography reading cost, how much does astrocartography cost, astrocartography reading price, cost of astrocartography, astrocartography consultation cost, free astrocartography vs paid`,
   articleHeadline: `How Much Does an Astrocartography Reading Cost?`,
   datePublished: `2026-07-04`,

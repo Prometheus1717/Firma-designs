@@ -4,9 +4,9 @@ export default {
   "alt": {
     "en": "astrocartography/moon-line"
   },
-  "title": "Mondlinie Astrokartographie: Zuhause, Geborgenheit & Gefühl | Natal Navigator",
+  "title": "Mondlinie Astrokartographie: Zuhause, Geborgenheit & Gefühl",
   "ogTitle": "Die Mondlinie in der Astrokartographie",
-  "description": "Was eine Mondlinie in der Astrokartographie bedeutet — Gefühl, Geborgenheit, Zuhause und Zugehörigkeit, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
+  "description": "Was eine Mondlinie in der Astrokartographie bedeutet — Gefühl, Geborgenheit, Zuhause und Zugehörigkeit, die Varianten auf MC/IC/AC/DC.",
   "keywords": "mondlinie, mondlinie astrokartographie, mondlinie bedeutung, astrokartographie mond zuhause",
   "articleHeadline": "Die Mondlinie in der Astrokartographie: Bedeutung und beste Orte zum Leben",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "mond IC-Linie",
       "mond zuhause linie"
     ],
-    "description": "Eine Mondlinie ist der geografische Weg in der Astrokartographie, auf dem der Mond im Moment der Geburt am Medium Coeli (MC), Nadir (IC), Aszendenten (AC) oder Deszendenten (DC) stand. Orte entlang einer Mondlinie werden so gedeutet, dass sie Themen wie Gefühl, Geborgenheit, Zugehörigkeit, Zuhause, Familie und Fürsorge betonen."
+    "description": "Eine Mondlinie ist der geografische Weg in der Astrokartographie, auf dem der Mond im Moment der Geburt am Medium Coeli (MC), Nadir (IC)."
   }
 };

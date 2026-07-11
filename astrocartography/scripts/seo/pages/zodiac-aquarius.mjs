@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/aquarius",
   "lang": "en",
-  "title": "Best Places to Live for an Aquarius: 7 Cities From the Future | Natal Navigator",
+  "title": "Best Places to Live for an Aquarius: 7 Cities From the Future",
   "ogTitle": "Best Places to Live for a Aquarius",
-  "description": "Where should a Aquarius live? The 7 best cities for Aquarius (Jan 20 – Feb 18) based on originality, ideas ahead of schedule and chosen community — plus how your full birth chart refines the answer.",
+  "description": "Where should a Aquarius live? The 7 best cities for Aquarius (Jan 20 – Feb 18) based on originality, ideas ahead of schedule and chosen community.",
   "keywords": "best places to live for a aquarius, where should a aquarius live, aquarius best cities, aquarius where to live, aquarius zodiac city, aquarius relocation astrology",
   "articleHeadline": "Best Places to Live for an Aquarius: 7 Cities From the Future",
   "datePublished": "2026-07-04",

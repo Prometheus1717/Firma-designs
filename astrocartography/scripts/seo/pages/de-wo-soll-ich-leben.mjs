@@ -6,9 +6,9 @@ export default {
     "es": "es/donde-deberia-vivir-astrologia",
     "pt": "pt/onde-devo-morar-astrologia"
   },
-  "title": "Wo soll ich leben? Astrologie & Geburtshoroskop | Natal Navigator",
+  "title": "Wo soll ich leben? Astrologie & Geburtshoroskop",
   "ogTitle": "Wo soll ich leben? Was die Astrologie wirklich sagen kann",
-  "description": "Wie die Astrokartographie hilft, die Frage „Wo soll ich leben?“ mit dem Geburtshoroskop zu beleuchten — eine ehrliche, praktische Methode, Orte zu vergleichen, statt eine Vorhersage zu liefern.",
+  "description": "Wie die Astrokartographie hilft, die Frage „Wo soll ich leben?“ mit dem Geburtshoroskop zu beleuchten.",
   "keywords": "wo soll ich leben astrologie, wo soll ich leben geburtshoroskop, bester ort zum leben astrologie, astrokartographie wohnort",
   "articleHeadline": "Wo soll ich leben? Wie die Astrologie und dein Geburtshoroskop bei der Ortswahl helfen",
   "datePublished": "2026-06-15",
@@ -101,6 +101,6 @@ export default {
       "Astro-Mapping",
       "Relocation-Astrologie"
     ],
-    "description": "Die Astrokartographie ist eine astrologische Methode, die das Geburtshoroskop auf die Weltkarte projiziert. Sie zeichnet für jeden Planeten Linien (auf den Achsen MC, IC, AC und DC) über den Globus und wird genutzt, um zu reflektieren, welche Orte welche Lebensthemen wie Karriere, Zuhause, Identität oder Liebe betonen."
+    "description": "Die Astrokartographie ist eine astrologische Methode, die das Geburtshoroskop auf die Weltkarte projiziert."
   }
 };

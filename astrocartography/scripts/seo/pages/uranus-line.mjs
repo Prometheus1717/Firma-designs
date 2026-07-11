@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/uranus-line",
   "lang": "en",
-  "title": "Uranus Line Astrocartography: Change, Freedom & Reinvention | Natal Navigator",
+  "title": "Uranus Line Astrocartography: Change, Freedom & Reinvention",
   "ogTitle": "The Uranus Line in Astrocartography",
-  "description": "What a Uranus line means in astrocartography — freedom, change, reinvention and awakening themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
+  "description": "What a Uranus line means in astrocartography — freedom, change, reinvention and awakening themes, the MC/IC/ASC/DSC variants, who it suits.",
   "keywords": "uranus line, uranus line astrocartography, uranus line meaning, uranus mc line, uranus asc line, uranus dc line, reinvention astrology relocation, freedom astrology line",
   "articleHeadline": "The Uranus Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -85,6 +85,6 @@ export default {
       "uranus DC line",
       "uranus freedom line"
     ],
-    "description": "A Uranus line is the geographic path in astrocartography where Uranus was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Uranus line are interpreted as emphasising freedom, change, reinvention, innovation, independence and sudden awakening — along with restlessness and unpredictability."
+    "description": "A Uranus line is the geographic path in astrocartography where Uranus was on the Midheaven (MC), Nadir (IC)."
   }
 };

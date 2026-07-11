@@ -6,7 +6,7 @@ export default {
     "de": "astrokartographie",
     "pt": "pt/astrocartografia"
   },
-  "title": "¿Qué es la astrocartografía? Guía completa con globo interactivo | Natal Navigator",
+  "title": "¿Qué es la astrocartografía? Guía completa con globo interactivo",
   "ogTitle": "¿Qué es la astrocartografía?",
   "description": "La astrocartografía proyecta tu carta natal sobre el mapa del mundo: qué es, cómo se leen las líneas planetarias, y cómo calcular tu mapa en un globo 3D interactivo.",
   "keywords": "astrocartografía, qué es la astrocartografía, astrocartografia, líneas planetarias, carta natal mapa, astrología de reubicación, dónde vivir astrología",

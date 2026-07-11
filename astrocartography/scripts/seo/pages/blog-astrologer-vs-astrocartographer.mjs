@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrologer-vs-astrocartographer`,
   lang: `en`,
-  title: `Astrologer vs. Astrocartographer — What's the Difference? | Natal Navigator`,
+  title: `Astrologer vs. Astrocartographer — What's the Difference?`,
   ogTitle: `Astrologer vs. Astrocartographer`,
-  description: `The difference between an astrologer and an astrocartographer, explained simply: one reads your birth chart, the other reads it onto the map of the world. Which specialist you need, and when each one helps.`,
+  description: `The difference between an astrologer and an astrocartographer, explained simply: one reads your birth chart, the other reads it onto the map of the world.`,
   keywords: `astrologer vs astrocartographer, difference between astrologer and astrocartographer, what is an astrocartographer, relocation astrologer, astrocartography specialist`,
   articleHeadline: `What's the Difference Between an Astrologer and an Astrocartographer?`,
   datePublished: `2026-07-05`,

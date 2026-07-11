@@ -4,9 +4,9 @@ export default {
   "alt": {
     "en": "astrocartography/venus-line"
   },
-  "title": "Venuslinie Astrokartographie: Liebe, Schönheit & Leichtigkeit | Natal Navigator",
+  "title": "Venuslinie Astrokartographie: Liebe, Schönheit & Leichtigkeit",
   "ogTitle": "Die Venuslinie in der Astrokartographie",
-  "description": "Was eine Venuslinie in der Astrokartographie bedeutet — Liebe, Schönheit, Genuss, Geld und Leichtigkeit, die Varianten MC/IC/ASZ/DSZ, für wen sie passt und wie du sie auf deiner Karte liest.",
+  "description": "Was eine Venuslinie in der Astrokartographie bedeutet — Liebe, Schönheit, Genuss, Geld und Leichtigkeit, die Varianten MC/IC/ASZ/DSZ.",
   "keywords": "venuslinie, venuslinie astrokartographie, venuslinie bedeutung, liebe astrologie umzug, astrokartographie liebe",
   "articleHeadline": "Die Venuslinie in der Astrokartographie: Bedeutung und die schönsten Orte zum Leben",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "venus dc linie",
       "venus liebeslinie"
     ],
-    "description": "Eine Venuslinie ist die geografische Linie in der Astrokartographie, entlang derer die Venus im Moment der Geburt am Medium Coeli (MC), am Imum Coeli (IC), am Aszendenten (ASZ) oder am Deszendenten (DSZ) stand. Orte entlang einer Venuslinie werden so gedeutet, dass sie die Themen Liebe, Schönheit, Genuss, soziale Leichtigkeit und Geld betonen."
+    "description": "Eine Venuslinie ist die geografische Linie in der Astrokartographie, entlang derer die Venus im Moment der Geburt am Medium Coeli (MC), am Imum Coeli (IC)."
   }
 };

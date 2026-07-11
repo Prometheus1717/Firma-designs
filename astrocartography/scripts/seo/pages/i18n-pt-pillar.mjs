@@ -6,7 +6,7 @@ export default {
     "de": "astrokartographie",
     "es": "es/astrocartografia"
   },
-  "title": "O que é astrocartografia? Seu mapa astral no mapa do mundo | Natal Navigator",
+  "title": "O que é astrocartografia? Seu mapa astral no mapa do mundo",
   "ogTitle": "O que é astrocartografia?",
   "description": "A astrocartografia projeta seu mapa astral sobre o mapa do mundo: o que é, como ler as linhas planetárias e como calcular o seu em um globo 3D interativo.",
   "keywords": "astrocartografia, o que é astrocartografia, mapa astral onde morar, linhas planetárias, astrologia de relocação, astrocartografia como fazer",

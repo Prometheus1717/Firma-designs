@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/cancer",
   "lang": "en",
-  "title": "Best Places to Live for a Cancer: 7 Cities That Feel Like Home | Natal Navigator",
+  "title": "Best Places to Live for a Cancer: 7 Cities That Feel Like Home",
   "ogTitle": "Best Places to Live for a Cancer",
-  "description": "Where should a Cancer live? The 7 best cities for Cancer (Jun 21 – Jul 22) based on belonging, safety and emotional depth of place — plus how your full birth chart refines the answer.",
+  "description": "Where should a Cancer live? The 7 best cities for Cancer (Jun 21 – Jul 22) based on belonging, safety and emotional depth of place.",
   "keywords": "best places to live for a cancer, where should a cancer live, cancer best cities, cancer where to live, cancer zodiac city, cancer relocation astrology",
   "articleHeadline": "Best Places to Live for a Cancer: 7 Cities That Feel Like Home",
   "datePublished": "2026-07-04",

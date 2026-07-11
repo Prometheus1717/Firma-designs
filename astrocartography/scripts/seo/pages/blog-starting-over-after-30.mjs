@@ -1,7 +1,7 @@
 export default {
   "slug": "blog/starting-over-after-30-astrology",
   "lang": "en",
-  "title": "Starting Over After 30: Your Birth Chart's 7-Step Map | Natal Navigator",
+  "title": "Starting Over After 30: Your Birth Chart's 7-Step Map",
   "ogTitle": "Starting Over After 30: Your Birth Chart's 7-Step Map to a New City",
   "description": "Divorce, burnout, a chapter ending? A grounded 7-step method to use astrocartography and your birth chart to choose where to begin again — across 345+ rated cities.",
   "keywords": "starting over after 30, where to move for a fresh start astrology, relocation astrology new chapter, best place to start over astrology, astrocartography fresh start, moving after divorce astrology",
@@ -105,6 +105,6 @@ export default {
       "locational astrology",
       "astro mapping"
     ],
-    "description": "Astrocartography is the map-based form of relocation astrology that re-projects a birth chart across the globe, drawing planetary lines to show where life themes such as home (IC), career (MC), identity (ASC) and relationships (DSC) are amplified. It is used as a reflective tool for choosing where to live, including when starting over after a major life change."
+    "description": "Astrocartography is the map-based form of relocation astrology that re-projects a birth chart across the globe."
   }
 };

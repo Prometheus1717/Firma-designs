@@ -1,9 +1,9 @@
 export default {
   slug: `blog/cant-move-to-your-best-line`,
   lang: `en`,
-  title: `What If You Can't Move to Your Best Astrocartography Line? | Natal Navigator`,
+  title: `What If You Can't Move to Your Best Astrocartography Line?`,
   ogTitle: `Can't Move to Your Best Line? Do This`,
-  description: `You found your ideal astrocartography line and it runs through somewhere you can't move to. Here's what actually works — visiting, closer lines, parans, and using the placements you already live with — without uprooting your life.`,
+  description: `You found your ideal astrocartography line and it runs through somewhere you can't move to.`,
   keywords: `can't move astrocartography, astrocartography without moving, visit astrocartography line, astrocartography paran, closest astrocartography line, use astrocartography without relocating`,
   articleHeadline: `What If You Can't Move to Your Best Astrocartography Line?`,
   datePublished: `2026-07-04`,

@@ -2,7 +2,7 @@ export default {
   "slug": "astrocartography/moon-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/mondlinie" },
-  "title": "Moon Line Astrocartography: Home, Comfort & Emotional Roots | Natal Navigator",
+  "title": "Moon Line Astrocartography: Home, Comfort & Emotional Roots",
   "ogTitle": "The Moon Line in Astrocartography",
   "description": "What a Moon line means in astrocartography — home, belonging, emotion and family themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "moon line, moon line astrocartography, moon line meaning, moon ic line, moon mc line, moon asc line, home line astrology, where do i feel at home astrology",
@@ -86,6 +86,6 @@ export default {
       "moon home line",
       "moon MC line"
     ],
-    "description": "A Moon line is the geographic path in astrocartography where the Moon was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Moon line are interpreted as emphasising emotion, comfort, belonging, family and the felt sense of home."
+    "description": "A Moon line is the geographic path in astrocartography where the Moon was on the Midheaven (MC), Nadir (IC)."
   }
 };

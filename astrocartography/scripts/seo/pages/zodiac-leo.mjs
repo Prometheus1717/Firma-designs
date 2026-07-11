@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/leo",
   "lang": "en",
-  "title": "Best Places to Live for a Leo: 7 Cities Where You're Meant to Shine | Natal Navigator",
+  "title": "Best Places to Live for a Leo: 7 Radiant Cities",
   "ogTitle": "Best Places to Live for a Leo",
-  "description": "Where should a Leo live? The 7 best cities for Leo (Jul 23 – Aug 22) based on visibility, warmth and a stage worth performing on — plus how your full birth chart refines the answer.",
+  "description": "Where should a Leo live? The 7 best cities for Leo (Jul 23 – Aug 22) based on visibility, warmth and a stage worth performing on.",
   "keywords": "best places to live for a leo, where should a leo live, leo best cities, leo where to live, leo zodiac city, leo relocation astrology",
   "articleHeadline": "Best Places to Live for a Leo: 7 Cities Where You're Meant to Shine",
   "datePublished": "2026-07-04",

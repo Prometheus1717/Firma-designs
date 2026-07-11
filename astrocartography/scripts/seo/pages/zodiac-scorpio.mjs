@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/scorpio",
   "lang": "en",
-  "title": "Best Places to Live for a Scorpio: 7 Cities With Real Depth | Natal Navigator",
+  "title": "Best Places to Live for a Scorpio: 7 Cities With Real Depth",
   "ogTitle": "Best Places to Live for a Scorpio",
-  "description": "Where should a Scorpio live? The 7 best cities for Scorpio (Oct 23 – Nov 21) based on depth, intensity and cities with a shadow side — plus how your full birth chart refines the answer.",
+  "description": "Where should a Scorpio live? The 7 best cities for Scorpio (Oct 23 – Nov 21) based on depth, intensity and cities with a shadow side.",
   "keywords": "best places to live for a scorpio, where should a scorpio live, scorpio best cities, scorpio where to live, scorpio zodiac city, scorpio relocation astrology",
   "articleHeadline": "Best Places to Live for a Scorpio: 7 Cities With Real Depth",
   "datePublished": "2026-07-04",

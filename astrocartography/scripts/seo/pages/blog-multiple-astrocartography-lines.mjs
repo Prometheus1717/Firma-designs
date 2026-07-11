@@ -1,9 +1,9 @@
 export default {
   slug: `blog/multiple-astrocartography-lines`,
   lang: `en`,
-  title: `Can You Have Multiple Astrocartography Lines in One Place? | Natal Navigator`,
+  title: `Can You Have Multiple Astrocartography Lines in One Place?`,
   ogTitle: `Multiple Astrocartography Lines in One Place`,
-  description: `What it means when two or more astrocartography lines run through the same city — how stacked lines and parans blend, which combinations help, which to handle with care, and how to read a place with several lines at once.`,
+  description: `What it means when two or more astrocartography lines run through the same city — how stacked lines and parans blend, which combinations help.`,
   keywords: `multiple astrocartography lines, overlapping astrocartography lines, two lines same place astrocartography, astrocartography parans, astrocartography line combinations, stacked astrocartography lines`,
   articleHeadline: `Can You Have Multiple Astrocartography Lines in One Place?`,
   datePublished: `2026-07-05`,

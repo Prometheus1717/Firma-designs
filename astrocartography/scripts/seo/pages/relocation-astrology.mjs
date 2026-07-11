@@ -1,9 +1,9 @@
 export default {
   "slug": "relocation-astrology",
   "lang": "en",
-  "title": "Relocation Astrology: Relocated Charts vs Astrocartography | Natal Navigator",
+  "title": "Relocation Astrology: Relocated Charts vs Astrocartography",
   "ogTitle": "Relocation Astrology Explained",
-  "description": "What relocation astrology is, how a relocated chart differs from astrocartography, when to use each, how to read a relocated chart, and how it all helps you understand a move.",
+  "description": "Relocation astrology recasts your birth chart for a new place; astrocartography draws it as lines on the world map. How the two methods differ and work together.",
   "keywords": "relocation astrology, relocated chart, relocation chart vs astrocartography, astrocartography relocation, moving astrology chart",
   "articleHeadline": "Relocation Astrology: Relocated Charts vs Astrocartography",
   "datePublished": "2026-06-15",

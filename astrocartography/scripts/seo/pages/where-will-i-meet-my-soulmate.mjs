@@ -1,7 +1,7 @@
 export default {
   "slug": "where-will-i-meet-my-soulmate-astrology",
   "lang": "en",
-  "title": "Where Will I Meet My Soulmate? What Your Birth Chart Says | Natal Navigator",
+  "title": "Where Will I Meet My Soulmate? What Your Birth Chart Says",
   "ogTitle": "Where Will I Meet My Soulmate?",
   "description": "Astrology's answer to where — not just when — you'll meet your person: Venus and Descendant lines in astrocartography, the cities they favour, and how to find yours.",
   "keywords": "where will I meet my soulmate astrology, where will I find love astrology, soulmate location birth chart, venus line love, descendant line relationships, meet partner astrology map",

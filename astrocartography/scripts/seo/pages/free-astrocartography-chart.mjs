@@ -1,9 +1,9 @@
 export default {
   "slug": "free-astrocartography-chart",
   "lang": "en",
-  "title": "Free Astrocartography Chart & Map — Try the Interactive Demo | Natal Navigator",
+  "title": "Free Astrocartography Chart & Map — Try the Interactive Demo",
   "ogTitle": "Free Astrocartography Chart & Map",
-  "description": "Explore astrocartography for free — no sign-up. Try Natal Navigator's interactive demo on a 3D globe with famous example charts, then build your own map for a one-time €9.99 / $9.99, no subscription.",
+  "description": "Explore astrocartography for free — no sign-up. Try Natal Navigator's interactive demo on a 3D globe with famous example charts.",
   "keywords": "free astrocartography chart, free astrocartography map, astrocartography free no sign up, free astrology relocation map, try astrocartography free",
   "articleHeadline": "Free Astrocartography Chart and Map: Try the Interactive Demo Before You Pay",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "free astrology relocation map",
       "astrocartography demo"
     ],
-    "description": "A free astrocartography chart is an astrocartography map you can explore at no cost and without signing up. In Natal Navigator, the free interactive demo shows the full 3D globe, all forty planetary lines, city detection and the natal wheel using famous example charts, letting you learn to read a map before building your own."
+    "description": "A free astrocartography chart is an astrocartography map you can explore at no cost and without signing up."
   }
 };

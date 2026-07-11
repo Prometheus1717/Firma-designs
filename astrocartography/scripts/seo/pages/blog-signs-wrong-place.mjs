@@ -78,6 +78,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/astrocartography-and-mental-health", "label": "Feeling low where you live? Read the mental-health caveats first" },
     {
       "href": "/where-should-i-live-astrology",
       "label": "Where should I live? An astrology guide"
@@ -102,6 +103,6 @@ export default {
       "locational astrology",
       "relocation astrology map"
     ],
-    "description": "Astrocartography is the practice of mapping a birth chart across the globe, drawing 40 planetary lines (10 planets on the MC, IC, ASC and DSC angles) to show where different life themes — career, home, identity, love, ease or challenge — are amplified. It is used as a reflective tool for understanding how different places may feel to live in, not as a prediction."
+    "description": "Astrocartography is the practice of mapping a birth chart across the globe, drawing 40 planetary lines (10 planets on the MC, IC."
   }
 };

@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/libra",
   "lang": "en",
-  "title": "Best Places to Live for a Libra: 7 Cities of Beauty and Balance | Natal Navigator",
+  "title": "Best Places to Live for a Libra: 7 Cities of Beauty and Balance",
   "ogTitle": "Best Places to Live for a Libra",
-  "description": "Where should a Libra live? The 7 best cities for Libra (Sep 23 – Oct 22) based on beauty, balance and a social fabric worth dressing for — plus how your full birth chart refines the answer.",
+  "description": "Where should a Libra live? The 7 best cities for Libra (Sep 23 – Oct 22) based on beauty, balance and a social fabric worth dressing for.",
   "keywords": "best places to live for a libra, where should a libra live, libra best cities, libra where to live, libra zodiac city, libra relocation astrology",
   "articleHeadline": "Best Places to Live for a Libra: 7 Cities of Beauty and Balance",
   "datePublished": "2026-07-04",

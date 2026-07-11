@@ -695,7 +695,7 @@ function renderBlogIndex(posts) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Astrocartography Blog — Where to Live, Love &amp; Thrive | Natal Navigator</title>
+  <title>Astrocartography Blog — Where to Live, Love &amp; Thrive</title>
   <meta name="description" content="Honest, practical guides to astrocartography and relocation astrology: where to live, where to find love, starting over, and reading your planetary lines." />
   <meta name="author" content="Natal Navigator" />
   <link rel="canonical" href="${ORIGIN}/blog" />
@@ -728,7 +728,7 @@ ${BLOG_CSS}
       <div class="nav-links">
         <a href="/astrocartography">What is Astrocartography?</a>
         <a href="/blog">Blog</a>
-        <a href="/landing">About</a>
+        <a href="/astrocartography">About</a>
       </div>
       <a href="/create" class="nav-cta">Create your map →</a>
     </nav>
@@ -755,6 +755,7 @@ ${items}
   <footer class="site">
     <p>
       <a href="/">Globe</a> ·
+      <a href="/demo">Live demo</a> ·
       <a href="/astrocartography">Astrocartography</a> ·
       <a href="/astrocartography-calculator">Calculator</a> ·
       <a href="/astrokartographie">Deutsch</a> ·

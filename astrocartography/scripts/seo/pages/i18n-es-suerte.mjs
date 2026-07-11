@@ -5,7 +5,7 @@ export default {
     "en": "lucky-places-astrology",
     "pt": "pt/lugares-de-sorte-astrologia"
   },
-  "title": "¿Qué país es de buena suerte para mí? Tus lugares de fortuna | Natal Navigator",
+  "title": "¿Qué país es de buena suerte para mí? Tus lugares de fortuna",
   "ogTitle": "Tus lugares de suerte, según la astrología",
   "description": "¿Qué país o ciudad te da buena suerte? Cómo la astrología localiza tu fortuna: las líneas de Júpiter, Venus y el Sol explicadas, y cómo encontrar las tuyas.",
   "keywords": "qué país es de buena suerte para mí, lugares de suerte astrología, país de la suerte carta natal, línea de júpiter suerte, ciudad de la suerte",

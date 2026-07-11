@@ -4,9 +4,9 @@ export default {
   "alt": {
     "en": "astrocartography/jupiter-line"
   },
-  "title": "Jupiterlinie Astrokartographie: Glück, Wachstum & Chancen | Natal Navigator",
+  "title": "Jupiterlinie Astrokartographie: Glück, Wachstum & Chancen",
   "ogTitle": "Die Jupiterlinie in der Astrokartographie",
-  "description": "Was eine Jupiterlinie in der Astrokartographie bedeutet — Expansion, Glück, Chancen und Wachstum, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
+  "description": "Was eine Jupiterlinie in der Astrokartographie bedeutet — Expansion, Glück, Chancen und Wachstum, die Varianten auf MC/IC/AC/DC.",
   "keywords": "jupiterlinie, jupiterlinie astrokartographie, jupiterlinie bedeutung, astrokartographie glück, jupiter mc linie, jupiter ac linie, wo soll ich leben astrologie",
   "articleHeadline": "Die Jupiterlinie in der Astrokartographie: Bedeutung und beste Orte zum Leben",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "jupiter DC linie",
       "jupiter glückslinie"
     ],
-    "description": "Eine Jupiterlinie ist der geografische Verlauf in der Astrokartographie, entlang dessen Jupiter im Moment der Geburt am Medium Coeli (MC), am tiefsten Punkt (IC), am Aszendenten (AC) oder am Deszendenten (DC) stand. Orte entlang einer Jupiterlinie werden als Betonung von Expansion, Glück, Chancen, Wachstum und Fülle interpretiert."
+    "description": "Eine Jupiterlinie ist der geografische Verlauf in der Astrokartographie, entlang dessen Jupiter im Moment der Geburt am Medium Coeli (MC), am tiefsten Punkt (IC)."
   }
 };

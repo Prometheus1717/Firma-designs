@@ -3,7 +3,7 @@ export default {
   lang: `en`,
   title: `Best Astrocartography Lines for Making Money | Natal Navigator`,
   ogTitle: `Which Astrocartography Lines Are Best for Money?`,
-  description: `The five astrocartography lines most associated with money — Jupiter, Sun, Venus, Pluto and Saturn — what each one actually does for your finances, and an honest look at what a line can and can't do for your bank balance.`,
+  description: `The five astrocartography lines most associated with money — Jupiter, Sun, Venus, Pluto and Saturn.`,
   keywords: `astrocartography lines for money, best line for money astrocartography, jupiter line money, wealth astrocartography, astrocartography for wealth, money lines astrology, best astrocartography line for success`,
   articleHeadline: `Which Astrocartography Lines Are Best for Making Money?`,
   datePublished: `2026-07-04`,

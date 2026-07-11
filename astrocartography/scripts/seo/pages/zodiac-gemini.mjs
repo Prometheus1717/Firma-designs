@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/gemini",
   "lang": "en",
-  "title": "Best Places to Live for a Gemini: 7 Cities That Never Repeat Themselves | Natal Navigator",
+  "title": "Best Places to Live for a Gemini: 7 Cities",
   "ogTitle": "Best Places to Live for a Gemini",
-  "description": "Where should a Gemini live? The 7 best cities for Gemini (May 21 – Jun 20) based on variety, conversation and constant mental stimulation — plus how your full birth chart refines the answer.",
+  "description": "Where should a Gemini live? The 7 best cities for Gemini (May 21 – Jun 20) based on variety, conversation and constant mental stimulation.",
   "keywords": "best places to live for a gemini, where should a gemini live, gemini best cities, gemini where to live, gemini zodiac city, gemini relocation astrology",
   "articleHeadline": "Best Places to Live for a Gemini: 7 Cities That Never Repeat Themselves",
   "datePublished": "2026-07-04",

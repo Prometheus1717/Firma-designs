@@ -2,7 +2,7 @@ export default {
   "slug": "astrocartography/venus-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/venuslinie" },
-  "title": "Venus Line Astrocartography: Love, Beauty & Social Ease | Natal Navigator",
+  "title": "Venus Line Astrocartography: Love, Beauty & Social Ease",
   "ogTitle": "The Venus Line in Astrocartography",
   "description": "What a Venus line means in astrocartography — love, beauty, ease and money themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "venus line, venus line astrocartography, venus line meaning, venus mc line, venus asc line, venus dc line, love astrology relocation, where to find love astrology",
@@ -61,6 +61,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/where-will-i-meet-my-soulmate-astrology", "label": "Where will you meet your soulmate? The Venus/DSC answer" },
     {
       "href": "/blog/where-to-move-for-love",
       "label": "Where to move to find love"
@@ -90,6 +91,6 @@ export default {
       "venus DC line",
       "venus love line"
     ],
-    "description": "A Venus line is the geographic path in astrocartography where Venus was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Venus line are interpreted as emphasising love, beauty, pleasure, social ease and money themes."
+    "description": "A Venus line is the geographic path in astrocartography where Venus was on the Midheaven (MC), Nadir (IC)."
   }
 };

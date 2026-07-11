@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/asc-line",
   "lang": "en",
-  "title": "ASC Line Astrocartography: Identity, Vitality & First Impressions | Natal Navigator",
+  "title": "ASC Line Astrocartography: Identity, Vitality & First Impressions",
   "ogTitle": "The ASC Line (Ascendant) in Astrocartography",
   "description": "What an ASC line means in astrocartography — the Ascendant/Rising line of identity, body and first impressions, what living on one feels like, and each planet's ASC line.",
   "keywords": "asc line, ascendant line astrocartography, rising line, asc line meaning, sun asc line, venus asc line, mars asc line, jupiter asc line, saturn asc line, ascendant astrocartography",
@@ -85,6 +85,6 @@ export default {
       "ascendant astrocartography line",
       "asc rising line"
     ],
-    "description": "An ASC line is the geographic path in astrocartography where a planet was rising over the eastern horizon (on the Ascendant) at the moment of birth. Places along an ASC line are interpreted as emphasising identity, the body, vitality, self-presentation and first impressions, coloured by the rising planet."
+    "description": "An ASC line is the geographic path in astrocartography where a planet was rising over the eastern horizon (on the Ascendant) at the moment of birth."
   }
 };

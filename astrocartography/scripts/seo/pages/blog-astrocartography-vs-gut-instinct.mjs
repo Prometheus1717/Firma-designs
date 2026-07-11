@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-vs-gut-instinct`,
   lang: `en`,
-  title: `Should You Trust Astrocartography More Than Your Gut? | Natal Navigator`,
+  title: `Should You Trust Astrocartography More Than Your Gut?`,
   ogTitle: `Astrocartography vs. Your Gut Instinct`,
-  description: `When your astrocartography lines and your gut instinct disagree, which do you follow? An honest look at why they're partners, not rivals — the map versus the compass — and how to read the moment they conflict.`,
+  description: `When your astrocartography lines and your gut instinct disagree, which do you follow? An honest look at why they're partners, not rivals.`,
   keywords: `astrocartography vs gut instinct, trust astrocartography or intuition, astrocartography vs intuition, should I trust my gut about moving, astrocartography or feeling`,
   articleHeadline: `Should You Trust Astrocartography More Than Your Gut Instinct?`,
   datePublished: `2026-07-05`,

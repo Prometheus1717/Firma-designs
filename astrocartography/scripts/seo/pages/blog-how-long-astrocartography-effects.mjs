@@ -1,9 +1,9 @@
 export default {
   slug: `blog/how-long-astrocartography-effects`,
   lang: `en`,
-  title: `How Long Until You Feel Astrocartography Effects After Moving? | Natal Navigator`,
+  title: `How Long Until You Feel Astrocartography Effects After Moving?`,
   ogTitle: `How Long Do Astrocartography Effects Take?`,
-  description: `How long it really takes to feel the effects of moving to a new astrocartography line — from the first-week arrival "click" to the years-long unfolding of a Saturn or Pluto line — and what speeds it up or slows it down.`,
+  description: `How long until you feel an astrocartography line after moving? The honest timeline — first weeks, six months, two years — and what shifts at each stage.`,
   keywords: `how long astrocartography effects, when do astrocartography lines kick in, astrocartography timeline, how long to feel astrocartography line, do astrocartography effects take time, astrocartography after moving`,
   articleHeadline: `How Long Does It Take to Feel the Effects After Moving to a New Line?`,
   datePublished: `2026-07-04`,
@@ -124,6 +124,7 @@ export default {
     },
   ],
   related: [
+    { "href": "/blog/does-astrocartography-chart-change", "label": "Does your astrocartography chart ever change?" },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },
     { href: `/blog/cant-move-to-your-best-line`, label: `Can't move to your best line? Here's what works` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },

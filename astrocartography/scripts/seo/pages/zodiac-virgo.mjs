@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/virgo",
   "lang": "en",
-  "title": "Best Places to Live for a Virgo: 7 Cities Where Things Just Work | Natal Navigator",
+  "title": "Best Places to Live for a Virgo: 7 Cities Where Things Just Work",
   "ogTitle": "Best Places to Live for a Virgo",
-  "description": "Where should a Virgo live? The 7 best cities for Virgo (Aug 23 – Sep 22) based on order, health and systems that actually work — plus how your full birth chart refines the answer.",
+  "description": "Where should a Virgo live? The 7 best cities for Virgo (Aug 23 – Sep 22) based on order, health and systems that actually work.",
   "keywords": "best places to live for a virgo, where should a virgo live, virgo best cities, virgo where to live, virgo zodiac city, virgo relocation astrology",
   "articleHeadline": "Best Places to Live for a Virgo: 7 Cities Where Things Just Work",
   "datePublished": "2026-07-04",

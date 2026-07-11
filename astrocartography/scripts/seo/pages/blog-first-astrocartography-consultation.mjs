@@ -1,9 +1,9 @@
 export default {
   slug: `blog/first-astrocartography-consultation`,
   lang: `en`,
-  title: `What to Expect From Your First Astrocartography Consultation | Natal Navigator`,
+  title: `What to Expect From Your First Astrocartography Consultation`,
   ogTitle: `Your First Astrocartography Consultation`,
-  description: `Booked your first astrocartography reading? Here's exactly what to expect — what to prepare (your accurate birth time matters), how a session flows, the questions to bring, and what a good consultation will and won't do.`,
+  description: `Booked your first astrocartography reading? Here's exactly what to expect — what to prepare (your accurate birth time matters), how a session flows.`,
   keywords: `first astrocartography consultation, what to expect astrocartography reading, prepare for astrocartography reading, astrocartography session, astrocartography consultation questions`,
   articleHeadline: `What to Expect From Your First Astrocartography Consultation`,
   datePublished: `2026-07-05`,
@@ -99,6 +99,7 @@ export default {
     },
   ],
   related: [
+    { "href": "/blog/does-astrocartography-chart-change", "label": "Does the chart change over time? What stays fixed" },
     { href: `/blog/how-to-choose-an-astrocartographer`, label: `How to choose an astrocartographer` },
     { href: `/blog/hire-astrocartographer-or-diy`, label: `Hire an astrocartographer or do it yourself?` },
     { href: `/blog/astrocartography-reading-cost`, label: `How much does an astrocartography reading cost?` },

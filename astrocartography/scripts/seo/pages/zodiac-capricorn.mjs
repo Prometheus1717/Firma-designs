@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/capricorn",
   "lang": "en",
-  "title": "Best Places to Live for a Capricorn: 7 Cities That Reward the Climb | Natal Navigator",
+  "title": "Best Places to Live for a Capricorn: 7 Cities",
   "ogTitle": "Best Places to Live for a Capricorn",
-  "description": "Where should a Capricorn live? The 7 best cities for Capricorn (Dec 22 – Jan 19) based on ambition, structure and institutions that respect work — plus how your full birth chart refines the answer.",
+  "description": "Where should a Capricorn live? The 7 best cities for Capricorn (Dec 22 – Jan 19) based on ambition, structure and institutions that respect work.",
   "keywords": "best places to live for a capricorn, where should a capricorn live, capricorn best cities, capricorn where to live, capricorn zodiac city, capricorn relocation astrology",
   "articleHeadline": "Best Places to Live for a Capricorn: 7 Cities That Reward the Climb",
   "datePublished": "2026-07-04",

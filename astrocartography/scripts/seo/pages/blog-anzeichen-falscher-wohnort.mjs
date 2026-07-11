@@ -6,7 +6,7 @@ export default {
   },
   "title": "7 Anzeichen, dass du am falschen Ort lebst | Natal Navigator",
   "ogTitle": "7 Anzeichen, dass du am falschen Ort lebst (laut Astrokartographie)",
-  "description": "Alles fühlt sich wie Bergauf an, du träumst ständig von anderen Städten? 7 ehrliche Anzeichen, dass du am falschen Ort lebst — und was die Astrokartographie dazu sagt.",
+  "description": "Sieben Anzeichen, dass dein Wohnort nicht zu dir passt — und wie ein Blick auf deine Linien der Astrokartographie erklärt, warum es woanders leichter fließt.",
   "keywords": "am falschen ort leben, falscher wohnort gefühl, wo soll ich leben astrologie, astrokartographie umzug, falsche stadt gefühl, anzeichen umziehen, wohnort wechseln gefühl, saturnlinie wohnort",
   "articleHeadline": "7 Anzeichen, dass du am falschen Ort lebst (laut Astrokartographie)",
   "datePublished": "2026-06-16",

@@ -1,7 +1,7 @@
 export default {
   "slug": "lucky-places-astrology",
   "lang": "en",
-  "title": "Which Country Is Lucky for Me? Your Lucky Places in Astrology | Natal Navigator",
+  "title": "Which Country Is Lucky for Me? Your Lucky Places in Astrology",
   "ogTitle": "Your Lucky Places, According to Astrology",
   "description": "Which country or city is lucky for you? How astrology actually locates your fortunate places — Jupiter, Venus and Sun lines explained, and how to find yours on a map.",
   "keywords": "which country is lucky for me, lucky places astrology, lucky country astrology, jupiter line lucky, fortunate places birth chart, lucky city for me",

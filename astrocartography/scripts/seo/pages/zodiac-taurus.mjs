@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/taurus",
   "lang": "en",
-  "title": "Best Places to Live for a Taurus: 7 Cities Built for Comfort | Natal Navigator",
+  "title": "Best Places to Live for a Taurus: 7 Cities Built for Comfort",
   "ogTitle": "Best Places to Live for a Taurus",
-  "description": "Where should a Taurus live? The 7 best cities for Taurus (Apr 20 – May 20) based on comfort, stability and sensory quality of life — plus how your full birth chart refines the answer.",
+  "description": "Where should a Taurus live? The 7 best cities for Taurus (Apr 20 – May 20) based on comfort, stability and sensory quality of life.",
   "keywords": "best places to live for a taurus, where should a taurus live, taurus best cities, taurus where to live, taurus zodiac city, taurus relocation astrology",
   "articleHeadline": "Best Places to Live for a Taurus: 7 Cities Built for Comfort",
   "datePublished": "2026-07-04",

@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography-for-love",
   "lang": "en",
-  "title": "Astrocartography for Love: Find Your Venus & Relationship Lines | Natal Navigator",
+  "title": "Astrocartography for Love: Find Your Venus & Relationship Lines",
   "ogTitle": "Astrocartography for Love",
-  "description": "How to use astrocartography for love — the Venus, Descendant, Moon and Sun lines that relate to romance, the difference between attraction and commitment, and an honest look at what geography can and can't do.",
+  "description": "How to use astrocartography for love — the Venus, Descendant, Moon and Sun lines that relate to romance, the difference between attraction and commitment.",
   "keywords": "astrocartography for love, where will i find love astrology, venus line love, relationship astrocartography, best place to find love astrology",
   "articleHeadline": "Astrocartography for Love: Finding Your Venus and Relationship Lines",
   "datePublished": "2026-06-15",
@@ -64,6 +64,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/where-will-i-meet-my-soulmate-astrology", "label": "Where will you meet your soulmate? Ask your DSC line" },
     {
       "href": "/where-will-i-meet-my-soulmate-astrology",
       "label": "Where will I meet my soulmate?"
@@ -97,6 +98,6 @@ export default {
       "venus line love",
       "astrocartography relationship lines"
     ],
-    "description": "Astrocartography for love is the practice of reading the relationship-related lines of a birth chart — chiefly the Venus and Descendant (DSC) lines, along with the Moon and Sun — to reflect on where romance, attraction and partnership themes are emphasised geographically. It is a reflective tool, not a prediction, and does not guarantee a relationship."
+    "description": "Astrocartography for love is the practice of reading the relationship-related lines of a birth chart."
   }
 };

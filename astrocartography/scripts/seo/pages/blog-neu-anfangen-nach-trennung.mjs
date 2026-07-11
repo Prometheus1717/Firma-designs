@@ -1,7 +1,7 @@
 export default {
   "slug": "blog/neu-anfangen-nach-trennung",
   "lang": "de",
-  "title": "Wo neu anfangen nach der Trennung? Deine Venuslinie | Natal Navigator",
+  "title": "Wo neu anfangen nach der Trennung? Deine Venuslinie",
   "ogTitle": "Wo neu anfangen nach der Trennung? Was deine Venuslinie verrät",
   "description": "Nach Trennung oder Scheidung an einem neuen Ort neu anfangen: Welche Linien — Venus-IC, Mond, Venus-ASZ — einen Neuanfang zum Heilen sanft unterstützen.",
   "keywords": "wo neu anfangen nach trennung, neuanfang nach trennung ort, umziehen nach trennung, astrokartographie liebe neuanfang, neuanfang nach scheidung, venuslinie neuanfang",
@@ -105,6 +105,6 @@ export default {
       "venus imum coeli linie",
       "neuanfang linie astrokartographie"
     ],
-    "description": "Eine Venus-IC-Linie ist die geografische Linie in der Astrokartographie, entlang derer die Venus im Moment der Geburt am Imum Coeli (IC) stand. Orte entlang dieser Linie werden so gedeutet, dass sie ein schönes, friedliches und nährendes Zuhause begünstigen, was sie zu einer der wohltuendsten Platzierungen für einen Neuanfang nach einer Trennung macht."
+    "description": "Eine Venus-IC-Linie ist die geografische Linie in der Astrokartographie, entlang derer die Venus im Moment der Geburt am Imum Coeli (IC) stand."
   }
 };

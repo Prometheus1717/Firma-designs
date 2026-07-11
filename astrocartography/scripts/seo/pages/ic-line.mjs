@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/ic-line",
   "lang": "en",
-  "title": "IC Line Astrocartography: Home, Family & Inner Foundations | Natal Navigator",
+  "title": "IC Line Astrocartography: Home, Family & Inner Foundations",
   "ogTitle": "The IC Line (Imum Coeli) in Astrocartography",
-  "description": "What an IC line means in astrocartography — the Imum Coeli or Nadir line of home, roots, family and belonging, what each planet's IC line feels like, and how it differs from the MC line.",
+  "description": "What an IC line means in astrocartography — the Imum Coeli or Nadir line of home, roots, family and belonging, what each planet's IC line feels like.",
   "keywords": "ic line, ic line astrocartography, imum coeli line, nadir line astrocartography, ic line meaning, moon ic line, venus ic line, home astrology relocation, where to put down roots astrology",
   "articleHeadline": "The IC Line in Astrocartography: Imum Coeli, Roots and the Feeling of Home",
   "datePublished": "2026-06-15",
@@ -85,6 +85,6 @@ export default {
       "IC astrocartography line",
       "home line astrocartography"
     ],
-    "description": "An IC line is the geographic path in astrocartography where a planet was on the Imum Coeli (IC), the Nadir or lowest point of the birth chart, at the moment of birth. The IC is the chart angle of home, roots, family, ancestry and emotional foundation, so places along an IC line are interpreted as emphasising belonging, settling and private inner life, coloured by the planet on the line."
+    "description": "An IC line is the geographic path in astrocartography where a planet was on the Imum Coeli (IC), the Nadir or lowest point of the birth chart."
   }
 };

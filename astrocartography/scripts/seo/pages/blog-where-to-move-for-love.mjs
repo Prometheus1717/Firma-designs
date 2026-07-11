@@ -3,7 +3,7 @@ export default {
   "lang": "en",
   "title": "Where Should You Move for Love? 6 Lines | Natal Navigator",
   "ogTitle": "Where Should You Move for Love?",
-  "description": "Six astrocartography lines that support love — Venus DSC, Venus ASC, Venus IC, Sun DSC, Moon and Jupiter — and an honest look at what a relocation can and can't do for your romantic life.",
+  "description": "Six astrocartography lines that support love — Venus DSC, Venus ASC, Venus IC, Sun DSC, Moon and Jupiter.",
   "keywords": "where to move for love astrology, venus line love, relocation astrology relationships, astrocartography for love, best place to find love astrology, venus descendant line, move to find love",
   "articleHeadline": "Where Should You Move for Love? 6 Astrocartography Lines That Help",
   "datePublished": "2026-06-16",
@@ -73,6 +73,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/where-will-i-meet-my-soulmate-astrology", "label": "The soulmate question, mapped: Venus & DSC places" },
     {
       "href": "/blog/astrocartography-success-stories",
       "label": "Real astrocartography success stories"
@@ -102,6 +103,6 @@ export default {
       "venus line love",
       "relationship astrocartography lines"
     ],
-    "description": "Relocation astrology for love uses the relationship-related lines of a birth chart — chiefly the Venus and Descendant (DSC) lines, along with the Moon, Sun DSC and Jupiter lines — to reflect on where romance, attraction and partnership themes are geographically emphasised. It is a reflective tool, not a prediction, and a line can support connection but never guarantee it."
+    "description": "Relocation astrology for love uses the relationship-related lines of a birth chart — chiefly the Venus and Descendant (DSC) lines, along with the Moon."
   }
 };

@@ -1,9 +1,9 @@
 export default {
   slug: `blog/best-cities-for-artists-astrocartography`,
   lang: `en`,
-  title: `Best Cities for Artists, According to Astrocartography | Natal Navigator`,
+  title: `Best Cities for Artists, According to Astrocartography`,
   ogTitle: `Best Cities for Artists (Astrocartography)`,
-  description: `Which places support a creative life? The astrocartography lines that feed art — Venus, Neptune, the Moon, Mercury and the Sun — what each one gives a maker, and why your best creative city depends on your chart, not a fixed list.`,
+  description: `Which places support a creative life? The astrocartography lines that feed art — Venus, Neptune, the Moon, Mercury and the Sun.`,
   keywords: `best cities for artists astrocartography, astrocartography for artists, astrocartography creativity, venus line art, neptune line creativity, best place for creativity astrology`,
   articleHeadline: `Best Cities for Artists According to Astrocartography`,
   datePublished: `2026-07-05`,

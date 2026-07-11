@@ -2,9 +2,9 @@ export default {
   "slug": "astrocartography/saturn-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/saturnlinie" },
-  "title": "Saturn Line Astrocartography: Discipline, Tests & Slow Building | Natal Navigator",
+  "title": "Saturn Line Astrocartography: Discipline, Tests & Slow Building",
   "ogTitle": "The Saturn Line in Astrocartography",
-  "description": "What a Saturn line means in astrocartography — discipline, structure, mastery and long-term work, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
+  "description": "What a Saturn line means in astrocartography — discipline, structure, mastery and long-term work, the MC/IC/ASC/DSC variants, who it suits.",
   "keywords": "saturn line, saturn line astrocartography, saturn line meaning, saturn mc line, saturn asc line, saturn dc line, work line astrology, discipline astrology relocation",
   "articleHeadline": "The Saturn Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -86,6 +86,6 @@ export default {
       "saturn DC line",
       "saturn work line"
     ],
-    "description": "A Saturn line is the geographic path in astrocartography where Saturn was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Saturn line are interpreted as emphasising discipline, structure, responsibility, endurance and the long-term work of mastery."
+    "description": "A Saturn line is the geographic path in astrocartography where Saturn was on the Midheaven (MC), Nadir (IC)."
   }
 };

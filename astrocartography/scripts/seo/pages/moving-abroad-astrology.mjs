@@ -1,9 +1,9 @@
 export default {
   "slug": "moving-abroad-astrology",
   "lang": "en",
-  "title": "Moving Abroad? What Astrocartography Says About Your Destination | Natal Navigator",
+  "title": "Moving Abroad? What Astrocartography Says About Your Destination",
   "ogTitle": "Moving Abroad & Astrocartography",
-  "description": "Thinking of emigrating? See how astrocartography reads the quality of a destination — which planetary lines run through it, how IC and Moon lines feel like home, and where Saturn tests you — alongside the visas, work and law that astrology can never replace.",
+  "description": "Thinking of emigrating? See how astrocartography reads the quality of a destination — which planetary lines run through it, how IC and Moon lines feel like home.",
   "keywords": "moving abroad astrology, emigrating astrology, astrocartography moving abroad, relocation astrology emigration, best country to move astrology",
   "articleHeadline": "Moving Abroad? What Astrocartography Says About Your Destination",
   "datePublished": "2026-06-15",
@@ -64,6 +64,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/lucky-places-astrology", "label": "Lucky places astrology — where fortune flows easier" },
     {
       "href": "/blog/digital-nomad-astrology-guide",
       "label": "The digital nomad astrology guide"
@@ -96,6 +97,6 @@ export default {
       "astrocartography moving abroad",
       "relocation astrology emigration"
     ],
-    "description": "The use of astrocartography to read the quality of a potential destination before emigrating — identifying which planetary lines run through a country or city and what they suggest about the emotional experience of living there. It is a reflective tool used alongside, never instead of, practical realities such as visas, work, language, cost and safety."
+    "description": "The use of astrocartography to read the quality of a potential destination before emigrating."
   }
 };

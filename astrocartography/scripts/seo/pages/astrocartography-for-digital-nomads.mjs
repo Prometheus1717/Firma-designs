@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography-for-digital-nomads",
   "lang": "en",
-  "title": "Astrocartography for Digital Nomads: Choose Your Next Base | Natal Navigator",
+  "title": "Astrocartography for Digital Nomads: Choose Your Next Base",
   "ogTitle": "Astrocartography for Digital Nomads",
-  "description": "How location-independent workers can use astrocartography to choose their next base — matching Jupiter, Venus, Mercury, Uranus and Moon lines to your current goal, then testing them on the ground.",
+  "description": "How location-independent workers can use astrocartography to choose their next base — matching Jupiter, Venus, Mercury, Uranus and Moon lines to your current goal.",
   "keywords": "astrocartography for digital nomads, best places digital nomad astrology, where to travel astrology, astrocartography travel, nomad astrology base",
   "articleHeadline": "Astrocartography for Digital Nomads: How to Choose Your Next Base",
   "datePublished": "2026-06-15",
@@ -104,6 +104,6 @@ export default {
       "astrocartography travel",
       "best places digital nomad astrology"
     ],
-    "description": "Astrocartography for digital nomads is the practice of using a birth-chart relocation map to choose a temporary base that matches a current goal — such as a Jupiter line for growth, a Mercury line for focus or a Moon line for rest — and then testing that line in person while weighing real-world factors like cost, visa, internet and safety."
+    "description": "Astrocartography for digital nomads is the practice of using a birth-chart relocation map to choose a temporary base that matches a current goal."
   }
 };

@@ -5,7 +5,7 @@ export default {
     "en": "astrocartography-calculator",
     "es": "es/calculadora-de-astrocartografia"
   },
-  "title": "Calculadora de astrocartografia: seu mapa em um globo 3D | Natal Navigator",
+  "title": "Calculadora de astrocartografia: seu mapa em um globo 3D",
   "ogTitle": "Calculadora de astrocartografia",
   "description": "Calcule seu mapa astrocartográfico em um globo 3D interativo: 40 linhas planetárias, 345+ cidades avaliadas para carreira, amor e lar, e leituras em português.",
   "keywords": "calculadora de astrocartografia, astrocartografia online, astrocartografia gratis, mapa astrocartográfico, calcular linhas planetárias, astrocartografia como fazer",

@@ -1,7 +1,7 @@
 export default {
   "slug": "blog/digital-nomad-astrology-guide",
   "lang": "en",
-  "title": "Digital Nomad Astrology: 9 Ways to Pick Your Base | Natal Navigator",
+  "title": "Digital Nomad Astrology: 9 Ways to Pick Your Base",
   "ogTitle": "Digital Nomad Astrology: 9 Ways to Pick Your Next Base",
   "description": "Nine practical ways for remote workers to use astrocartography and your birth chart to pick your next base — match the line to your season, then test it on the ground.",
   "keywords": "digital nomad astrology, best places to travel astrology, astrocartography for travel, where to live nomad astrology, astrocartography base, remote work astrology, choose next base by birth chart",
@@ -85,6 +85,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/best-cities-for-artists-astrocartography", "label": "Best cities for artists, by their lines" },
     {
       "href": "/blog/best-cities-for-astrocartography",
       "label": "The best cities for your lines"
@@ -113,6 +114,6 @@ export default {
       "astrocartography for travel",
       "best places to travel astrology"
     ],
-    "description": "Digital nomad astrology is the practice of using astrocartography — a birth-chart relocation map of 40 planetary lines — to choose a temporary base that matches a current goal, such as a Jupiter zone for opportunity, a Mercury zone for focus, a Venus zone for an easy social landing or a Moon/IC zone for rest, then testing that line in person while weighing real-world factors like visa, cost, wifi and timezone."
+    "description": "Digital nomad astrology is the practice of using astrocartography — a birth-chart relocation map of 40 planetary lines."
   }
 };

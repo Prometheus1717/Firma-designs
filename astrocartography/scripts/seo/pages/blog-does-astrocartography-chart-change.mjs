@@ -1,9 +1,9 @@
 export default {
   slug: `blog/does-astrocartography-chart-change`,
   lang: `en`,
-  title: `Does Your Astrocartography Chart Change Over Time? | Natal Navigator`,
+  title: `Does Your Astrocartography Chart Change Over Time?`,
   ogTitle: `Does Your Astrocartography Chart Change?`,
-  description: `Do your astrocartography lines change over time? The honest answer: your natal lines are fixed for life, but the way they activate — through transits, progressions and where you are — shifts constantly. The map is permanent; the weather over it moves.`,
+  description: `Do your astrocartography lines change over time? The honest answer: your natal lines are fixed for life, but the way they activate.`,
   keywords: `does astrocartography chart change over time, do astrocartography lines change, are astrocartography lines permanent, astrocartography transits, cyclocartography, astrocartography over time`,
   articleHeadline: `Does Your Astrocartography Chart Change Over Time?`,
   datePublished: `2026-07-05`,

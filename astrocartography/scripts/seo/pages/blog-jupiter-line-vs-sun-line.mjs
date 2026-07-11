@@ -1,9 +1,9 @@
 export default {
   slug: `blog/jupiter-line-vs-sun-line`,
   lang: `en`,
-  title: `Jupiter Line vs. Sun Line — Which Should You Live On? | Natal Navigator`,
+  title: `Jupiter Line vs. Sun Line — Which Should You Live On?`,
   ogTitle: `Jupiter Line vs. Sun Line — Which Wins?`,
-  description: `The two brightest astrocartography lines compared side by side. When a Sun line makes you visible, when a Jupiter line opens doors, and how to choose the one that fits the life you're actually trying to build.`,
+  description: `The two brightest astrocartography lines compared side by side. When a Sun line makes you visible, when a Jupiter line opens doors.`,
   keywords: `jupiter line vs sun line, sun line vs jupiter line astrocartography, jupiter or sun line, best astrocartography line for success, jupiter line meaning, sun line meaning, astrocartography comparison`,
   articleHeadline: `Jupiter Line vs. Sun Line: Which Should You Live On?`,
   datePublished: `2026-07-04`,
@@ -143,6 +143,7 @@ export default {
     },
   ],
   related: [
+    { "href": "/blog/multiple-astrocartography-lines", "label": "Multiple lines through one city — how to weigh them" },
     { href: `/blog/sun-line-vs-moon-line`, label: `Sun line vs. Moon line — the other great comparison` },
     { href: `/blog/astrocartography-lines-for-money`, label: `Best astrocartography lines for making money` },
     { href: `/astrocartography/sun-line`, label: `The Sun Line — vitality and recognition` },

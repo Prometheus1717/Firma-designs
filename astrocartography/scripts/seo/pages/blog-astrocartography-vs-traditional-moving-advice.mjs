@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-vs-traditional-moving-advice`,
   lang: `en`,
-  title: `Astrocartography vs. Traditional Moving Advice — What's Different? | Natal Navigator`,
+  title: `Astrocartography vs. Traditional Moving Advice`,
   ogTitle: `Astrocartography vs. Moving Advice`,
-  description: `Cost-of-living rankings and "best places to live" lists answer where's practical. Astrocartography answers where fits you. Here's how they differ, why it's not either/or, and how to combine external facts with an internal compass.`,
+  description: `Cost-of-living rankings and "best places to live" lists answer where's practical. Astrocartography answers where fits you.`,
   keywords: `astrocartography vs traditional moving advice, astrocartography vs cost of living, best places to live vs astrocartography, how to choose where to live, relocation astrology vs practical`,
   articleHeadline: `Astrocartography vs. Traditional Moving Advice: What's Different?`,
   datePublished: `2026-07-05`,

@@ -4,9 +4,9 @@ export default {
   "alt": {
     "en": "astrocartography/sun-line"
   },
-  "title": "Sonnenlinie Astrokartographie: Selbstvertrauen & Sichtbarkeit | Natal Navigator",
+  "title": "Sonnenlinie Astrokartographie: Selbstvertrauen & Sichtbarkeit",
   "ogTitle": "Die Sonnenlinie in der Astrokartographie",
-  "description": "Was eine Sonnenlinie in der Astrokartographie bedeutet — Identität, Vitalität, Selbstvertrauen und Sichtbarkeit, die Varianten auf MC/IC/AC/DC, für wen sie passt und wie du sie auf deiner Karte liest.",
+  "description": "Was eine Sonnenlinie in der Astrokartographie bedeutet — Identität, Vitalität, Selbstvertrauen und Sichtbarkeit, die Varianten auf MC/IC/AC/DC.",
   "keywords": "sonnenlinie, sonnenlinie astrokartographie, sonnenlinie bedeutung, astrokartographie sonne, sonne mc linie, sonne ac linie, sonne dc linie, wo strahle ich astrologie",
   "articleHeadline": "Die Sonnenlinie in der Astrokartographie: Bedeutung und die besten Orte zum Leben",
   "datePublished": "2026-06-15",
@@ -88,6 +88,6 @@ export default {
       "sonne AC linie",
       "sonnen identitätslinie"
     ],
-    "description": "Eine Sonnenlinie ist der geografische Verlauf in der Astrokartographie, entlang dessen die Sonne zum Geburtszeitpunkt am Medium Coeli (MC), am Imum Coeli (IC), am Aszendenten (AC) oder am Deszendenten (DC) stand. Orte entlang einer Sonnenlinie werden so gedeutet, dass sie Identität, Vitalität, Selbstvertrauen, Anerkennung und Sichtbarkeit betonen."
+    "description": "Eine Sonnenlinie ist der geografische Verlauf in der Astrokartographie, entlang dessen die Sonne zum Geburtszeitpunkt am Medium Coeli (MC), am Imum Coeli (IC)."
   }
 };

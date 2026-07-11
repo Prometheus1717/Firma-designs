@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography-for-career",
   "lang": "en",
-  "title": "Astrocartography for Career: Your MC & Success Lines | Natal Navigator",
+  "title": "Astrocartography for Career: Your MC & Success Lines",
   "ogTitle": "Astrocartography for Career and Relocation for Work",
-  "description": "How astrocartography reads career and relocation for work — the MC (Midheaven) and success lines, what Sun, Jupiter, Saturn, Mercury, Mars and Venus on the MC mean, and how to choose a city for a professional goal.",
+  "description": "Where would your career run smoother? How MC, Sun, Saturn and Jupiter lines describe ambition, visibility and discipline on the map — and how to read yours.",
   "keywords": "astrocartography for career, career astrology relocation, mc line career, best city for career astrology, relocation astrology work",
   "articleHeadline": "Astrocartography for Career: Using Your MC and Success Lines to Choose Where to Work",
   "datePublished": "2026-06-15",

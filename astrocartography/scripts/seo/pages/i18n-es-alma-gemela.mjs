@@ -5,7 +5,7 @@ export default {
     "en": "where-will-i-meet-my-soulmate-astrology",
     "pt": "pt/onde-vou-conhecer-minha-alma-gemea"
   },
-  "title": "¿Dónde conoceré a mi alma gemela? Lo que dice tu carta natal | Natal Navigator",
+  "title": "¿Dónde conoceré a mi alma gemela? Lo que dice tu carta natal",
   "ogTitle": "¿Dónde conoceré a mi alma gemela?",
   "description": "La astrología responde dónde — no solo cuándo — conocerás a tu persona: las líneas de Venus y del Descendente en astrocartografía, y cómo encontrar las tuyas.",
   "keywords": "dónde conoceré a mi alma gemela, dónde encontraré el amor astrología, alma gemela carta natal, línea de venus amor, astrología del amor mapa",

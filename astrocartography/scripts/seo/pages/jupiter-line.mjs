@@ -2,9 +2,9 @@ export default {
   "slug": "astrocartography/jupiter-line",
   "lang": "en",
   "alt": { "de": "astrokartographie/jupiterlinie" },
-  "title": "Jupiter Line Astrocartography: Luck, Growth & Opportunity | Natal Navigator",
+  "title": "Jupiter Line Astrocartography: Luck, Growth & Opportunity",
   "ogTitle": "The Jupiter Line in Astrocartography",
-  "description": "What a Jupiter line means in astrocartography — growth, luck, opportunity and abundance themes, the MC/IC/ASC/DSC variants, the honest downsides, and how to read it on your map.",
+  "description": "What a Jupiter line means in astrocartography — growth, luck, opportunity and abundance themes, the MC/IC/ASC/DSC variants, the honest downsides.",
   "keywords": "jupiter line, jupiter line astrocartography, jupiter line meaning, jupiter mc line, jupiter asc line, jupiter dc line, luck astrology relocation, expansion astrocartography",
   "articleHeadline": "The Jupiter Line in Astrocartography: Meaning and Best Places to Live",
   "datePublished": "2026-06-15",
@@ -86,6 +86,6 @@ export default {
       "jupiter DC line",
       "jupiter luck line"
     ],
-    "description": "A Jupiter line is the geographic path in astrocartography where Jupiter was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Jupiter line are interpreted as emphasising growth, opportunity, optimism, abundance and expansion, with overconfidence and excess as the honest downsides."
+    "description": "A Jupiter line is the geographic path in astrocartography where Jupiter was on the Midheaven (MC), Nadir (IC)."
   }
 };

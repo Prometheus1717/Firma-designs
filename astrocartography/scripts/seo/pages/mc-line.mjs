@@ -1,9 +1,9 @@
 export default {
   "slug": "astrocartography/mc-line",
   "lang": "en",
-  "title": "MC Line Astrocartography: Career Peaks & Public Recognition | Natal Navigator",
+  "title": "MC Line Astrocartography: Career Peaks & Public Recognition",
   "ogTitle": "The MC Line (Midheaven) in Astrocartography",
-  "description": "What an MC line (Midheaven line) means in astrocartography — career, reputation, visibility and life direction, what each planet's MC line emphasises, and how it differs from the IC line.",
+  "description": "What an MC line (Midheaven line) means in astrocartography — career, reputation, visibility and life direction, what each planet's MC line emphasises.",
   "keywords": "mc line, midheaven line, mc line astrocartography, midheaven astrocartography, sun mc line, saturn mc line, jupiter mc line, astrocartography career line",
   "articleHeadline": "The MC Line (Midheaven) in Astrocartography: Meaning and Career Themes",
   "datePublished": "2026-06-15",
@@ -93,6 +93,6 @@ export default {
       "Medium Coeli line",
       "midheaven astrocartography line"
     ],
-    "description": "An MC line (Midheaven line) is the geographic path in astrocartography where a planet was culminating at the highest point of the sky — on the Midheaven (MC) — at the moment of birth. Places along an MC line are interpreted as emphasising career, public reputation, ambition, visibility and life direction, coloured by the planet on the line."
+    "description": "An MC line (Midheaven line) is the geographic path in astrocartography where a planet was culminating at the highest point of the sky — on the Midheaven (MC)."
   }
 };

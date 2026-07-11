@@ -5,7 +5,7 @@ export default {
     "en": "lucky-places-astrology",
     "es": "es/lugares-de-suerte-astrologia"
   },
-  "title": "Qual país dá sorte para mim? Seus lugares de fortuna na astrologia | Natal Navigator",
+  "title": "Qual país dá sorte para mim? Astrologia da fortuna",
   "ogTitle": "Seus lugares de sorte, segundo a astrologia",
   "description": "Qual país ou cidade dá sorte para você? Como a astrologia localiza sua fortuna: as linhas de Júpiter, Vênus e do Sol explicadas, e como encontrar as suas.",
   "keywords": "qual país dá sorte para mim, lugares de sorte astrologia, país da sorte mapa astral, linha de júpiter sorte, cidade da sorte astrologia",

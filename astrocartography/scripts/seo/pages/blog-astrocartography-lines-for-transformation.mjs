@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-lines-for-transformation`,
   lang: `en`,
-  title: `Best Astrocartography Lines for Growth & Transformation | Natal Navigator`,
+  title: `Best Astrocartography Lines for Growth & Transformation`,
   ogTitle: `Astrocartography Lines for Transformation`,
-  description: `The astrocartography lines most associated with personal growth and transformation — Pluto, Saturn, Uranus, the Sun and Neptune — what kind of change each one brings, and an honest look at how intense (and slow) real transformation can be.`,
+  description: `The astrocartography lines most associated with personal growth and transformation — Pluto, Saturn, Uranus, the Sun and Neptune.`,
   keywords: `astrocartography lines for personal growth, astrocartography transformation, best line for self-improvement, pluto line transformation, saturn line growth, astrocartography for reinvention`,
   articleHeadline: `Best Astrocartography Lines for Personal Growth and Transformation`,
   datePublished: `2026-07-05`,

@@ -1,9 +1,9 @@
 export default {
   slug: `blog/astrocartography-and-mental-health`,
   lang: `en`,
-  title: `Astrocartography and Mental Health — Can a Place Make a Difference? | Natal Navigator`,
+  title: `Astrocartography & Mental Health: Can a Place Help?`,
   ogTitle: `Astrocartography & Mental Health`,
-  description: `Can where you live really affect your mental health? An honest, non-medical look at how place shapes wellbeing, how astrocartography offers a reflective lens on it, and why a line is never a substitute for real care.`,
+  description: `Can where you live really affect your mental health? An honest, non-medical look at how place shapes wellbeing, how astrocartography offers a reflective lens on it.`,
   keywords: `astrocartography mental health, location and mental health, does where you live affect mental health, moon line mental health, astrocartography wellbeing, place and wellbeing`,
   articleHeadline: `Astrocartography and Mental Health: Can Location Really Make a Difference?`,
   datePublished: `2026-07-05`,

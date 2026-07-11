@@ -1,7 +1,7 @@
 export default {
   "slug": "astrocartography/pluto-line",
   "lang": "en",
-  "title": "Pluto Line Astrocartography: Transformation, Power & Rebirth | Natal Navigator",
+  "title": "Pluto Line Astrocartography: Transformation, Power & Rebirth",
   "ogTitle": "The Pluto Line in Astrocartography",
   "description": "What a Pluto line means in astrocartography — transformation, power, depth and rebirth themes, the MC/IC/ASC/DSC variants, who it suits, and how to read it on your map.",
   "keywords": "pluto line, pluto line astrocartography, pluto line meaning, pluto mc line, pluto asc line, pluto dc line, transformation astrology relocation, pluto astrocartography power",
@@ -85,6 +85,6 @@ export default {
       "pluto DC line",
       "pluto transformation line"
     ],
-    "description": "A Pluto line is the geographic path in astrocartography where Pluto was on the Midheaven (MC), Nadir (IC), Ascendant (ASC) or Descendant (DSC) at the moment of birth. Places along a Pluto line are interpreted as amplifying transformation, depth, power, intensity and rebirth themes."
+    "description": "A Pluto line is the geographic path in astrocartography where Pluto was on the Midheaven (MC), Nadir (IC)."
   }
 };

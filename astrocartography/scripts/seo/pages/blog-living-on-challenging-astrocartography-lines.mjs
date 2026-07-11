@@ -1,9 +1,9 @@
 export default {
   slug: `blog/living-on-challenging-astrocartography-lines`,
   lang: `en`,
-  title: `What Happens When You Live on a Challenging Astrocartography Line? | Natal Navigator`,
+  title: `Living on a Challenging Astrocartography Line`,
   ogTitle: `Living on a Challenging Line`,
-  description: `Saturn, Mars, Pluto and Neptune lines have tough reputations. Here's what living on a challenging astrocartography line actually feels like, why "difficult" isn't the same as "bad", and how to work with a hard line instead of fleeing it.`,
+  description: `Saturn, Mars, Pluto and Neptune lines have tough reputations. Here's what living on a challenging astrocartography line actually feels like.`,
   keywords: `challenging astrocartography lines, difficult astrocartography lines, hard astrocartography lines, saturn line living, mars line problems, worst astrocartography lines`,
   articleHeadline: `What Happens When You Live on Your Challenging Astrocartography Lines?`,
   datePublished: `2026-07-05`,
@@ -114,6 +114,8 @@ export default {
     },
   ],
   related: [
+    { "href": "/blog/astrocartography-and-mental-health", "label": "Astrocartography and mental health — the honest boundaries" },
+    { "href": "/blog/multiple-astrocartography-lines", "label": "When several lines cross the same city" },
     { href: `/blog/astrocartography-lines-for-transformation`, label: `Astrocartography lines for growth & transformation` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },
     { href: `/blog/cant-move-to-your-best-line`, label: `Can't move to your best line? Here's what works` },

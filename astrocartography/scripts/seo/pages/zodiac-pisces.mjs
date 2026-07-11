@@ -1,9 +1,9 @@
 export default {
   "slug": "best-places-to-live/pisces",
   "lang": "en",
-  "title": "Best Places to Live for a Pisces: 7 Soft Cities by the Water | Natal Navigator",
+  "title": "Best Places to Live for a Pisces: 7 Soft Cities by the Water",
   "ogTitle": "Best Places to Live for a Pisces",
-  "description": "Where should a Pisces live? The 7 best cities for Pisces (Feb 19 – Mar 20) based on imagination, gentleness and thin places near water — plus how your full birth chart refines the answer.",
+  "description": "Where should a Pisces live? The 7 best cities for Pisces (Feb 19 – Mar 20) based on imagination, gentleness and thin places near water.",
   "keywords": "best places to live for a pisces, where should a pisces live, pisces best cities, pisces where to live, pisces zodiac city, pisces relocation astrology",
   "articleHeadline": "Best Places to Live for a Pisces: 7 Soft Cities by the Water",
   "datePublished": "2026-07-04",
