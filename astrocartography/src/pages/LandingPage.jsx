@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { resetConsent } from '../lib/consent';
-import { getLandingLang, landingContent, RTL_LANGS } from '../lib/landingContent';
+import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } from '../lib/landingContent';
+import { LANGUAGES } from '../lib/i18n';
 import ConsentBanner from '../components/ConsentBanner';
 import { trackEvent } from '../lib/posthog';
 
@@ -166,14 +167,14 @@ export default function LandingPage() {
   const [star, setStar] = useState('musk');
   const [demoTheme, setDemoTheme] = useState('dark');
 
-  // Language: auto-detected from the visitor's browser / search-engine locale.
-  // English is the fallback. Same URL — no redirect (SEO-neutral). No manual
-  // switcher: the page follows the visitor's language automatically.
-  const [lang] = useState(getLandingLang);
+  // Language is auto-detected on the first visit. A manual choice persists
+  // locally and wins on future visits; the URL stays SEO-neutral.
+  const [lang, setLangState] = useState(getLandingLang);
   const C = landingContent(lang);
   const CYCLE_WORDS = C.hero.cycle;
   const priceStr = priceLabel();
   const isRtl = RTL_LANGS.includes(lang);
+  const changeLang = (code) => { setLandingLang(code); setLangState(code); };
 
   // Hero word-cycler: advance the active word on an interval. The slot morphs
   // its width to the active word (smooth CSS transition) so "See where you ___"
@@ -309,6 +310,14 @@ export default function LandingPage() {
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
           </div>
           <div className="lp-nav-right">
+            <label className="lp-lang-icon" title="Change language">
+              {I.globe}
+              <select value={lang} onChange={(e) => changeLang(e.target.value)} aria-label="Change language">
+                {LP_LANGS.map((code) => (
+                  <option key={code} value={code}>{(LANGUAGES.find((language) => language.code === code)?.name) || code.toUpperCase()}</option>
+                ))}
+              </select>
+            </label>
             {/* Returning customers need a visible way back in — every other
                 CTA on this page funnels into the purchase flow. */}
             <a className="lp-nav-signin" href="/auth?mode=login">{C.nav.signIn}</a>
@@ -749,6 +758,10 @@ const CSS = `
 .lp-nav-right{ display:flex; align-items:center; gap:14px; }
 .lp-nav-signin{ font-size:14.5px; font-weight:500; color:var(--ink2); white-space:nowrap; transition:color .2s; }
 .lp-nav-signin:hover{ color:var(--ink); }
+.lp-lang-icon{ position:relative; display:grid; place-items:center; width:36px; height:36px; border:1px solid var(--line); border-radius:50%; color:var(--ink2); cursor:pointer; transition:color .2s, border-color .2s, background .2s; }
+.lp-lang-icon:hover, .lp-lang-icon:focus-within{ color:var(--ink); border-color:var(--ink2); background:rgba(255,255,255,.58); }
+.lp-lang-icon svg{ width:17px; height:17px; pointer-events:none; }
+.lp-lang-icon select{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
 [dir="rtl"] .lp-h1-it em{ font-style:normal; }
 
 /* ── buttons ── */
@@ -1306,6 +1319,7 @@ const CSS = `
   .lp-nav{ padding:0 8px 0 14px; height:54px; }
   .lp-nav .lp-btn-sm{ padding:9px 14px; font-size:13px; }
   .lp-nav .lp-btn-sm .lp-btn-ic{ display:none; }
+  .lp-nav-signin{ display:none; }
   .lp-logo{ font-size:14.5px; }
   .lp-frame-url{ display:none; }
   .lp-frame-body{ height:min(64vh, 520px); }
