@@ -85,6 +85,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/astrocartography-for-travel", "label": "Astrocartography for travel — choosing trips by your lines" },
     { "href": "/blog/best-cities-for-artists-astrocartography", "label": "Best cities for artists, by their lines" },
     {
       "href": "/blog/best-cities-for-astrocartography",

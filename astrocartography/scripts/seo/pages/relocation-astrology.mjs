@@ -64,6 +64,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/solar-return-astrocartography", "label": "Solar return astrocartography — where to spend your birthday" },
     {
       "href": "/blog/astrocartography-vs-relocation-astrology",
       "label": "Astrocartography vs. relocation astrology — which to use"

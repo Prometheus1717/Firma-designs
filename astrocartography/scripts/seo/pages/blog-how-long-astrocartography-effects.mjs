@@ -125,6 +125,7 @@ export default {
   ],
   related: [
     { "href": "/blog/does-astrocartography-chart-change", "label": "Does your astrocartography chart ever change?" },
+    { href: `/blog/astrocartography-for-travel`, label: `Astrocartography for travel — what short trips can show` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },
     { href: `/blog/cant-move-to-your-best-line`, label: `Can't move to your best line? Here's what works` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },

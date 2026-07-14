@@ -52,6 +52,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/astrocartography-for-travel", "label": "Astrocartography for travel — test your lucky places on a trip" },
     {
       "href": "/astrocartography/jupiter-line",
       "label": "The Jupiter line — luck and expansion, in depth"

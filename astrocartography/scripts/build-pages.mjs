@@ -143,7 +143,7 @@ function renderTable(t) {
 // reachable from the pillar alone (moon-line, mercury-line had a single inbound
 // link). This renders a full-mesh cluster — every line links to all its
 // siblings — plus a bridge to the evergreen blog guides for the EN set.
-const isEnLine = (slug) => /^astrocartography\/[a-z]+-line$/.test(slug);
+const isEnLine = (slug) => /^astrocartography\/[a-z]+(?:-[a-z]+)*-line$/.test(slug);
 const isDeLine = (slug) => /^astrokartographie\/[a-z]+linie$/.test(slug);
 const LINE_PAGES = {
   en: PAGES.filter((p) => isEnLine(p.slug)).map((p) => p.slug).sort(),

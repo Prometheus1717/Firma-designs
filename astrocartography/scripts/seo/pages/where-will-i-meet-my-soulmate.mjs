@@ -52,6 +52,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/astrocartography/vertex-line", "label": "The Vertex line — the geography of fated encounters" },
     {
       "href": "/astrocartography-for-love",
       "label": "Astrocartography for love — the full guide"
