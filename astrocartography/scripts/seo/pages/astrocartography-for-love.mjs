@@ -64,6 +64,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/astrocartography-for-couples", "label": "Already coupled? How to read two maps together" },
     { "href": "/where-will-i-meet-my-soulmate-astrology", "label": "Where will you meet your soulmate? Ask your DSC line" },
     {
       "href": "/where-will-i-meet-my-soulmate-astrology",

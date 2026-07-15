@@ -61,6 +61,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/saturn-return-astrocartography", "label": "Saturn return + astrocartography — where to be at 29" },
     {
       "href": "/astrocartography/jupiter-line",
       "label": "The Jupiter Line — luck and expansion"

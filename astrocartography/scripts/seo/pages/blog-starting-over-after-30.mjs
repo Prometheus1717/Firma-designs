@@ -77,6 +77,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/saturn-return-astrocartography", "label": "The prequel: your Saturn return, mapped" },
     {
       "href": "/blog/signs-living-in-wrong-place",
       "label": "Signs you are living in the wrong place"
