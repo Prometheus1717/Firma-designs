@@ -78,6 +78,7 @@ export default {
   ],
   "related": [
     { "href": "/blog/saturn-return-astrocartography", "label": "The prequel: your Saturn return, mapped" },
+    { "href": "/blog/where-to-retire-astrology", "label": "The third act: where to retire, by the map" },
     {
       "href": "/blog/signs-living-in-wrong-place",
       "label": "Signs you are living in the wrong place"

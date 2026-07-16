@@ -109,6 +109,7 @@ export default {
     },
   ],
   related: [
+    { href: `/blog/what-is-a-paran`, label: `Parans — the latitude bands born from crossings` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },
     { href: `/blog/strongest-astrocartography-line`, label: `Which is the strongest astrocartography line?` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },

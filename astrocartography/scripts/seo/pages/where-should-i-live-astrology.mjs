@@ -69,6 +69,8 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/feeling-drawn-to-a-place", "label": "Drawn to a place you've never been? Test it first" },
+    { "href": "/blog/where-to-retire-astrology", "label": "Choosing where to retire — the third-act reading" },
     { "href": "/lucky-places-astrology", "label": "Lucky places astrology — your Jupiter and Venus spots" },
     {
       "href": "/where-to-live-by-zodiac-sign",

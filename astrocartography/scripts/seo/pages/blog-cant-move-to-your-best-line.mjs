@@ -111,6 +111,7 @@ export default {
   ],
   related: [
     { href: `/blog/astrocartography-for-travel`, label: `Astrocartography for travel — visit the line instead` },
+    { href: `/blog/moving-off-your-line`, label: `The mirror image: leaving a line you're on` },
     { href: `/blog/solar-return-astrocartography`, label: `Solar return astrocartography — where to spend your birthday` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },

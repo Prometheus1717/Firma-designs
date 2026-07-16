@@ -78,6 +78,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/feeling-drawn-to-a-place", "label": "The other end of the rope: drawn to a place you've never been" },
     { "href": "/blog/astrocartography-and-mental-health", "label": "Feeling low where you live? Read the mental-health caveats first" },
     {
       "href": "/where-should-i-live-astrology",

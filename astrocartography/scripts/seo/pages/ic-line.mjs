@@ -60,6 +60,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/where-to-retire-astrology", "label": "The IC in practice: where to retire, by the map" },
     {
       "href": "/astrocartography/mc-line",
       "label": "The MC Line — career and public identity"

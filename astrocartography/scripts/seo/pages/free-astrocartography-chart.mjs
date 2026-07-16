@@ -64,6 +64,7 @@ export default {
     }
   ],
   "related": [
+    { "href": "/blog/astrocartography-without-birth-time", "label": "No birth time? What still works — and how to find yours" },
     {
       "href": "/astrocartography-calculator",
       "label": "Astrocartography calculator"
