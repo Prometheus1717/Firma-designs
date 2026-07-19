@@ -61,6 +61,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/ic-lines-astrocartography",
+      "label": "IC lines planet by planet — incl. Uranus IC"
+    },
+    {
       "href": "/astrocartography/neptune-line",
       "label": "The Neptune Line — dreams and dissolution"
     },

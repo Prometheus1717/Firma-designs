@@ -70,6 +70,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/astrokartographie/rechner",
+      "label": "Astrokartographie kostenlos berechnen"
+    },
+    {
       "href": "/blog/anzeichen-falscher-wohnort",
       "label": "Anzeichen, dass du am falschen Ort lebst"
     },

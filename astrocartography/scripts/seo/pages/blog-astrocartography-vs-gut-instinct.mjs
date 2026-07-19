@@ -106,6 +106,7 @@ export default {
     },
   ],
   related: [
+    { href: `/blog/is-astrocartography-real`, label: `Is astrocartography real? What science says` },
     { href: `/blog/astrocartography-with-other-life-planning`, label: `Combining astrocartography with your other tools` },
     { href: `/blog/how-accurate-is-astrocartography`, label: `How accurate is astrocartography, really?` },
     { href: `/blog/signs-living-in-wrong-place`, label: `Signs you're living in the wrong place` },

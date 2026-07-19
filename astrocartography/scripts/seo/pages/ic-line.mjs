@@ -60,6 +60,10 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/blog/ic-lines-astrocartography",
+      "label": "IC lines planet by planet — incl. Uranus & North Node"
+    },
     { "href": "/blog/where-to-retire-astrology", "label": "The IC in practice: where to retire, by the map" },
     {
       "href": "/astrocartography/mc-line",

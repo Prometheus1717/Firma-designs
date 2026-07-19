@@ -76,6 +76,7 @@ export default {
     },
   ],
   related: [
+    { href: `/blog/ic-lines-astrocartography`, label: `IC lines planet by planet — incl. North Node IC` },
     { href: `/astrocartography/chiron-line`, label: `The Chiron Line — healing and the wounded healer` },
     { href: `/astrocartography/vertex-line`, label: `The Vertex Line — fated encounters` },
     { href: `/blog/astrocartography-lines-for-transformation`, label: `Best lines for transformation` },

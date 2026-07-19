@@ -64,6 +64,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/astrokartographie/rechner",
+      "label": "Astrokartographie kostenlos berechnen"
+    },
+    {
       "href": "/astrokartographie/jupiterlinie",
       "label": "Die Jupiterlinie — Glück und Expansion"
     },
