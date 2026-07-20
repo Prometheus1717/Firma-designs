@@ -101,6 +101,12 @@ export default async function handler(req, res) {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         ...(email ? { customer_email: email } : {}),
+        // payment mode defaults to 'if_required', which creates no Customer at
+        // all for a one-off purchase — the Dashboard files those under "guest
+        // customers" and session.customer stays null, so the profile's
+        // stripe_customer_id never gets filled. Purely a reporting concern;
+        // provisioning reads customer_details.email either way.
+        customer_creation: 'always',
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${origin}/result?payment=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/create?payment=cancelled`,
@@ -144,6 +150,7 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       customer_email: email,
+      customer_creation: 'always', // see guest branch above
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/dashboard?payment=success`,
       cancel_url: `${origin}/dashboard?payment=cancelled`,
