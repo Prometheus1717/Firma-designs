@@ -38,9 +38,17 @@ export default {
     {
       "h2": "Für wen die Sonnenlinie interessant ist",
       "html": "<p>Sonnenlinien sprechen vor allem Menschen an, die an einem Wendepunkt von Identität und Selbstvertrauen stehen:</p>\n      <ul>\n        <li><strong>Nach einer Phase der Unsichtbarkeit</strong> — wer sich klein gemacht oder den eigenen Selbstausdruck zurückgestellt hat, findet auf einer Sonne-AC-Linie oft wieder zu mehr Präsenz.</li>\n        <li><strong>Beim beruflichen Durchstarten</strong> — eine Sonne-MC-Linie für Sichtbarkeit, Anerkennung und das Übernehmen einer führenden Rolle.</li>\n        <li><strong>Auf der Suche nach einem stabilen Fundament</strong> — eine Sonne-IC-Linie, um an einem Ort wirklich anzukommen und das eigene Selbstgefühl von den Wurzeln her zu festigen.</li>\n        <li><strong>In einer Phase der Neuerfindung</strong> — irgendwo, wo es leichter fällt, selbstbewusst die Person zu sein, die man werden möchte.</li>\n      </ul>\n      <p>Wenn dein aktuelles Zuhause auf einer Saturn- oder Neptunlinie liegt und du dich dort gedämpft oder unsichtbar fühlst, kann es ausgesprochen klärend sein zu sehen, wo deine Sonnenlinien verlaufen — nicht als Anweisung umzuziehen, sondern als Landkarte dafür, wo die strahlendere Version deines Lebens vielleicht leichter erreichbar wäre. Und es lohnt sich, die Kehrseite mitzudenken: Wer ohnehin gern im Mittelpunkt steht, sollte bedenken, dass eine Sonnenlinie diese Tendenz noch verstärken kann.</p>"
+    },
+    {
+      "h2": "Deine Sonnenlinie berechnen und finden",
+      "html": "<p>Die Sonnenlinie zu finden ist reine Rechnung: Aus Geburtsdatum, minutengenauer Geburtszeit und Geburtsort ergibt sich exakt, wo die Sonne in deinem Geburtsmoment auf- oder unterging beziehungsweise am höchsten oder tiefsten Punkt stand — daraus folgen die vier Sonnenlinien zwingend. Im <a href=\"/astrokartographie/rechner\">Astrokartographie-Rechner</a> kannst du das Prinzip zuerst kostenlos an Beispielkarten ausprobieren, bevor deine eigene Karte entsteht.</p>\n      <p>Beim Lesen gilt dieselbe Reihenfolge wie bei allen Linien: erst die Vergangenheit, dann die Zukunft. Prüfe zuerst, ob Orte, an denen du dich sichtbar, lebendig und selbstsicher gefühlt hast, tatsächlich in Sonnen-Nähe lagen — diese Rückwärtsprüfung an der eigenen Biografie ist der ehrlichste Test dafür, wie stark das Sonnen-Thema bei dir persönlich trägt. Ein praktischer Hinweis zur Datenqualität: Die Geburtszeit entscheidet über die Achsen; schon wenige Minuten Abweichung verschieben die Linien spürbar, ein Blick in die Geburtsurkunde lohnt sich also.</p>"
     }
   ],
   "faq": [
+    {
+      "q": "Wie finde ich meine Sonnenlinie?",
+      "a": "Aus Geburtsdatum, minutengenauer Geburtszeit und Geburtsort wird berechnet, wo die Sonne bei deiner Geburt an den vier Achsen stand — daraus ergeben sich deine vier Sonnenlinien exakt. Im Natal-Navigator-Rechner lässt sich das Prinzip kostenlos an Beispielkarten erkunden, bevor du deine eigene Karte erstellst."
+    },
     {
       "q": "Was bedeutet eine Sonnenlinie in der Astrokartographie?",
       "a": "Eine Sonnenlinie markiert die Orte, an denen die Sonne bei deiner Geburt an einer Achse stand — also aufging, unterging, kulminierte oder am Tiefpunkt war. Diese Regionen werden traditionell so gelesen, dass sie Identität, Vitalität, Selbstvertrauen, Anerkennung und Sichtbarkeit betonen, und gelten damit als eine der stärkenden Geografien auf einer astrokartografischen Karte."
