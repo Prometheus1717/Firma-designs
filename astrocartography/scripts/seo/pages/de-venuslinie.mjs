@@ -38,9 +38,25 @@ export default {
     {
       "h2": "Für wen die Venuslinie interessant ist",
       "html": "<p>Venuslinien sprechen vor allem Menschen an, die sich an Wendepunkten in Beziehung und Selbstwert befinden:</p>\n      <ul>\n        <li><strong>Neuanfang nach einer Trennung</strong> — ein Ort, der Offenheit und Selbstfreundlichkeit unterstützt statt Abwehrpanzer.</li>\n        <li><strong>Auf der Suche nach Liebe oder Gemeinschaft</strong> — die Venus-DSZ- und ASZ-Linien sind die traditionelle erste Wahl.</li>\n        <li><strong>Ausgebrannt und nach Leichtigkeit sehnend</strong> — eine Venus-IC-Linie für einen sanfteren, schöneren Alltag.</li>\n        <li><strong>Tätig in einem kreativen oder menschennahen Feld</strong> — eine Venus-MC-Linie, um dafür gesehen und geschätzt zu werden.</li>\n      </ul>\n      <p>Wenn dein jetziges Zuhause auf einer Mars- oder Saturnlinie liegt und sich alles wie Reibung anfühlt, kann es wirklich klärend sein zu sehen, wo deine Venuslinien verlaufen — nicht als Anweisung umzuziehen, sondern als Karte dafür, wo die sanftere Version deines Lebens leichter erreichbar sein könnte.</p>"
+    },
+    {
+      "h2": "Deine Venuslinie berechnen und finden",
+      "html": "<p>Deine Venuslinien zu finden ist kein Rätselraten, sondern Rechnung: Aus Geburtsdatum, minutengenauer Geburtszeit und Geburtsort ergibt sich exakt, wo die Venus in deinem Geburtsmoment auf- oder unterging beziehungsweise kulminierte — die vier Venuslinien folgen daraus zwingend. Im <a href=\"/astrokartographie/rechner\">Astrokartographie-Rechner</a> kannst du das Prinzip zuerst kostenlos an Beispielkarten erkunden; deine persönlichen Linien entstehen dann aus deinen eigenen Daten.</p>\n      <p>Beim Lesen der eigenen Venuslinien lohnt eine Reihenfolge: Beginne nicht bei Traumzielen, sondern bei Orten, an denen du schon gelebt hast oder länger warst. Lag eine Stadt, in der dir Begegnungen leichtfielen, tatsächlich in Venus-Nähe? Diese Rückwärtsprüfung ist der ehrlichste Test, wie stark die Venus-Themen bei dir persönlich durchkommen — und erst danach wird der Blick auf künftige Orte wirklich aussagekräftig. Beachte dabei die Geburtszeit: Schon zehn Minuten Abweichung verschieben die Achsenlinien um teils hunderte Kilometer; ein Blick in die Geburtsurkunde lohnt sich.</p>"
+    },
+    {
+      "h2": "Venuslinie oder Jupiterlinie — welche für welches Lebenskapitel?",
+      "html": "<p>Die beiden „wohlwollenden“ Linien werden oft in einem Atemzug genannt, tragen aber verschiedene Kapitel. Die <strong>Venuslinie</strong> ist die Linie der Qualität des Alltags: Beziehungen, Schönheit, Selbstwert, ein weicheres Lebensgefühl. Die <a href=\"/astrokartographie/jupiterlinie\">Jupiterlinie</a> ist die Linie der Expansion: Wachstum, Chancen, Sichtbarkeit, Optimismus — mehr Volumen, nicht unbedingt mehr Sanftheit.</p>\n      <p>Als Faustregel: Wer nach einer anstrengenden Phase heilen, lieben oder einfach schöner leben will, schaut zuerst auf die Venus. Wer ein Projekt, eine Karriere oder einen Horizont vergrößern will, zuerst auf den Jupiter. Ideal — und gar nicht selten — sind Orte, an denen beide Linien nahe beieinander verlaufen oder sich kreuzen: Dort verbinden sich Leichtigkeit und Wachstum. Die Städteliste im Natal Navigator zeigt dir solche Überschneidungen direkt am Globus.</p>"
     }
   ],
   "faq": [
+    {
+      "q": "Wie finde ich meine Venuslinie?",
+      "a": "Aus Geburtsdatum, minutengenauer Geburtszeit und Geburtsort wird berechnet, wo die Venus bei deiner Geburt an den vier Achsen stand — daraus ergeben sich deine vier Venuslinien exakt. Im Natal-Navigator-Rechner kannst du das Prinzip kostenlos an Beispielkarten erkunden, bevor du deine eigene Karte erstellst."
+    },
+    {
+      "q": "Venuslinie oder Jupiterlinie — was ist besser für einen Umzug?",
+      "a": "Sie beantworten verschiedene Fragen: Die Venuslinie steht für Beziehungsqualität, Schönheit und einen weicheren Alltag, die Jupiterlinie für Wachstum, Chancen und Expansion. Für Heilung und Liebe zuerst die Venus prüfen, für Karriere- und Wachstumskapitel den Jupiter — und Orte, wo beide nahe zusammenlaufen, verbinden beides."
+    },
     {
       "q": "Was bedeutet eine Venuslinie in der Astrokartographie?",
       "a": "Eine Venuslinie markiert die Orte, an denen die Venus bei deiner Geburt an einer Achse stand — aufgehend, untergehend, kulminierend oder in der Tiefe. Diese Regionen werden traditionell so gedeutet, dass sie Liebe, Schönheit, soziale Leichtigkeit, Genuss und Geld betonen, was sie zu einer der angenehmsten Geografien auf einer Astrokartographie-Karte macht."
