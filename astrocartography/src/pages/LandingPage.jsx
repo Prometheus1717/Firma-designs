@@ -298,7 +298,7 @@ export default function LandingPage() {
       <header className="lp-nav-wrap">
         <nav className="lp-nav" ref={navRef} aria-label="Main">
           <a href="/" className="lp-logo" onClick={(e) => { e.preventDefault(); document.querySelector('.lp-root')?.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            <span className="lp-logo-mark">{I.globe}</span>
+            <img className="lp-logo-mark" src="/logo-icon.png" alt="" width="30" height="30" />
             Natal&nbsp;Navigator
           </a>
           <div className="lp-nav-links">
@@ -616,7 +616,7 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-wrap lp-footer-grid">
           <div className="lp-footer-brand">
-            <a href="/" className="lp-logo"><span className="lp-logo-mark">{I.globe}</span>Natal&nbsp;Navigator</a>
+            <a href="/" className="lp-logo"><img className="lp-logo-mark" src="/logo-icon.png" alt="" width="30" height="30" />Natal&nbsp;Navigator</a>
             <p>{C.footer.tagline}</p>
           </div>
           <nav aria-label="Product">
