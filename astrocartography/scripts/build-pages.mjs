@@ -72,7 +72,7 @@ function renderSchema(page) {
     publisher: {
       '@type': 'Organization',
       name: 'Natal Navigator',
-      logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon.svg` },
+      logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon-512x512.png`, width: 512, height: 512 },
     },
     datePublished: page.datePublished || '2026-06-15',
     dateModified: page.dateModified || page.datePublished || '2026-06-15',
@@ -551,7 +551,7 @@ ${renderSchema(page)}
 <body>
   <header class="nav-wrap">
     <nav class="nav" aria-label="Primary">
-      <a href="/" class="logo"><span class="logo-mark">N</span> Natal Navigator</a>
+      <a href="/" class="logo"><img class="logo-mark" src="/logo-icon.png" alt="" width="30" height="30"> Natal Navigator</a>
       <div class="nav-links">
         <a href="${u.pillar}">${u.whatIs}</a>
         <a href="/blog">Blog</a>
@@ -680,7 +680,12 @@ function renderBlogIndex(posts) {
     '@id': ORIGIN + '/blog#blog',
     name: 'Natal Navigator — Astrocartography Blog',
     url: ORIGIN + '/blog',
-    publisher: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Natal Navigator',
+      url: ORIGIN,
+      logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon-512x512.png`, width: 512, height: 512 },
+    },
     blogPost: ordered.map((p) => ({
       '@type': 'BlogPosting',
       headline: p.h1,
@@ -724,7 +729,7 @@ ${BLOG_CSS}
 <body>
   <header class="nav-wrap">
     <nav class="nav" aria-label="Main">
-      <a href="/" class="logo"><span class="logo-mark">N</span><span>Natal Navigator</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/logo-icon.png" alt="" width="30" height="30"><span>Natal Navigator</span></a>
       <div class="nav-links">
         <a href="/astrocartography">What is Astrocartography?</a>
         <a href="/blog">Blog</a>
