@@ -485,18 +485,25 @@ export default function Dashboard({ demo = false, teaser = false }) {
     }
   }, []);
 
-  // Fetch global app settings (paywall, pricing, announcement)
+  // Fetch global app settings (paywall, pricing, announcement).
+  // The announcement banner is meant for every visitor, so the demo dashboard
+  // (what anonymous users get) fetches it too — anon may read these keys by RLS.
+  // Only the demo embedded in the landing iframe stays clean: a banner strip
+  // would eat the little vertical room that window has.
+  // Pricing/paywall values stay signed-in-only so demo behaviour is unchanged.
   useEffect(() => {
-    if (demo) return;
+    if (demo && isEmbeddedDemo()) return;
     import('../lib/supabase').then(({ supabase }) => {
       supabase.from('app_settings').select('key, value')
         .then(({ data }) => {
           if (!data) return;
           const s = {};
           data.forEach(r => { s[r.key] = r.value; });
-          if (s.display_price) setDisplayPrice(s.display_price);
-          if (s.display_currency) setDisplayCurrency(s.display_currency);
-          if (s.price_label) setPriceLabel(s.price_label);
+          if (!demo) {
+            if (s.display_price) setDisplayPrice(s.display_price);
+            if (s.display_currency) setDisplayCurrency(s.display_currency);
+            if (s.price_label) setPriceLabel(s.price_label);
+          }
           if (s.announcement_active === 'true' && s.announcement_text) {
             setAnnouncement({ text: s.announcement_text, color: s.announcement_color || '#D8A030' });
           }
