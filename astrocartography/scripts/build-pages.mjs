@@ -81,7 +81,7 @@ function renderSchema(page) {
       '@id': self,
       speakable: { '@type': 'SpeakableSpecification', cssSelector: ['article h1', 'p.lead', 'article h2'] },
     },
-    image: `${ORIGIN}/og-v4.png`,
+    image: `${ORIGIN}/og-v5.png`,
     inLanguage: page.lang,
     ...(page.definedTerm ? { about: { '@type': 'DefinedTerm', '@id': self + '#term' } } : {}),
   });
@@ -530,13 +530,13 @@ function renderPage(page) {
   <meta property="og:title" content="${esc(page.ogTitle || page.h1)}" />
   <meta property="og:description" content="${esc(plain(page.description))}" />
   <meta property="og:url" content="${abs('/' + page.slug)}" />
-  <meta property="og:image" content="${ORIGIN}/og-v4.png" />
+  <meta property="og:image" content="${ORIGIN}/og-v5.png" />
   <meta property="og:locale" content="${ogLocale}" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${esc(page.ogTitle || page.h1)}" />
   <meta name="twitter:description" content="${esc(plain(page.description))}" />
-  <meta name="twitter:image" content="${ORIGIN}/og-v4.png" />
+  <meta name="twitter:image" content="${ORIGIN}/og-v5.png" />
 
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 
@@ -712,11 +712,11 @@ function renderBlogIndex(posts) {
   <meta property="og:title" content="Astrocartography Blog — Natal Navigator" />
   <meta property="og:description" content="Honest, practical guides to astrocartography and relocation astrology." />
   <meta property="og:url" content="${ORIGIN}/blog" />
-  <meta property="og:image" content="${ORIGIN}/og-v4.png" />
+  <meta property="og:image" content="${ORIGIN}/og-v5.png" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Astrocartography Blog — Natal Navigator" />
-  <meta name="twitter:image" content="${ORIGIN}/og-v4.png" />
+  <meta name="twitter:image" content="${ORIGIN}/og-v5.png" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <script type="application/ld+json">
 ${JSON.stringify(itemListSchema, null, 2)}
