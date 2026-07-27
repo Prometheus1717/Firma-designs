@@ -1,6 +1,5 @@
 /* global process, fetch */
 import { applySecurityHeaders } from './_security.js';
-import { sendTelegramMessage } from './_telegram.js';
 
 /**
  * Täglicher Gesundheitsbericht nach Telegram (Vercel-Cron, siehe vercel.json).
@@ -134,6 +133,46 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * Eigene Zustellung statt sendTelegramMessage(): der gemeinsame Helfer
+ * protokolliert Sendefehler nur auf der Konsole und schluckt sie sonst. Für
+ * einen Wächter ist das die falsche Richtung — wenn der Alarmkanal selbst
+ * kaputt ist (Token rotiert, Bot aus dem Kanal geworfen), muss das im
+ * Antwort-Body sichtbar sein, sonst hält man Stille für "alles in Ordnung".
+ */
+async function notifyTelegram(text) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatIds = (process.env.TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_IDS || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+
+  if (!token || !chatIds.length) {
+    return { delivered: 0, failed: 0, error: 'TELEGRAM_BOT_TOKEN oder TELEGRAM_CHAT_ID fehlt' };
+  }
+
+  let delivered = 0, failed = 0, error;
+  for (const chatId of chatIds) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true }),
+      });
+      if (res.ok) {
+        delivered++;
+      } else {
+        failed++;
+        // description enthält Telegrams Klartextgrund, z.B. "chat not found".
+        const body = await res.json().catch(() => ({}));
+        error = `${res.status} ${body.description || ''}`.trim();
+      }
+    } catch (err) {
+      failed++;
+      error = err.message;
+    }
+  }
+  return { delivered, failed, ...(error ? { error } : {}) };
+}
+
 export default async function handler(req, res) {
   applySecurityHeaders(res);
 
@@ -173,15 +212,17 @@ export default async function handler(req, res) {
   // Bei "quiet" nur melden, wenn etwas kaputt ist — für Aufrufe direkt nach
   // einem Deploy, die nicht jedes Mal eine Erfolgsmeldung auslösen sollen.
   const quiet = req.query?.quiet === '1';
-  let notified = false;
-  if (failed.length || !quiet) {
-    await sendTelegramMessage(lines.join('\n'));
-    notified = true;
-  }
+  const telegram = (failed.length || !quiet)
+    ? await notifyTelegram(lines.join('\n'))
+    : { delivered: 0, failed: 0, skipped: 'quiet' };
 
-  return res.status(failed.length ? 503 : 200).json({
+  // Eine unzustellbare Meldung ist selbst ein Ausfall — sonst schweigt der
+  // Wächter und niemand merkt es.
+  const broken = failed.length > 0 || telegram.failed > 0 || Boolean(telegram.error);
+
+  return res.status(broken ? 503 : 200).json({
     status: failed.length ? 'failing' : 'ok',
-    notified,
+    telegram,
     checks,
   });
 }
