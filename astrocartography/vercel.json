@@ -380,5 +380,11 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/health-report",
+      "schedule": "15 6 * * *"
+    }
   ]
 }
