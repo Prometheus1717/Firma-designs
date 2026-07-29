@@ -40,11 +40,12 @@ vi.mock('../pages/AdminPage', () => ({
   default: () => <div data-testid="admin-page">Admin Page</div>,
 }));
 
-import App from '../App';
+import App, { isEmbeddedDemoRequest } from '../App';
 
 describe('App routing', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.sessionStorage.clear();
   });
 
   it('renders without crashing', () => {
@@ -55,6 +56,14 @@ describe('App routing', () => {
   it('shows loading screen initially', () => {
     render(<App />);
     expect(screen.getByText('NATAL NAVIGATOR')).toBeInTheDocument();
+  });
+
+  it('ignores and clears a stale embedded-demo flag in the top-level window', () => {
+    window.sessionStorage.setItem('nn_embedded_demo', '1');
+
+    expect(window.self).toBe(window.top);
+    expect(isEmbeddedDemoRequest()).toBe(false);
+    expect(window.sessionStorage.getItem('nn_embedded_demo')).toBeNull();
   });
 });
 

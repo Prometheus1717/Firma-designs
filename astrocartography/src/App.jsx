@@ -279,7 +279,7 @@ function SmartRedirect() {
 // iframe's internal navigations and never leaks to the real landing page (nor to
 // preview tools that merely frame the landing without ?embed=1).
 const EMBED_FLAG = 'nn_embedded_demo';
-function isEmbeddedDemoRequest() {
+export function isEmbeddedDemoRequest() {
   // The persisted flag is only meaningful inside the landing page's iframe.
   // A visitor can otherwise carry it into a normal top-level "/" navigation
   // in the same tab and incorrectly get the demo dashboard instead of the
