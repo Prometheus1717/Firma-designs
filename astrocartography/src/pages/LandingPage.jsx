@@ -157,10 +157,6 @@ function FeatureMedia({ media, m }) {
 }
 
 export default function LandingPage() {
-  // LCP-Shell (statisches Above-the-fold aus index.html) aufräumen, sobald die
-  // echte Landing steht — visuell deckt .lp-root (fixed, z-9999) sie bereits ab.
-  useEffect(() => { window.__lpShellRemove?.(); }, []);
-
   const rootRef = useRef(null);
   const navRef = useRef(null);
   const [demoOn, setDemoOn] = useState(false);

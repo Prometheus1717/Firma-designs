@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/build-pages.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms-full.mjs",
+    "prebuild": "node scripts/check-no-legacy-landing-shell.mjs && node scripts/build-pages.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms-full.mjs",
     "build": "vite build",
     "indexnow": "node scripts/ping-indexnow.mjs",
     "lint": "eslint .",
