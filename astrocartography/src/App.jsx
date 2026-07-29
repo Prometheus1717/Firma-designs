@@ -280,6 +280,23 @@ function SmartRedirect() {
 // preview tools that merely frame the landing without ?embed=1).
 const EMBED_FLAG = 'nn_embedded_demo';
 function isEmbeddedDemoRequest() {
+  // The persisted flag is only meaningful inside the landing page's iframe.
+  // A visitor can otherwise carry it into a normal top-level "/" navigation
+  // in the same tab and incorrectly get the demo dashboard instead of the
+  // marketing landing page.
+  let isFramed = false;
+  try {
+    isFramed = window.self !== window.top;
+  } catch {
+    // Cross-origin frame access can throw in hardened browsers. Treat that as
+    // framed; a real top-level window never throws while comparing self/top.
+    isFramed = true;
+  }
+  if (!isFramed) {
+    try { window.sessionStorage.removeItem(EMBED_FLAG); } catch { /* storage blocked */ }
+    return false;
+  }
+
   try {
     if (new URLSearchParams(window.location.search).get('embed') === '1') {
       try { window.sessionStorage.setItem(EMBED_FLAG, '1'); } catch { /* storage blocked */ }
