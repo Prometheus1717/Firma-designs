@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Static SEO pages and the full machine-readable corpus are generated from
+# scripts/seo/content.mjs by predev/prebuild. Keep their source of truth in code.
+public/**/index.html
+public/llms-full.txt
 .env
 .env.*
 .env.local

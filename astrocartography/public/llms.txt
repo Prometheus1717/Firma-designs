@@ -18,11 +18,19 @@ Astrocartography is also known as locational astrology or relocation astrology. 
 
 - Homepage with embedded live demo: https://natalnavigator.com/
 - Interactive demo with example charts: https://natalnavigator.com/demo
+- Astrocartography definition and map-reading guide: https://natalnavigator.com/astrocartography
+- Astrocartography calculator: https://natalnavigator.com/astrocartography-calculator
+- Relocation astrology guide: https://natalnavigator.com/relocation-astrology
+- German Astrokartographie guide: https://natalnavigator.com/astrokartographie
+- Planet and angle reference pages: https://natalnavigator.com/astrocartography/sun-line and related pages
+- Practical educational articles: https://natalnavigator.com/blog
 
 ### Content policy
 
-All educational and product explanation content is consolidated into the
-homepage. Legacy blog, guide and line URLs redirect to https://natalnavigator.com/.
+Educational pages answer specific questions with visible, human-readable
+content and link back to the interactive calculator. Astrology is consistently
+framed as an interpretive reflection tool; pages do not promise outcomes or
+replace practical research and professional advice.
 
 ## Pricing
 
@@ -76,5 +84,6 @@ Analytics and performance: Vercel Analytics, Vercel Speed Insights and PostHog
 
 Sitemap: https://natalnavigator.com/sitemap.xml
 Robots: https://natalnavigator.com/robots.txt
+Full machine-readable guide corpus: https://natalnavigator.com/llms-full.txt
 Preferred citation name: NatalNavigator
 Preferred URL: https://natalnavigator.com/

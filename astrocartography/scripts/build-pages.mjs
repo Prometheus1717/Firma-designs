@@ -13,7 +13,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PAGES } from './seo/content.mjs';
+import { INDEXABLE_PAGES as PAGES } from './seo/content.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = join(ROOT, 'public');
@@ -40,12 +40,24 @@ const plain = (s) =>
     .trim();
 
 const abs = (path) => (path.startsWith('http') ? path : ORIGIN + (path.startsWith('/') ? path : '/' + path));
+const metaDescription = (value, max = 160) => {
+  const text = plain(value);
+  if (text.length <= max) return text;
+  const shortened = text.slice(0, max - 1).replace(/\s+\S*$/, '');
+  return `${shortened}…`;
+};
+
+const PUBLISHED_HREFS = new Set([
+  '/', '/demo', '/blog', '/astrocartography-calculator',
+  ...PAGES.map((page) => `/${page.slug}`),
+]);
 
 function renderHreflang(page) {
   const self = abs('/' + page.slug);
+  const defaultHref = page.lang === 'en' ? self : page.alt?.en ? abs('/' + page.alt.en) : self;
   const links = [
     `<link rel="canonical" href="${self}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${self}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${defaultHref}" />`,
     `<link rel="alternate" hreflang="${page.lang}" href="${self}" />`,
   ];
   if (page.alt) {
@@ -60,27 +72,45 @@ function renderSchema(page) {
   const self = abs('/' + page.slug);
   const graph = [];
 
-  graph.push({
-    '@type': 'Article',
-    headline: page.articleHeadline || page.h1,
-    description: plain(page.description),
-    author: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Natal Navigator',
-      logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon.svg` },
-    },
-    datePublished: page.datePublished || '2026-06-15',
-    dateModified: page.dateModified || page.datePublished || '2026-06-15',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': self,
-      speakable: { '@type': 'SpeakableSpecification', cssSelector: ['article h1', 'p.lead', 'article h2'] },
-    },
-    image: `${ORIGIN}/og-image.png`,
-    inLanguage: page.lang,
-    ...(page.definedTerm ? { about: { '@type': 'DefinedTerm', '@id': self + '#term' } } : {}),
-  });
+  if (page.schemaType === 'WebApplication') {
+    graph.push({
+      '@type': ['WebApplication', 'SoftwareApplication'],
+      '@id': self + '#app',
+      name: page.h1,
+      url: self,
+      description: plain(page.description),
+      applicationCategory: 'LifestyleApplication',
+      operatingSystem: 'Web',
+      browserRequirements: 'Requires JavaScript and a modern web browser',
+      offers: { '@type': 'Offer', price: '9.99', priceCurrency: 'EUR' },
+      featureList: page.featureList,
+      screenshot: `${ORIGIN}/og-image.png`,
+      creator: { '@type': 'Organization', '@id': `${ORIGIN}/#org` },
+      inLanguage: page.lang,
+    });
+  } else {
+    graph.push({
+      '@type': 'Article',
+      headline: page.articleHeadline || page.h1,
+      description: plain(page.description),
+      author: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Natal Navigator',
+        logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon.svg` },
+      },
+      datePublished: page.datePublished || '2026-06-15',
+      dateModified: page.dateModified || page.datePublished || '2026-06-15',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': self,
+        speakable: { '@type': 'SpeakableSpecification', cssSelector: ['article h1', 'p.lead', 'article h2'] },
+      },
+      image: `${ORIGIN}/og-image.png`,
+      inLanguage: page.lang,
+      ...(page.definedTerm ? { about: { '@type': 'DefinedTerm', '@id': self + '#term' } } : {}),
+    });
+  }
 
   graph.push({
     '@type': 'BreadcrumbList',
@@ -162,7 +192,7 @@ function renderLinesCluster(page) {
     .join('\n');
   const guides = de
     ? ''
-    : `\n        <p class="cluster-guides">Guides: <a href="/blog/astrocartography-lines-explained">Lines explained</a> &middot; <a href="/blog/how-to-read-astrocartography-map">How to read your map</a> &middot; <a href="/blog/strongest-astrocartography-line">Strongest line</a></p>`;
+    : `\n        <p class="cluster-guides">Guides: <a href="/astrocartography">How to read your map</a> &middot; <a href="/astrocartography-calculator">Calculator</a> &middot; <a href="/relocation-astrology">Relocation astrology</a></p>`;
   return `      <nav class="lines-cluster" aria-label="${heading}">\n        <h2>${heading}</h2>\n        <ul>\n${items}\n        </ul>${guides}\n      </nav>`;
 }
 
@@ -197,8 +227,10 @@ function renderBody(page) {
       page.faq.map((f) => `      <h3>${esc(f.q)}</h3>\n      <p>${f.a}</p>`).join('\n\n')
     : '';
 
-  const related = page.related?.length
+  const publishedRelated = page.related?.filter((item) => PUBLISHED_HREFS.has(item.href));
+  const related = publishedRelated?.length
     ? `      <section class="related">\n        <h2>${t.relatedHeading}</h2>\n        <ul>\n${page.related
+        .filter((item) => PUBLISHED_HREFS.has(item.href))
         .map((r) => `          <li><a href="${r.href}">${esc(r.label)}</a></li>`)
         .join('\n')}\n        </ul>\n      </section>`
     : '';
@@ -265,7 +297,7 @@ function renderPage(page) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>${esc(page.title)}</title>
-  <meta name="description" content="${esc(plain(page.description))}" />
+  <meta name="description" content="${esc(metaDescription(page.description))}" />
   <meta name="keywords" content="${esc(page.keywords)}" />
   <meta name="author" content="Natal Navigator" />
   ${renderHreflang(page)}
@@ -420,18 +452,27 @@ function renderBlogIndex(posts) {
 
   const itemListSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Blog',
-    '@id': ORIGIN + '/blog#blog',
-    name: 'Natal Navigator — Astrocartography Blog',
-    url: ORIGIN + '/blog',
-    publisher: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
-    blogPost: ordered.map((p) => ({
-      '@type': 'BlogPosting',
-      headline: p.h1,
-      url: abs('/' + p.slug),
-      datePublished: p.datePublished,
-      inLanguage: p.lang,
-    })),
+    '@graph': [
+      {
+        '@type': 'Organization', '@id': ORIGIN + '/#org', name: 'Natal Navigator', url: ORIGIN + '/',
+        logo: { '@type': 'ImageObject', url: ORIGIN + '/favicon.svg' },
+      },
+      {
+        '@type': 'Blog', '@id': ORIGIN + '/blog#blog', name: 'Natal Navigator — Astrocartography Blog',
+        url: ORIGIN + '/blog', publisher: { '@id': ORIGIN + '/#org' }, inLanguage: ['en', 'de'],
+        blogPost: ordered.map((p) => ({
+          '@type': 'BlogPosting', headline: p.h1, url: abs('/' + p.slug),
+          datePublished: p.datePublished, dateModified: p.dateModified || p.datePublished, inLanguage: p.lang,
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: ORIGIN + '/' },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: ORIGIN + '/blog' },
+        ],
+      },
+    ],
   };
 
   return `<!doctype html>
@@ -443,6 +484,8 @@ function renderBlogIndex(posts) {
   <meta name="description" content="Honest, practical guides to astrocartography and relocation astrology: where to live, where to find love, starting over, and reading your planetary lines." />
   <meta name="author" content="Natal Navigator" />
   <link rel="canonical" href="${ORIGIN}/blog" />
+  <link rel="alternate" hreflang="en" href="${ORIGIN}/blog" />
+  <link rel="alternate" hreflang="x-default" href="${ORIGIN}/blog" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="theme-color" content="#FBF8F1" />

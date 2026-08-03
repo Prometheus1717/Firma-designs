@@ -37,3 +37,23 @@ for (const p of PAGES) {
   if (seen.has(p.slug)) throw new Error(`Duplicate page slug: ${p.slug}`);
   seen.add(p.slug);
 }
+
+// Hreflang is a bidirectional contract. Catch missing targets and one-way
+// alternates at build time instead of publishing ambiguous language clusters.
+const bySlug = new Map(PAGES.map((p) => [p.slug, p]));
+for (const page of PAGES.filter((p) => !p.prebuilt)) {
+  for (const [lang, targetSlug] of Object.entries(page.alt || {})) {
+    const target = bySlug.get(targetSlug);
+    if (!target || target.prebuilt) {
+      throw new Error(`Hreflang target for ${page.slug} does not render: ${targetSlug}`);
+    }
+    if (target.lang !== lang) {
+      throw new Error(`Hreflang language mismatch: ${page.slug} declares ${lang} for ${targetSlug}`);
+    }
+    if (target.alt?.[page.lang] !== page.slug) {
+      throw new Error(`Non-reciprocal hreflang: ${page.slug} -> ${targetSlug}`);
+    }
+  }
+}
+
+export const INDEXABLE_PAGES = PAGES.filter((p) => !p.prebuilt);

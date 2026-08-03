@@ -574,9 +574,10 @@ export default function LandingPage() {
           </nav>
           <nav aria-label="Learn">
             <h4>{C.footer.hLearn}</h4>
-            <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
-            <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
-            <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
+            <a href={lang === 'de' ? '/astrokartographie' : '/astrocartography'}>{lang === 'de' ? 'Astrokartographie erklärt' : 'Astrocartography guide'}</a>
+            <a href="/astrocartography-calculator">{lang === 'de' ? 'Astrokartographie-Rechner' : 'Astrocartography calculator'}</a>
+            <a href={lang === 'de' ? '/astrokartographie/wo-soll-ich-leben-astrologie' : '/relocation-astrology'}>{lang === 'de' ? 'Wo soll ich leben?' : 'Relocation astrology'}</a>
+            <a href="/blog">Blog</a>
           </nav>
           <nav aria-label="Contact">
             <h4>{C.footer.hContact}</h4>

@@ -6,7 +6,7 @@
 import { writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PAGES } from './seo/content.mjs';
+import { INDEXABLE_PAGES as PAGES } from './seo/content.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://natalnavigator.com';
@@ -36,7 +36,6 @@ function toText(html) {
 // Prebuilt pages (landing-styled blog posts) ship their own HTML and carry no
 // `sections` body here, so they can't be flattened into llms-full text — skip them.
 const enFirst = [...PAGES]
-  .filter((p) => !p.prebuilt)
   .sort((a, b) => (a.lang === b.lang ? 0 : a.lang === 'en' ? -1 : 1));
 
 const header = `# Natal Navigator — Full Guide Corpus
@@ -69,4 +68,4 @@ const body = enFirst
   .join('\n');
 
 await writeFile(join(ROOT, 'public', 'llms-full.txt'), header + body + '\n', 'utf8');
-console.log(`build-llms-full: wrote corpus for ${PAGES.length} pages.`);
+console.log(`build-llms-full: wrote corpus for ${PAGES.length} indexable pages.`);
