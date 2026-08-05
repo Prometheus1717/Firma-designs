@@ -13,6 +13,14 @@ import { applySecurityHeaders } from './_security.js';
  * Deshalb prüft dieser Report nicht Statuscodes, sondern ob die Build-Env
  * tatsächlich im ausgelieferten JavaScript steht — das ist der Fingerabdruck
  * genau dieses Fehlers und er ist von außen ohne Browser feststellbar.
+ *
+ * Am 03.08.2026 kam ein zweiter Fehlertyp dazu: ein Deployment aus einem
+ * fremden Branch wurde auf Produktion promotet und warf den Code um sechs
+ * Wochen zurück. Auch dabei war alles HTTP 200, die Build-Env stand im
+ * Bundle, React mountete. Kaputt war nur der Kaufweg, und das 40 Stunden
+ * lang unbemerkt. Deshalb prüft der Report seit dem zusätzlich, WOHER das
+ * laufende Deployment stammt und ob der Weg zur Kasse im Bundle überhaupt
+ * noch existiert.
  */
 
 const SITE = 'https://natalnavigator.com';
@@ -20,6 +28,14 @@ const SITE = 'https://natalnavigator.com';
 // Muss im ausgelieferten Bundle stehen. Fehlt sie, wurde ohne
 // VITE_SUPABASE_URL gebaut und das Frontend ist tot.
 const SUPABASE_REF = 'kbwjxtvqdkcicaydtixp';
+
+// Der einzige Branch, aus dem Produktion gebaut werden darf.
+const PROD_BRANCH = 'claude/astrocartography-globe-dashboard-aBjui';
+
+// Dieser Throw wurde am 01.07.2026 mit Commit 6df38cf entfernt. Taucht er
+// wieder im Bundle auf, läuft ein Stand von vor dem Payment-Deadlock-Fix und
+// zahlende Kunden hängen zwischen Paywall und Geburtsdaten fest.
+const DEADLOCK_MARKER = 'Payment required before entering birth data.';
 
 const checks = [];
 
@@ -38,6 +54,26 @@ function must(condition, message) {
 async function runChecks() {
   let indexHtml = '';
   let anonKey = '';
+  let entryJs = '';
+
+  // Vercel setzt diese Variablen im Deployment, das den Request bedient. Der
+  // Report läuft als Cron auf dem Produktions-Deployment und sieht damit
+  // dessen echte Herkunft — nicht die, die im Repo stehen sollte.
+  await check('Herkunft des Deployments', async () => {
+    const ref = process.env.VERCEL_GIT_COMMIT_REF;
+    const sha = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
+
+    // Ein CLI-Deploy (`vercel --prod`) setzt die Git-Variablen nicht. Das ist
+    // kein Fehler, aber es heißt, dass niemand mehr sagen kann, welcher Stand
+    // live ist — also melden statt stillschweigend durchwinken.
+    must(ref, 'keine Git-Herkunft im Deployment — vermutlich per CLI deployt, Stand nicht nachvollziehbar');
+
+    must(
+      ref === PROD_BRANCH,
+      `läuft aus Branch "${ref}" statt "${PROD_BRANCH}" — es wurde ein fremdes Deployment auf Produktion promotet`
+    );
+    return `${ref}@${sha || '?'}`;
+  });
 
   await check('Startseite', async () => {
     const res = await fetch(`${SITE}/`, { redirect: 'follow' });
@@ -55,6 +91,7 @@ async function runChecks() {
     const res = await fetch(`${SITE}${entry}`);
     must(res.status === 200, `Bundle HTTP ${res.status}`);
     const js = await res.text();
+    entryJs = js;
 
     must(
       js.includes(SUPABASE_REF),
@@ -86,6 +123,45 @@ async function runChecks() {
     const body = await res.json().catch(() => ({}));
     must(res.status === 200, `Status "${body.status || res.status}" — eine Server-Variable fehlt`);
     return body.status || 'ok';
+  });
+
+  // Der Kern der Frage "können Leute kaufen". Statuscodes beantworten sie
+  // nicht: am 03.08. antwortete alles mit 200, während der komplette
+  // Guest-Funnel aus dem Bundle verschwunden und der alte Deadlock zurück war.
+  await check('Kaufweg im Bundle', async () => {
+    must(entryJs, 'Entry-Bundle nicht geladen');
+
+    must(
+      !entryJs.includes(DEADLOCK_MARKER),
+      'der Payment-Deadlock von Juni ist zurück — bezahlte Kunden kommen nicht an ihre Karte'
+    );
+    must(entryJs.includes('/create'), 'die Route /create fehlt im Bundle — der Kauf-Funnel ist weg');
+
+    // Die Bestellseite liegt in einem eigenen Lazy-Chunk; der Entry verweist
+    // nur auf den Dateinamen. Ohne diesen Chunk führt /create ins Leere.
+    const chunk = entryJs.match(/assets\/CreatePage-[A-Za-z0-9_-]+\.js/)?.[0];
+    must(chunk, 'kein CreatePage-Chunk im Bundle referenziert');
+
+    const res = await fetch(`${SITE}/${chunk}`);
+    must(res.status === 200, `CreatePage-Chunk HTTP ${res.status}`);
+    const createJs = await res.text();
+    must(!createJs.includes(DEADLOCK_MARKER), 'Payment-Deadlock im CreatePage-Chunk');
+    must(createJs.includes('guest_checkout'), 'Guest-Checkout fehlt — /create führt nicht mehr zu Stripe');
+
+    return chunk.replace('assets/', '');
+  });
+
+  await check('Kauf-Abschluss erreichbar', async () => {
+    // Nach der Rückkehr von Stripe schaltet verify-session den Kauf frei.
+    // Fehlt der Endpunkt, hat der Kunde bezahlt und bekommt nichts.
+    const res = await fetch(`${SITE}/api/verify-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    });
+    must(res.status !== 404, 'verify-session fehlt — bezahlte Kunden werden nicht freigeschaltet');
+    must(res.status < 500, `HTTP ${res.status}`);
+    return `antwortet ${res.status}`;
   });
 
   await check('Checkout-Endpunkt', async () => {
@@ -206,7 +282,12 @@ export default async function handler(req, res) {
   ];
 
   if (failed.length) {
-    lines.push('', 'Letzter Deploy ohne Env gebaut? Prüfe, ob jemand mit --prebuilt deployt hat.');
+    lines.push(
+      '',
+      'Die zwei bekannten Ursachen zuerst prüfen:',
+      '1. Wurde ein fremdes Deployment auf Produktion promotet? (Vercel → Deployments)',
+      '2. Wurde ohne Build-Env deployt, etwa mit --prebuilt?'
+    );
   }
 
   // Bei "quiet" nur melden, wenn etwas kaputt ist — für Aufrufe direkt nach
