@@ -3,6 +3,7 @@ export default {
   "lang": "pt",
   "alt": {
     "en": "astrocartography-calculator",
+    "de": "astrokartographie/rechner",
     "es": "es/calculadora-de-astrocartografia"
   },
   "title": "Calculadora de astrocartografia: seu mapa em um globo 3D",

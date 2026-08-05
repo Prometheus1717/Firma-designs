@@ -2,7 +2,9 @@ export default {
   "slug": "astrokartographie/rechner",
   "lang": "de",
   "alt": {
-    "en": "astrocartography-calculator"
+    "en": "astrocartography-calculator",
+    "es": "es/calculadora-de-astrocartografia",
+    "pt": "pt/calculadora-de-astrocartografia"
   },
   "title": "Astrokartographie-Rechner: Karte kostenlos online erkunden",
   "ogTitle": "Astrokartographie kostenlos berechnen",

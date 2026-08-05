@@ -9,6 +9,7 @@ import { writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PAGES } from './seo/content.mjs';
+import { allRoutes } from './seo/static-routes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://natalnavigator.com';
@@ -16,37 +17,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 
 const url = (path) => (path === '/' ? ORIGIN + '/' : ORIGIN + '/' + path.replace(/^\//, ''));
 
-// Hand-built routes that are not generated from content.mjs.
-const STATIC_ROUTES = [
-  { loc: '/', priority: '1.0', changefreq: 'weekly', alt: { en: '/', 'x-default': '/' } },
-  { loc: 'blog', priority: '0.7', changefreq: 'weekly', alt: { en: 'blog', 'x-default': 'blog' } },
-  {
-    loc: 'astrocartography',
-    priority: '0.9',
-    changefreq: 'monthly',
-    alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
-  },
-  { loc: 'astrocartography-calculator', priority: '0.8', changefreq: 'monthly', alt: { en: 'astrocartography-calculator', es: 'es/calculadora-de-astrocartografia', pt: 'pt/calculadora-de-astrocartografia', 'x-default': 'astrocartography-calculator' } },
-  {
-    loc: 'astrokartographie',
-    priority: '0.8',
-    changefreq: 'monthly',
-    alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
-  },
-  // Downloadable lead magnet (PDF) — listed so Google can discover and index it
-  // without waiting for a manual request or for the linking blog posts to be crawled.
-  { loc: 'astrocartography-line-cheat-sheet.pdf', priority: '0.5', changefreq: 'yearly' },
-];
-
-function pageToRoute(p) {
-  // x-default = the EN member of the hreflang cluster (self only for EN pages).
-  const xDefault = p.lang === 'en' ? p.slug : (p.alt?.en || p.slug);
-  const alt = { 'x-default': xDefault, [p.lang]: p.slug };
-  if (p.alt) for (const [lang, slug] of Object.entries(p.alt)) alt[lang] = slug;
-  return { loc: p.slug, priority: '0.7', changefreq: 'monthly', alt };
-}
-
-const routes = [...STATIC_ROUTES, ...PAGES.map(pageToRoute)];
+const routes = allRoutes(PAGES);
 
 const entries = routes
   .map((r) => {
