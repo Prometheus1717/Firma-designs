@@ -4,12 +4,17 @@ import { useAuth } from '../hooks/useAuth';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { saveGuestBirth, readGuestBirth } from '../lib/guestBirth';
+import { isoFromDisplayDate, isImpossibleDisplayDate } from '../lib/birthDate';
 import { redirectToGuestCheckout } from '../lib/stripe';
 import { isLightMode, getTheme } from '../lib/theme';
 import { useMobileFormViewport } from '../lib/mobileFormViewport';
 import { trackEvent } from '../lib/posthog';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
+
+// Shown the moment eight digits describe a day that doesn't exist. The common
+// case is a US visitor typing month first, so the hint names the order.
+const DATE_HINT = 'That date does not exist. Day first, then month: 15.06.1963.';
 
 // Anonymous order form — the single step between a conversion CTA and Stripe.
 // The visitor enters their exact birth details (order data, like a shipping
@@ -55,6 +60,7 @@ export default function CreatePage() {
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
   // Price shown on the checkout button — same app_settings source as the
@@ -134,6 +140,7 @@ export default function CreatePage() {
     e.preventDefault();
     setError('');
     if (!selectedCity) { setError('Please search and select your birth city.'); return; }
+    if (!date && dateDisplay) { setError(DATE_HINT); setDateError(DATE_HINT); return; }
     if (!date || !time) { setError('Please enter your birth date and exact time.'); return; }
 
     setSubmitting(true);
@@ -237,11 +244,16 @@ export default function CreatePage() {
                   if (digits.length >= 5) v = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4, 8);
                   else if (digits.length >= 3) v = digits.slice(0, 2) + '.' + digits.slice(2, 4);
                   setDateDisplay(v);
-                  const m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-                  setDate(m ? `${m[3]}-${m[2]}-${m[1]}` : '');
+                  setDate(isoFromDisplayDate(v));
+                  setDateError(isImpossibleDisplayDate(v) ? DATE_HINT : '');
                 }}
                 style={inputStyle}
               />
+              {dateError && (
+                <div style={{ ...F, fontSize: 9, color: '#F04060', marginTop: 6, lineHeight: 1.5 }}>
+                  {dateError}
+                </div>
+              )}
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: T.mu }}>(exact)</span></label>

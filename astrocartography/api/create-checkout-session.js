@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { applySecurityHeaders, getClientIp, getCorsHeaders, getRequestOrigin } from './_security.js';
+import { isStorableIsoDate } from './_birthDate.js';
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
@@ -95,6 +96,12 @@ export default async function handler(req, res) {
     }
     if (!birth || !birth.date || !birth.time || birth.lat == null || birth.lng == null) {
       return res.status(400).json({ error: 'Missing birth data — please re-enter your details.' });
+    }
+    // Never charge for birth data the database cannot store. A date like
+    // "1963-15-06" (US-style input reaching the ISO builder) used to sail
+    // through checkout and blow up in provisioning, after the money was taken.
+    if (!isStorableIsoDate(birth.date)) {
+      return res.status(400).json({ error: 'That birth date does not exist. Please use the day first, then the month.' });
     }
 
     try {

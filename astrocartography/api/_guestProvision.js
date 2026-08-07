@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
+import { isStorableIsoDate } from './_birthDate.js';
 
 // Shared guest-checkout provisioning, used by BOTH delivery paths:
 //   1. api/stripe-webhook.js   — Stripe pushes checkout.session.completed
@@ -99,6 +100,13 @@ export async function provisionGuestAccount(supabase, meta, customerEmail, strip
   };
   // Never overwrite existing birth data with nulls — a signed-up user who
   // already entered their details and then bought as a guest keeps them.
+  // An unstorable date is dropped rather than passed on: Postgres would reject
+  // the whole upsert (22008), which used to leave a paying customer with no
+  // account at all. Access is what they bought; the date they can retype.
+  if (meta.birth_date && !isStorableIsoDate(meta.birth_date)) {
+    console.error(`[guest-provision] Dropping unstorable birth_date "${meta.birth_date}" for ${email} — provisioning premium without it.`);
+    meta = { ...meta, birth_date: '' };
+  }
   if (meta.birth_date) {
     update.birth_date = meta.birth_date;
     update.birth_time = meta.birth_time || null;

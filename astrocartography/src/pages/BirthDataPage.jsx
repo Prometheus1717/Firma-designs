@@ -5,8 +5,13 @@ import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { isLightMode, getTheme } from '../lib/theme';
 import { useMobileFormViewport } from '../lib/mobileFormViewport';
+import { isoFromDisplayDate, isImpossibleDisplayDate } from '../lib/birthDate';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
+
+// Shown the moment eight digits describe a day that doesn't exist. The common
+// case is a US visitor typing month first, so the hint names the order.
+const DATE_HINT = 'That date does not exist. Day first, then month: 15.06.1963.';
 
 // Stash form input in localStorage so a timeout or refresh never destroys
 // what the user typed. Keyed by user id so a different account on the same
@@ -57,6 +62,7 @@ export default function BirthDataPage() {
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
   const { containerRef, scrollFocusedField } = useMobileFormViewport();
@@ -209,6 +215,7 @@ export default function BirthDataPage() {
     e.preventDefault();
     setError('');
     if (!selectedCity) { setError('Please search and select your birth city.'); return; }
+    if (!date && dateDisplay) { setError(DATE_HINT); setDateError(DATE_HINT); return; }
     if (!date || !time) { setError('Please enter your birth date and exact time.'); return; }
 
     setSubmitting(true);
@@ -350,11 +357,16 @@ export default function BirthDataPage() {
                   if (digits.length >= 5) v = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4, 8);
                   else if (digits.length >= 3) v = digits.slice(0, 2) + '.' + digits.slice(2, 4);
                   setDateDisplay(v);
-                  const m = v.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-                  setDate(m ? `${m[3]}-${m[2]}-${m[1]}` : '');
+                  setDate(isoFromDisplayDate(v));
+                  setDateError(isImpossibleDisplayDate(v) ? DATE_HINT : '');
                 }}
                 style={inputStyle}
               />
+              {dateError && (
+                <div style={{ ...F, fontSize: 9, color: '#F04060', marginTop: 6, lineHeight: 1.5 }}>
+                  {dateError}
+                </div>
+              )}
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ ...F, fontSize: 9, color: T.td, letterSpacing: 1, display: 'block', marginBottom: 6 }}>BIRTH TIME * <span style={{ color: T.mu }}>(exact)</span></label>
