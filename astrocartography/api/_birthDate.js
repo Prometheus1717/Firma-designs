@@ -14,3 +14,11 @@ export function isStorableIsoDate(value) {
   // Day 0 of the following month is the last day of this one — handles leap years.
   return day <= new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
+
+// profiles.birth_time is a strict `time` column — "99:99" kills the upsert
+// exactly like the impossible date did. The form's mask enforces this, but the
+// API is callable without the form, and the incident proved that "the client
+// validates it" is not a thing the database gets to rely on.
+export function isStorableTime(value) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value || ''));
+}

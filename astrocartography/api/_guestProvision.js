@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
-import { isStorableIsoDate } from './_birthDate.js';
+import { isStorableIsoDate, isStorableTime } from './_birthDate.js';
 
 // Shared guest-checkout provisioning, used by BOTH delivery paths:
 //   1. api/stripe-webhook.js   — Stripe pushes checkout.session.completed
@@ -106,6 +106,12 @@ export async function provisionGuestAccount(supabase, meta, customerEmail, strip
   if (meta.birth_date && !isStorableIsoDate(meta.birth_date)) {
     console.error(`[guest-provision] Dropping unstorable birth_date "${meta.birth_date}" for ${email} — provisioning premium without it.`);
     meta = { ...meta, birth_date: '' };
+  }
+  // birth_time is a strict `time` column with the same failure mode — drop a
+  // bad value, keep a good date. update.birth_time falls back to null below.
+  if (meta.birth_time && !isStorableTime(meta.birth_time)) {
+    console.error(`[guest-provision] Dropping unstorable birth_time "${meta.birth_time}" for ${email} — provisioning premium without it.`);
+    meta = { ...meta, birth_time: '' };
   }
   if (meta.birth_date) {
     update.birth_date = meta.birth_date;

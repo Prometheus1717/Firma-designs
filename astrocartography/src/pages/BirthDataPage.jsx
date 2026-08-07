@@ -5,7 +5,7 @@ import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { isLightMode, getTheme } from '../lib/theme';
 import { useMobileFormViewport } from '../lib/mobileFormViewport';
-import { isoFromDisplayDate, isImpossibleDisplayDate } from '../lib/birthDate';
+import { isoFromDisplayDate, isImpossibleDisplayDate, isStorableIsoDate } from '../lib/birthDate';
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
 
@@ -143,7 +143,9 @@ export default function BirthDataPage() {
     const draft = readDraft(user.id);
     if (!draft) return;
     if (draft.name) setName(draft.name);
-    if (draft.date) {
+    // Drafts written before the calendar check may carry an impossible date —
+    // skip those instead of prefilling poison.
+    if (draft.date && isStorableIsoDate(draft.date)) {
       setDate(draft.date);
       const [y, m, d] = draft.date.split('-');
       if (y && m && d) setDateDisplay(`${d}.${m}.${y}`);

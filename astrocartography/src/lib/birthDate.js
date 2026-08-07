@@ -27,3 +27,12 @@ export function isImpossibleDisplayDate(display) {
   const m = DISPLAY_RE.exec(String(display || ''));
   return !!m && !isRealDate(+m[3], +m[2], +m[1]);
 }
+
+// For ISO strings that come back from storage rather than the mask: saved
+// guest data and drafts written before the calendar check existed may still
+// carry an impossible date — prefilling it would resurrect the exact input
+// the incident started with.
+export function isStorableIsoDate(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+  return !!m && isRealDate(+m[1], +m[2], +m[3]);
+}

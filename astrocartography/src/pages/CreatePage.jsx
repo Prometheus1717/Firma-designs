@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { calculateChart } from '../lib/calculateChart';
 import { setCachedChart } from '../lib/chartCache';
 import { saveGuestBirth, readGuestBirth } from '../lib/guestBirth';
-import { isoFromDisplayDate, isImpossibleDisplayDate } from '../lib/birthDate';
+import { isoFromDisplayDate, isImpossibleDisplayDate, isStorableIsoDate } from '../lib/birthDate';
 import { redirectToGuestCheckout } from '../lib/stripe';
 import { isLightMode, getTheme } from '../lib/theme';
 import { useMobileFormViewport } from '../lib/mobileFormViewport';
@@ -41,8 +41,13 @@ export default function CreatePage() {
   }, [authLoading, user, hasBirthData, navigate]);
 
   // Prefill from a previous visit (cancelled checkout, expired session) so
-  // nobody types their birth details twice. Read once per mount.
-  const [saved] = useState(() => readGuestBirth());
+  // nobody types their birth details twice. Read once per mount. A visit from
+  // before the calendar check may have stored an impossible date — an empty
+  // field beats prefilling the exact input the incident started with.
+  const [saved] = useState(() => {
+    const s = readGuestBirth();
+    return s?.date && !isStorableIsoDate(s.date) ? { ...s, date: '' } : s;
+  });
 
   const [name, setName] = useState(saved?.name || '');
   const [date, setDate] = useState(saved?.date || '');

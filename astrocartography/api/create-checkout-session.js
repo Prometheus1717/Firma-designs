@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { applySecurityHeaders, getClientIp, getCorsHeaders, getRequestOrigin } from './_security.js';
-import { isStorableIsoDate } from './_birthDate.js';
+import { isStorableIsoDate, isStorableTime } from './_birthDate.js';
 
 // ─── In-memory rate limiter (per Vercel instance) ───
 const _rateMap = new Map();
@@ -102,6 +102,12 @@ export default async function handler(req, res) {
     // through checkout and blow up in provisioning, after the money was taken.
     if (!isStorableIsoDate(birth.date)) {
       return res.status(400).json({ error: 'That birth date does not exist. Please use the day first, then the month.' });
+    }
+    // Same guard for the time — profiles.birth_time is a strict `time` column
+    // and an unstorable value would kill provisioning after payment too. The
+    // form can't produce this, but the API can be called without the form.
+    if (!isStorableTime(birth.time)) {
+      return res.status(400).json({ error: 'That birth time is not valid. Please use 24-hour HH:MM.' });
     }
 
     try {
