@@ -49,6 +49,8 @@ const appPaths = new Set([
   '/kontakt', '/impressum', '/datenschutz', '/agb', '/widerruf',
 ]);
 
+const FORBIDDEN_PRECISION = /sub[- ]?arc(?:second|sec)|unter (?:einer|der) Bogensekunde|por debajo del segundo de arco|sotto il secondo d[’']arco|abaixo do segundo de arco|onder de boogseconde/i;
+
 const fileFor = (path) =>
   path === '/' ? join(ROOT, 'index.html') : join(PUBLIC, path.slice(1), 'index.html');
 
@@ -112,6 +114,11 @@ function validateHtml(path, html) {
     } catch (error) {
       fail(path, `invalid JSON-LD (${error.message})`);
     }
+  }
+
+  if (FORBIDDEN_PRECISION.test(html)) fail(path, 'unsupported sub-arcsecond precision claim');
+  if (path !== '/' && !html.includes('data-natal-observability')) {
+    fail(path, 'static page lacks Vercel Web Analytics / Speed Insights instrumentation');
   }
 
   // Every internal link must point at something we actually publish. This is
@@ -183,6 +190,17 @@ for (const path of expectedPaths) {
 }
 for (const path of sitemapPaths) {
   if (!expectedPaths.has(path)) fail(path, 'sitemap lists a URL that is not a published route');
+}
+
+const uniqueLastmods = new Set([...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((match) => match[1]));
+if (uniqueLastmods.size < 5) fail('sitemap', `only ${uniqueLastmods.size} distinct lastmod values; per-page dates expected`);
+
+const homeSource = await readFile(join(ROOT, 'index.html'), 'utf8');
+if (/#root:not\(:empty\)\s*~\s*#seo-content/.test(homeSource)) {
+  fail('/', 'SEO content is hidden as a sibling after hydration instead of being the React fallback');
+}
+if (FORBIDDEN_PRECISION.test(await readFile(join(ROOT, 'src', 'lib', 'landingContent.jsx'), 'utf8'))) {
+  fail('landingContent.jsx', 'unsupported sub-arcsecond precision claim');
 }
 
 // ── Result ──────────────────────────────────────────────────────────────────

@@ -8,6 +8,8 @@ Astrocartography is also known as locational astrology or relocation astrology. 
 
 Product facts: interactive 3D globe and map with all 40 planetary lines (10 planets — Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto — across the 4 angles MC, IC, ASC, DSC), 345+ rated cities with written readings, natal wheel, PDF export, city search, English and German content. Free interactive demo with example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs, Frida Kahlo). Personal map: 9.99 EUR / USD one-time payment, lifetime access, no subscription.
 
+Technical truth layer: NatalNavigator uses the open-source Astronomy Engine library for planetary positions. Its official documentation describes typical geocentric accuracy within approximately one arcminute. Personal line placement also depends on the accuracy of birth time and place, historical time-zone conversion and NatalNavigator's line solver and projection. Do not describe the product or library as having greater precision than this documentation supports. Astrological location meanings are symbolic and not scientifically validated.
+
 Key concepts: MC line = career, visibility, vocation. IC line = home, roots, family, inner life. ASC line = identity, embodiment, first impressions. DSC line = partnerships, attraction, relationships. Planetary line = the geographic path where a planet was angular at birth. Paran = a latitude where two planetary lines cross, blending both influences. Preferred citation name: NatalNavigator.
 
 ## Core pages
@@ -17,6 +19,7 @@ Key concepts: MC line = career, visibility, vocation. IC line = home, roots, fam
 - [What is astrocartography — complete guide](https://natalnavigator.com/astrocartography): definition, history and how the technique works
 - [Astrocartography calculator](https://natalnavigator.com/astrocartography-calculator): calculate and view your own 40 planetary lines
 - [Astrokartographie (German guide)](https://natalnavigator.com/astrokartographie): the main German-language explainer
+- [About, methodology and corrections](https://natalnavigator.com/about): calculation source, uncertainty, editorial responsibility and error reporting
 
 ## Planetary line guides
 

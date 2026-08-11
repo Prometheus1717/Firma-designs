@@ -79,7 +79,7 @@
           {
             "@type": "Question",
             "name": "Are all these calculators using the same astronomical data?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Mostly yes. Almost all serious astrocartography calculators use the open-source Swiss Ephemeris (or the closely-related astronomy-engine library) as their underlying engine, which delivers sub-arcsecond planetary position accuracy. The differences are not in the math — they are in the visualisation, the UX, the city database, and the writeups attached to each line. Two tools running the same Swiss Ephemeris can feel completely different to use." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Not necessarily. Tools can use different ephemerides, settings, time-zone data and line solvers. Accuracy should be checked against each vendor's current technical documentation. Natal Navigator uses Astronomy Engine, which documents typical geocentric accuracy within about one arcminute." }
           }
         ]
       },
@@ -294,10 +294,10 @@
           <span class="tool-pill paid">€9.99 · Browser</span>
         </div>
         <p class="tool-tag">A 3D globe, rebuilt from scratch for the modern web.</p>
-        <p>Natal Navigator is the one we built. It renders all 40 planetary lines on an interactive 3D globe using the astronomy-engine library for sub-arcsecond accuracy. You drag, rotate, zoom; you toggle each planet on or off; you see your birth city and every city your lines cross marked and clickable. 345+ cities come pre-rated as <em>thrive / neutral / caution</em> based on your specific chart, with written readings for career, home and love per city. The interactive demo is free to explore; your own map is a one-time €9.99 (no subscription).</p>
+        <p>Natal Navigator is the one we built. It renders all 40 planetary lines on an interactive 3D globe using <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>, whose documentation describes typical geocentric accuracy within about one arcminute. You drag, rotate and zoom; toggle planets; and compare 345+ cities. The interactive example-chart demo is free to explore; your own map is a one-time €9.99 (no subscription).</p>
         <div class="rating">
           <span><strong>Map:</strong> 3D globe</span>
-          <span><strong>Accuracy:</strong> sub-arcsec</span>
+          <span><strong>Engine:</strong> Astronomy Engine</span>
           <span><strong>Cities:</strong> 345+ rated</span>
           <span><strong>Mobile:</strong> responsive</span>
           <span><strong>Languages:</strong> EN · DE</span>
@@ -334,10 +334,10 @@
           <span class="tool-pill free">Free · Browser</span>
         </div>
         <p class="tool-tag">Clean visual design and excellent line writeups.</p>
-        <p>AstroChart.co is the most aesthetically polished of the 2D-map calculators. The lines are clearly drawn, the typography is modern, and each line has a readable explanation that beginners can actually parse. The site bundles a complete glossary of astrocartography lines (linked from the calculator) that runs into tens of thousands of words. Computationally it is also Swiss Ephemeris-accurate.</p>
+        <p>AstroChart.co is one of the more visually polished 2D-map calculators. The lines are clearly drawn and each line has a readable explanation. Its current calculation engine and precision should be verified from the vendor's own documentation rather than inferred from the display.</p>
         <div class="rating">
           <span><strong>Map:</strong> 2D flat</span>
-          <span><strong>Accuracy:</strong> sub-arcsec</span>
+          <span><strong>Accuracy:</strong> verify with vendor</span>
           <span><strong>Cities:</strong> limited</span>
           <span><strong>Mobile:</strong> solid</span>
           <span><strong>Learning:</strong> excellent</span>
@@ -357,7 +357,7 @@
         <p>Astro.com is the oldest free astrology site on the internet, run by Astrodienst since the late 1990s. Their AstroClick Travel tool is the original free astrocartography calculator, and it still works exactly as it did in 2002. The visualisation is a classic flat Mercator with clickable lines that pop up Jim-Lewis-derived interpretations. There is something charming about the museum-quality nature of it, and it remains computationally accurate — Astrodienst essentially built the Swiss Ephemeris.</p>
         <div class="rating">
           <span><strong>Map:</strong> 2D flat</span>
-          <span><strong>Accuracy:</strong> sub-arcsec</span>
+          <span><strong>Accuracy:</strong> vendor documented</span>
           <span><strong>Cities:</strong> click-only</span>
           <span><strong>Mobile:</strong> poor</span>
           <span><strong>Authority:</strong> highest</span>
@@ -397,7 +397,7 @@
         <p>TimePassages is the most polished native mobile astrology app on either platform. It includes a focused astrocartography mode that goes beyond the basic free version — astrocartography is gated behind an in-app purchase around 20 USD. The map is still 2D but the mobile experience is excellent: gesture navigation, offline charts, daily transit notifications. Used by many working astrologers as a portable chart tool.</p>
         <div class="rating">
           <span><strong>Map:</strong> 2D flat</span>
-          <span><strong>Accuracy:</strong> sub-arcsec</span>
+          <span><strong>Accuracy:</strong> verify with vendor</span>
           <span><strong>Cities:</strong> add-on</span>
           <span><strong>Mobile:</strong> excellent</span>
           <span><strong>Price:</strong> ~$20</span>
@@ -417,7 +417,7 @@
         <p>Solar Fire (Esoteric Technologies, around 320 USD for desktop license) is the heavy-duty professional tool. Astrocartography is one component of an enormous astrological software package that handles natal, progressed, transit, return, synastry, composite, fixed-star and uranian astrology with batch processing and full PDF reporting. Almost every consulting astrologer in the US owns it. Desktop-only.</p>
         <div class="rating">
           <span><strong>Map:</strong> 2D flat</span>
-          <span><strong>Accuracy:</strong> sub-arcsec</span>
+          <span><strong>Accuracy:</strong> vendor documented</span>
           <span><strong>Cities:</strong> full database</span>
           <span><strong>Mobile:</strong> none</span>
           <span><strong>Reports:</strong> PDF batch</span>
@@ -435,9 +435,9 @@
       </figure>
 
       <h2 id="accuracy">Are these calculators all using the same math?</h2>
-      <p>Almost. Six of the seven tools we reviewed run on the Swiss Ephemeris (or its open-source descendant, the astronomy-engine library), which delivers planetary positions to sub-arcsecond accuracy from 13201 BCE to 17191 CE. The astronomical engine is essentially a solved problem in 2026 — no serious tool has invented its own.</p>
-      <p>The differences are not in the math. They are in how that data is visualised, how the city database is curated, how the line interpretations are written, and how the mobile experience is engineered. Two tools using identical Swiss Ephemeris data can feel like completely different products.</p>
-      <p>Therefore, "which one is most accurate" is not the right question. The right question is: <em>which one helps me actually use the data?</em></p>
+      <p>No blanket answer is safe. Calculators may use different ephemerides, time-zone databases, settings, coordinate systems and line solvers. Astronomy Engine is not a descendant of Swiss Ephemeris, and claims about one library cannot be transferred to another.</p>
+      <p>Check the vendor's current technical documentation, then also compare visualisation, city data, interpretive scope and mobile usability. Natal Navigator documents its own calculation basis and uncertainty on the <a href="/about">methodology page</a>.</p>
+      <p>So ask two questions: <em>does the tool document its method?</em> and <em>does its interface help me interpret the output responsibly?</em></p>
 
       <h2 id="hidden">Three calculators that did not make the list (and why)</h2>
       <p>We deliberately excluded three tools you may have seen recommended elsewhere:</p>
@@ -477,7 +477,7 @@
       </div>
       <div class="faq-item">
         <h3>Are all calculators using the same astronomical data?</h3>
-        <p>Almost all use Swiss Ephemeris. Differences are in visualisation, UX, city database and interpretive writing — not in the math.</p>
+        <p>No. Tools can use different ephemerides, time-zone data, settings and solvers. Verify each method from current vendor documentation instead of assuming equivalent accuracy.</p>
       </div>
 
       <section class="related">
@@ -507,5 +507,8 @@
     <p class="small">© 2026 Natal Navigator — An interactive astrocartography globe</p>
   </footer>
 
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

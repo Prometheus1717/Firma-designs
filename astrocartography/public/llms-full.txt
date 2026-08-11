@@ -4,7 +4,44 @@ This file concatenates the full text of every astrocartography guide on
 natalnavigator.com for machine reading. Astrocartography is presented as a
 reflective, interpretive astrology tool, not as scientific prediction.
 Canonical site: https://natalnavigator.com/  ·  Summary: https://natalnavigator.com/llms.txt
+Generated from canonical guide sources · Latest material update: 2026-08-10
+Methodology and corrections: https://natalnavigator.com/about
 
+
+---
+
+## How Natal Navigator calculates, explains and corrects its maps
+URL: https://natalnavigator.com/about  ·  Language: en
+
+Natal Navigator is an interactive astrocartography product. It calculates astronomical positions with documented software, then presents traditional astrological interpretations as symbolic reflection — not as scientific prediction or professional advice.
+
+### Operator and editorial responsibility
+Natal Navigator is operated by Sercan Yesilyurt, who is also responsible for the website's editorial content. The legally required address and contact details are maintained in the imprint. Articles use the transparent organizational byline “Natal Navigator Editorial”; the site does not invent author qualifications or anonymous expert profiles.
+
+### Calculation method and documented precision
+The product uses the open-source Astronomy Engine library for planetary positions. Its documentation describes typical geocentric position accuracy within approximately one arcminute. A personal map also depends on the accuracy of birth time and place, time-zone conversion and the geometry used to project angular positions onto Earth.
+We do not claim greater precision than the selected library documents. Input uncertainty can outweigh software precision: an uncertain birth time can move angular lines materially, so the map should never imply more certainty than the source data supports.
+
+### Astronomy and interpretation are different claims
+Planet positions and map geometry are computational questions. The life meanings traditionally assigned to Sun, Moon, Venus or other lines are astrological interpretations. They are not established by scientific evidence. Natal Navigator therefore frames the map as a vocabulary for reflection and comparison, never as a guarantee that a move will produce love, success, health or income.
+
+### Editorial sources and corrections
+Technical claims should link to primary documentation. Time-sensitive product comparisons should identify their checked date and distinguish observed features from vendor claims. Interpretive guides should label tradition, anecdote and opinion instead of presenting them as measured effects.
+To report a factual error, send the page URL, affected passage and a source to info@natalnavigator.com. Confirmed material corrections update the page and its modification date.
+
+### Product, privacy and commercial scope
+The live demo uses example charts and is free to explore. A personal map is a one-time purchase currently shown on the product page as €9.99 or US$9.99 depending on locale. Privacy, storage and deletion details are maintained in the privacy notice; commercial terms are maintained in the terms.
+
+### FAQ
+
+**Is astrocartography scientifically proven?**
+No. The astronomical inputs are calculable, but the astrological meanings assigned to locations are symbolic interpretations without established scientific validation.
+
+**How accurate is Astronomy Engine?**
+Its official documentation describes typical geocentric position accuracy within approximately one arcminute. Map accuracy also depends on birth data, time-zone conversion and projection geometry.
+
+**How can I request a correction?**
+Email info@natalnavigator.com with the page URL, passage and preferably a primary source. Confirmed material corrections update the content and modification date.
 
 ---
 

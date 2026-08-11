@@ -104,7 +104,7 @@
           {
             "@type": "Question",
             "name": "How accurate is the calculator?",
-            "acceptedAnswer": { "@type": "Answer", "text": "We use the astronomy-engine library, trusted by planetarium software, for sub-arcsecond planetary position accuracy. The precision of your personal lines then depends on how accurate your birth time is." }
+            "acceptedAnswer": { "@type": "Answer", "text": "We use Astronomy Engine, whose official documentation describes typical geocentric position accuracy within about one arcminute. Personal line accuracy also depends on birth time, location, time-zone conversion and the map projection." }
           },
           {
             "@type": "Question",
@@ -295,8 +295,8 @@
       </ul>
 
       <h2>How accurate is the calculator?</h2>
-      <p>Natal Navigator uses the open-source <strong>astronomy-engine</strong> library, the same engine used by planetarium software and astronomical research tools. Planetary positions are computed to sub-arcsecond precision. The Ascendant and Descendant use an analytical solver rather than brute-force approximation, so our lines are as geometrically exact as the input birth time allows.</p>
-      <p>This means the <em>only</em> source of uncertainty in your personal map is the accuracy of your birth time. A certified birth certificate usually lists the minute; some list the hour only, in which case results should be treated as approximate.</p>
+      <p>Natal Navigator uses the open-source <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer"><strong>Astronomy Engine</strong></a> library. Its documentation describes typical geocentric position accuracy within approximately one arcminute. The Ascendant and Descendant lines are then derived by Natal Navigator's own solver and projection.</p>
+      <p>Uncertainty is therefore not limited to one component. Personal line placement also depends on the accuracy of birth time and place, historical time-zone conversion and projection geometry. If the recorded birth time is approximate, the resulting angular lines should be treated as approximate too. The full method is documented on our <a href="/about">methodology page</a>.</p>
 
       <h2>Natal Navigator vs. other tools</h2>
       <table class="compare">
@@ -323,7 +323,7 @@
       <p>You can explore the demo globe with example charts first. A personal 40-line astrocartography map with your real birth data is available for a one-time payment of €9.99.</p>
 
       <h3>How accurate is the calculator?</h3>
-      <p>We use the astronomy-engine library, trusted by planetarium software, for sub-arcsecond planetary position accuracy. The precision of your personal lines then depends on how accurate your birth time is.</p>
+      <p>We use Astronomy Engine, whose official documentation describes typical geocentric position accuracy within about one arcminute. Personal lines also depend on birth data, time-zone conversion and projection geometry.</p>
 
       <h3>Do I need to create an account?</h3>
       <p>You can explore the demo globe with example charts. Creating your personal chart requires an account so your map can be saved and revisited across devices.</p>
@@ -362,5 +362,8 @@
     </div>
     <p class="small">&copy; 2026 Natal Navigator.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

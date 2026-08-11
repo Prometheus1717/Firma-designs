@@ -43,11 +43,14 @@
       "author": {
         "@type": "Organization",
         "name": "Natal Navigator",
-        "url": "https://natalnavigator.com"
+        "url": "https://natalnavigator.com",
+        "publishingPrinciples": "https://natalnavigator.com/about"
       },
       "publisher": {
         "@type": "Organization",
         "name": "Natal Navigator",
+        "legalName": "Sercan Yesilyurt",
+        "publishingPrinciples": "https://natalnavigator.com/about",
         "logo": {
           "@type": "ImageObject",
           "url": "https://natalnavigator.com/favicon-512x512.png",
@@ -295,6 +298,11 @@
       <div class="note">Use a real calculator for the astronomy and AI for the interpretation. A language model predicts words, not planetary positions — so it can discuss your lines insightfully, but it cannot reliably compute where they fall.</div>
 
 
+      <aside class="note" aria-labelledby="method-source">
+        <h2 id="method-source">Method and source</h2>
+        <p>Planetary positions are calculated with <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>, whose documentation describes typical geocentric accuracy within about one arcminute. Personal line placement also depends on birth-data and projection accuracy. Astrological meanings are symbolic, not scientifically validated. <a href="/about">Read the full methodology and corrections policy.</a></p>
+      </aside>
+
       <h2>The honest answer, up front</h2>
       <p>People ask this because ChatGPT is astonishingly good at sounding like an astrologer. Ask it about the Saturn line and you'll get a fluent, thoughtful, genuinely useful explanation. So it's reasonable to assume it can just read your whole chart. The problem is that astrocartography is two jobs wearing one coat: an <strong>astronomy job</strong> (calculating exactly where each planet's line falls on Earth) and an <strong>interpretation job</strong> (explaining what those placements mean for your life).</p>
       <p>A large language model is built for the second job and structurally unsuited to the first. It generates the most plausible next words based on patterns in text — it does not run an ephemeris, it doesn't compute your Ascendant, and it can't project your chart onto a map. When it gives you coordinates or a list of "your lines," it is pattern-matching what such an answer usually looks like, not calculating your actual sky. That distinction is the entire reason this article exists.</p>
@@ -441,8 +449,14 @@
       <a href="/astrocartography-calculator">Calculator</a>
       <a href="/astrokartographie">DE</a>
       <a href="/blog">Blog</a>
+      <a href="/about">About &amp; methodology</a>
+      <a href="/es/astrocartografia">ES</a>
+      <a href="/pt/astrocartografia">PT</a>
     </div>
     <p class="small">&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

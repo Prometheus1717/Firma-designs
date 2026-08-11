@@ -46,11 +46,14 @@
       "author": {
         "@type": "Organization",
         "name": "Natal Navigator",
-        "url": "https://natalnavigator.com"
+        "url": "https://natalnavigator.com",
+        "publishingPrinciples": "https://natalnavigator.com/about"
       },
       "publisher": {
         "@type": "Organization",
         "name": "Natal Navigator",
+        "legalName": "Sercan Yesilyurt",
+        "publishingPrinciples": "https://natalnavigator.com/about",
         "logo": {
           "@type": "ImageObject",
           "url": "https://natalnavigator.com/favicon-512x512.png",
@@ -270,6 +273,11 @@
       <div class="note"><strong>La diferencia:</strong> las líneas son datos; la decisión necesita ciudades. Por eso esta calculadora evalúa 345+ ciudades contra tus líneas y te da una lista ordenada — florecer, neutral, cautela — en lugar de dejarte solo ante un mapa.</div>
 
 
+      <aside class="note" aria-labelledby="method-source">
+        <h2 id="method-source">Método y fuente</h2>
+        <p>Las posiciones planetarias se calculan con <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>; su documentación indica una precisión geocéntrica típica de aproximadamente un minuto de arco. La ubicación de las líneas también depende de los datos natales y la proyección. Las interpretaciones astrológicas son simbólicas, no están validadas científicamente. <a href="/about">Lee la metodología completa.</a></p>
+      </aside>
+
       <h2>Qué calcula exactamente</h2>
       <p>Con tus datos de nacimiento, la calculadora determina la posición exacta de los diez planetas y traza las cuatro líneas angulares de cada uno: Ascendente (identidad), Medio Cielo (carrera), Descendente (relaciones) y Fondo del Cielo (hogar). El cálculo usa efemérides reales — las mismas tablas astronómicas de los observatorios — no aproximaciones.</p>
       <p>Sobre el globo puedes activar y desactivar cada planeta, girar la Tierra en tiempo real y tocar cualquier ciudad para ver qué líneas la cruzan y a qué distancia. La influencia de una línea se lee como una banda: más fuerte a menos de ~150 km, desvaneciéndose hacia los ~500 km.</p>
@@ -340,8 +348,14 @@
       <a href="/es/calculadora-de-astrocartografia">Calculadora</a>
       <a href="/astrocartography">EN</a>
       <a href="/blog">Blog</a>
+      <a href="/about">About &amp; methodology</a>
+      <a href="/es/astrocartografia">ES</a>
+      <a href="/pt/astrocartografia">PT</a>
     </div>
     <p class="small">&copy; 2026 Natal Navigator. Astrocartografía con fines educativos y de reflexión.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

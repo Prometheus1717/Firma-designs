@@ -68,10 +68,12 @@ function renderSchema(page) {
     '@type': 'Article',
     headline: page.articleHeadline || page.h1,
     description: plain(page.description),
-    author: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN },
+    author: { '@type': 'Organization', name: 'Natal Navigator', url: ORIGIN, publishingPrinciples: `${ORIGIN}/about` },
     publisher: {
       '@type': 'Organization',
       name: 'Natal Navigator',
+      legalName: 'Sercan Yesilyurt',
+      publishingPrinciples: `${ORIGIN}/about`,
       logo: { '@type': 'ImageObject', url: `${ORIGIN}/favicon-512x512.png`, width: 512, height: 512 },
     },
     datePublished: page.datePublished || '2026-06-15',
@@ -327,6 +329,8 @@ const I18N = {
     calloutCta: 'Create my map', calloutDemo: 'Live demo',
     figProjCap: "<strong>Figure {n}.</strong> Astrocartography projects your birth chart onto the planet — each planet's position becomes a line across the world map.",
     figBirthChart: 'YOUR BIRTH CHART', figLinesOnEarth: 'YOUR LINES ON EARTH',
+    sourceH: 'Method and source',
+    sourceP: 'Planetary positions are calculated with <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>, whose documentation describes typical geocentric accuracy within about one arcminute. Personal line placement also depends on birth-data and projection accuracy. Astrological meanings are symbolic, not scientifically validated. <a href="/about">Read the full methodology and corrections policy.</a>',
   },
   de: {
     whatIs: 'Was ist Astrokartographie?', pillar: '/astrokartographie', calcHref: '/astrocartography-calculator',
@@ -342,6 +346,8 @@ const I18N = {
     calloutCta: 'Meine Karte erstellen', calloutDemo: 'Live-Demo',
     figProjCap: '<strong>Abbildung {n}.</strong> Astrokartographie projiziert dein Geburtshoroskop auf die Erde — jede Planetenposition wird zu einer Linie über der Weltkarte.',
     figBirthChart: 'GEBURTSHOROSKOP', figLinesOnEarth: 'DEINE LINIEN AUF DER ERDE',
+    sourceH: 'Methode und Quelle',
+    sourceP: 'Planetenpositionen werden mit <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a> berechnet; die Dokumentation nennt eine typische geozentrische Genauigkeit von etwa einer Bogenminute. Die Linienlage hängt zusätzlich von Geburtsdaten und Projektion ab. Astrologische Deutungen sind symbolisch, nicht wissenschaftlich bestätigt. <a href="/about">Methode und Korrekturrichtlinie lesen.</a>',
   },
   es: {
     whatIs: '¿Qué es la astrocartografía?', pillar: '/es/astrocartografia', calcHref: '/es/calculadora-de-astrocartografia',
@@ -357,6 +363,8 @@ const I18N = {
     calloutCta: 'Crear mi mapa', calloutDemo: 'Demo en vivo',
     figProjCap: '<strong>Figura {n}.</strong> La astrocartografía proyecta tu carta natal sobre el planeta — la posición de cada planeta se convierte en una línea sobre el mapa del mundo.',
     figBirthChart: 'TU CARTA NATAL', figLinesOnEarth: 'TUS LÍNEAS SOBRE LA TIERRA',
+    sourceH: 'Método y fuente',
+    sourceP: 'Las posiciones planetarias se calculan con <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>; su documentación indica una precisión geocéntrica típica de aproximadamente un minuto de arco. La ubicación de las líneas también depende de los datos natales y la proyección. Las interpretaciones astrológicas son simbólicas, no están validadas científicamente. <a href="/about">Lee la metodología completa.</a>',
   },
   pt: {
     whatIs: 'O que é astrocartografia?', pillar: '/pt/astrocartografia', calcHref: '/pt/calculadora-de-astrocartografia',
@@ -372,6 +380,8 @@ const I18N = {
     calloutCta: 'Criar meu mapa', calloutDemo: 'Demo ao vivo',
     figProjCap: '<strong>Figura {n}.</strong> A astrocartografia projeta seu mapa astral sobre o planeta — a posição de cada planeta vira uma linha no mapa-múndi.',
     figBirthChart: 'SEU MAPA ASTRAL', figLinesOnEarth: 'SUAS LINHAS NA TERRA',
+    sourceH: 'Método e fonte',
+    sourceP: 'As posições planetárias são calculadas com o <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>; a documentação indica precisão geocêntrica típica de aproximadamente um minuto de arco. A posição das linhas também depende dos dados natais e da projeção. As interpretações astrológicas são simbólicas, não validadas cientificamente. <a href="/about">Leia a metodologia completa.</a>',
   },
 };
 const tr = (lang) => ({ ...I18N.en, ...(I18N[lang] || {}) });
@@ -581,6 +591,11 @@ ${heroButtons(page)}
 ${answerCard(page)}
 ${page.note ? `\n      <div class="note">${page.note}</div>\n` : ''}
 
+      <aside class="note" aria-labelledby="method-source">
+        <h2 id="method-source">${u.sourceH}</h2>
+        <p>${u.sourceP}</p>
+      </aside>
+
 ${sections}
 
       <div class="callout">
@@ -603,6 +618,9 @@ ${linesCluster}
       <a href="${u.calcHref}">${t.calc}</a>
       <a href="${u.langToggleHref}">${t.other}</a>
       <a href="/blog">Blog</a>
+      <a href="/about">About &amp; methodology</a>
+      <a href="/es/astrocartografia">ES</a>
+      <a href="/pt/astrocartografia">PT</a>
     </div>
     <p class="small">&copy; 2026 Natal Navigator. ${t.footerNote}</p>
   </footer>
@@ -733,7 +751,7 @@ ${BLOG_CSS}
       <div class="nav-links">
         <a href="/astrocartography">What is Astrocartography?</a>
         <a href="/blog">Blog</a>
-        <a href="/astrocartography">About</a>
+        <a href="/about">About</a>
       </div>
       <a href="/create" class="nav-cta">Create your map →</a>
     </nav>
@@ -764,6 +782,9 @@ ${items}
       <a href="/astrocartography">Astrocartography</a> ·
       <a href="/astrocartography-calculator">Calculator</a> ·
       <a href="/astrokartographie">Deutsch</a> ·
+      <a href="/es/astrocartografia">Español</a> ·
+      <a href="/pt/astrocartografia">Português</a> ·
+      <a href="/about">Methodology</a> ·
       <a href="/blog">Blog</a>
     </p>
     <p class="small">© 2026 Natal Navigator — An interactive astrocartography globe</p>

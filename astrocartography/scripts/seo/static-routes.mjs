@@ -9,32 +9,30 @@
 // side effect of reading its own source of truth.
 
 export const STATIC_ROUTES = [
-  { loc: '/', priority: '1.0', changefreq: 'weekly', alt: { en: '/', 'x-default': '/' } },
-  { loc: 'blog', priority: '0.7', changefreq: 'weekly', alt: { en: 'blog', 'x-default': 'blog' } },
+  { loc: '/', lastmod: '2026-08-10', alt: { en: '/', 'x-default': '/' } },
+  { loc: 'blog', lastmod: '2026-08-10', alt: { en: 'blog', 'x-default': 'blog' } },
   {
     loc: 'astrocartography',
-    priority: '0.9',
-    changefreq: 'monthly',
+    lastmod: '2026-08-10',
     alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
   },
   // de = the German *calculator* (astrokartographie/rechner), not the German
   // pillar guide. de-rechner.mjs already points its `en` alternate here, so
   // without this entry the pair was one-way and Google ignored both halves.
-  { loc: 'astrocartography-calculator', priority: '0.8', changefreq: 'monthly', alt: { en: 'astrocartography-calculator', de: 'astrokartographie/rechner', es: 'es/calculadora-de-astrocartografia', pt: 'pt/calculadora-de-astrocartografia', 'x-default': 'astrocartography-calculator' } },
+  { loc: 'astrocartography-calculator', lastmod: '2026-08-10', alt: { en: 'astrocartography-calculator', de: 'astrokartographie/rechner', es: 'es/calculadora-de-astrocartografia', pt: 'pt/calculadora-de-astrocartografia', 'x-default': 'astrocartography-calculator' } },
   {
     loc: 'astrokartographie',
-    priority: '0.8',
-    changefreq: 'monthly',
+    lastmod: '2026-08-10',
     alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
   },
   // The methodology page: hand-built, linked from the iOS app's You tab
   // ("How the app calculates") and from nothing else generated - so it
   // must be listed here or the sitemap never learns about it.
-  { loc: 'methodology', priority: '0.6', changefreq: 'monthly', alt: { en: 'methodology', 'x-default': 'methodology' } },
+  { loc: 'methodology', lastmod: '2026-08-11', alt: { en: 'methodology', 'x-default': 'methodology' } },
   // Downloadable lead magnet (PDF), listed so Google can discover and index it
   // without waiting for a manual request or for the linking blog posts to be
   // crawled. It has no HTML, so page-level checks skip it.
-  { loc: 'astrocartography-line-cheat-sheet.pdf', priority: '0.5', changefreq: 'yearly' },
+  { loc: 'astrocartography-line-cheat-sheet.pdf', lastmod: '2026-06-15' },
 ];
 
 // A generated page from content.mjs, expressed as a sitemap route.
@@ -43,7 +41,7 @@ export function pageToRoute(p) {
   const xDefault = p.lang === 'en' ? p.slug : (p.alt?.en || p.slug);
   const alt = { 'x-default': xDefault, [p.lang]: p.slug };
   if (p.alt) for (const [lang, slug] of Object.entries(p.alt)) alt[lang] = slug;
-  return { loc: p.slug, priority: '0.7', changefreq: 'monthly', alt };
+  return { loc: p.slug, lastmod: p.dateModified || p.datePublished || '2026-06-15', alt };
 }
 
 // The complete published route list: what the sitemap emits and what

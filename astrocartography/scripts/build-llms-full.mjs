@@ -39,12 +39,19 @@ const enFirst = [...PAGES]
   .filter((p) => !p.prebuilt)
   .sort((a, b) => (a.lang === b.lang ? 0 : a.lang === 'en' ? -1 : 1));
 
+const latestUpdate = [...enFirst]
+  .map((p) => p.dateModified || p.datePublished || '2026-06-15')
+  .sort()
+  .at(-1);
+
 const header = `# Natal Navigator — Full Guide Corpus
 
 This file concatenates the full text of every astrocartography guide on
 natalnavigator.com for machine reading. Astrocartography is presented as a
 reflective, interpretive astrology tool, not as scientific prediction.
 Canonical site: ${ORIGIN}/  ·  Summary: ${ORIGIN}/llms.txt
+Generated from canonical guide sources · Latest material update: ${latestUpdate}
+Methodology and corrections: ${ORIGIN}/about
 
 `;
 

@@ -247,6 +247,10 @@ function getLineDescription(planetId, angle, zodiacInfo) {
 }
 
 export function calculateChart({ date, time, lat, lng }) {
+  if (typeof date !== 'string' || typeof time !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}(?::\d{2})?$/.test(time)) {
+    throw new Error(`Invalid date/time: ${date} ${time}`);
+  }
   // Normalize time — Supabase may return HH:MM:SS, we need HH:MM:SS for ISO
   const normalizedTime = time.length === 5 ? `${time}:00` : time; // HH:MM → HH:MM:00
 
@@ -260,10 +264,15 @@ export function calculateChart({ date, time, lat, lng }) {
   const tz = tzlookup(parsedLat, parsedLng);
   const [year, month, day] = date.split('-').map(Number);
   const [hour, minute, sec] = normalizedTime.split(':').map(Number);
+  const calendarProbe = new Date(Date.UTC(year, month - 1, day, hour, minute, sec || 0));
+  if (calendarProbe.getUTCFullYear() !== year || calendarProbe.getUTCMonth() !== month - 1 ||
+      calendarProbe.getUTCDate() !== day || hour > 23 || minute > 59 || (sec || 0) > 59) {
+    throw new Error(`Invalid date/time: ${date} ${time}`);
+  }
 
   // Use Intl.DateTimeFormat to get the exact UTC offset at the birth moment,
   // including historical DST rules (browsers have full ICU timezone data).
-  const naiveUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, sec || 0));
+  const naiveUTC = calendarProbe;
   const fmt = new Intl.DateTimeFormat('en-US', {
     timeZone: tz, timeZoneName: 'longOffset',
     year: 'numeric', month: '2-digit', day: '2-digit',

@@ -245,7 +245,7 @@
 
       <h2>A brief history</h2>
       <p>Astrology has included location-based techniques for centuries, but modern astrocartography was formalized by American astrologer <strong>Jim Lewis</strong> in the early 1970s. Lewis trademarked the term <em>Astro*Carto*Graphy</em> and popularized flat-map printouts that showed all of a person&rsquo;s planetary lines on a single sheet. His method allowed astrologers to spot, at a glance, which parts of the world amplified which energies in a client&rsquo;s chart.</p>
-      <p>Since then, computing power has turned a once-manual craft into an interactive experience. Natal Navigator uses the open-source <strong>astronomy-engine</strong> library to calculate planetary positions to sub-arcsecond precision and then renders those positions as lines on a true 3D globe — no paper map needed.</p>
+      <p>Since then, computing power has turned a once-manual craft into an interactive experience. Natal Navigator uses the open-source <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer"><strong>Astronomy Engine</strong></a> library; its documentation describes typical geocentric position accuracy within about one arcminute. Natal Navigator then projects those positions as lines on a 3D globe. Birth-data and projection uncertainty still matter; see the <a href="/about">methodology</a>.</p>
 
       <figure>
 <svg viewBox="0 0 720 300" role="img" aria-label="A birth chart wheel projected as planetary lines onto a world map">
@@ -407,5 +407,8 @@
     </div>
     <p class="small">&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

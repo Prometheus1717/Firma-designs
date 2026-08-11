@@ -38,11 +38,11 @@
       {
         "@type": "Article",
         "headline": "How Accurate is Astrocartography? An Honest 2026 Analysis",
-        "description": "Astrocartography hides two questions inside the word 'accurate' — astronomical math (settled, sub-arcsecond precise) and interpretive meaning (open, contested). This piece separates them and looks at what evidence actually exists.",
+        "description": "Astrocartography combines documented astronomical calculations with symbolic interpretations. This analysis separates software precision, input uncertainty and scientific evidence.",
         "author": { "@type": "Organization", "name": "Natal Navigator", "url": "https://natalnavigator.com" },
         "publisher": { "@type": "Organization", "name": "Natal Navigator", "logo": { "@type": "ImageObject", "url": "https://natalnavigator.com/favicon-512x512.png" } },
         "datePublished": "2026-06-16",
-        "dateModified": "2026-06-16",
+        "dateModified": "2026-08-10",
         "mainEntityOfPage": "https://natalnavigator.com/blog/how-accurate-is-astrocartography",
         "image": "https://natalnavigator.com/blog/how-accurate-is-astrocartography/img/two-standards.svg",
         "inLanguage": "en",
@@ -54,12 +54,12 @@
           {
             "@type": "Question",
             "name": "How accurate is astrocartography?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Astrocartography has two separate accuracy questions. Astronomically, it is 100 percent precise — modern calculators use Swiss Ephemeris which delivers sub-arcsecond planetary positions from 13201 BCE to 17191 CE. Interpretively, there is no scientific consensus. Whether a Sun line actually creates vitality where it crosses is a subjective question without rigorous evidence either way. Conflating these two questions creates almost every argument about whether astrocartography 'works'." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Astrocartography has separate calculation and interpretation questions. Planetary positions are computable, but precision is tool-specific and personal lines also depend on birth-time, time-zone and projection accuracy. Natal Navigator uses Astronomy Engine, whose documentation describes typical geocentric accuracy within about one arcminute. Astrological location meanings are not scientifically validated." }
           },
           {
             "@type": "Question",
             "name": "Has astrocartography been scientifically proven?",
-            "acceptedAnswer": { "@type": "Answer", "text": "No. There are zero double-blind, pre-registered, replicated studies of astrocartography effects. The evidence that exists falls into three weaker categories: Jim Lewis's case archives from the 1970s and 80s (rich but selection-biased), contemporary self-report surveys (around 70 percent of users report 'matched' experiences but confirmation bias is unresolvable), and millions of first-person testimonies from Reddit and astrology communities (abundant, consistent, unfalsifiable). The absence of rigorous studies is not the same as the absence of an effect, but it does mean astrocartography is not 'scientifically proven' in any strict sense." }
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Natal Navigator does not treat astrological location meanings as scientifically established. Anecdotes, case archives and community testimony cannot establish causation, and we do not publish an unsupported match-rate statistic." }
           },
           {
             "@type": "Question",
@@ -252,20 +252,20 @@
 
       <div class="answer-card">
         <div class="label">The one-sentence answer</div>
-        <p>Astrocartography hides two questions inside the word "accurate". The first — <em>where was the planet?</em> — is settled science to sub-arcsecond precision. The second — <em>what does the line mean for your life?</em> — has no scientific consensus and probably cannot have one. Almost every argument about whether astrocartography "works" confuses these two questions.</p>
+        <p>Astrocartography hides several questions inside the word “accurate”: how precisely a tool computes planetary positions, how reliably birth data and time zones are known, how lines are projected, and whether the traditional life meanings have scientific support. Those questions need separate answers.</p>
         </div>
 
       <p>This piece does the unpopular thing: it takes the question seriously enough to separate it cleanly. We walk through what the math actually does, what evidence does and does not exist, what the skeptic's case is, what the believer's case is, and how to use astrocartography either way — including the pragmatic uses that do not require belief in anything.</p>
 
       <figure>
-        <img src="/blog/how-accurate-is-astrocartography/img/two-standards.svg" alt="Two-column comparison: Question 1 is astronomical accuracy (Swiss Ephemeris delivers sub-arcsecond precision, settled science, no serious tool disagrees). Question 2 is interpretive accuracy (Jim Lewis tradition vs. modern vs. evolutionary schools, no scientific consensus, possibly cannot have one). The trap: most arguments confuse Question 1 with Question 2." width="820" height="580" loading="lazy" />
+        <img src="/blog/how-accurate-is-astrocartography/img/two-standards.svg" alt="Two-column comparison: astronomical calculation accuracy is documented per software and depends on inputs; astrological interpretation is symbolic and lacks scientific validation." width="820" height="580" loading="lazy" />
         <figcaption><strong>Figure 1.</strong> Two questions are hiding inside the word "accurate". Conflating them is how every astrocartography argument goes wrong.</figcaption>
       </figure>
 
-      <h2 id="math">Question 1: <em>The math is settled.</em></h2>
-      <p>If you ask "where was Venus at the exact moment of your birth, relative to a given longitude on Earth?", the answer is computable to sub-arcsecond accuracy. The Swiss Ephemeris — the open-source astronomical engine that powers nearly every serious astrology tool in 2026 — delivers planetary positions from 13201 BCE to 17191 CE with precision that astronauts and orbital mechanics engineers would find acceptable.</p>
-      <p>This is not where the controversy lives. No working astrologer, no astronomer, no skeptic disputes the math. Two astrocartography calculators using the same Swiss Ephemeris will produce identical line positions for the same input. The differences between AstroSeek and Natal Navigator and Solar Fire are in <em>how the lines are drawn</em> — flat map vs. 3D globe, line thickness, colour coding — not in <em>where</em> the lines are drawn.</p>
-      <p>If your tool is mainstream, the astronomy is correct. Full stop.</p>
+      <h2 id="math">Question 1: <em>What does the software document?</em></h2>
+      <p>Planetary positions are computable, but “computer-generated” does not mean infinitely precise. Natal Navigator uses the open-source <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>, whose official documentation describes typical geocentric position accuracy within approximately one arcminute.</p>
+      <p>The final map adds other inputs and transformations: recorded birth time and place, historical time-zone conversion, angular-line solving and geographic projection. Two products can therefore differ even when their ephemeris inputs are similar. A responsible accuracy statement names the engine and its documentation, then states the remaining uncertainty.</p>
+      <p>Natal Navigator's current implementation and correction process are summarized on the <a href="/about">methodology page</a>.</p>
 
       <h2 id="meaning">Question 2: <em>The meaning is open.</em></h2>
       <p>Here is where the trouble starts. Saying "the Sun was over Berlin at the moment of your birth" is one kind of claim. Saying "therefore Berlin will amplify your vitality and visibility" is a fundamentally different kind of claim. The first is astronomical. The second is interpretive — and interpretation is where every working astrocartographer of the last fifty years has argued with every other.</p>
@@ -281,7 +281,7 @@
       <h2 id="evidence">What evidence actually exists</h2>
 
       <figure>
-        <img src="/blog/how-accurate-is-astrocartography/img/the-evidence.svg" alt="Evidence landscape for astrocartography in four tiers: Tier 1 double-blind RCTs (zero exist), Tier 2 Jim Lewis case archives (suggestive but selection-biased), Tier 3 contemporary self-report surveys (correlational, ~70% match rate but confirmation bias), Tier 4 first-person testimony from Reddit and astrology communities (abundant, consistent, unfalsifiable)." width="820" height="660" loading="lazy" />
+        <img src="/blog/how-accurate-is-astrocartography/img/the-evidence.svg" alt="Evidence landscape for astrocartography: controlled replicated evidence is not established; case archives, self-reports and testimony are weaker and vulnerable to selection and confirmation bias." width="820" height="660" loading="lazy" />
         <figcaption><strong>Figure 2.</strong> Four kinds of evidence, ranked honestly. None is definitive. Abundant testimony is not proof — but absence of RCTs is not refutation either.</figcaption>
       </figure>
 
@@ -292,7 +292,7 @@
       <p>Lewis himself amassed thousands of client charts during the 1970s and 80s and published <em>The Psychology of Astro*Carto*Graphy</em> based on patterns he saw. The corpus is rich and includes many vivid case studies, but suffers from a fatal selection bias: Lewis kept the successes, not the failures. We have no way to know how many clients moved to a Sun line and nothing happened, because those clients did not return as data.</p>
 
       <h3>Tier 3: Contemporary self-report surveys</h3>
-      <p>Astrology communities have run dozens of post-move self-report surveys over the years. The reproducible finding is that around 70 percent of respondents who move to a planetary line report that the line's classical interpretation "matched" their experience. This is suggestive but unfalsifiable — confirmation bias and selection bias compound, because the people responding to astrology surveys already believe enough to participate.</p>
+      <p>Community self-reports can describe experiences but cannot establish a reliable match rate without a published sampling frame, questionnaire, denominator and analysis. Selection and confirmation bias are especially strong when participants already know the predicted line meaning. We therefore do not present an unsourced percentage as a reproducible result.</p>
 
       <h3>Tier 4: First-person testimony</h3>
       <p>This is the largest dataset by orders of magnitude. Reddit (r/astrocartography), astrology Discord servers, podcasts, and YouTube comment sections contain millions of detailed post-move anecdotes. Three patterns repeat with striking consistency: (1) Moon-line moves cause emotional unburdening that surprises even skeptical movers; (2) Saturn-line moves are described as "hard but useful" with consistency that would be hard to fake; (3) Pluto-line moves produce identity collapses that movers describe in remarkably similar language across cultures.</p>
@@ -373,11 +373,11 @@
 
       <div class="faq-item">
         <h3>How accurate is astrocartography?</h3>
-        <p>Two questions hide inside. Astronomically: 100% precise (Swiss Ephemeris, sub-arcsecond). Interpretively: no scientific consensus, contested between schools.</p>
+        <p>Several questions hide inside: software precision, birth-data and time-zone accuracy, projection geometry and symbolic interpretation. Natal Navigator's engine documents typical geocentric accuracy within about one arcminute; astrological meanings are not scientifically validated.</p>
       </div>
       <div class="faq-item">
         <h3>Has astrocartography been scientifically proven?</h3>
-        <p>No rigorous double-blind RCTs exist. Evidence comes from case archives (selection-biased), self-report surveys (~70% match, confirmation bias), and abundant first-person testimony.</p>
+        <p>No established body of controlled, replicated evidence validates the location meanings. Case archives, self-reports and testimony are vulnerable to selection and confirmation bias.</p>
       </div>
       <div class="faq-item">
         <h3>Why has no one done rigorous studies?</h3>
@@ -423,5 +423,8 @@
     <p class="small">© 2026 Natal Navigator — An interactive astrocartography globe</p>
   </footer>
 
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

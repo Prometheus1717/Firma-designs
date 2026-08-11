@@ -13,8 +13,6 @@ import { allRoutes } from './seo/static-routes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://natalnavigator.com';
-const TODAY = new Date().toISOString().slice(0, 10);
-
 const url = (path) => (path === '/' ? ORIGIN + '/' : ORIGIN + '/' + path.replace(/^\//, ''));
 
 const routes = allRoutes(PAGES);
@@ -26,9 +24,7 @@ const entries = routes
       .join('\n');
     return `  <url>
     <loc>${url(r.loc)}</loc>
-    <lastmod>${TODAY}</lastmod>
-    <changefreq>${r.changefreq}</changefreq>
-    <priority>${r.priority}</priority>
+    <lastmod>${r.lastmod}</lastmod>
 ${alts}
   </url>`;
   })
@@ -42,4 +38,4 @@ ${entries}
 `;
 
 await writeFile(join(ROOT, 'public', 'sitemap.xml'), xml, 'utf8');
-console.log(`build-sitemap: wrote ${routes.length} URLs (lastmod ${TODAY}).`);
+console.log(`build-sitemap: wrote ${routes.length} URLs with per-page lastmod values.`);

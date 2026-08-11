@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-ts d-ts">
   <title id="t-ts">Two Standards of Accuracy in Astrocartography — Math vs. Meaning</title>
-  <desc id="d-ts">A two-column comparison showing astrocartography has two separate accuracy questions: astronomical accuracy (Swiss Ephemeris delivers sub-arcsecond precision, scientifically settled) and interpretive accuracy (Jim Lewis tradition, subjective, no scientific consensus). Confusing the two creates most disagreements about whether astrocartography "works".</desc>
+  <desc id="d-ts">A two-column comparison showing that astronomical calculation accuracy is documented per tool and depends on inputs, while astrological interpretation is symbolic and lacks scientific validation.</desc>
 
   <rect width="820" height="580" fill="#FBF8F1"/>
 
@@ -27,11 +27,11 @@
 
     <text x="215" y="306" font-family="'Instrument Serif',Georgia,serif" font-size="58" text-anchor="middle" fill="#0E7C5B">✓</text>
 
-    <text x="215" y="346" font-family="'Instrument Serif',Georgia,serif" font-size="22" text-anchor="middle" fill="#181C23">Settled science</text>
+    <text x="215" y="346" font-family="'Instrument Serif',Georgia,serif" font-size="22" text-anchor="middle" fill="#181C23">Documented per tool</text>
 
-    <text x="60" y="384" font-size="13" fill="#4C5563">Swiss Ephemeris delivers</text>
-    <text x="60" y="402" font-size="13" fill="#4C5563">sub-arcsecond accuracy from</text>
-    <text x="60" y="420" font-size="13" fill="#4C5563">13201 BCE to 17191 CE.</text>
+    <text x="60" y="384" font-size="13" fill="#4C5563">Engine, birth data, time zone</text>
+    <text x="60" y="402" font-size="13" fill="#4C5563">and projection each affect</text>
+    <text x="60" y="420" font-size="13" fill="#4C5563">the final line placement.</text>
 
     <text x="60" y="450" font-family="'JetBrains Mono',monospace" font-size="10" fill="#0E7C5B" letter-spacing="1.5">VERDICT</text>
     <text x="60" y="470" font-size="13" fill="#181C23">No serious tool in 2026 disagrees</text>

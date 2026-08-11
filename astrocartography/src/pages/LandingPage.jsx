@@ -163,14 +163,30 @@ export default function LandingPage() {
   const [star, setStar] = useState('musk');
   const [demoTheme, setDemoTheme] = useState('dark');
 
-  // Language is auto-detected on the first visit. A manual choice persists
-  // locally and wins on future visits; the URL stays SEO-neutral.
-  const [lang, setLangState] = useState(getLandingLang);
+  // The canonical homepage is always English, matching its HTML, canonical,
+  // schema and `lang` signal. Translated marketing previews live on the
+  // noindexed /landing route; indexable DE/ES/PT guides remain separate URLs.
+  const isCanonicalHomepage = typeof window === 'undefined' || window.location.pathname === '/';
+  const [lang, setLangState] = useState(() => (isCanonicalHomepage ? 'en' : getLandingLang()));
   const C = landingContent(lang);
   const CYCLE_WORDS = C.hero.cycle;
   const priceStr = priceLabel();
   const isRtl = RTL_LANGS.includes(lang);
-  const changeLang = (code) => { setLandingLang(code); setLangState(code); };
+  const changeLang = (code) => {
+    setLandingLang(code);
+    if (isCanonicalHomepage && code !== 'en') {
+      window.location.assign(`/landing?lang=${encodeURIComponent(code)}`);
+      return;
+    }
+    if (!isCanonicalHomepage && code === 'en') {
+      window.location.assign('/');
+      return;
+    }
+    if (!isCanonicalHomepage) {
+      window.history.replaceState(null, '', `/landing?lang=${encodeURIComponent(code)}`);
+    }
+    setLangState(code);
+  };
 
   // Hero word-cycler: advance the active word on an interval. The slot morphs
   // its width to the active word (smooth CSS transition) so "See where you ___"
@@ -178,13 +194,14 @@ export default function LandingPage() {
   // fade + lift on top of that.
   const [wi, setWi] = useState(0);
   const [cycleW, setCycleW] = useState(null);
+  const cycleWordCount = CYCLE_WORDS.length;
   const wordRefs = useRef([]);
   const wiRef = useRef(0);
   useEffect(() => { wiRef.current = wi; }, [wi]);
   useEffect(() => {
-    const id = setInterval(() => setWi(i => (i + 1) % CYCLE_WORDS.length), 2600);
+    const id = setInterval(() => setWi(i => (i + 1) % cycleWordCount), 2600);
     return () => clearInterval(id);
-  }, []);
+  }, [cycleWordCount]);
   // Measure the active word and set the slot width to it. Recomputed on each
   // word change, on language switch, and whenever a rendered width changes
   // (web-font swap, resize).
@@ -200,20 +217,35 @@ export default function LandingPage() {
     });
     wordRefs.current.forEach(el => el && ro.observe(el));
     return () => ro.disconnect();
-  }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lang]);
 
-  // Title + meta description for the homepage (follows the chosen language)
+  // The indexable homepage metadata stays identical to the server-rendered
+  // English source. Only the noindexed translation preview mutates metadata.
   useEffect(() => {
+    if (isCanonicalHomepage) return undefined;
     const prevTitle = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute('content');
+    // eslint-disable-next-line react-hooks/immutability -- document metadata is this effect's target.
     document.title = C.meta.title;
     meta?.setAttribute('content', C.meta.desc);
     return () => {
       document.title = prevTitle;
       if (prevDesc) meta?.setAttribute('content', prevDesc);
     };
-  }, [C.meta.title, C.meta.desc]);
+  }, [C.meta.title, C.meta.desc, isCanonicalHomepage]);
+
+  useEffect(() => {
+    if (isCanonicalHomepage) return undefined;
+    const previousLang = document.documentElement.lang;
+    const previousDir = document.documentElement.dir;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    return () => {
+      document.documentElement.lang = previousLang;
+      document.documentElement.dir = previousDir;
+    };
+  }, [isCanonicalHomepage, isRtl, lang]);
 
   // Display fonts, loaded only when the landing page mounts
   useEffect(() => {
@@ -627,6 +659,7 @@ export default function LandingPage() {
             <a href="#lines" onClick={scrollTo('lines')}>{C.nav.lines}</a>
             <a href="#features" onClick={scrollTo('features')}>{C.nav.features}</a>
             <a href="#faq" onClick={scrollTo('faq')}>{C.nav.faq}</a>
+            <a href="/about">About &amp; methodology</a>
           </nav>
           {/* Guide pages exist in EN + DE only, so their titles stay untranslated */}
           <nav aria-label="Guides">
@@ -638,6 +671,8 @@ export default function LandingPage() {
             <a href="/astrocartography-for-love">Astrocartography for love</a>
             <a href="/blog">Blog</a>
             <a href="/astrokartographie">Astrokartographie (DE)</a>
+            <a href="/es/astrocartografia">Astrocartografía (ES)</a>
+            <a href="/pt/astrocartografia">Astrocartografia (PT)</a>
           </nav>
           <nav aria-label="Contact">
             <h3>{C.footer.hContact}</h3>

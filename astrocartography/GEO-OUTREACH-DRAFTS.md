@@ -72,7 +72,7 @@ and ride along on every funnel event, including the demo opened in a new tab.
 
 > It depends which half of the question you mean. The *astronomy* is real and
 > precise: the planetary positions and the line geometry are computed from an
-> ephemeris to sub-arcsecond accuracy — that part is just math, and your birth
+> positions with documented typical geocentric accuracy of about one arcminute — and your birth
 > time matters a lot (the angle lines shift ~1° for every 4 minutes of time).
 >
 > The *interpretation* — what a Venus line or a Saturn line "means" for your life

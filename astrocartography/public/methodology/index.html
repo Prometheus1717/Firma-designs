@@ -194,12 +194,12 @@
 
         <div class="answer-card">
           <div class="label">In one paragraph</div>
-          <p>Natal Navigator computes planetary positions from analytical ephemerides of the VSOP87 class, derives the Ascendant and Midheaven with the true obliquity of the ecliptic, divides houses by the Porphyry method, weighs aspects with classical moiety orbs, and projects astrocartography lines both in mundo and zodiacally &mdash; the two conventions the field has used since Jim Lewis formalised it in the 1970s. The astronomy is exact; the interpretation applies documented traditional principles and is offered for reflection, not prediction.</p>
+          <p>Natal Navigator computes planetary positions from analytical ephemerides of the VSOP87 class, derives the Ascendant and Midheaven with the true obliquity of the ecliptic, divides houses by the Porphyry method, weighs aspects with classical moiety orbs, and projects astrocartography lines both in mundo and zodiacally &mdash; the two conventions the field has used since Jim Lewis formalised it in the 1970s. The astronomical calculation is reproducible within the documented model accuracy; the interpretation applies traditional principles and is offered for reflection, not prediction.</p>
         </div>
 
         <h2>1 &middot; The astronomical layer</h2>
         <p>All positions come from an open-source ephemeris engine implementing truncated analytical planetary theories of the <strong>VSOP87</strong> family (Bretagnon &amp; Francou, 1988), together with a dedicated lunar theory and a separate model for Pluto. Accuracy for the relevant epochs is on the order of an arcminute &mdash; far below anything a chart wheel or a world map can visually resolve, and consistent with the standard ephemerides used across serious astrological software.</p>
-        <p>Two details matter more than they look. First, the <strong>Ascendant and Midheaven are derived with the true obliquity of the ecliptic</strong>, including nutation, rather than a fixed mean value; on the angles, shortcuts of a few arcseconds accumulate into visible degrees over a lifetime of charts. Second, the birth moment is converted through the <strong>IANA time-zone database</strong> from the exact birth coordinates, which resolves historical offsets and daylight-saving edge cases &mdash; the classic source of &ldquo;my rising sign is wrong&rdquo; errors in older tools.</p>
+        <p>Two details matter more than they look. First, the <strong>Ascendant and Midheaven are derived with the true obliquity of the ecliptic</strong>, including nutation, rather than a fixed mean value. Second, the birth moment is converted through the <strong>IANA time-zone database</strong> from the birth coordinates, which resolves historical offsets and daylight-saving edge cases &mdash; a common source of incorrect rising signs in older tools. The result still depends on the accuracy of the entered birth time, location and historical time-zone record.</p>
         <p>Charts are computed in the <strong>tropical zodiac</strong>, the convention of Western natal astrology since Ptolemy&rsquo;s <em>Tetrabiblos</em> (2nd century CE), in which 0&deg; Aries is anchored to the March equinox.</p>
 
         <h2>2 &middot; Houses: the Porphyry method</h2>
@@ -223,7 +223,7 @@
         <p>The entire astronomical layer &mdash; chart, houses, aspects, lines, parans, transits &mdash; runs <strong>on your device</strong>. Birth data does not need to leave it for a chart to exist. When you ask the in-app Guide a question, the app sends the already-computed chart facts along with your question, and the Guide is constrained to interpret exactly those facts; it is explicitly forbidden from inventing degrees, dates or placements.</p>
 
         <h2>8 &middot; What this is, and what it is not</h2>
-        <p>The astronomy above is exact and checkable against any professional ephemeris. The interpretation applies documented principles from the astrological tradition &mdash; Ptolemy&rsquo;s <em>Tetrabiblos</em>, the hellenistic sect doctrine, Lilly&rsquo;s orb conventions, Lewis&rsquo;s astrocartography &mdash; consistently and transparently. Astrology itself is not an empirically validated predictive science, and Natal Navigator does not present it as one: readings are offered for orientation and self-reflection, not as medical, legal or financial advice, and never as certainty about the future.</p>
+        <p>The astronomical output is reproducible and can be compared with independent ephemerides within the stated model accuracy of roughly one arcminute for supported epochs. The interpretation applies documented principles from the astrological tradition &mdash; Ptolemy&rsquo;s <em>Tetrabiblos</em>, the hellenistic sect doctrine, Lilly&rsquo;s orb conventions, Lewis&rsquo;s astrocartography &mdash; consistently and transparently. Astrology itself is not an empirically validated predictive science, and Natal Navigator does not present it as one: readings are offered for orientation and self-reflection, not as medical, legal or financial advice, and never as certainty about the future.</p>
 
         <h3>Which ephemeris does Natal Navigator use?</h3>
         <p>An open-source engine implementing truncated VSOP87-class analytical theories with a dedicated lunar model, accurate to roughly an arcminute for the supported epochs &mdash; the same family of models behind most professional astrology software.</p>
@@ -258,5 +258,8 @@
     </div>
     <p class="small">&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js" data-natal-observability></script>
+  <script defer src="/_vercel/speed-insights/script.js" data-natal-observability></script>
 </body>
 </html>

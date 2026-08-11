@@ -213,7 +213,7 @@
               "name": "Is my birth data private?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Your birth data is stored securely, never sold and never shared. You can delete your account — and all data with it — at any time."
+                "text": "Your birth data is handled by the service providers and for the purposes described in our privacy notice. It is not sold for advertising. You can delete your account and associated profile data subject to legal retention duties."
               }
             }
           ]
@@ -306,10 +306,10 @@
         0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
         40% { opacity: 1; transform: scale(1); }
       }
-      /* Hide loader + semantic layer once React mounts */
-      #root:not(:empty) ~ #root-loader,
-      #root:not(:empty) ~ #seo-content { display: none; }
-      /* Semantic content layer styling — visible to crawlers and before JS */
+      /* The semantic homepage is the React root's initial fallback. React
+         replaces it during hydration, so there is no hidden duplicate layer. */
+      #root:not(:empty) ~ #root-loader { display: none; }
+      /* Semantic content layer styling — visible before JavaScript */
       #seo-content {
         background: #0A1018; color: #C8D8E8; font-family: 'Instrument Sans', system-ui, sans-serif;
         max-width: 800px; margin: 0 auto; padding: 40px 24px; line-height: 1.7;
@@ -327,29 +327,16 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
-
-    <!-- Instant loading screen — visible before any JS loads/executes -->
-    <div id="root-loader" aria-hidden="true">
-      <div class="title">NATAL NAVIGATOR</div>
-      <div class="dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
-    </div>
+    <div id="root">
 
     <!--
-      ═════════════════════════════════════════════════════════════
-      SEMANTIC CONTENT LAYER
-      Visible to crawlers, screen readers, and users with JS disabled.
-      Hidden automatically once React mounts into #root.
-      ═════════════════════════════════════════════════════════════
+      Canonical semantic homepage. React replaces this exact fallback when the
+      application mounts; it is not retained as hidden crawler-only content.
     -->
     <main id="seo-content">
       <header>
-        <h1>Natal Navigator</h1>
-        <p><strong>Your Astrocartography Globe — Find Where Your Stars Align</strong></p>
+        <h1>Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.</h1>
+        <p><strong>Interactive astrocartography globe with a free example-chart demo</strong></p>
       </header>
 
       <nav aria-label="Main navigation">
@@ -357,7 +344,9 @@
         <a href="/astrocartography">What is Astrocartography?</a> ·
         <a href="/astrocartography-calculator">Calculator</a> ·
         <a href="/astrokartographie">Astrokartographie (DE)</a> ·
-        <a href="/landing">About</a>
+        <a href="/es/astrocartografia">Astrocartografía (ES)</a> ·
+        <a href="/pt/astrocartografia">Astrocartografia (PT)</a> ·
+        <a href="/about">About &amp; methodology</a>
       </nav>
 
       <section>
@@ -435,7 +424,7 @@
         <h2>Features</h2>
         <ul>
           <li>Interactive 3D globe powered by D3.js with smooth rotation and zoom</li>
-          <li>High-precision planetary calculations using the astronomy-engine library</li>
+          <li>Planetary calculations using Astronomy Engine, whose documentation describes typical geocentric accuracy within about one arcminute</li>
           <li>40 astrocartography lines across all 10 major planets and 4 angles</li>
           <li>Real-world city detection — see which cities align with each line</li>
           <li>Color-coded line quality: thrive (green), neutral (yellow), avoid (red)</li>
@@ -444,8 +433,20 @@
           <li>Responsive design for desktop, tablet, and mobile</li>
           <li>Keyboard controls for globe navigation</li>
           <li>Instant loading with offline caching via Service Worker</li>
-          <li>Secure authentication and encrypted data storage</li>
+          <li>Authentication and data handling documented in the privacy notice</li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Method, sources and limitations</h2>
+        <p>
+          Planetary positions are calculated with the open-source
+          <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>.
+          Its documentation describes typical geocentric position accuracy within about one arcminute.
+          Personal line placement also depends on the accuracy of birth time, place, time-zone conversion
+          and the map projection. Astrological interpretations are symbolic and are not scientifically validated.
+          Read the <a href="/about">full methodology and corrections policy</a>.
+        </p>
       </section>
 
       <section>
@@ -506,6 +507,7 @@
         <p>Natal Navigator provides astrocartography calculations for educational and entertainment purposes. Astrological interpretations should not replace professional advice for important life decisions.</p>
       </footer>
     </main>
+    </div>
 
     <!-- ─── No-JS fallback (additional signal for crawlers that don't render JS) ─── -->
     <noscript>

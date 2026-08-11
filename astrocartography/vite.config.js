@@ -31,6 +31,17 @@ export default defineConfig({
           if (id.includes('/data/cities')) {
             return 'cities';
           }
+          // Dashboard is lazy-loaded. Split its large visual/data modules so
+          // no single production asset breaches the 500 KB budget.
+          if (id.includes('/components/Globe.jsx')) {
+            return 'dashboard-globe';
+          }
+          if (id.includes('/components/NatalWheel') || id.includes('/components/Tutorial.jsx')) {
+            return 'dashboard-visuals';
+          }
+          if (id.includes('/data/natalReadings')) {
+            return 'dashboard-readings';
+          }
         },
       },
     },

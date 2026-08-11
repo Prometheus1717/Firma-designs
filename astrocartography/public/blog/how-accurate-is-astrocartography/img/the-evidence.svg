@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 660" font-family="'General Sans',-apple-system,BlinkMacSystemFont,sans-serif" role="img" aria-labelledby="t-ev d-ev">
   <title id="t-ev">The Evidence Landscape for Astrocartography — Honest Assessment</title>
-  <desc id="d-ev">An honest summary of what evidence does and does not exist for astrocartography: zero rigorous double-blind studies, several Jim Lewis case-collections from the 1970s and 80s with selection bias, dozens of contemporary self-report surveys with positive but unfalsifiable results, and growing first-person testimony documented by Reddit and astrology communities.</desc>
+  <desc id="d-ev">An evidence hierarchy for astrocartography: controlled replicated evidence is not established; case archives, community self-reports and first-person testimony are weaker and vulnerable to selection and confirmation bias.</desc>
 
   <rect width="820" height="660" fill="#FBF8F1"/>
 
@@ -50,8 +50,8 @@
   <g>
     <rect x="60" y="408" width="700" height="86" fill="#FFFFFF"/>
     <text x="84" y="438" font-family="'Instrument Serif',Georgia,serif" font-size="22" font-style="italic" fill="#181C23">Tier 3 · Contemporary self-report surveys</text>
-    <text x="84" y="460" font-size="13" fill="#4C5563">Astrology communities have run dozens of post-move self-report surveys.</text>
-    <text x="84" y="480" font-size="13" fill="#5D4FB8" font-style="italic">Status: ~70% report "matched" experiences. Confirmation bias unresolvable.</text>
+    <text x="84" y="460" font-size="13" fill="#4C5563">Community self-reports lack a published representative sampling frame.</text>
+    <text x="84" y="480" font-size="13" fill="#5D4FB8" font-style="italic">Status: descriptive only. Selection and confirmation bias are unresolved.</text>
 
     <text x="600" y="440" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5D4FB8" letter-spacing="1" text-anchor="middle">EVIDENCE</text>
     <text x="600" y="472" font-family="'Instrument Serif',Georgia,serif" font-size="48" fill="#5D4FB8" text-anchor="middle">◐</text>

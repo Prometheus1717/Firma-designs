@@ -1,12 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockSelect = vi.fn().mockReturnThis();
-const mockOr = vi.fn().mockReturnThis();
-const mockOrder = vi.fn().mockReturnThis();
-const mockRange = vi.fn().mockResolvedValue({ data: [], count: 0, error: null });
-const mockGte = vi.fn().mockReturnThis();
-const mockNot = vi.fn().mockResolvedValue({ count: 5 });
-
 const headResult = { count: 10 };
 const headChain = () => ({
   gte: vi.fn().mockResolvedValue(headResult),
@@ -17,6 +10,9 @@ const headChain = () => ({
 
 vi.mock('../lib/supabase', () => ({
   supabase: {
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'test-token' } } }),
+    },
     from: vi.fn(() => ({
       select: vi.fn((sel, opts) => {
         if (opts?.head) {
@@ -52,6 +48,17 @@ import { fetchAllProfiles, fetchAdminStats, fetchAllAppSettings, updateAppSettin
 describe('adminApi', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    globalThis.fetch = vi.fn(async (_url, options) => {
+      const { action } = JSON.parse(options.body);
+      const payload = action === 'fetchProfiles'
+        ? { data: [{ id: '1' }], total: 1 }
+        : action === 'fetchStats'
+          ? { totalUsers: 10, recentSignups: 2, withBirthData: 5, premiumUsers: 1 }
+          : action === 'fetchSettings'
+            ? { paywall_enabled: 'true', display_price: '4.99' }
+            : { ok: true };
+      return { ok: true, json: async () => payload };
+    });
   });
 
   describe('fetchAllProfiles', () => {
