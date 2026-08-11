@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>How Natal Navigator Calculates &mdash; Methodology</title>
+  <meta name="description" content="The astronomy and methods behind Natal Navigator: VSOP87-class ephemerides, true obliquity, Porphyry houses, moiety orbs, in-mundo astrocartography and parans." />
+  <meta name="keywords" content="astrocartography methodology, how astrocartography is calculated, natal chart calculation method, porphyry houses, moiety orbs, in mundo lines" />
+  <meta name="author" content="Natal Navigator" />
+  <link rel="canonical" href="https://natalnavigator.com/methodology" />
+  <link rel="alternate" hreflang="x-default" href="https://natalnavigator.com/methodology" />
+  <link rel="alternate" hreflang="en" href="https://natalnavigator.com/methodology" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#FBF8F1" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Natal Navigator" />
+  <meta property="og:title" content="How Natal Navigator Calculates — Methodology" />
+  <meta property="og:description" content="Ephemerides, house systems, orbs, in-mundo lines and parans: the methods behind every chart and map in the app." />
+  <meta property="og:url" content="https://natalnavigator.com/methodology" />
+  <meta property="og:image" content="https://natalnavigator.com/og-v5.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Natal Navigator Calculates — Methodology" />
+  <meta name="twitter:description" content="The astronomy and methods behind every chart and map in the app." />
+  <meta name="twitter:image" content="https://natalnavigator.com/og-v5.png" />
+
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": "https://natalnavigator.com/methodology#article",
+        "headline": "How Natal Navigator Calculates: Methodology",
+        "description": "The astronomy and interpretive methods behind Natal Navigator: analytical ephemerides, true obliquity, Porphyry houses, moiety orbs, in-mundo astrocartography and parans.",
+        "author": { "@type": "Organization", "name": "Natal Navigator", "url": "https://natalnavigator.com" },
+        "publisher": { "@type": "Organization", "name": "Natal Navigator", "url": "https://natalnavigator.com" },
+        "datePublished": "2026-08-11",
+        "dateModified": "2026-08-11",
+        "mainEntityOfPage": "https://natalnavigator.com/methodology",
+        "image": "https://natalnavigator.com/og-v5.png",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://natalnavigator.com/methodology#webpage",
+        "url": "https://natalnavigator.com/methodology",
+        "name": "How Natal Navigator Calculates — Methodology",
+        "isPartOf": { "@type": "WebSite", "name": "Natal Navigator", "url": "https://natalnavigator.com" },
+        "breadcrumb": { "@id": "https://natalnavigator.com/methodology#breadcrumb" },
+        "inLanguage": "en"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://natalnavigator.com/methodology#breadcrumb",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natalnavigator.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Methodology", "item": "https://natalnavigator.com/methodology" }
+        ]
+      }
+    ]
+  }
+  </script>
+<style>
+    :root {
+      --paper:#FBF8F1; --paper2:#F4EFE3; --card:#FFFFFF;
+      --ink:#181C23; --ink2:#4C5563; --ink3:#8A93A2;
+      --line:#E7E0D1; --line2:#DDD5C2;
+      --mint:#0E7C5B; --mint-soft:#DCF2E5; --mint-bright:#19C68B;
+      --amber:#A8650F; --amber-soft:#FAEBD2;
+      --lav:#5D4FB8; --lav-soft:#E9E5F9;
+      --rose:#B2543F; --rose-soft:#F9E3E0;
+      --r:18px; --r-lg:26px;
+      --serif:'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --sans:'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color .2s ease; }
+    a:hover { text-decoration-color: var(--mint); }
+    img, svg { display: block; max-width: 100%; height: auto; }
+    .nav-wrap { position: sticky; top: 0; z-index: 50; padding: 16px clamp(12px,3vw,28px) 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .nav { max-width: 1120px; margin: 0 auto; height: 60px; padding: 0 10px 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; box-shadow: 0 10px 34px -18px rgba(40,44,90,.32), inset 0 1px 0 rgba(255,255,255,.8); }
+    .logo { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15.5px; color: var(--ink); text-decoration: none; }
+    .logo-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--ink); color: #fff; flex-shrink: 0; font-family: var(--serif); font-size: 16px; font-style: italic; }
+    .nav-links { display: flex; gap: clamp(12px,2vw,26px); font-size: 14.5px; font-weight: 500; color: var(--ink2); }
+    .nav-links a { text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 9px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--paper) !important; font-weight: 600; font-size: 14px; text-decoration: none !important; transition: transform .22s, box-shadow .22s; }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -10px rgba(24,28,35,.45); }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 clamp(20px,4vw,40px); }
+    .hero { padding: clamp(50px,8vh,90px) 0 clamp(30px,5vh,50px); position: relative; overflow: hidden; }
+    .hero-aurora { position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(680px 380px at 15% 4%, rgba(93,79,184,.18), transparent 64%), radial-gradient(760px 440px at 86% 0%, rgba(25,198,139,.16), transparent 64%); mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); -webkit-mask-image: linear-gradient(180deg,#000 0%,#000 55%,transparent 88%); }
+    .hero-inner { position: relative; z-index: 1; text-align: center; }
+    .breadcrumb { font-size: 13px; color: var(--ink3); margin-bottom: 18px; }
+    .breadcrumb a { color: var(--ink3); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .badge { display: inline-flex; align-items: center; gap: 9px; padding: 8px 18px; background: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.7); border-radius: 999px; backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%); box-shadow: 0 6px 20px -12px rgba(40,44,90,.4), inset 0 1px 0 rgba(255,255,255,.8); font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--ink2); margin-bottom: 24px; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint-bright); box-shadow: 0 0 0 4px rgba(25,198,139,.22); flex-shrink: 0; }
+    h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px,4.6vw,58px); line-height: 1.13; letter-spacing: -.015em; color: var(--ink); max-width: 24ch; margin: 0 auto 18px; }
+    h1 em { font-style: italic; color: var(--ink2); }
+    .lead { font-size: clamp(17px,2vw,20px); line-height: 1.55; color: var(--ink2); max-width: 54ch; margin: 0 auto 28px; }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 15.5px; letter-spacing: -.005em; transition: transform .22s, box-shadow .22s; text-decoration: none !important; cursor: pointer; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-ink { background: var(--ink); color: var(--paper); box-shadow: 0 1px 2px rgba(24,28,35,.2); }
+    .btn-ink:hover { box-shadow: 0 14px 30px -10px rgba(24,28,35,.45); }
+    .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line2); }
+    .btn-ghost:hover { background: #fff; box-shadow: 0 10px 24px -12px rgba(24,28,35,.2); }
+    .meta { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; color: var(--ink3); text-transform: uppercase; text-align: center; margin: 40px 0 8px; }
+    article { padding: 12px 0 80px; }
+    article h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(26px,3.2vw,36px); line-height: 1.2; letter-spacing: -.01em; color: var(--ink); margin: 52px 0 6px; max-width: 30ch; }
+    article h3 { font-size: 19px; font-weight: 600; color: var(--ink); margin: 30px 0 6px; }
+    article p { color: var(--ink); font-size: 17px; margin: 14px 0; }
+    article ul, article ol { padding-left: 22px; margin: 16px 0; }
+    article li { color: var(--ink); font-size: 16.5px; margin: 8px 0; }
+    article strong { font-weight: 600; color: var(--ink); }
+    article em { font-style: italic; color: var(--ink2); }
+    .answer-card { background: linear-gradient(140deg, var(--mint-soft) 0%, #EFF7F1 100%); border: 1px solid var(--mint-soft); border-radius: var(--r-lg); padding: 28px 32px; margin: 32px 0; box-shadow: 0 14px 34px -22px rgba(14,124,91,.4); }
+    .answer-card .label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mint); margin-bottom: 10px; }
+    .answer-card .label::before { content: '✦ '; }
+    .answer-card p { margin: 0; font-size: 17px; color: #06241A; }
+    table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14.5px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+    th { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); background: var(--paper2); }
+    figure { margin: 44px 0; }
+    figure svg { width: 100%; height: auto; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--card); box-shadow: 0 24px 50px -28px rgba(40,44,90,.35); }
+    figcaption { margin-top: 14px; font-size: 13.5px; color: var(--ink2); line-height: 1.55; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto; }
+    figcaption strong { color: var(--ink); font-weight: 600; }
+    .callout { background: var(--ink); color: var(--paper); border-radius: var(--r-lg); padding: 40px clamp(28px,5vw,48px); margin: 56px 0; text-align: center; }
+    .callout h3 { font-family: var(--serif); font-weight: 400; font-size: 30px; color: var(--paper); margin: 0 0 12px; }
+    .callout p { color: rgba(251,248,241,.78); margin: 0 0 22px; font-size: 17px; }
+    .callout .cta { display: inline-flex; align-items: center; gap: 8px; background: var(--mint-bright); color: #06241A !important; padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 15.5px; text-decoration: none !important; }
+    .note { border: 1px solid var(--line2); background: var(--card); border-radius: 16px; padding: 18px 22px; margin: 28px 0; font-size: 16px; color: var(--ink2); box-shadow: 0 14px 38px -30px rgba(40,44,90,.35); }
+    .note strong { color: var(--ink); }
+    .related { margin-top: 76px; padding-top: 30px; border-top: 1px solid var(--line); }
+    .related h2 { font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0 0 16px; border: none; padding: 0; }
+    .related ul { list-style: none; padding: 0; }
+    .related li { margin: 11px 0; font-size: 16px; }
+    .lines-cluster { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .lines-cluster h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 0 0 14px; border: none; padding: 0; }
+    .lines-cluster ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 18px; }
+    .lines-cluster li { margin: 3px 0; font-size: 15px; }
+    .lines-cluster .cluster-guides { font-size: 14px; color: var(--ink2); margin-top: 16px; }
+    footer.site { border-top: 1px solid var(--line); padding: 40px clamp(20px,4vw,40px); text-align: center; font-size: 14px; color: var(--ink3); background: var(--paper2); }
+    footer.site a { color: var(--ink2); margin: 0 12px; text-decoration: none; }
+    footer.site a:hover { color: var(--ink); }
+    @media (max-width: 600px) { .nav-links { display: none; } article h2 { font-size: 24px; margin-top: 44px; } .lines-cluster ul { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<header class="nav-wrap">
+    <nav class="nav" aria-label="Primary">
+      <a href="/" class="logo"><img class="logo-mark" src="/logo-icon.png" alt="" width="30" height="30"> Natal Navigator</a>
+      <div class="nav-links">
+        <a href="/astrocartography">What is Astrocartography?</a>
+        <a href="/blog">Blog</a>
+        <a href="/astrocartography-calculator">Calculator</a>
+        <a href="/astrokartographie">DE</a>
+      </div>
+      <a href="/create" class="nav-cta">Create your map &rarr;</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-aurora" aria-hidden="true"></div>
+      <div class="wrap hero-inner">
+        <div class="breadcrumb"><a href="/">Home</a> &middot; Methodology</div>
+        <div class="badge"><span class="badge-dot"></span> METHODOLOGY &middot; UPDATED AUG 2026</div>
+        <h1>How Natal Navigator <em>calculates.</em></h1>
+        <p class="lead">Every line on the globe and every sentence in a reading starts as astronomy. This page explains the models, conventions and sources behind the app &mdash; precisely enough to be checked, without turning into a textbook.</p>
+        <div class="cta-row">
+          <a class="btn btn-ink" href="/create">Create your map &rarr;</a>
+          <a class="btn btn-ghost" href="/astrocartography">What is astrocartography?</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <p class="meta">10 planets &middot; 4 angles &middot; 40 lines &middot; one birth moment</p>
+      <article>
+
+        <div class="answer-card">
+          <div class="label">In one paragraph</div>
+          <p>Natal Navigator computes planetary positions from analytical ephemerides of the VSOP87 class, derives the Ascendant and Midheaven with the true obliquity of the ecliptic, divides houses by the Porphyry method, weighs aspects with classical moiety orbs, and projects astrocartography lines both in mundo and zodiacally &mdash; the two conventions the field has used since Jim Lewis formalised it in the 1970s. The astronomy is exact; the interpretation applies documented traditional principles and is offered for reflection, not prediction.</p>
+        </div>
+
+        <h2>1 &middot; The astronomical layer</h2>
+        <p>All positions come from an open-source ephemeris engine implementing truncated analytical planetary theories of the <strong>VSOP87</strong> family (Bretagnon &amp; Francou, 1988), together with a dedicated lunar theory and a separate model for Pluto. Accuracy for the relevant epochs is on the order of an arcminute &mdash; far below anything a chart wheel or a world map can visually resolve, and consistent with the standard ephemerides used across serious astrological software.</p>
+        <p>Two details matter more than they look. First, the <strong>Ascendant and Midheaven are derived with the true obliquity of the ecliptic</strong>, including nutation, rather than a fixed mean value; on the angles, shortcuts of a few arcseconds accumulate into visible degrees over a lifetime of charts. Second, the birth moment is converted through the <strong>IANA time-zone database</strong> from the exact birth coordinates, which resolves historical offsets and daylight-saving edge cases &mdash; the classic source of &ldquo;my rising sign is wrong&rdquo; errors in older tools.</p>
+        <p>Charts are computed in the <strong>tropical zodiac</strong>, the convention of Western natal astrology since Ptolemy&rsquo;s <em>Tetrabiblos</em> (2nd century CE), in which 0&deg; Aries is anchored to the March equinox.</p>
+
+        <h2>2 &middot; Houses: the Porphyry method</h2>
+        <p>Natal Navigator divides houses by the <strong>Porphyry method</strong>, one of the oldest documented quadrant systems (attributed to Porphyry of Tyre, 3rd century CE): each quadrant between the four angles is split into three equal parts along the ecliptic. It keeps the angles as true house cusps, behaves gracefully at higher latitudes where time-based systems distort, and matches the app&rsquo;s premise that the four angles &mdash; Ascendant, Midheaven and their opposites &mdash; carry the structural weight of the chart.</p>
+
+        <h2>3 &middot; Aspects and moiety orbs</h2>
+        <p>Aspects are computed between all ten planets plus the angles, covering the five Ptolemaic aspects and the standard minor ones. For the allowed deviation from exactness, the app uses <strong>moiety orbs</strong>: the classical convention, systematised in William Lilly&rsquo;s <em>Christian Astrology</em> (1647), in which each body carries its own orb and an aspect&rsquo;s effective orb is half the sum of the two. A Sun&ndash;Moon aspect therefore tolerates more deviation than a Mercury&ndash;Venus one &mdash; which is how the tradition weighted them, and measurably different from the flat per-aspect orbs many modern tools default to. Tighter aspects rank higher throughout the app.</p>
+
+        <h2>4 &middot; Planetary condition</h2>
+        <p>Behind every reading sits a condition model drawn from the traditional toolkit: <strong>essential dignities</strong> (domicile, exaltation and their debilities, per the Ptolemaic rulership scheme), <strong>sect</strong> &mdash; the hellenistic distinction between day and night births that changes which planets act as allies &mdash; <strong>combustion</strong> (proximity to the Sun) and <strong>speed</strong> relative to the planet&rsquo;s mean motion, including retrograde state. These are documented concepts with primary sources, not house rules we invented; their exact weighting into the app&rsquo;s scores is part of the engine we keep to ourselves.</p>
+
+        <h2>5 &middot; Astrocartography: lines, both ways</h2>
+        <p>Astrocartography, formalised by <strong>Jim Lewis</strong> as Astro*Carto*Graphy&reg; in the 1970s, asks a precise question: from which places on Earth was a given planet exactly on one of the four angles at your birth moment? Each planet yields four lines &mdash; MC, IC, ASC, DC &mdash; ten planets, forty lines.</p>
+        <p>The app computes them in both accepted conventions, and lets you switch. <strong>In mundo</strong>: the planet&rsquo;s actual body stands on the angle, derived from its equatorial coordinates and the local hour angle &mdash; MC/IC lines fall on meridians of longitude, ASC/DC lines are curves given by spherical trigonometry of the local horizon. <strong>Zodiacal</strong>: the planet&rsquo;s ecliptic degree meets the angle, the projection Lewis&rsquo;s original maps used. The two disagree most where a planet stands far from the ecliptic &mdash; which is precisely why the choice is exposed instead of hidden.</p>
+        <p>Line influence is treated as a <strong>band, not a hairline</strong>: cities score by their angular distance to the nearest line, fading with distance, and the app additionally computes <strong>parans</strong> &mdash; latitudes where two planets stand on angles simultaneously, a technique with roots in the hellenistic <em>paranatellonta</em>. How distance, condition and parans combine into a single city score is the part of the recipe we do not publish.</p>
+
+        <h2>6 &middot; Transits, cycles and the Moon</h2>
+        <p>The daily layer runs the same ephemerides forward in real time. Transits to natal positions are tracked with the same moiety-based orb logic, phase-tagged as applying or separating, and windowed &mdash; a transit is presented as a period with a build-up, a peak and a fade, never as a point prediction. Retrograde windows and sign ingresses come straight from the ephemeris; lunar phase and illumination are computed from the Sun&ndash;Moon elongation. The day-score you see is an aggregate of these active windows; its exact weights, like the city score, stay in-house.</p>
+
+        <h2>7 &middot; Where the computing happens</h2>
+        <p>The entire astronomical layer &mdash; chart, houses, aspects, lines, parans, transits &mdash; runs <strong>on your device</strong>. Birth data does not need to leave it for a chart to exist. When you ask the in-app Guide a question, the app sends the already-computed chart facts along with your question, and the Guide is constrained to interpret exactly those facts; it is explicitly forbidden from inventing degrees, dates or placements.</p>
+
+        <h2>8 &middot; What this is, and what it is not</h2>
+        <p>The astronomy above is exact and checkable against any professional ephemeris. The interpretation applies documented principles from the astrological tradition &mdash; Ptolemy&rsquo;s <em>Tetrabiblos</em>, the hellenistic sect doctrine, Lilly&rsquo;s orb conventions, Lewis&rsquo;s astrocartography &mdash; consistently and transparently. Astrology itself is not an empirically validated predictive science, and Natal Navigator does not present it as one: readings are offered for orientation and self-reflection, not as medical, legal or financial advice, and never as certainty about the future.</p>
+
+        <h3>Which ephemeris does Natal Navigator use?</h3>
+        <p>An open-source engine implementing truncated VSOP87-class analytical theories with a dedicated lunar model, accurate to roughly an arcminute for the supported epochs &mdash; the same family of models behind most professional astrology software.</p>
+
+        <h3>Why Porphyry houses instead of Placidus?</h3>
+        <p>Porphyry keeps the four angles as real cusps, stays well-defined at high latitudes where Placidus degenerates, and matches the app&rsquo;s angle-centred method. House systems are conventions; the app names its choice instead of hiding it.</p>
+
+        <h3>Why do my lines differ slightly from other astrocartography sites?</h3>
+        <p>Usually one of three reasons: the other tool uses zodiacal projection while you are viewing in mundo (or vice versa), it uses a different house or orb convention, or it resolves the birth time zone differently. Switch the line method in the app to compare like with like.</p>
+
+        <section class="related">
+          <h2>Keep exploring</h2>
+          <ul>
+            <li><a href="/astrocartography">What is astrocartography? (full guide)</a></li>
+            <li><a href="/astrocartography-calculator">The astrocartography calculator</a></li>
+            <li><a href="/relocation-astrology">Relocation astrology explained</a></li>
+            <li><a href="/blog">All articles</a></li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+<footer class="site">
+    <div>
+      <a href="/">Globe</a>
+      <a href="/astrocartography">What is Astrocartography?</a>
+      <a href="/astrocartography-calculator">Calculator</a>
+      <a href="/astrokartographie">DE</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <p class="small">&copy; 2026 Natal Navigator. Astrocartography for educational and reflective purposes.</p>
+  </footer>
+</body>
+</html>

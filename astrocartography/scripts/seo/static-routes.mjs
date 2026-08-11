@@ -27,6 +27,10 @@ export const STATIC_ROUTES = [
     changefreq: 'monthly',
     alt: { en: 'astrocartography', de: 'astrokartographie', es: 'es/astrocartografia', pt: 'pt/astrocartografia', 'x-default': 'astrocartography' },
   },
+  // The methodology page: hand-built, linked from the iOS app's You tab
+  // ("How the app calculates") and from nothing else generated - so it
+  // must be listed here or the sitemap never learns about it.
+  { loc: 'methodology', priority: '0.6', changefreq: 'monthly', alt: { en: 'methodology', 'x-default': 'methodology' } },
   // Downloadable lead magnet (PDF), listed so Google can discover and index it
   // without waiting for a manual request or for the linking blog posts to be
   // crawled. It has no HTML, so page-level checks skip it.
