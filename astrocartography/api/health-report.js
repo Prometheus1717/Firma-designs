@@ -1,49 +1,103 @@
-/* global process, fetch */
+/* global process */
+import { Buffer } from 'node:buffer';
+import { randomUUID, timingSafeEqual } from 'node:crypto';
+import { createClient } from '@supabase/supabase-js';
 import { applySecurityHeaders } from './_security.js';
 
 /**
- * Täglicher Gesundheitsbericht nach Telegram (Vercel-Cron, siehe vercel.json).
+ * Täglicher Gesundheitsbericht nach Telegram.
  *
- * Hintergrund: Am 26./27.07.2026 lud ein `vercel --prebuilt`-Deploy ein Bundle
- * ohne Build-Env hoch. Der Supabase-Client warf beim Modul-Eval
- * `supabaseUrl is required`, React mountete nie, sichtbar blieb nur die
- * statische LCP-Shell aus index.html. Dabei lieferte JEDER Request HTTP 200.
- * Ein gewöhnlicher Uptime-Ping hätte 24 Stunden lang "alles gut" gemeldet.
- *
- * Deshalb prüft dieser Report nicht Statuscodes, sondern ob die Build-Env
- * tatsächlich im ausgelieferten JavaScript steht — das ist der Fingerabdruck
- * genau dieses Fehlers und er ist von außen ohne Browser feststellbar.
- *
- * Am 03.08.2026 kam ein zweiter Fehlertyp dazu: ein Deployment aus einem
- * fremden Branch wurde auf Produktion promotet und warf den Code um sechs
- * Wochen zurück. Auch dabei war alles HTTP 200, die Build-Env stand im
- * Bundle, React mountete. Kaputt war nur der Kaufweg, und das 40 Stunden
- * lang unbemerkt. Deshalb prüft der Report seit dem zusätzlich, WOHER das
- * laufende Deployment stammt und ob der Weg zur Kasse im Bundle überhaupt
- * noch existiert.
+ * Zuverlässigkeitsmodell:
+ * - jeder externe Request hat eine feste Abbruchgrenze;
+ * - Telegram wird bei transienten Fehlern mit Backoff erneut versucht;
+ * - Supabase hält pro Berliner Kalendertag einen Zustellnachweis und eine
+ *   kurze Lease, damit doppelte Cron-Ereignisse keine doppelten Nachrichten
+ *   erzeugen und abgebrochene Läufe später übernommen werden können;
+ * - ein optionaler unabhängiger Supabase-Cron kann denselben, idempotenten
+ *   Handler nach dem Vercel-Zeitfenster erneut aufrufen und einen Dead-man-
+ *   Alarm auslösen.
  */
 
 const SITE = 'https://natalnavigator.com';
-
-// Muss im ausgelieferten Bundle stehen. Fehlt sie, wurde ohne
-// VITE_SUPABASE_URL gebaut und das Frontend ist tot.
 const SUPABASE_REF = 'kbwjxtvqdkcicaydtixp';
-
-// Der einzige Branch, aus dem Produktion gebaut werden darf.
 const PROD_BRANCH = 'claude/astrocartography-globe-dashboard-aBjui';
-
-// Dieser Throw wurde am 01.07.2026 mit Commit 6df38cf entfernt. Taucht er
-// wieder im Bundle auf, läuft ein Stand von vor dem Payment-Deadlock-Fix und
-// zahlende Kunden hängen zwischen Paywall und Geburtsdaten fest.
 const DEADLOCK_MARKER = 'Payment required before entering birth data.';
+const CHECK_TIMEOUT_MS = 7_000;
+const TELEGRAM_TIMEOUT_MS = 8_000;
+const TELEGRAM_ATTEMPTS = 4;
+const TELEGRAM_CHUNK_SIZE = 3_900;
+const RUN_LEASE_SECONDS = 180;
 
-const checks = [];
+let monitorSupabase;
 
-async function check(name, fn) {
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function logEvent(level, event, data = {}) {
+  const payload = {
+    level,
+    event,
+    monitor: 'natal-navigator-daily-health',
+    timestamp: new Date().toISOString(),
+    ...data,
+  };
+  const line = JSON.stringify(payload);
+  if (level === 'error') console.error(line);
+  else if (level === 'warning') console.warn(line);
+  else console.log(line);
+}
+
+function safeEqual(value, expected) {
+  if (!value || !expected) return false;
+  const actualBuffer = Buffer.from(String(value));
+  const expectedBuffer = Buffer.from(String(expected));
+  return actualBuffer.length === expectedBuffer.length
+    && timingSafeEqual(actualBuffer, expectedBuffer);
+}
+
+export function isAuthorized(authorization, env = process.env) {
+  const secrets = [env.CRON_SECRET, env.MONITOR_FALLBACK_SECRET].filter(Boolean);
+  if (!secrets.length) return false;
+  return secrets.some(secret => safeEqual(authorization, `Bearer ${secret}`));
+}
+
+export function reportDateBerlin(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Berlin',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
+export async function fetchWithTimeout(
+  url,
+  init = {},
+  timeoutMs = CHECK_TIMEOUT_MS,
+  fetchImpl = fetch
+) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const parentSignal = init.signal;
+  const abortFromParent = () => controller.abort();
+  if (parentSignal) {
+    if (parentSignal.aborted) controller.abort();
+    else parentSignal.addEventListener('abort', abortFromParent, { once: true });
+  }
+
   try {
-    checks.push({ name, ok: true, detail: (await fn()) || '' });
-  } catch (err) {
-    checks.push({ name, ok: false, detail: err.message });
+    return await fetchImpl(url, { ...init, signal: controller.signal });
+  } catch (error) {
+    if (controller.signal.aborted && !parentSignal?.aborted) {
+      throw new Error(`Timeout nach ${timeoutMs} ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    parentSignal?.removeEventListener?.('abort', abortFromParent);
   }
 }
 
@@ -51,259 +105,567 @@ function must(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-async function runChecks() {
+async function captureCheck(name, fn) {
+  const startedAt = Date.now();
+  try {
+    return {
+      name,
+      ok: true,
+      detail: (await fn()) || '',
+      ms: Date.now() - startedAt,
+    };
+  } catch (error) {
+    return {
+      name,
+      ok: false,
+      detail: errorMessage(error),
+      ms: Date.now() - startedAt,
+    };
+  }
+}
+
+/**
+ * Die Prüfungen bleiben absichtlich in einer stabilen Reihenfolge. Nach dem
+ * Laden von HTML und Entry-Bundle laufen unabhängige Grenzen parallel, damit
+ * ein langsamer Dienst nicht alle übrigen Prüfungen und Telegram blockiert.
+ */
+export async function runChecks({
+  fetchImpl = fetch,
+  timeoutMs = CHECK_TIMEOUT_MS,
+  env = process.env,
+} = {}) {
   let indexHtml = '';
   let anonKey = '';
   let entryJs = '';
+  const request = (url, init) => fetchWithTimeout(url, init, timeoutMs, fetchImpl);
 
-  // Vercel setzt diese Variablen im Deployment, das den Request bedient. Der
-  // Report läuft als Cron auf dem Produktions-Deployment und sieht damit
-  // dessen echte Herkunft — nicht die, die im Repo stehen sollte.
-  await check('Herkunft des Deployments', async () => {
-    const ref = process.env.VERCEL_GIT_COMMIT_REF;
-    const sha = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
-
-    // Ein CLI-Deploy (`vercel --prod`) setzt die Git-Variablen nicht. Das ist
-    // kein Fehler, aber es heißt, dass niemand mehr sagen kann, welcher Stand
-    // live ist — also melden statt stillschweigend durchwinken.
-    must(ref, 'keine Git-Herkunft im Deployment — vermutlich per CLI deployt, Stand nicht nachvollziehbar');
-
+  const provenance = await captureCheck('Herkunft des Deployments', async () => {
+    const ref = env.VERCEL_GIT_COMMIT_REF;
+    const sha = (env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
+    if (!ref) {
+      must(
+        env.VERCEL_ENV === 'production',
+        `CLI-Deployment läuft in Umgebung "${env.VERCEL_ENV || 'unbekannt'}" statt Produktion`
+      );
+      return `CLI-Deployment (${env.VERCEL_URL || 'production'})`;
+    }
     must(
       ref === PROD_BRANCH,
-      `läuft aus Branch "${ref}" statt "${PROD_BRANCH}" — es wurde ein fremdes Deployment auf Produktion promotet`
+      `läuft aus Branch "${ref}" statt "${PROD_BRANCH}" — fremdes Deployment auf Produktion`
     );
     return `${ref}@${sha || '?'}`;
   });
 
-  await check('Startseite', async () => {
-    const res = await fetch(`${SITE}/`, { redirect: 'follow' });
-    must(res.status === 200, `HTTP ${res.status}`);
-    indexHtml = await res.text();
+  const homepage = await captureCheck('Startseite', async () => {
+    const response = await request(`${SITE}/`, { redirect: 'follow' });
+    must(response.status === 200, `HTTP ${response.status}`);
+    indexHtml = await response.text();
     must(indexHtml.includes('<div id="root">'), 'kein #root im HTML');
     return `${(indexHtml.length / 1024).toFixed(0)} KB`;
   });
 
-  await check('Build-Env im Bundle', async () => {
+  const bundle = await captureCheck('Build-Env im Bundle', async () => {
     must(indexHtml, 'Startseite nicht geladen');
     const entry = indexHtml.match(/src="(\/assets\/index-[A-Za-z0-9_-]+\.js)"/)?.[1];
     must(entry, 'kein Entry-Bundle im HTML');
 
-    const res = await fetch(`${SITE}${entry}`);
-    must(res.status === 200, `Bundle HTTP ${res.status}`);
-    const js = await res.text();
-    entryJs = js;
-
+    const response = await request(`${SITE}${entry}`);
+    must(response.status === 200, `Bundle HTTP ${response.status}`);
+    entryJs = await response.text();
     must(
-      js.includes(SUPABASE_REF),
-      'VITE_SUPABASE_URL fehlt — ohne Env gebaut, React mountet nicht, nur die statische Shell ist sichtbar'
+      entryJs.includes(SUPABASE_REF),
+      'VITE_SUPABASE_URL fehlt — ohne Env gebaut, React mountet nicht'
     );
-    must(js.includes('phc_'), 'VITE_POSTHOG_KEY fehlt — ohne Env gebaut');
-
-    anonKey = js.match(/sb_publishable_[A-Za-z0-9_-]{20,}/)?.[0]
-      || js.match(/eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/)?.[0]
+    must(entryJs.includes('phc_'), 'VITE_POSTHOG_KEY fehlt — ohne Env gebaut');
+    anonKey = entryJs.match(/sb_publishable_[A-Za-z0-9_-]{20,}/)?.[0]
+      || entryJs.match(/eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/)?.[0]
       || '';
-
     return entry.replace('/assets/', '');
   });
 
-  await check('App-Chunks abrufbar', async () => {
-    must(indexHtml, 'Startseite nicht geladen');
-    const preloads = [...indexHtml.matchAll(/href="(\/assets\/vendor-[A-Za-z0-9_-]+\.js)"/g)].map(m => m[1]);
-    must(preloads.length >= 2, `nur ${preloads.length} Vendor-Chunks verlinkt`);
+  const remaining = await Promise.all([
+    captureCheck('App-Chunks abrufbar', async () => {
+      must(indexHtml, 'Startseite nicht geladen');
+      const chunks = [...indexHtml.matchAll(/href="(\/assets\/vendor-[A-Za-z0-9_-]+\.js)"/g)]
+        .map(match => match[1]);
+      must(chunks.length >= 2, `nur ${chunks.length} Vendor-Chunks verlinkt`);
+      await Promise.all(chunks.map(async chunk => {
+        const response = await request(`${SITE}${chunk}`, { method: 'HEAD' });
+        must(response.status === 200, `${chunk} HTTP ${response.status}`);
+      }));
+      return `${chunks.length} Chunks ok`;
+    }),
 
-    for (const chunk of preloads) {
-      const res = await fetch(`${SITE}${chunk}`, { method: 'HEAD' });
-      must(res.status === 200, `${chunk} HTTP ${res.status}`);
-    }
-    return `${preloads.length} Chunks ok`;
-  });
+    captureCheck('Server-Env vollständig', async () => {
+      const response = await request(`${SITE}/api/health`);
+      const body = await response.json().catch(() => ({}));
+      must(response.status === 200, `Status "${body.status || response.status}" — Server-Variable fehlt`);
+      return body.status || 'ok';
+    }),
 
-  await check('Server-Env vollständig', async () => {
-    const res = await fetch(`${SITE}/api/health`);
-    const body = await res.json().catch(() => ({}));
-    must(res.status === 200, `Status "${body.status || res.status}" — eine Server-Variable fehlt`);
-    return body.status || 'ok';
-  });
+    captureCheck('Kaufweg im Bundle', async () => {
+      must(entryJs, 'Entry-Bundle nicht geladen');
+      must(!entryJs.includes(DEADLOCK_MARKER), 'Payment-Deadlock von Juni ist zurück');
+      must(entryJs.includes('/create'), 'Route /create fehlt — Kauf-Funnel ist weg');
+      const chunk = entryJs.match(/assets\/CreatePage-[A-Za-z0-9_-]+\.js/)?.[0];
+      must(chunk, 'kein CreatePage-Chunk im Bundle referenziert');
+      const response = await request(`${SITE}/${chunk}`);
+      must(response.status === 200, `CreatePage-Chunk HTTP ${response.status}`);
+      const createJs = await response.text();
+      must(!createJs.includes(DEADLOCK_MARKER), 'Payment-Deadlock im CreatePage-Chunk');
+      must(createJs.includes('guest_checkout'), 'Guest-Checkout fehlt');
+      return chunk.replace('assets/', '');
+    }),
 
-  // Der Kern der Frage "können Leute kaufen". Statuscodes beantworten sie
-  // nicht: am 03.08. antwortete alles mit 200, während der komplette
-  // Guest-Funnel aus dem Bundle verschwunden und der alte Deadlock zurück war.
-  await check('Kaufweg im Bundle', async () => {
-    must(entryJs, 'Entry-Bundle nicht geladen');
+    captureCheck('Kauf-Abschluss erreichbar', async () => {
+      const response = await request(`${SITE}/api/verify-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      must(response.status !== 404, 'verify-session fehlt');
+      must(response.status < 500, `HTTP ${response.status}`);
+      return `antwortet ${response.status}`;
+    }),
 
-    must(
-      !entryJs.includes(DEADLOCK_MARKER),
-      'der Payment-Deadlock von Juni ist zurück — bezahlte Kunden kommen nicht an ihre Karte'
-    );
-    must(entryJs.includes('/create'), 'die Route /create fehlt im Bundle — der Kauf-Funnel ist weg');
+    captureCheck('Checkout-Endpunkt', async () => {
+      const response = await request(`${SITE}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      must(response.status < 500, `HTTP ${response.status} — Stripe-Env oder Function kaputt`);
+      return `antwortet ${response.status}`;
+    }),
 
-    // Die Bestellseite liegt in einem eigenen Lazy-Chunk; der Entry verweist
-    // nur auf den Dateinamen. Ohne diesen Chunk führt /create ins Leere.
-    const chunk = entryJs.match(/assets\/CreatePage-[A-Za-z0-9_-]+\.js/)?.[0];
-    must(chunk, 'kein CreatePage-Chunk im Bundle referenziert');
+    captureCheck('Supabase + Anon-Key', async () => {
+      must(anonKey, 'kein Anon-Key im Bundle gefunden');
+      const response = await request(`https://${SUPABASE_REF}.supabase.co/auth/v1/health`, {
+        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+      });
+      must(response.status !== 401, 'Anon-Key abgelehnt — Login und Kauf sind tot');
+      must(response.ok, `HTTP ${response.status}`);
+      return 'Key akzeptiert';
+    }),
 
-    const res = await fetch(`${SITE}/${chunk}`);
-    must(res.status === 200, `CreatePage-Chunk HTTP ${res.status}`);
-    const createJs = await res.text();
-    must(!createJs.includes(DEADLOCK_MARKER), 'Payment-Deadlock im CreatePage-Chunk');
-    must(createJs.includes('guest_checkout'), 'Guest-Checkout fehlt — /create führt nicht mehr zu Stripe');
+    captureCheck('Sitemap', async () => {
+      const response = await request(`${SITE}/sitemap.xml`);
+      must(response.status === 200, `HTTP ${response.status}`);
+      const count = ((await response.text()).match(/<loc>/g) || []).length;
+      must(count >= 100, `nur ${count} URLs (erwartet >= 100)`);
+      return `${count} URLs`;
+    }),
 
-    return chunk.replace('assets/', '');
-  });
+    captureCheck('robots.txt + OG-Bild', async () => {
+      const [robots, og] = await Promise.all([
+        request(`${SITE}/robots.txt`),
+        request(`${SITE}/og.png`, { method: 'HEAD' }),
+      ]);
+      must(robots.status === 200, `robots.txt HTTP ${robots.status}`);
+      must((await robots.text()).includes('Sitemap'), 'robots.txt ohne Sitemap-Verweis');
+      must(og.status === 200, `og.png HTTP ${og.status}`);
+      const size = Number(og.headers.get('content-length') || 0);
+      must(size > 10_000, `og.png nur ${size} Bytes`);
+      return `og.png ${(size / 1024).toFixed(0)} KB`;
+    }),
+  ]);
 
-  await check('Kauf-Abschluss erreichbar', async () => {
-    // Nach der Rückkehr von Stripe schaltet verify-session den Kauf frei.
-    // Fehlt der Endpunkt, hat der Kunde bezahlt und bekommt nichts.
-    const res = await fetch(`${SITE}/api/verify-session`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}',
-    });
-    must(res.status !== 404, 'verify-session fehlt — bezahlte Kunden werden nicht freigeschaltet');
-    must(res.status < 500, `HTTP ${res.status}`);
-    return `antwortet ${res.status}`;
-  });
-
-  await check('Checkout-Endpunkt', async () => {
-    const res = await fetch(`${SITE}/api/create-checkout-session`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}',
-    });
-    must(res.status < 500, `HTTP ${res.status} — Stripe-Env fehlt oder Function kaputt`);
-    return `antwortet ${res.status}`;
-  });
-
-  await check('Supabase + Anon-Key', async () => {
-    must(anonKey, 'kein Anon-Key im Bundle gefunden');
-    const res = await fetch(`https://${SUPABASE_REF}.supabase.co/auth/v1/health`, {
-      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-    });
-    must(res.status !== 401, 'Anon-Key abgelehnt — Login und Kauf sind tot');
-    must(res.ok, `HTTP ${res.status}`);
-    return 'Key akzeptiert';
-  });
-
-  await check('Sitemap', async () => {
-    const res = await fetch(`${SITE}/sitemap.xml`);
-    must(res.status === 200, `HTTP ${res.status}`);
-    const n = ((await res.text()).match(/<loc>/g) || []).length;
-    must(n >= 100, `nur ${n} URLs (erwartet >= 100)`);
-    return `${n} URLs`;
-  });
-
-  await check('robots.txt + OG-Bild', async () => {
-    const robots = await fetch(`${SITE}/robots.txt`);
-    must(robots.status === 200, `robots.txt HTTP ${robots.status}`);
-    must((await robots.text()).includes('Sitemap'), 'robots.txt ohne Sitemap-Verweis');
-
-    const og = await fetch(`${SITE}/og.png`, { method: 'HEAD' });
-    must(og.status === 200, `og.png HTTP ${og.status}`);
-    const size = Number(og.headers.get('content-length') || 0);
-    must(size > 10000, `og.png nur ${size} Bytes`);
-    return `og.png ${(size / 1024).toFixed(0)} KB`;
-  });
+  return [provenance, homepage, bundle, ...remaining];
 }
 
 function escapeHtml(value) {
-  return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
-/**
- * Eigene Zustellung statt sendTelegramMessage(): der gemeinsame Helfer
- * protokolliert Sendefehler nur auf der Konsole und schluckt sie sonst. Für
- * einen Wächter ist das die falsche Richtung — wenn der Alarmkanal selbst
- * kaputt ist (Token rotiert, Bot aus dem Kanal geworfen), muss das im
- * Antwort-Body sichtbar sein, sonst hält man Stille für "alles in Ordnung".
- */
-async function notifyTelegram(text) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatIds = (process.env.TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_IDS || '')
-    .split(',').map(s => s.trim()).filter(Boolean);
-
-  if (!token || !chatIds.length) {
-    return { delivered: 0, failed: 0, error: 'TELEGRAM_BOT_TOKEN oder TELEGRAM_CHAT_ID fehlt' };
-  }
-
-  let delivered = 0, failed = 0, error;
-  for (const chatId of chatIds) {
-    try {
-      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true }),
-      });
-      if (res.ok) {
-        delivered++;
-      } else {
-        failed++;
-        // description enthält Telegrams Klartextgrund, z.B. "chat not found".
-        const body = await res.json().catch(() => ({}));
-        error = `${res.status} ${body.description || ''}`.trim();
+export function splitTelegramText(text, limit = TELEGRAM_CHUNK_SIZE) {
+  if (text.length <= limit) return [text];
+  const chunks = [];
+  let current = '';
+  for (const line of text.split('\n')) {
+    if (line.length > limit) {
+      if (current) chunks.push(current);
+      for (let offset = 0; offset < line.length; offset += limit) {
+        chunks.push(line.slice(offset, offset + limit));
       }
-    } catch (err) {
-      failed++;
-      error = err.message;
+      current = '';
+      continue;
+    }
+    const candidate = current ? `${current}\n${line}` : line;
+    if (candidate.length > limit) {
+      chunks.push(current);
+      current = line;
+    } else {
+      current = candidate;
     }
   }
-  return { delivered, failed, ...(error ? { error } : {}) };
+  if (current) chunks.push(current);
+  return chunks;
 }
 
-export default async function handler(req, res) {
-  applySecurityHeaders(res);
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+function isRetryableTelegramStatus(status) {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+async function sendTelegramChunk({
+  token,
+  chatId,
+  text,
+  chatIndex,
+  chunkIndex,
+  fetchImpl,
+  sleepImpl,
+  random,
+  timeoutMs,
+  maxAttempts,
+  runId,
+}) {
+  let lastError = 'unbekannter Telegram-Fehler';
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const startedAt = Date.now();
+    try {
+      const response = await fetchWithTimeout(
+        `https://api.telegram.org/bot${token}/sendMessage`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+          }),
+        },
+        timeoutMs,
+        fetchImpl
+      );
+      const body = await response.json().catch(() => ({}));
+      if (response.ok && body.ok === true) {
+        logEvent('info', 'monitor.delivery.attempt', {
+          runId,
+          chatIndex,
+          chunkIndex,
+          attempt,
+          ok: true,
+          ms: Date.now() - startedAt,
+        });
+        return { ok: true, messageId: body.result?.message_id };
+      }
+
+      lastError = `${response.status} ${body.description || 'Telegram lehnte die Nachricht ab'}`.trim();
+      const retryable = isRetryableTelegramStatus(response.status)
+        || (response.ok && body.ok !== true);
+      logEvent(retryable ? 'warning' : 'error', 'monitor.delivery.attempt', {
+        runId,
+        chatIndex,
+        chunkIndex,
+        attempt,
+        ok: false,
+        status: response.status,
+        retryable,
+        ms: Date.now() - startedAt,
+      });
+      if (!retryable || attempt === maxAttempts) break;
+      const retryAfterMs = Number(body.parameters?.retry_after || 0) * 1_000;
+      const backoffMs = Math.min(8_000, 500 * (2 ** (attempt - 1)));
+      await sleepImpl(Math.max(retryAfterMs, Math.round(backoffMs * (0.5 + random()))));
+    } catch (error) {
+      lastError = errorMessage(error);
+      logEvent('warning', 'monitor.delivery.attempt', {
+        runId,
+        chatIndex,
+        chunkIndex,
+        attempt,
+        ok: false,
+        retryable: true,
+        error: lastError,
+        ms: Date.now() - startedAt,
+      });
+      if (attempt === maxAttempts) break;
+      const backoffMs = Math.min(8_000, 500 * (2 ** (attempt - 1)));
+      await sleepImpl(Math.round(backoffMs * (0.5 + random())));
+    }
+  }
+  return { ok: false, error: lastError };
+}
+
+export async function notifyTelegram(text, {
+  env = process.env,
+  fetchImpl = fetch,
+  sleepImpl = sleep,
+  random = Math.random,
+  timeoutMs = TELEGRAM_TIMEOUT_MS,
+  maxAttempts = TELEGRAM_ATTEMPTS,
+  runId = 'unknown',
+} = {}) {
+  const token = env.TELEGRAM_BOT_TOKEN;
+  const chatIds = (env.TELEGRAM_CHAT_ID || env.TELEGRAM_CHAT_IDS || '')
+    .split(',')
+    .map(value => value.trim())
+    .filter(Boolean);
+  if (!token || !chatIds.length) {
+    return {
+      delivered: 0,
+      failed: 0,
+      error: 'TELEGRAM_BOT_TOKEN oder TELEGRAM_CHAT_ID fehlt',
+    };
   }
 
-  // Vercel schickt bei Cron-Läufen automatisch `Authorization: Bearer $CRON_SECRET`,
-  // sobald die Variable im Projekt gesetzt ist. Ohne diese Sperre könnte jeder
-  // den Endpunkt aufrufen und den Telegram-Kanal fluten.
-  const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.authorization !== `Bearer ${secret}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  const chunks = splitTelegramText(text);
+  const chatResults = await Promise.all(chatIds.map(async (chatId, chatIndex) => {
+    const messageIds = [];
+    for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex += 1) {
+      const result = await sendTelegramChunk({
+        token,
+        chatId,
+        text: chunks[chunkIndex],
+        chatIndex,
+        chunkIndex,
+        fetchImpl,
+        sleepImpl,
+        random,
+        timeoutMs,
+        maxAttempts,
+        runId,
+      });
+      if (!result.ok) return result;
+      if (result.messageId != null) messageIds.push(result.messageId);
+    }
+    return { ok: true, messageIds };
+  }));
 
-  checks.length = 0;
-  await runChecks();
+  const delivered = chatResults.filter(result => result.ok).length;
+  const failed = chatResults.length - delivered;
+  const errors = [...new Set(chatResults.filter(result => !result.ok).map(result => result.error))];
+  return {
+    delivered,
+    failed,
+    chunks: chunks.length,
+    messageIds: chatResults.filter(result => result.ok).flatMap(result => result.messageIds || []),
+    ...(errors.length ? { error: errors.join('; ') } : {}),
+  };
+}
 
-  const failed = checks.filter(c => !c.ok);
-  const now = new Date().toLocaleString('de-DE', {
-    timeZone: 'Europe/Berlin', dateStyle: 'short', timeStyle: 'short',
+function getMonitorSupabase(env = process.env) {
+  if (monitorSupabase) return monitorSupabase;
+  const url = (env.VITE_SUPABASE_URL || env.SUPABASE_URL || '')
+    .replace(/\/+$/, '')
+    .replace(/\/rest\/v\d+$/, '');
+  const key = env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('Supabase-Monitor-Env fehlt');
+  monitorSupabase = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
+  return monitorSupabase;
+}
 
+async function claimDailyRun(supabase, { reportDate, runId, trigger }) {
+  const { data, error } = await supabase.rpc('claim_health_report_run', {
+    p_report_date: reportDate,
+    p_attempt_id: runId,
+    p_trigger: trigger,
+    p_lease_seconds: RUN_LEASE_SECONDS,
+  });
+  if (error) throw error;
+  return data === true;
+}
+
+async function completeDailyRun(supabase, {
+  reportDate,
+  runId,
+  status,
+  checks,
+  telegram,
+  error,
+}) {
+  const { data, error: rpcError } = await supabase.rpc('complete_health_report_run', {
+    p_report_date: reportDate,
+    p_attempt_id: runId,
+    p_status: status,
+    p_checks: checks,
+    p_telegram: telegram,
+    p_error: error || null,
+  });
+  if (rpcError) throw rpcError;
+  return data === true;
+}
+
+function getTrigger(req) {
+  if (req.query?.source === 'supabase' || String(req.query?.trigger || '').startsWith('supabase-')) {
+    return String(req.query?.trigger || 'supabase-fallback');
+  }
+  if (String(req.headers['user-agent'] || '').includes('vercel-cron/')) return 'vercel-cron';
+  return 'manual';
+}
+
+function buildReport(checks, now) {
+  const failed = checks.filter(check => !check.ok);
+  const localTime = now.toLocaleString('de-DE', {
+    timeZone: 'Europe/Berlin',
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
   const lines = [
     failed.length
       ? `🚨 <b>natalnavigator.com — ${failed.length} Problem${failed.length > 1 ? 'e' : ''}</b>`
       : '✅ <b>natalnavigator.com läuft</b>',
-    `<i>${escapeHtml(now)} Uhr</i>`,
+    `<i>${escapeHtml(localTime)} Uhr</i>`,
     '',
-    ...checks.map(c => `${c.ok ? '✅' : '❌'} ${escapeHtml(c.name)}${c.detail ? ` — ${escapeHtml(c.detail)}` : ''}`),
+    ...checks.map(check => (
+      `${check.ok ? '✅' : '❌'} ${escapeHtml(check.name)}`
+      + `${check.detail ? ` — ${escapeHtml(check.detail)}` : ''}`
+    )),
   ];
-
   if (failed.length) {
     lines.push(
       '',
-      'Die zwei bekannten Ursachen zuerst prüfen:',
-      '1. Wurde ein fremdes Deployment auf Produktion promotet? (Vercel → Deployments)',
-      '2. Wurde ohne Build-Env deployt, etwa mit --prebuilt?'
+      'Zuerst prüfen:',
+      '1. Fremdes Deployment auf Produktion promotet?',
+      '2. Ohne Build-Env oder mit --prebuilt deployt?'
     );
   }
+  return { failed, text: lines.join('\n') };
+}
 
-  // Bei "quiet" nur melden, wenn etwas kaputt ist — für Aufrufe direkt nach
-  // einem Deploy, die nicht jedes Mal eine Erfolgsmeldung auslösen sollen.
+export async function handleHealthReport(req, res, dependencies = {}) {
+  applySecurityHeaders(res);
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const env = dependencies.env || process.env;
+  if (!isAuthorized(req.headers.authorization, env)) {
+    const misconfigured = !env.CRON_SECRET && !env.MONITOR_FALLBACK_SECRET;
+    return res.status(misconfigured ? 503 : 401).json({
+      error: misconfigured ? 'Monitor authentication is not configured' : 'Unauthorized',
+    });
+  }
+
+  const now = dependencies.now ? dependencies.now() : new Date();
+  const runId = dependencies.randomUUID ? dependencies.randomUUID() : randomUUID();
+  const reportDate = reportDateBerlin(now);
+  const trigger = getTrigger(req);
   const quiet = req.query?.quiet === '1';
+  const force = req.query?.force === '1';
+  const startedAt = Date.now();
+  let supabase;
+  let ledgerAvailable = false;
+
+  logEvent('info', 'monitor.run.start', { runId, reportDate, trigger, quiet, force });
+
+  if (!quiet && !force) {
+    try {
+      supabase = dependencies.getSupabaseClient
+        ? dependencies.getSupabaseClient(env)
+        : getMonitorSupabase(env);
+      ledgerAvailable = true;
+      const claimed = await claimDailyRun(supabase, { reportDate, runId, trigger });
+      if (!claimed) {
+        logEvent('info', 'monitor.run.skipped', {
+          runId,
+          reportDate,
+          trigger,
+          reason: 'already-delivered-or-active',
+        });
+        return res.status(200).json({
+          status: 'already-delivered',
+          reportDate,
+          trigger,
+        });
+      }
+    } catch (error) {
+      // Zustellung hat Vorrang vor perfekter Deduplizierung: fällt das Ledger
+      // aus, wird weitergesendet. Eine seltene Dublette ist besser als Stille.
+      logEvent('warning', 'monitor.ledger.claim_failed', {
+        runId,
+        reportDate,
+        trigger,
+        error: errorMessage(error),
+      });
+      ledgerAvailable = false;
+    }
+  }
+
+  const checks = await runChecks({
+    fetchImpl: dependencies.fetchImpl || fetch,
+    timeoutMs: dependencies.checkTimeoutMs || CHECK_TIMEOUT_MS,
+    env,
+  });
+  for (const check of checks) {
+    logEvent(check.ok ? 'info' : 'error', 'monitor.check', {
+      runId,
+      name: check.name,
+      ok: check.ok,
+      detail: check.detail,
+      ms: check.ms,
+    });
+  }
+
+  const { failed, text } = buildReport(checks, now);
   const telegram = (failed.length || !quiet)
-    ? await notifyTelegram(lines.join('\n'))
+    ? await notifyTelegram(text, {
+      env,
+      fetchImpl: dependencies.fetchImpl || fetch,
+      sleepImpl: dependencies.sleepImpl || sleep,
+      random: dependencies.random || Math.random,
+      timeoutMs: dependencies.telegramTimeoutMs || TELEGRAM_TIMEOUT_MS,
+      maxAttempts: dependencies.telegramAttempts || TELEGRAM_ATTEMPTS,
+      runId,
+    })
     : { delivered: 0, failed: 0, skipped: 'quiet' };
 
-  // Eine unzustellbare Meldung ist selbst ein Ausfall — sonst schweigt der
-  // Wächter und niemand merkt es.
-  const broken = failed.length > 0 || telegram.failed > 0 || Boolean(telegram.error);
+  const delivered = telegram.skipped === 'quiet'
+    || (telegram.delivered > 0 && telegram.failed === 0 && !telegram.error);
+  const status = !delivered ? 'delivery_failed' : failed.length ? 'failing' : 'ok';
 
-  return res.status(broken ? 503 : 200).json({
-    status: failed.length ? 'failing' : 'ok',
+  if (ledgerAvailable && !quiet) {
+    try {
+      await completeDailyRun(supabase, {
+        reportDate,
+        runId,
+        status: status === 'delivery_failed' ? 'error' : status,
+        checks,
+        telegram,
+        error: delivered ? null : telegram.error || 'Telegram nicht vollständig zugestellt',
+      });
+    } catch (error) {
+      logEvent('error', 'monitor.ledger.complete_failed', {
+        runId,
+        reportDate,
+        trigger,
+        error: errorMessage(error),
+      });
+    }
+  }
+
+  logEvent(delivered ? 'info' : 'error', 'monitor.run.complete', {
+    runId,
+    reportDate,
+    trigger,
+    status,
+    failedChecks: failed.length,
+    telegramDelivered: telegram.delivered,
+    telegramFailed: telegram.failed,
+    ms: Date.now() - startedAt,
+  });
+
+  // Ein kaputter Web-Check ist erfolgreich gemeldet worden und erhält 200.
+  // Nur eine fehlende Zustellung ist 503; das verhindert Backup-Dubletten.
+  return res.status(delivered ? 200 : 503).json({
+    status,
+    reportDate,
+    trigger,
     telegram,
     checks,
   });
+}
+
+export default async function handler(req, res) {
+  return handleHealthReport(req, res);
 }

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
       "source": "/en",
@@ -26,7 +27,7 @@
       "permanent": true
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "has": [
         {
           "type": "host",
@@ -381,10 +382,19 @@
       ]
     }
   ],
+  "functions": {
+    "api/health-report.js": {
+      "maxDuration": 90
+    }
+  },
   "crons": [
     {
       "path": "/api/health-report",
       "schedule": "15 6 * * *"
+    },
+    {
+      "path": "/api/health-report",
+      "schedule": "15 7 * * *"
     }
   ]
 }

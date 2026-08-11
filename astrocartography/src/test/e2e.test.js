@@ -72,4 +72,23 @@ describe('Vercel configuration', () => {
       );
     }
   });
+
+  it('keeps API routes out of legacy-host redirects', () => {
+    const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
+    const hostRedirect = config.redirects.find((redirect) => redirect.has?.some(
+      (condition) => condition.type === 'host'
+    ));
+    expect(hostRedirect).toBeDefined();
+    expect(hostRedirect.source).toContain('(?!api/)');
+  });
+
+  it('has two daily health-report triggers and a bounded function duration', () => {
+    const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
+    const healthCrons = config.crons.filter((cron) => cron.path === '/api/health-report');
+    expect(healthCrons).toEqual([
+      { path: '/api/health-report', schedule: '15 6 * * *' },
+      { path: '/api/health-report', schedule: '15 7 * * *' },
+    ]);
+    expect(config.functions['api/health-report.js'].maxDuration).toBe(90);
+  });
 });
