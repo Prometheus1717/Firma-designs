@@ -167,8 +167,8 @@ function renderLinesCluster(page) {
     .map((s) => `          <li><a href="/${s}">${lineLabel(s)}</a></li>`)
     .join('\n');
   const guides = de
-    ? ''
-    : `\n        <p class="cluster-guides">Guides: <a href="/blog/astrocartography-lines-explained">Lines explained</a> &middot; <a href="/blog/how-to-read-astrocartography-map">How to read your map</a> &middot; <a href="/blog/strongest-astrocartography-line">Strongest line</a></p>`;
+    ? `\n        <p class="cluster-guides">Leitfaden: <a href="/blog/astrokartographie-planetenlinien-winkel">10 Planeten × 4 Winkel</a></p>`
+    : `\n        <p class="cluster-guides">Guides: <a href="/blog/astrocartography-planet-angle-matrix">Planet × angle matrix</a> &middot; <a href="/blog/astrocartography-lines-explained">Lines explained</a> &middot; <a href="/blog/how-to-read-astrocartography-map">How to read your map</a></p>`;
   return `      <nav class="lines-cluster" aria-label="${heading}">\n        <h2>${heading}</h2>\n        <ul>\n${items}\n        </ul>${guides}\n      </nav>`;
 }
 

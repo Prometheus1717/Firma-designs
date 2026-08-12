@@ -7,6 +7,7 @@ export default {
   "keywords": "relocation astrology, relocated chart, relocation chart vs astrocartography, astrocartography relocation, moving astrology chart",
   "articleHeadline": "Relocation Astrology: Relocated Charts vs Astrocartography",
   "datePublished": "2026-06-15",
+  "dateModified": "2026-08-11",
   "breadcrumb": [
     {
       "name": "Relocation Astrology",
@@ -34,7 +35,7 @@ export default {
     },
     {
       "h2": "Using it to plan a move",
-      "html": "<p>Relocation astrology is at its most useful as a structured conversation with yourself about place, layered on top of all the ordinary practical factors a move involves — cost, language, climate, work, the people you'd be near. It should sit alongside those, never replace them.</p>\n      <p>A sensible workflow looks like this. First, open an astrocartography map to see which lines cross the regions you're drawn to, and note which planets are involved and how close the line runs to each candidate city. Then cast a relocated chart for your two or three frontrunners and read the angles and houses to understand the texture of each. Finally — and this is the most honest calibration there is — compare what you find against places you've already lived or visited. If the descriptions ring true for your past, the framework is meaningful to you; if they don't, trust your own experience over any chart.</p>\n      <p>Throughout, hold it lightly. A relocated chart that emphasises home and roots is an invitation to reflect on whether that's what you want from a place, not a verdict that you'll be happy there. Used this way, relocation astrology becomes a thoughtful prompt rather than a prophecy.</p>\n      <p>Natal Navigator builds both views from your birth details — your astrocartography map and relocated charts for the cities you're considering — as a one-time €9.99 / $9.99 with no subscription, so you can explore breadth and depth together without an ongoing commitment.</p>"
+      "html": "<p>Relocation astrology is at its most useful as a structured conversation with yourself about place, layered on top of all the ordinary practical factors a move involves — cost, language, climate, work, the people you'd be near. It should sit alongside those, never replace them.</p>\n      <p>A sensible workflow looks like this. First, open an astrocartography map to see which lines approach the regions you're drawn to, then record the planet, angle and actual shortest distance using a transparent convention; the <a href=\"/blog/astrocartography-line-distance\">line-distance guide</a> shows how. If no major line is genuinely nearby, that is not a failed result—the guide to <a href=\"/blog/no-astrocartography-lines-near-me\">line-light locations</a> explains what to check next. Then cast a relocated chart for your two or three frontrunners and read the angles and houses to understand the texture of each. Finally — and this is the most honest calibration there is — compare what you find against places you've already lived or visited. If the descriptions ring true for your past, the framework is meaningful to you; if they don't, trust your own experience over any chart.</p>\n      <p>Throughout, hold it lightly. A relocated chart that emphasises home and roots is an invitation to reflect on whether that's what you want from a place, not a verdict that you'll be happy there. Used this way, relocation astrology becomes a thoughtful prompt rather than a prophecy.</p>\n      <p>Natal Navigator builds both views from your birth details — your astrocartography map and relocated charts for the cities you're considering — as a one-time €9.99 / $9.99 with no subscription, so you can explore breadth and depth together without an ongoing commitment.</p>"
     }
   ],
   "faq": [
@@ -64,6 +65,18 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/blog/how-to-read-relocated-chart",
+      "label": "How to read a relocated chart, step by step"
+    },
+    {
+      "href": "/blog/astrocartography-line-distance",
+      "label": "How close is close? Measure lines without false precision"
+    },
+    {
+      "href": "/blog/no-astrocartography-lines-near-me",
+      "label": "No lines near a finalist? Read the line-light location"
+    },
     { "href": "/blog/solar-return-astrocartography", "label": "Solar return astrocartography — where to spend your birthday" },
     {
       "href": "/blog/astrocartography-vs-relocation-astrology",

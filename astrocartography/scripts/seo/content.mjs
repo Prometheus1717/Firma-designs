@@ -24,7 +24,10 @@ import { fileURLToPath } from 'node:url';
 
 const pagesDir = join(dirname(fileURLToPath(import.meta.url)), 'pages');
 const files = readdirSync(pagesDir)
-  .filter((f) => f.endsWith('.mjs'))
+  // Finder-style copies such as "about 2.mjs" are local backup artifacts,
+  // not production page specs. Ignoring them keeps a harmless backup from
+  // registering the same slug twice during local and Vercel builds.
+  .filter((f) => f.endsWith('.mjs') && !/ \d+\.mjs$/.test(f))
   .sort();
 
 const modules = await Promise.all(files.map((f) => import(join(pagesDir, f))));

@@ -13,7 +13,7 @@ export default {
     { name: `Reading Cost`, url: `/blog/astrocartography-reading-cost` },
   ],
   h1: `How much does an astrocartography reading cost?`,
-  lead: `The honest range is wider than you'd expect: <strong>from free to several hundred dollars</strong>, for what can look like the same thing. Calculating your lines is essentially free — the astronomy is solved. What you actually pay for is interpretation, personalisation and someone's time. Here's what each tier really gets you, so you don't overpay for a chart you could have read yourself, or underpay when a real conversation is what you needed.`,
+  lead: `The honest range is wider than you'd expect: <strong>from low-cost self-serve software to several hundred dollars</strong>, for what can look like the same thing. The price is not just for astronomical arithmetic; it also covers the interface, geocoding, storage, city matching, interpretation and support around the result. Here's what each tier really gets you, so you don't overpay for features you do not need or underpay when a real conversation is what you wanted.`,
   note: `The maths behind your lines is the cheap part — a computer does it in milliseconds. Price is almost entirely about interpretation and human time, so the real question isn't "how much does it cost" but "how much interpretation do I actually need?"`,
   sections: [
     {
@@ -24,7 +24,7 @@ export default {
     {
       h2: `Free and near-free — where the math is basically free`,
       html: `<p>Several long-standing websites will calculate your astrocartography lines for nothing. They're accurate at the astronomy and completely fine for a first look — the trade-offs are dated interfaces, sparse interpretation, and maps that can be hard to actually read. You get the lines; making sense of them is on you. We compare the main options in our <a href="/blog/best-astrocartography-calculators">best astrocartography calculators</a> round-up.</p>
-      <p>Free is the right starting point for most people, because it answers the first question — <em>where do my lines even fall?</em> — at zero risk. If you're curious rather than committed, begin here. You can also generate a <a href="/free-astrocartography-chart">free astrocartography chart</a> or explore the <a href="/demo">live demo</a> with example charts before spending anything at all.</p>
+      <p>A product preview is the right starting point for most people because it shows whether the interface and interpretation style make sense before any purchase. Natal Navigator's <a href="/demo">live demo</a> uses example charts only; it does not calculate a personal map. Your own 40-line globe from real birth data is a one-time €9.99 / $9.99 purchase with no subscription.</p>
       <figure>
 <svg viewBox="0 0 720 320" role="img" aria-labelledby="costLadderTitle costLadderDesc">
   <title id="costLadderTitle">The cost of an astrocartography reading by tier</title>
@@ -90,7 +90,7 @@ export default {
     {
       h2: `So what should you actually pay?`,
       html: `<p>Start free to see your lines. If you want a map you can genuinely read and return to, a one-time tool around €9.99 is the best value for most people and avoids subscription creep. Book a professional reading — $75 to $300+ — when the decision is genuinely big, genuinely complicated, or when what you really want is a thoughtful conversation rather than an answer. And if you're tempted to let an AI do it for free, read <a href="/blog/can-chatgpt-read-astrocartography">can ChatGPT read astrocartography accurately</a> first, because that free option has a catch.</p>
-      <p>Whatever tier you choose, the calculation underneath is the same solved astronomy. You can build your own accurate, interactive 40-line map right now for a one-time €9.99 / $9.99 — no subscription — or explore the <a href="/demo">demo</a> for free before deciding whether you need anything more. Spend up the ladder only for the interpretation you actually can't get yourself.</p>`,
+      <p>Whatever tier you choose, the calculation underneath is the same solved astronomy. You can build your own accurate, interactive 40-line map right now for a one-time €9.99 / $9.99 — no subscription — and inspect the <a href="/demo">example-data demo</a> before deciding whether you need anything more. Spend up the ladder only for the interpretation you actually can't get yourself.</p>`,
     },
   ],
   faq: [
@@ -112,15 +112,15 @@ export default {
     },
     {
       q: `Can I do an astrocartography reading myself for free?`,
-      a: `Yes. You can calculate your lines with a free tool, then learn to interpret them using guides like our breakdown of the ten lines and how to read your map. This gives you the whole reading for the cost of your own time. A paid tool makes it easier and clearer, and a professional adds expert dialogue, but neither is strictly required to get started.`,
+      a: `You can learn the method with public guides and example charts, then use a self-serve calculator for your personal lines. Natal Navigator charges a one-time €9.99 / $9.99 for that personal map; the demo is limited to example data. A professional reading costs more because it adds expert dialogue and synthesis rather than only the calculated map.`,
     },
   ],
   related: [
     { href: `/blog/best-astrocartography-calculators`, label: `The best astrocartography calculators, compared` },
     { href: `/blog/can-chatgpt-read-astrocartography`, label: `Can ChatGPT read your astrocartography chart?` },
-    { href: `/free-astrocartography-chart`, label: `Get a free astrocartography chart` },
+    { href: `/free-astrocartography-chart`, label: `Preview the app before buying a personal map` },
     { href: `/blog/astrocartography-reading`, label: `What an astrocartography reading actually tells you` },
-    { href: `/astrocartography-calculator`, label: `Free astrocartography calculator — interactive globe` },
+    { href: `/astrocartography-calculator`, label: `Personal astrocartography calculator — one-time price` },
   ],
   definedTerm: {
     name: `Astrocartography reading cost`,

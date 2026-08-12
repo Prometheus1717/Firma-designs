@@ -64,8 +64,8 @@ export default {
       "a": "It is reliable as a way to organise and prioritise your thinking, not as a forecast of outcomes. Astrology is not science, and it cannot account for visas, finances, climate or distance from loved ones. Use it as one input among several practical ones, and let your own judgement make the final call."
     },
     {
-      "q": "Can I check my own location lines for free?",
-      "a": "Yes — you can explore astrocartography in the Natal Navigator demo using example charts before entering any of your own data. Building a personal map from your own birth details is a one-time €9.99 / $9.99 with no subscription."
+      "q": "How can I preview the map before buying?",
+      "a": "Use the Natal Navigator demo to inspect the interface with example charts before entering any of your own data. A map calculated from your personal birth details is a one-time €9.99 / $9.99 purchase with no subscription."
     }
   ],
   "related": [

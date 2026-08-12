@@ -80,6 +80,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrokartographie-planetenlinien-winkel",
+      "label": "Planetenlinien und Winkel: die vollständige 10 × 4 Lesematrix"
+    },
+    {
       "href": "/astrokartographie/rechner",
       "label": "Astrokartographie kostenlos berechnen"
     },

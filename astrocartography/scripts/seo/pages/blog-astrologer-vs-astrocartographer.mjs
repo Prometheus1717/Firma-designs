@@ -60,7 +60,7 @@ export default {
     },
     {
       h2: `Do you even need a specialist?`,
-      html: `<p>Here's the honest bit. Because astrocartography is a well-defined technique — project the chart, read the lines — much of it is now handled by software, which means you don't necessarily need to hire anyone to see your map. A dedicated tool calculates the same lines a specialist would, and guides like <a href="/blog/astrocartography-lines-explained">the ten lines explained</a> and <a href="/blog/how-to-read-astrocartography-map">how to read your map</a> let you interpret them yourself. A human specialist adds experience and nuance for complex questions, but the entry point is free and self-serve.</p>
+      html: `<p>Here's the honest bit. Because astrocartography is a well-defined technique — project the chart, read the lines — much of it is now handled by software, which means you don't necessarily need to hire anyone to see your map. A dedicated tool calculates the same lines a specialist would, and guides like <a href="/blog/astrocartography-lines-explained">the ten lines explained</a> and <a href="/blog/how-to-read-astrocartography-map">how to read your map</a> let you interpret them yourself. A human specialist adds experience and nuance for complex questions. Natal Navigator keeps that self-serve route simple: the personal map is a one-time €9.99 / $9.99 purchase with no subscription, while the example demo lets you inspect the interface before buying.</p>
       <p>So the practical takeaway: use the tools (or a general astrologer you already trust) for most questions, and consider a dedicated astrocartographer only when a big relocation decision genuinely warrants an expert conversation. You can start right now — explore the <a href="/demo">live demo</a> with example charts, then build your own 40-line map. If you're weighing whether to hire at all, see <a href="/blog/hire-astrocartographer-or-diy">hire an astrocartographer or do it yourself</a>.</p>
       <figure>
 <svg viewBox="0 0 720 300" role="img" aria-labelledby="needTitle needDesc">
@@ -110,7 +110,7 @@ export default {
     },
     {
       q: `Do I need to hire either one to get started?`,
-      a: `No. Because astrocartography is a well-defined technique now handled by software, you can calculate your own lines for free and interpret them with guides. A human astrologer or astrocartographer adds experience for complex questions, but the map itself is self-serve, so most people start on their own and consult a professional only for a big decision.`,
+      a: `No. Because astrocartography is a well-defined technique now handled by software, you can use a self-serve calculator and interpret the result with guides. Natal Navigator charges a one-time €9.99 / $9.99 for a personal map; the demo uses example data only. A human astrologer or astrocartographer adds experience for complex questions, so many people begin with software and consult a professional only for a major decision.`,
     },
   ],
   related: [

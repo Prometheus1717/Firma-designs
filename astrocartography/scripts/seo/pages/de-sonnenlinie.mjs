@@ -72,6 +72,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrokartographie-planetenlinien-winkel",
+      "label": "Alle 10 Planetenlinien an AC, DC, MC und IC vergleichen"
+    },
+    {
       "href": "/astrokartographie/rechner",
       "label": "Astrokartographie kostenlos berechnen"
     },

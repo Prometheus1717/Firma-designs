@@ -64,6 +64,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrokartographie-planetenlinien-winkel",
+      "label": "Mond, Sonne und alle Planeten an den vier Winkeln vergleichen"
+    },
+    {
       "href": "/astrokartographie/venuslinie",
       "label": "Die Venuslinie — Liebe, Schönheit und Leichtigkeit"
     },

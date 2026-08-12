@@ -29,7 +29,7 @@ export default {
     },
     {
       h2: 'Product, privacy and commercial scope',
-      html: `<p>The live demo uses example charts and is free to explore. A personal map is a one-time purchase currently shown on the product page as €9.99 or US$9.99 depending on locale. Privacy, storage and deletion details are maintained in the <a href="/datenschutz">privacy notice</a>; commercial terms are maintained in the <a href="/agb">terms</a>.</p>`,
+      html: `<p>The demo is a product preview limited to example charts. A personal map is a one-time purchase currently shown on the product page as €9.99 or US$9.99 depending on locale. Privacy, storage and deletion details are maintained in the <a href="/datenschutz">privacy notice</a>; commercial terms are maintained in the <a href="/agb">terms</a>.</p>`,
     },
   ],
   faq: [

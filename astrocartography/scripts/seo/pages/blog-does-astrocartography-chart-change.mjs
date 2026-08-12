@@ -104,6 +104,7 @@ export default {
     },
   ],
   related: [
+    { href: `/blog/how-to-read-relocated-chart`, label: `What changes in a relocated chart—and how to read it` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },
     { href: `/blog/how-long-astrocartography-effects`, label: `How long do astrocartography effects take?` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },

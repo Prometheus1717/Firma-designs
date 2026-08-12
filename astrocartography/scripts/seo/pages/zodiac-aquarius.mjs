@@ -2,8 +2,8 @@ export default {
   "slug": "best-places-to-live/aquarius",
   "lang": "en",
   "title": "Best Places to Live for an Aquarius: 7 Cities From the Future",
-  "ogTitle": "Best Places to Live for a Aquarius",
-  "description": "Where should a Aquarius live? The 7 best cities for Aquarius (Jan 20 – Feb 18) based on originality, ideas ahead of schedule and chosen community.",
+  "ogTitle": "Best Places to Live for an Aquarius",
+  "description": "Where should an Aquarius live? The 7 best cities for Aquarius (Jan 20 – Feb 18) based on originality, ideas ahead of schedule and chosen community.",
   "keywords": "best places to live for a aquarius, where should a aquarius live, aquarius best cities, aquarius where to live, aquarius zodiac city, aquarius relocation astrology",
   "articleHeadline": "Best Places to Live for an Aquarius: 7 Cities From the Future",
   "datePublished": "2026-07-04",
@@ -17,19 +17,19 @@ export default {
       "url": "/best-places-to-live/aquarius"
     }
   ],
-  "h1": "The Best Places to Live for a Aquarius",
+  "h1": "The Best Places to Live for an Aquarius",
   "lead": "The best places to live for an <strong>Aquarius</strong> are cities running a few years ahead of the present — tech and subculture, tolerance as baseline, weirdness as a civic asset. As fixed air ruled by Uranus, Aquarius suffocates in conformist places; you don't want to fit in, you want a city where nobody has to.",
   "sections": [
     {
-      "h2": "What a Aquarius actually needs from a city",
+      "h2": "What an Aquarius actually needs from a city",
       "html": "<p>Aquarius builds identity through difference and belonging through ideas. Your city needs functioning strangeness: co-ops and collectives, niche scenes with open doors, technology and counterculture sharing the same cafés. Tradition-heavy societies with one script for adulthood will politely erase you. The paradox to honour: fixed air also needs stability — the right city lets you be radical on a reliable grid.</p>"
     },
     {
-      "h2": "The 7 best cities for a Aquarius",
+      "h2": "The 7 best cities for an Aquarius",
       "html": "<figure style=\"margin:28px 0;\">\n<svg viewBox=\"0 0 720 190\" role=\"img\" aria-label=\"Aquarius at a glance: air sign ruled by Uranus, with its seven recommended cities\" style=\"width:100%;height:auto;display:block;\">\n  <rect x=\"1\" y=\"1\" width=\"718\" height=\"188\" rx=\"12\" fill=\"#FFFFFF\" stroke=\"#2B6CB0\" stroke-opacity=\"0.45\"/>\n  <text x=\"52\" y=\"86\" font-size=\"64\" fill=\"#2B6CB0\" font-family=\"Georgia,serif\" text-anchor=\"middle\">♒</text>\n  <text x=\"100\" y=\"52\" font-size=\"26\" font-weight=\"bold\" fill=\"#181C23\" font-family=\"Arial,Helvetica,sans-serif\">Aquarius</text>\n  <text x=\"100\" y=\"76\" font-size=\"13\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Jan 20 – Feb 18</text>\n  <rect x=\"440\" y=\"30\" width=\"120\" height=\"26\" rx=\"13\" fill=\"none\" stroke=\"#2B6CB0\"/>\n  <text x=\"500\" y=\"47\" font-size=\"12\" fill=\"#2B6CB0\" text-anchor=\"middle\" font-family=\"Arial,Helvetica,sans-serif\">Air sign</text>\n  <rect x=\"572\" y=\"30\" width=\"126\" height=\"26\" rx=\"13\" fill=\"none\" stroke=\"#0E7C5B\"/>\n  <text x=\"635\" y=\"47\" font-size=\"12\" fill=\"#0E7C5B\" text-anchor=\"middle\" font-family=\"Arial,Helvetica,sans-serif\">Ruled by Uranus</text>\n  <line x1=\"60\" y1=\"150\" x2=\"660\" y2=\"150\" stroke=\"#2B6CB0\" stroke-opacity=\"0.35\" stroke-width=\"2\"/>\n  <text x=\"60\" y=\"122\" font-size=\"12\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">The 7 cities from this guide</text>\n  <circle cx=\"60\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"60\" y=\"172\" text-anchor=\"start\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Berlin</text><circle cx=\"160\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"160\" y=\"172\" text-anchor=\"middle\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">San Francisco</text><circle cx=\"260\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"260\" y=\"172\" text-anchor=\"middle\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Reykjavik</text><circle cx=\"360\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"360\" y=\"172\" text-anchor=\"middle\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Tallinn</text><circle cx=\"460\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"460\" y=\"172\" text-anchor=\"middle\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Rotterdam</text><circle cx=\"560\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"560\" y=\"172\" text-anchor=\"middle\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Taipei</text><circle cx=\"660\" cy=\"150\" r=\"5\" fill=\"#2B6CB0\"/><text x=\"660\" y=\"172\" text-anchor=\"end\" font-size=\"11\" fill=\"#4C5563\" font-family=\"Arial,Helvetica,sans-serif\">Brighton</text>\n</svg>\n<figcaption style=\"font-size:13px;color:#4C5563;margin-top:8px;\">Aquarius at a glance — element, ruling planet and the seven cities recommended below.</figcaption>\n</figure><p>Seven places where Aquarius energy (fixed air) tends to land on its feet:</p>\n      <h3>1. Berlin</h3>\n      <p>The world capital of doing your own thing — subculture with infrastructure.</p>\n      <h3>2. San Francisco</h3>\n      <p>Utopian tech ambition and legacy counterculture, still the future's test lab.</p>\n      <h3>3. Reykjavik</h3>\n      <p>A whole society as a small experiment; creativity per capita off the charts.</p>\n      <h3>4. Tallinn</h3>\n      <p>Digital statehood — a government run like a startup.</p>\n      <h3>5. Rotterdam</h3>\n      <p>Architectural experiment as skyline; rebuilt to be different.</p>\n      <h3>6. Taipei</h3>\n      <p>Open-source civics, night markets and friendly futurism.</p>\n      <h3>7. Brighton</h3>\n      <p>England's tolerance capital, sea air included.</p>"
     },
     {
-      "h2": "Where a Aquarius tends to struggle",
+      "h2": "Where an Aquarius tends to struggle",
       "html": "<p>Status-conservative cities where the first question is what your parents do. Aquarius doesn't rebel against those places so much as evaporate from them.</p>"
     },
     {
@@ -39,11 +39,11 @@ export default {
   ],
   "faq": [
     {
-      "q": "What is the best city for a Aquarius to live in?",
+      "q": "What is the best city for an Aquarius to live in?",
       "a": "Strong picks are Berlin, San Francisco and Reykjavik — cities that match Aquarius's core needs: originality, ideas ahead of schedule and chosen community. The truly best city for you personally depends on your full birth chart, which is what an astrocartography map shows."
     },
     {
-      "q": "Which places should a Aquarius avoid?",
+      "q": "Which places should an Aquarius avoid?",
       "a": "Status-conservative cities where the first question is what your parents do. Aquarius doesn't rebel against those places so much as evaporate from them."
     },
     {

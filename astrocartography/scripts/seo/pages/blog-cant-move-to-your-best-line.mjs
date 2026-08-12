@@ -7,7 +7,7 @@ export default {
   keywords: `can't move astrocartography, astrocartography without moving, visit astrocartography line, astrocartography paran, closest astrocartography line, use astrocartography without relocating`,
   articleHeadline: `What If You Can't Move to Your Best Astrocartography Line?`,
   datePublished: `2026-07-04`,
-  dateModified: `2026-07-04`,
+  dateModified: `2026-08-11`,
   breadcrumb: [
     { name: `Blog`, url: `/blog` },
     { name: `Can't Move to Your Best Line`, url: `/blog/cant-move-to-your-best-line` },
@@ -23,12 +23,12 @@ export default {
     },
     {
       h2: `You don't need to stand exactly on the line`,
-      html: `<p>The single most freeing fact in astrocartography: a line is a band, not a tightrope. Its influence is generally considered strongest within roughly 80–160 km and fades gradually out to around 500 km. That's a wide corridor. The city you assumed was "not on" your line may sit comfortably inside its zone — and a place two or three hours' drive from a line usually still counts.</p>
-      <p>So before you conclude your best line is unreachable, check the actual distance rather than eyeballing the map. A line that "misses" your region by what looks like a hand's width on a world map can still be well within range. This alone rescues a lot of supposedly impossible lines, and it's why proximity — not landing on the exact coordinate — is the thing to optimise for.</p>
+      html: `<p>The single most freeing idea in astrocartography is that practitioners read proximity as a gradient, not a tightrope. There is no scientifically validated or universally agreed cutoff. For transparent comparisons, Natal Navigator labels 0–100 km as very close, 100–300 km as nearby and 300–500 km as background territory; some published astrological conventions extend much farther. These are editorial review bands, not measured forces or invisible walls. The full <a href="/blog/astrocartography-line-distance">astrocartography line-distance guide</a> explains the model and its limits.</p>
+      <p>So before you conclude your best line is unreachable, check the actual shortest distance rather than eyeballing the map. A line that "misses" your region by what looks like a hand's width on a world map can still be close enough to include in a reading. Proximity earns a line attention; it does not make the place automatically good or bad.</p>
       <figure>
 <svg viewBox="0 0 720 240" role="img" aria-labelledby="bandTitle bandDesc">
-  <title id="bandTitle">A planetary line is a band of influence, not an exact point</title>
-  <desc id="bandDesc">A planetary line runs down the middle with its strongest influence within about 80 to 160 kilometres and fading out to roughly 500 kilometres. A city set well to the side of the line still sits inside the zone of influence.</desc>
+  <title id="bandTitle">Editorial comparison bands around a planetary line</title>
+  <desc id="bandDesc">A planetary line runs down the middle with progressively wider editorial comparison bands. A city about 140 kilometres away is labelled nearby, while 500 kilometres marks the edge of Natal Navigator's background review band rather than a scientifically measured boundary.</desc>
   <rect width="720" height="240" fill="#FFFFFF"/>
   <text x="24" y="34" font-family="'JetBrains Mono',monospace" font-size="12" letter-spacing="0.06em" fill="#8A93A2">YOU DON'T HAVE TO LIVE ON IT</text>
   <defs><linearGradient id="bandGrad" x1="0" x2="1"><stop offset="0" stop-color="#0E7C5B" stop-opacity="0"/><stop offset="0.5" stop-color="#0E7C5B" stop-opacity="0.20"/><stop offset="1" stop-color="#0E7C5B" stop-opacity="0"/></linearGradient></defs>
@@ -38,11 +38,11 @@ export default {
   <text x="360" y="50" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B" font-weight="700">YOUR LINE</text>
   <circle cx="470" cy="115" r="7" fill="#181C23"/>
   <text x="470" y="200" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" fill="#181C23">Your city</text>
-  <text x="470" y="218" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4C5563">~140 km — still in range</text>
-  <text x="150" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">~500 km edge</text>
-  <text x="360" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B">strongest</text>
+  <text x="470" y="218" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#4C5563">~140 km — nearby band</text>
+  <text x="150" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#8A93A2">~500 km review edge</text>
+  <text x="360" y="200" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#0E7C5B">very close</text>
 </svg>
-<figcaption><strong>Figure 2.</strong> A line's influence is a corridor, not a hairline. A city well off the exact line often still sits inside the zone — check the real distance before writing it off.</figcaption>
+<figcaption><strong>Figure 2.</strong> Use distance as a transparent confidence label, not a promise of intensity. These review bands help compare places without pretending the boundaries are scientifically established.</figcaption>
 </figure>`,
     },
     {
@@ -52,8 +52,8 @@ export default {
     },
     {
       h2: `Closer lines, parans, and working where you are`,
-      html: `<p>Beyond visiting, three more levers matter. First, look for a <strong>closer "good-enough" line</strong>: you have 40 lines, and a slightly less ideal one within reach usually beats a perfect one you'll never get to. A reachable Venus line can do more for you than a Jupiter line on another continent. Second, consider <strong>parans</strong> — where two lines cross at the same latitude, their combined energy can be felt along that whole latitude, sometimes touching where you already live even when no visible line runs through it.</p>
-      <p>Third, and most powerful of all if you're truly rooted: <strong>work consciously with the lines you already live on</strong>. Every place sits on or near <em>some</em> of your lines, and knowing which ones changes everything. If you're on a Saturn line, you can stop fighting the discipline it demands and use it. If you're on a Mars line, you can channel the drive instead of picking fights. Naming your current placements turns invisible weather into something you can actually navigate — start with <a href="/blog/astrocartography-lines-explained">what each line means</a>.</p>
+      html: `<p>Beyond visiting, three more levers matter. First, look for a <strong>closer "good-enough" line</strong>: you have 40 lines, and a reachable option is more actionable than a supposedly perfect one you'll never get to. Second, consider <strong>parans</strong> — latitude crossings that practitioners read as a quieter second layer even when no visible angular line runs through a place.</p>
+      <p>Third, if you're truly rooted, read your current location without forcing a line to fit. Some places are genuinely <a href="/blog/no-astrocartography-lines-near-me">line-light</a>, which is not bad or meaningless. If a nearby Saturn or Mars line does fall inside the distance convention you state, you can explore its symbolism consciously; if none does, use the relocated chart, lived experience and ordinary place fit instead. Start with <a href="/blog/astrocartography-lines-explained">what each line means</a>, then let the evidence you can verify outrank the map.</p>
       <figure>
 <svg viewBox="0 0 720 360" role="img" aria-labelledby="ladderTitle ladderDesc">
   <title id="ladderTitle">Ways to benefit from a line you can't move to</title>
@@ -94,7 +94,7 @@ export default {
     },
     {
       q: `How close do I need to be to an astrocartography line?`,
-      a: `Not exactly on it. A line's influence is generally strongest within roughly 80–160 km and fades out to around 500 km, which is a wide corridor. A city two or three hours away from a line usually still sits inside its zone, so many places that look "off" the line on a world map are actually well within range.`,
+      a: `There is no scientifically validated or universally agreed cutoff. Natal Navigator uses transparent review bands: 0–100 km is very close, 100–300 km nearby and 300–500 km background territory; broader traditions extend farther. Measure the shortest distance and use the dedicated <a href="/blog/astrocartography-line-distance">line-distance guide</a> instead of treating any boundary as a guarantee.`,
     },
     {
       q: `Does visiting an astrocartography line work, or do I have to live there?`,
@@ -106,10 +106,12 @@ export default {
     },
     {
       q: `What if I truly can't move at all?`,
-      a: `Then work with the lines you already live on. Every place sits on or near some of your lines, and identifying them turns invisible influences into something you can navigate — using a Saturn line's discipline instead of fighting it, or channelling a Mars line's drive. You can also hold your ideal line as a future direction rather than an ultimatum, since a map has no deadline.`,
+      a: `Read the nearest lines without stretching their distance, then check parans and a relocated chart. If your home is genuinely line-light, that is a valid result rather than a problem to solve. You can also hold an ideal line as a future direction rather than an ultimatum, since a map has no deadline.`,
     },
   ],
   related: [
+    { href: `/blog/astrocartography-line-distance`, label: `How close is close? A transparent distance guide` },
+    { href: `/blog/no-astrocartography-lines-near-me`, label: `No lines nearby? How to read a line-light place` },
     { href: `/blog/astrocartography-for-travel`, label: `Astrocartography for travel — visit the line instead` },
     { href: `/blog/moving-off-your-line`, label: `The mirror image: leaving a line you're on` },
     { href: `/blog/solar-return-astrocartography`, label: `Solar return astrocartography — where to spend your birthday` },
@@ -126,6 +128,6 @@ export default {
       `use astrocartography without relocating`,
       `visit astrocartography line`,
     ],
-    description: `You can benefit from astrocartography without relocating, because a line's influence is a wide band rather than an exact point. Options include already sitting within a line's zone (strongest within about 80–160 km, fading to roughly 500 km), visiting a line temporarily, choosing a closer good-enough line, using a paran at your latitude, and consciously working with the lines your current home already sits on.`,
+    description: `Astrocartography without moving means using the map without treating relocation as a requirement. Options include measuring whether a line is actually nearby using an explicitly stated distance convention, visiting temporarily, choosing a reachable good-enough line, checking parans and a relocated chart, or accepting that a current home is line-light and letting practical fit lead.`,
   },
 };

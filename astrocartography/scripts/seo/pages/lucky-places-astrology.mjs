@@ -26,7 +26,7 @@ export default {
     },
     {
       "h2": "How to find your lucky countries",
-      "html": "<p>You need your birth date, exact birth time and birthplace — the lines shift with all three, which is why your lucky countries are different from your sibling's. From that, an astrocartography calculator draws all 40 of your lines across the globe. The countries your Jupiter and Venus lines cross are your traditional answer to \"which country is lucky for me\" — and the specific cities within the line's band (roughly up to a few hundred kilometres) are the practical shortlist.</p>\n      <p><a href=\"/create\">Natal Navigator</a> computes this in about a minute and rates 345+ cities against your lines, so instead of a poetic answer you get a ranked list: these ten cities sit in your fortune zones, these five sit on lines you may find heavy. You can explore how it works in the free demo first.</p>"
+      "html": "<p>You need your birth date, exact birth time and birthplace — the lines shift with all three, which is why your lucky countries are different from your sibling's. From that, an astrocartography calculator draws all 40 of your lines across the globe. The countries your Jupiter and Venus lines cross are your traditional answer to \"which country is lucky for me\" — and the specific cities within the line's band (roughly up to a few hundred kilometres) are the practical shortlist.</p>\n      <p><a href=\"/create\">Natal Navigator</a> computes this in about a minute and rates 345+ cities against your lines, so instead of a poetic answer you get a ranked list: these ten cities sit in your fortune zones, these five sit on lines you may find heavy. You can inspect the workflow in the example-data demo before buying.</p>"
     },
     {
       "h2": "Three honest caveats",
@@ -44,7 +44,7 @@ export default {
     },
     {
       "q": "How do I find my lucky places for free?",
-      "a": "You can explore astrocartography lines in the Natal Navigator demo with example charts for free. Your personal map — all 40 lines plus 345+ rated cities from your own birth data — is a one-time €9.99 / $9.99, no subscription."
+      "a": "You can inspect the interface in the Natal Navigator demo using example charts. Your personal map — all 40 lines plus 345+ rated cities calculated from your own birth data — is a one-time €9.99 / $9.99 purchase with no subscription."
     },
     {
       "q": "What if a 'lucky' line runs through the middle of an ocean?",

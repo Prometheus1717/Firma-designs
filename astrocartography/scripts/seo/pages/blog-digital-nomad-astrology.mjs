@@ -81,7 +81,7 @@ export default {
     },
     {
       "q": "Does the birth time really matter for nomad astrocartography?",
-      "a": "Yes, quite a lot. Astrocartography depends on the angles MC, IC, ASC and DSC, which move at roughly one degree every four minutes, so an inaccurate birth time shifts your lines noticeably across the map. If you know your time to the nearest few minutes the lines are reliable; if you only know it roughly, treat the map as broad-brush and lean harder on testing places in person. You can explore the free demo with example charts before entering your own data."
+      "a": "Yes, quite a lot. Astrocartography depends on the angles MC, IC, ASC and DSC, which move at roughly one degree every four minutes, so an inaccurate birth time shifts your lines noticeably across the map. If you know your time to the nearest few minutes the lines are reliable; if you only know it roughly, treat the map as broad-brush and lean harder on testing places in person. You can inspect the example-data demo before entering your own data."
     }
   ],
   "related": [

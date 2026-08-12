@@ -122,7 +122,7 @@ export default {
     { href: `/blog/how-accurate-is-astrocartography`, label: `How accurate is astrocartography, honestly?` },
     { href: `/astrocartography/vertex-line`, label: `The Vertex — the most time-sensitive point of all` },
     { href: `/blog/astrocartography-for-travel`, label: `Test places by visiting — precision optional` },
-    { href: `/free-astrocartography-chart`, label: `Explore the free demo first` },
+    { href: `/free-astrocartography-chart`, label: `Inspect the example-data demo first` },
     { href: `/astrocartography`, label: `What is astrocartography? (full guide)` },
   ],
   definedTerm: {

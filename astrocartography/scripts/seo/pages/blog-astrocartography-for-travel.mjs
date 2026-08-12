@@ -7,7 +7,7 @@ export default {
   keywords: `astrocartography travel, astrocartography vacation, travelling to astrocartography lines, line vacation astrology, best line to visit astrocartography, do lines work on short trips, astrology travel destinations`,
   articleHeadline: `Astrocartography for Travel: How to Choose Your Next Trip by Your Lines`,
   datePublished: `2026-07-14`,
-  dateModified: `2026-07-14`,
+  dateModified: `2026-08-11`,
   breadcrumb: [
     { name: `Blog`, url: `/blog` },
     { name: `Astrocartography for Travel`, url: `/blog/astrocartography-for-travel` },
@@ -58,7 +58,7 @@ export default {
     },
     {
       h2: `Planning a line trip in practice`,
-      html: `<p>The method fits in four moves. <strong>Pull up your map</strong> and list the lines within reach of your budget and vacation days — most people are surprised how many bands they can touch within a short flight. <strong>Book inside the band</strong>: within roughly 100 miles of the line if you can, and remember two nearby cities on the same line can differ wildly in cost and character. <strong>Give the theme room</strong>: a packed itinerary drowns out exactly the signal you came to taste — leave unstructured days, especially on Venus, Moon and Vertex geography, where the good parts arrive unplanned. And <strong>keep notes</strong>: energy, sleep, mood, encounters. Not because a diary proves anything, but because your own before-and-after is the only calibration instrument you'll ever have for this practice — far better than any testimonial, including the ones in our <a href="/blog/astrocartography-success-stories">success stories</a>.</p>
+      html: `<p>The method fits in four moves. <strong>Pull up your map</strong> and list the lines within reach of your budget and vacation days. <strong>Measure before booking</strong>: there is no scientifically validated or universally agreed cutoff, so use one disclosed model instead of assuming that an entire country is “on” a line. Natal Navigator treats 0–100 km as very close and 100–300 km as nearby for comparison; the <a href="/blog/astrocartography-line-distance">line-distance guide</a> explains the wider bands and limitations. <strong>Give the theme room</strong>: a packed itinerary can obscure the experience you came to observe, so leave unstructured time. And <strong>keep notes</strong>: energy, sleep, mood, encounters. Not because a diary proves anything, but because your own before-and-after is the only personal calibration available for this reflective practice — more useful than any testimonial, including the ones in our <a href="/blog/astrocartography-success-stories">success stories</a>.</p>
       <p>Two special cases deserve their own playbooks: if the trip's job is <em>where to spend your birthday</em>, that's <a href="/blog/solar-return-astrocartography">solar return astrocartography</a> and has its own rules; and if the trip is really a scouting run for a bigger relocation, read it with the mover's checklist from <a href="/where-should-i-live-astrology">where should I live</a> rather than the tourist's.</p>
       <figure>
 <svg viewBox="0 0 720 400" role="img" aria-labelledby="travDepthTitle travDepthDesc">
@@ -106,7 +106,7 @@ export default {
     },
     {
       q: `How close to a line do I need to travel?`,
-      a: `The usual convention gives a line full strength within roughly 50–100 miles (80–160 km), fading over a few hundred. For a deliberate line trip, book accommodation inside that core band rather than in the same country generally — two hours' drive can be the difference between on the line and merely near it.`,
+      a: `There is no scientifically validated or universally agreed cutoff. For a deliberate line trip, measure the shortest distance and state the convention you use: Natal Navigator labels 0–100 km very close, 100–300 km nearby and 300–500 km background territory. The <a href="/blog/astrocartography-line-distance">distance guide</a> explains why these are comparison bands, not guaranteed intensity zones.`,
     },
     {
       q: `Is it safe to visit my Saturn or Pluto line?`,
@@ -118,10 +118,11 @@ export default {
     },
     {
       q: `How do I find which lines I can reach on my budget?`,
-      a: `Build your map in Natal Navigator (explore the free demo with example charts first; your own full map is a one-time €9.99 / $9.99, no subscription), then look at the bands within short-flight range of home. Most people find several distinct line experiences — a Venus band, a Mars band, a Mercury city — within a weekend's reach.`,
+      a: `Build your map in Natal Navigator (inspect the example-data demo first; your own full map is a one-time €9.99 / $9.99, no subscription), then look at the bands within short-flight range of home. Most people find several distinct line experiences — a Venus band, a Mars band, a Mercury city — within a weekend's reach.`,
     },
   ],
   related: [
+    { href: `/blog/astrocartography-line-distance`, label: `How close should a line trip be? Distance without false precision` },
     { href: `/blog/solar-return-astrocartography`, label: `Where to spend your birthday — solar return astrocartography` },
     { href: `/blog/how-long-astrocartography-effects`, label: `How long do line effects take?` },
     { href: `/astrocartography/venus-line`, label: `The Venus Line — love, beauty and ease` },
@@ -137,6 +138,6 @@ export default {
       `travelling to your lines`,
       `astrology travel planning`,
     ],
-    description: `Astrocartography travel is the practice of choosing holiday and trip destinations using the planetary lines of one's astrocartography map — typically visiting the band within roughly 100 miles of a chosen line to experience its theme on a short stay. Tradition reads brief visits as previews of a line's flavour rather than full life changes, which makes travel a low-stakes way to test a line before considering longer relocation. Benefic lines (Venus, Sun, Moon, Jupiter) are conventionally favoured for recreation, while heavier lines (Saturn, Pluto, Neptune) are reserved for purposeful retreats.`,
+    description: `Astrocartography travel is the practice of using planetary angular lines as one reflective lens when choosing a trip. A responsible plan measures the shortest distance, discloses the comparison convention and treats a visit as a personal observation rather than proof of an effect. Traditionally pleasant lines are often chosen for recreation, while more demanding symbolism may suit purposeful trips, but practical travel fit remains decisive.`,
   },
 };

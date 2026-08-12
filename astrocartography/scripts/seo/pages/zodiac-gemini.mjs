@@ -62,7 +62,7 @@ export default {
     },
     {
       "href": "/best-places-to-live/aquarius",
-      "label": "Best places for a Aquarius"
+      "label": "Best places for an Aquarius"
     },
     {
       "href": "/astrocartography/mercury-line",

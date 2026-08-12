@@ -6,11 +6,11 @@ export default {
     "es": "es/calculadora-de-astrocartografia",
     "pt": "pt/calculadora-de-astrocartografia"
   },
-  "title": "Astrokartographie-Rechner: Karte kostenlos online erkunden",
-  "ogTitle": "Astrokartographie kostenlos berechnen",
-  "description": "Astrokartographie online berechnen: Die interaktive Demo mit 3D-Globus ist kostenlos und ohne Anmeldung — alle 40 Planetenlinien, echte Städte, Beispielkarten.",
-  "keywords": "astrokartographie rechner, astrokartographie kostenlos berechnen, astrokartographie online kostenlos, astrokartographie rechner kostenlos, astrokartografie kostenlos, astrokartographie berechnen, weltkarte astrokartografie",
-  "articleHeadline": "Astrokartographie-Rechner: Deine Karte online berechnen — Demo kostenlos, ohne Anmeldung",
+  "title": "Astrokartographie-Rechner: persönliche Karte für 9,99 €",
+  "ogTitle": "Astrokartographie-Rechner auf dem 3D-Globus",
+  "description": "Persönliche Astrokartographie für einmalig 9,99 €: 40 Planetenlinien, 3D-Globus, Geburtshoroskop und passende Städte — ohne Abo.",
+  "keywords": "astrokartographie rechner, astrokartographie berechnen, astrokartographie online, astrokartografie rechner, persönliche astrokartographie karte, weltkarte astrokartografie",
+  "articleHeadline": "Astrokartographie-Rechner: persönliche Karte auf dem 3D-Globus",
   "datePublished": "2026-07-19",
   "breadcrumb": [
     {
@@ -22,12 +22,12 @@ export default {
       "url": "/astrokartographie/rechner"
     }
   ],
-  "h1": "Astrokartographie kostenlos berechnen",
-  "lead": "<strong>Einen Astrokartographie-Rechner</strong> kannst du bei Natal Navigator sofort ausprobieren — die interaktive Demo ist kostenlos, läuft ohne Anmeldung und ohne E-Mail-Adresse und zeigt das vollständige Werkzeug auf einem drehbaren 3D-Globus: alle 40 Planetenlinien, die nächstgelegenen Städte zu jeder Linie und das Geburtshoroskop, aus dem die Karte entsteht. Deine persönliche Karte aus eigenen Geburtsdaten kostet einmalig 9,99 € — ohne Abo.",
+  "h1": "Astrokartographie-Rechner: deine persönliche Karte für einmalig 9,99 €",
+  "lead": "<strong>Natal Navigator berechnet deine persönliche Astrokartographie-Karte</strong> aus Geburtsdatum, genauer Uhrzeit und Geburtsort. Für einmalig 9,99 € erhältst du den drehbaren 3D-Globus mit allen 40 Planetenlinien, den nächstgelegenen Städten und dem zugehörigen Geburtshoroskop — ohne Abo. Vor dem Kauf kannst du das Interface mit Beispielkarten in der Demo prüfen; persönliche Geburtsdaten werden dort nicht berechnet.",
   "sections": [
     {
-      "h2": "Was der Rechner kostenlos zeigt — und was nicht",
-      "html": "<p>Ehrlichkeit vorweg, weil die meisten „kostenlos berechnen“-Versprechen im Netz auf eine Anmeldemaske mit Bezahlschranke führen: Die Natal-Navigator-Demo ist das echte Interface, keine abgespeckte Vorschau. Du öffnest <em>/demo</em>, wählst eine Beispielkarte und bekommst dieselben Werkzeuge, die zahlende Nutzer verwenden — den frei drehbaren 3D-Globus, alle vierzig Linien (zehn klassische Planeten über die vier Achsen Aszendent, Deszendent, MC und IC), die Städteerkennung entlang jeder Linie und das Geburtshoroskop-Rad. Nichts ist verpixelt, gesperrt oder mit Wasserzeichen versehen.</p>\n      <p>Die eine ehrliche Grenze: Die Demo rechnet mit Beispieldaten berühmter Personen, nicht mit deinen. Wer seine eigene Karte will, gibt Geburtsdatum, -zeit und -ort ein und zahlt dafür einmalig 9,99 € — das ist das gesamte Preismodell, ohne Abo und ohne versteckte Stufen. So weißt du vor dem Kauf genau, wie sich das Werkzeug bedient, weil du es bereits benutzt hast.</p>"
+      "h2": "Was du für 9,99 € erhältst — und was die Demo leistet",
+      "html": "<p>Der Preis für die persönliche Berechnung beträgt einmalig 9,99 €. Darin enthalten sind der frei drehbare 3D-Globus, alle vierzig Linien (zehn Planeten über die vier Achsen Aszendent, Deszendent, MC und IC), die Städteerkennung entlang jeder Linie und das Geburtshoroskop-Rad. Es gibt kein Abo, keine nachträgliche Freischaltstufe und keinen als kostenlos bezeichneten persönlichen Chart.</p>\n      <p>Die Demo ist ausschließlich eine Produktvorschau mit Beispielkarten bekannter Personen. Sie zeigt Bedienung, Darstellung und Deutungslogik, berechnet aber keine Karte aus deinen Geburtsdaten. So kannst du das Interface vor dem Kauf prüfen, ohne dass die Vorschau mit dem bezahlten persönlichen Produkt verwechselt wird.</p>"
     },
     {
       "h2": "So funktioniert die Berechnung",
@@ -44,16 +44,16 @@ export default {
   ],
   "faq": [
     {
-      "q": "Kann ich Astrokartographie wirklich kostenlos berechnen?",
-      "a": "Die interaktive Demo ist vollständig kostenlos und ohne Anmeldung — sie zeigt alle Funktionen mit Beispielkarten berühmter Personen. Die Berechnung deiner persönlichen Karte aus eigenen Geburtsdaten kostet einmalig 9,99 €, ohne Abo. Es gibt keine versteckten Stufen dazwischen."
+      "q": "Was kostet die persönliche Astrokartographie-Karte?",
+      "a": "Die Berechnung deiner persönlichen Karte aus eigenen Geburtsdaten kostet einmalig 9,99 €, ohne Abo. Die Demo mit Beispielkarten dient nur dazu, Oberfläche und Funktionen vor dem Kauf anzusehen; sie berechnet keinen persönlichen Chart."
     },
     {
       "q": "Welche Daten braucht der Astrokartographie-Rechner?",
       "a": "Drei Angaben: Geburtsdatum, Geburtszeit (möglichst minutengenau, idealerweise aus der Geburtsurkunde) und Geburtsort. Die Zeit ist am wichtigsten, weil sie die vier Achsen fixiert — kleine Abweichungen verschieben die Achsenlinien spürbar."
     },
     {
-      "q": "Was unterscheidet Natal Navigator von anderen kostenlosen Rechnern?",
-      "a": "Drei Dinge: der interaktive 3D-Globus statt einer verzerrten Flachkarte, die Städteerkennung, die zu jeder Linie die real nächstgelegenen Orte nennt, und die ehrliche Preisstruktur — die Demo ist echt und vollständig, die eigene Karte ein einmaliger Festpreis statt eines Abos."
+      "q": "Was unterscheidet Natal Navigator von anderen Rechnern?",
+      "a": "Drei Dinge: der interaktive 3D-Globus statt einer verzerrten Flachkarte, die Städteerkennung, die zu jeder Linie die nächstgelegenen Orte nennt, und die klare Preisstruktur — die persönliche Karte kostet einmalig 9,99 € statt eines laufenden Abos."
     },
     {
       "q": "Was bedeuten die 40 Linien auf der Karte?",
@@ -65,6 +65,10 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/blog/astrokartographie-planetenlinien-winkel",
+      "label": "Die 40 Kombinationen aus Planetenlinien und Winkeln lesen"
+    },
     {
       "href": "/astrokartographie",
       "label": "Was ist Astrokartographie? (vollständiger Leitfaden)"
@@ -85,9 +89,9 @@ export default {
   "definedTerm": {
     "name": "Astrokartographie-Rechner",
     "alternateName": [
-      "astrokartographie kostenlos berechnen",
       "astrokartographie online rechner",
-      "astrokartografie rechner kostenlos"
+      "astrokartografie rechner",
+      "persönliche astrokartographie karte"
     ],
     "description": "Ein Astrokartographie-Rechner berechnet aus Geburtsdatum, -zeit und -ort die 40 Planetenlinien einer Person und zeichnet sie auf eine Weltkarte oder einen Globus."
   }

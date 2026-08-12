@@ -119,7 +119,7 @@ export default {
     },
     {
       q: `How do I find out which lines run through the place that calls me?`,
-      a: `Build your astrocartography map from your birth date, exact time and birthplace, then look up the city. In Natal Navigator you can explore the free demo with example charts first; your personal map — all planetary lines plus sensitive points like the Vertex, nodes, Chiron and Lilith — is a one-time €9.99 / $9.99 with no subscription.`,
+      a: `Build your astrocartography map from your birth date, exact time and birthplace, then look up the city. In Natal Navigator you can inspect the example-data demo first; your personal map — all planetary lines plus sensitive points like the Vertex, nodes, Chiron and Lilith — is a one-time €9.99 / $9.99 purchase with no subscription.`,
     },
   ],
   related: [

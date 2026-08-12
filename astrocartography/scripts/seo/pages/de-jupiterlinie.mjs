@@ -64,6 +64,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/blog/astrokartographie-planetenlinien-winkel",
+      "label": "Die 10 × 4 Matrix für Planetenlinien, AC, DC, MC und IC"
+    },
+    {
       "href": "/astrokartographie/venuslinie",
       "label": "Die Venuslinie — Liebe und Leichtigkeit"
     },

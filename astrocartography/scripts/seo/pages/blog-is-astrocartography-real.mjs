@@ -87,7 +87,7 @@ export default {
         <li><strong>Let the map ask questions, not answer them.</strong> "My Venus line runs through Lisbon" is not a reason to move to Lisbon. "Do I actually want more softness and connection in my next chapter?" is a real question the line prompted — and it's answerable without astrology.</li>
         <li><strong>Keep the boring variables in charge.</strong> Work, visas, cost of living, language, healthcare, distance to people you love — these decide whether a move succeeds. A line is, at most, a tiebreaker between places that already pass the practical test, a point we make bluntly in the guide to <a href="/blog/astrocartography-with-other-life-planning">combining astrocartography with real-world planning</a>.</li>
       </ul>
-      <p>That is also how we build Natal Navigator: the astronomy is computed precisely, the interpretations are worded as themes to reflect on rather than outcomes to expect, and nothing on the map will ever tell you a place is "guaranteed". You can test that stance yourself in the free demo — it uses famous example charts, so you can check how the tool talks about lines before your own chart is ever involved. And if what you actually wanted was a thorough debunking-versus-defence tour of the common claims, that lives in <a href="/blog/astrocartography-myths-debunked">astrocartography myths, debunked</a>.</p>`,
+      <p>That is also how we build Natal Navigator: the astronomy is computed precisely, the interpretations are worded as themes to reflect on rather than outcomes to expect, and nothing on the map will ever tell you a place is "guaranteed". You can inspect that stance in the example-data demo before your own chart is ever involved. And if what you actually wanted was a thorough debunking-versus-defence tour of the common claims, that lives in <a href="/blog/astrocartography-myths-debunked">astrocartography myths, debunked</a>.</p>`,
     },
   ],
   faq: [
@@ -113,7 +113,7 @@ export default {
     },
     {
       q: `Does Natal Navigator claim the lines are scientifically valid?`,
-      a: `No — and we think that matters. The app computes the astronomy precisely and presents interpretations as reflective themes, not predictions. You can see exactly how that's worded in the free demo with example charts before entering any of your own data.`,
+      a: `No — and we think that matters. The app computes the astronomy precisely and presents interpretations as reflective themes, not predictions. You can see exactly how that's worded in the example-data demo before entering any of your own data.`,
     },
   ],
   related: [

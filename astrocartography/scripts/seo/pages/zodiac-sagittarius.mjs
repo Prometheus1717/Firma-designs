@@ -62,7 +62,7 @@ export default {
     },
     {
       "href": "/best-places-to-live/aries",
-      "label": "Best places for a Aries"
+      "label": "Best places for an Aries"
     },
     {
       "href": "/astrocartography/jupiter-line",

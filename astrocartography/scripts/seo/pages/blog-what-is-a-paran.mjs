@@ -7,7 +7,7 @@ export default {
   keywords: `paran astrocartography, what is a paran, parans meaning astrology, astrocartography line crossings, latitude crossings astrocartography, paran lines, jim lewis parans`,
   articleHeadline: `What Is a Paran in Astrocartography? The Crossings Most People Miss`,
   datePublished: `2026-07-16`,
-  dateModified: `2026-07-16`,
+  dateModified: `2026-08-11`,
   breadcrumb: [
     { name: `Blog`, url: `/blog` },
     { name: `What Is a Paran?`, url: `/blog/what-is-a-paran` },
@@ -19,7 +19,7 @@ export default {
     {
       h2: `The mechanics: from crossing point to latitude band`,
       html: `<p>Picture your map: the Jupiter MC line sweeps down through one continent, the Venus ASC line curves through another, and somewhere — often in the middle of an ocean — they intersect. That intersection is the paran point. The classical logic, revived by astrocartography's founder Jim Lewis from much older horizon-astrology roots, goes like this: at that geographic point, both planets were simultaneously angular at your birth — Jupiter culminating while Venus rose. Two planets hitting the chart's power positions <em>at the same moment</em> is a combination, not a coincidence, and the combination is read as fusing their themes: Jupiter–Venus, luck meeting love; Sun–Saturn, identity meeting discipline; Mars–Pluto, drive meeting depth.</p>
-      <p>Here's the counterintuitive part that makes parans matter: the fusion isn't read as confined to the crossing point. Because the pairing is a function of the Earth's rotation at a given latitude, tradition treats the paran as active along the <strong>entire circle of latitude</strong> through that crossing — a band usually drawn at about ±1 degree of latitude, roughly 70 miles (110 km) top to bottom, wrapping the whole globe. Your Jupiter–Venus crossing in the mid-Atlantic quietly runs through cities on three continents. This is the standard answer to one of the most common puzzles in the practice: <em>"This city has no lines anywhere near it — why does it feel so specific?"</em> Often, a paran band runs straight through it.</p>`,
+      <p>Here's the counterintuitive part that makes parans matter: the fusion isn't read as confined to the crossing point. Because the pairing is a function of the Earth's rotation at a given latitude, tradition treats the paran as active along the <strong>entire circle of latitude</strong> through that crossing — a band usually drawn at about ±1 degree of latitude, roughly 70 miles (110 km) top to bottom, wrapping the whole globe. Your Jupiter–Venus crossing in the mid-Atlantic can therefore share a latitude with cities on three continents. This is one traditional explanation for the puzzle <em>"This city has no lines anywhere near it — what do I read next?"</em> The complete answer starts by verifying the distance, then checking parans and the relocated chart; see <a href="/blog/no-astrocartography-lines-near-me">how to read a line-light location</a>.</p>`,
     },
     {
       h2: `Reading a paran: how the blend works`,
@@ -84,7 +84,7 @@ export default {
     },
     {
       h2: `Where parans fit in a real decision`,
-      html: `<p>The working hierarchy for reading any place: lines first (which planetary themes are loudest here?), parans second (what quieter blend runs underneath?), then everything the map can't see — visas, work, people, climate — which always outranks both, as we argue in <a href="/blog/astrocartography-vs-gut-instinct">map vs. gut</a>. Parans earn their keep in three situations: as <strong>tiebreakers</strong> between finalist cities that look similar on lines; as <strong>explainers</strong> for places that feel strongly specific despite an empty-looking map; and as <strong>fine print</strong> on a heavily-lined city, where a demanding paran under a pleasant line (or vice versa) adjusts expectations usefully.</p>
+      html: `<p>The working hierarchy for reading any place: lines first—using a disclosed <a href="/blog/astrocartography-line-distance">distance convention</a>—parans second as a quieter traditional layer, then everything the map can't see: visas, work, people and climate. Those practical facts always outrank both, as we argue in <a href="/blog/astrocartography-vs-gut-instinct">map vs. gut</a>. Parans earn their keep in three situations: as <strong>tiebreakers</strong> between finalist cities that look similar on lines; as <strong>explainers</strong> for places that feel strongly specific despite an empty-looking map; and as <strong>fine print</strong> on a heavily-lined city, where a demanding paran under a pleasant line (or vice versa) adjusts expectations usefully.</p>
       <p>If you want to see yours: build your map, then scan the latitude bands through your shortlist cities — the <a href="/demo">demo</a> shows how the layered reading works on example charts before you enter anything. Most people check the verticals and stop; the latitude layer is where the map starts rewarding people who read it properly.</p>`,
     },
   ],
@@ -115,6 +115,8 @@ export default {
     },
   ],
   related: [
+    { href: `/blog/no-astrocartography-lines-near-me`, label: `No visible lines nearby? Use the full four-layer check` },
+    { href: `/blog/astrocartography-line-distance`, label: `Measure the angular lines before adding parans` },
     { href: `/blog/multiple-astrocartography-lines`, label: `Multiple lines in one place — the vertical version` },
     { href: `/blog/astrocartography-lines-explained`, label: `All the lines, explained — start here` },
     { href: `/blog/astrocartography-without-birth-time`, label: `No exact birth time? Read this first` },

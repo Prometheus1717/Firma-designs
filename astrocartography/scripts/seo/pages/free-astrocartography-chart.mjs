@@ -1,23 +1,23 @@
 export default {
   "slug": "free-astrocartography-chart",
   "lang": "en",
-  "title": "Free Astrocartography Chart & Map — Try the Interactive Demo",
-  "ogTitle": "Free Astrocartography Chart & Map",
-  "description": "Explore astrocartography for free — no sign-up. Try Natal Navigator's interactive demo on a 3D globe with famous example charts.",
-  "keywords": "free astrocartography chart, free astrocartography map, astrocartography free no sign up, free astrology relocation map, try astrocartography free",
-  "articleHeadline": "Free Astrocartography Chart and Map: Try the Interactive Demo Before You Pay",
+  "title": "Astrocartography Demo vs Personal Map — What You Get",
+  "ogTitle": "Astrocartography Demo vs Personal Map",
+  "description": "Preview Natal Navigator with example charts, then create your personal astrocartography map for a one-time €9.99 / $9.99.",
+  "keywords": "astrocartography demo, personal astrocartography map price, astrocartography map one time payment, try astrocartography app",
+  "articleHeadline": "Astrocartography Demo vs Personal Map: What You Can Preview Before Buying",
   "datePublished": "2026-06-15",
   "breadcrumb": [
     {
-      "name": "Free Astrocartography Chart",
+      "name": "Astrocartography Demo",
       "url": "/free-astrocartography-chart"
     }
   ],
-  "h1": "Free Astrocartography Chart & Map",
-  "lead": "<strong>You can explore astrocartography for free</strong> in Natal Navigator's interactive demo — no account, no email, no payment. The demo opens the full experience on a 3D globe using famous example charts, so you can see how the lines, cities and natal wheel work before you ever enter your own birth details. Building a personal map from your own data is a one-time €9.99 / $9.99 with no subscription.",
+  "h1": "Astrocartography Demo vs Personal Map",
+  "lead": "<strong>Natal Navigator's demo is a product preview with example data, not a free personal chart.</strong> It shows the 3D globe, planetary lines, cities and natal wheel on famous example charts before you buy. A map calculated from your own birth data is a one-time €9.99 / $9.99 purchase with no subscription.",
   "sections": [
     {
-      "h2": "What you can explore for free",
+      "h2": "What the example-data demo lets you inspect",
       "html": "<p>Let us be straight with you, because most \"free astrocartography\" promises turn out to be a teaser screen with a paywall behind it. Natal Navigator's free demo is the real interface, not a watered-down preview. You open it at <em>/demo</em>, pick an example chart, and you get the same tools a paying customer uses.</p>\n      <p>That means the full interactive 3D globe you can spin, tilt and zoom; all forty planetary lines (the ten classical planets across the four angles — Ascendant, Descendant, Midheaven and Nadir); city detection that names the real places each line runs closest to; and the natal wheel that the map is built from. Nothing is blurred out, locked or stamped with a watermark. The only thing the demo does not do is run on <em>your</em> birth data — and that is the honest boundary between free and paid.</p>\n      <p>No sign-up is required to use any of this. You do not create a login, you do not hand over an email, and there is no free trial that quietly starts billing you later. You simply open the page and start exploring.</p>"
     },
     {
@@ -39,8 +39,8 @@ export default {
   ],
   "faq": [
     {
-      "q": "Is there a genuinely free astrocartography chart?",
-      "a": "Yes. Natal Navigator's interactive demo is free and requires no sign-up. It opens the full 3D globe with all forty lines, city detection and the natal wheel, using famous example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo). The only thing it does not do is run on your own birth data."
+      "q": "Does the demo calculate my personal astrocartography chart?",
+      "a": "No. The demo is limited to famous example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo) so you can inspect the 3D globe, line controls, city detection and natal wheel before buying. A chart calculated from your own birth data costs a one-time €9.99 / $9.99."
     },
     {
       "q": "Do I need to create an account or give my email?",
@@ -87,12 +87,12 @@ export default {
     }
   ],
   "definedTerm": {
-    "name": "Free astrocartography chart",
+    "name": "Astrocartography demo",
     "alternateName": [
-      "free astrocartography map",
-      "free astrology relocation map",
+      "astrocartography product preview",
+      "example astrocartography map",
       "astrocartography demo"
     ],
-    "description": "A free astrocartography chart is an astrocartography map you can explore at no cost and without signing up."
+    "description": "An astrocartography demo previews the map interface with example data before a user purchases a personal calculation."
   }
 };
