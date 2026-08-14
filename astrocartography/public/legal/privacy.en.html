@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy Policy · Natal Navigator</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; padding:28px 22px 60px; font:15px/1.6 -apple-system, system-ui, sans-serif;
+         background:#FBF9F4; color:#201A2E; max-width:680px; margin-inline:auto; }
+  @media (prefers-color-scheme: dark) { body { background:#14101F; color:#EDEAF4; } }
+  h1 { font-family:ui-serif, Georgia, serif; font-size:26px; line-height:1.2; margin:0 0 4px; }
+  .stand { font-size:12.5px; opacity:.6; margin:0 0 26px; }
+  h2 { font-size:16.5px; margin:26px 0 8px; }
+  p, li { font-size:14.5px; }
+  ul { padding-left:20px; }
+  a { color:#6F5CE8; }
+  .kasten { border:1px solid rgba(111,92,232,.35); border-radius:12px; padding:12px 14px;
+            background:rgba(111,92,232,.06); font-size:14px; }
+</style>
+</head>
+<body>
+<h1>Privacy Policy</h1>
+<p class="stand">Natal Navigator iOS app · Version of 14 August 2026</p>
+
+<p class="kasten"><strong>The short version:</strong> Your birth data and your chart live on your
+device, not on our servers. There are no accounts. The only data that leaves your device is what
+you actively send when you use the Guide chat or the translation feature, plus anonymous purchase
+information handled by Apple and RevenueCat. We do not run ads and we do not track you across
+other apps.</p>
+
+<h2>1. Who is responsible</h2>
+<p>Sercan Yesilyurt<br>Dasselstraße 31<br>50674 Köln, Germany<br>
+E-mail: <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a></p>
+
+<h2>2. Data that stays on your device</h2>
+<p>When you set up the app you enter a display name, your date, time and place of birth, and
+preferences such as language and theme. All of this is stored <strong>only locally on your
+iPhone</strong> (app storage). Your birth chart, the world map lines, city lists, readings and
+daily texts are calculated on the device. We have no server copy of your profile and cannot see
+it. Deleting the app, or using "Reset all data" in the You tab, permanently removes this local
+data (server-side fair-use counters are covered in section 3).</p>
+<p><strong>Birthplace search.</strong> While you type your birth city, the app first searches a
+city catalogue that ships inside the app. From two characters on, your search text is also sent
+to <strong>Apple Maps (MKLocalSearch)</strong> on the device to find places the catalogue does
+not contain. This request goes to Apple under Apple's own privacy terms; we do not receive or
+store it. The time zone is derived from the chosen coordinates on your device.</p>
+<p><strong>App start.</strong> Opening the app requests only the current remote configuration
+from our server, without any identifier. We record no launch or activity data.</p>
+
+<h2>3. The Guide chat and translations (AI features)</h2>
+<p>The Guide chat and the translation of reading texts are the only features that send content
+off your device — and they do so <strong>only after you have explicitly allowed it</strong> in
+the AI consent dialog shown before the first transfer. You can review and revoke this permission
+at any time under You → AI data sharing; after revoking, nothing is sent until you allow it
+again. When these features run, the following is transmitted to our API server (hosted on
+Vercel) and processed there:</p>
+<ul>
+  <li>your question and, for context, up to the last six messages of the current chat,</li>
+  <li>calculated facts from your chart that are needed to answer (for example planet positions,
+      line distances, house placements), which can include your birth date, time and place,</li>
+  <li>for translations: the English texts to be translated,</li>
+  <li>a random per-install identifier (used for the daily question allowance) and your IP address
+      (used for hourly abuse limits).</li>
+</ul>
+<p><strong>AI processing.</strong> To generate answers and translations we send this content to
+external AI model providers acting as our processors. Primary provider is
+<strong>DeepSeek</strong> (Hangzhou DeepSeek Artificial Intelligence Co., Ltd., China); as
+fallback we may use <strong>Z.ai</strong> (GLM models) or <strong>xAI</strong> (USA). These
+providers process the content to produce the response. Where providers are located outside the
+EU/EEA (China, USA), the level of data protection may differ from EU standards; we transmit only
+what is needed for your specific request, and you decide whether to use these features at all.
+The rest of the app works without them.</p>
+<p><strong>Transfers outside the EU/EEA.</strong> For providers in countries without an EU
+adequacy decision (in particular China), the transfer is based on your explicit consent given in
+the AI consent dialog after being informed of the possible risks (Art. 49(1)(a) GDPR). Where a US
+provider is certified under the EU-US Data Privacy Framework, we rely on that certification;
+otherwise the transfer is likewise based on your consent. You can withdraw your consent at any
+time under You → AI data sharing; withdrawal does not affect the lawfulness of processing that
+happened before the withdrawal.</p>
+<p><strong>What we store server-side:</strong> only counters (number of requests per install
+identifier per calendar day, per IP address per hour, and total cost) to enforce fair-use
+limits. We do <strong>not</strong> store your questions, answers or chart facts on our servers.
+The counters contain no content. "Reset all data" clears your device, gives you a fresh install
+identifier and thereby detaches the old counters from you; on request
+(<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>) we delete the counter rows
+for your install identifier from the database.</p>
+<p><strong>Storage periods.</strong> Hourly counters that reference an IP address are deleted
+automatically after 7 days at the latest. Daily counters that reference the random install
+identifier are deleted automatically after 12 months at the latest. Aggregate counters without
+any personal reference are kept for statistics. Reported answers in the operations log expire
+automatically with the log's short retention window, at most 90 days.</p>
+<p>If you report a Guide answer via "Report answer", the reported question and answer are
+transmitted and kept in our operations log so we can review them; nothing else is attached.</p>
+<p>Legal basis: your consent (Art. 6(1)(a) GDPR) for sending content to the AI providers;
+performance of the contract (Art. 6(1)(b) GDPR) for answering your request; legitimate interest
+(Art. 6(1)(f) GDPR) for abuse prevention.</p>
+
+<h2>4. Purchases and subscriptions</h2>
+<p>Subscriptions are sold through Apple's App Store and charged to your Apple ID. We never see
+your payment details. To manage entitlements, trials and renewals we use
+<strong>RevenueCat, Inc.</strong> (USA) as a processor. RevenueCat receives an anonymous app user
+ID and purchase/receipt information from Apple, and provides us aggregated statistics (for
+example trial conversions). Legal basis: Art. 6(1)(b) GDPR. RevenueCat participates in the EU-US
+Data Privacy Framework.</p>
+
+<h2>5. What we do NOT do</h2>
+<ul>
+  <li>No accounts, no e-mail collection in the app, no address books, no location tracking. The
+      app never requests your device location; the birthplace search is described in section 2.</li>
+  <li>No advertising, no ad SDKs.</li>
+  <li>No tracking across apps or websites, no sale of data. The app therefore does not show an
+      App Tracking Transparency prompt: there is nothing to ask for.</li>
+</ul>
+
+<h2>6. Hosting</h2>
+<p>Our API runs on Vercel Inc. (USA/EU edge network); requests are subject to Vercel's standard
+technical logging. The fair-use counters are stored in a PostgreSQL database hosted in the EU
+(Supabase). Data Processing Agreements are in place with our processors.</p>
+
+<h2>7. Your rights</h2>
+<p>Under the GDPR you have the right of access, rectification, erasure, restriction, data
+portability and objection, and the right to lodge a complaint with a supervisory authority.
+Because your profile exists only on your device, access and erasure are literally in your hands:
+the You tab shows everything, and "Reset all data" or deleting the app erases it. For anything
+concerning the server-side counters, contact us at the address above. We do not use your data
+for automated decision-making that produces legal or similarly significant effects concerning
+you.</p>
+
+<h2>8. Children</h2>
+<p>The app is not directed at children and provides no content intended for them. We do not
+knowingly process children's data.</p>
+
+<h2>9. California privacy rights (CCPA/CPRA)</h2>
+<p>If you are a California resident, the California Consumer Privacy Act gives you specific
+rights. In the last 12 months we have collected only these categories of personal information:
+<em>identifiers</em> (a random per-install identifier; your IP address for hourly abuse limits),
+<em>user content</em> (Guide questions with chart context, only when you use the Guide after
+consenting), and <em>commercial information</em> (purchase status, processed by Apple and
+RevenueCat). We collect them for app functionality only, as described in sections 3 and 4, and
+keep them for the periods stated there. We do <strong>not</strong> sell personal information and
+we do <strong>not</strong> share it for cross-context behavioral advertising, and we have not
+done either in the past 12 months; there is therefore nothing to opt out of. We do not knowingly
+collect information of consumers under 16. You have the right to know, access, correct and
+delete your personal information, the right to non-discrimination for exercising these rights,
+and the right to use an authorized agent. To exercise any right, e-mail
+<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>; because we hold no account
+data, we verify requests via your install identifier, and we will walk you through locating it
+in the app if needed. We respond within the statutory deadlines.</p>
+
+<h2>10. Changes</h2>
+<p>We will update this policy when the app changes. The current version is always available in
+the app (You tab) and at natalnavigator.com.</p>
+</body>
+</html>

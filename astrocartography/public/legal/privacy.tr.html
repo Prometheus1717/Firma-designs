@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gizlilik Politikası · Natal Navigator</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; padding:28px 22px 60px; font:15px/1.6 -apple-system, system-ui, sans-serif;
+         background:#FBF9F4; color:#201A2E; max-width:680px; margin-inline:auto; }
+  @media (prefers-color-scheme: dark) { body { background:#14101F; color:#EDEAF4; } }
+  h1 { font-family:ui-serif, Georgia, serif; font-size:26px; line-height:1.2; margin:0 0 4px; }
+  .stand { font-size:12.5px; opacity:.6; margin:0 0 26px; }
+  h2 { font-size:16.5px; margin:26px 0 8px; }
+  p, li { font-size:14.5px; }
+  ul { padding-left:20px; }
+  a { color:#6F5CE8; }
+  .kasten { border:1px solid rgba(111,92,232,.35); border-radius:12px; padding:12px 14px;
+            background:rgba(111,92,232,.06); font-size:14px; }
+</style>
+</head>
+<body>
+<h1>Gizlilik Politikası</h1>
+<p class="stand">Natal Navigator iOS uygulaması · 14 Ağustos 2026 sürümü</p>
+
+<p class="kasten"><strong>Kısa özet:</strong> Doğum verilerin ve haritan sunucularımızda değil,
+cihazında yaşar. Hesap yoktur. Cihazından yalnızca Rehber sohbetini veya çeviri özelliğini
+kullanırken etkin olarak gönderdiklerin çıkar — o da ancak açık iznini verdikten sonra — ve
+ayrıca Apple ile RevenueCat tarafından işlenen anonim satın alma bilgileri. Reklam göstermeyiz
+ve seni başka uygulamalarda izlemeyiz.</p>
+
+<h2>1. Veri sorumlusu</h2>
+<p>Sercan Yesilyurt<br>Dasselstraße 31<br>50674 Köln, Almanya<br>
+E-posta: <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a></p>
+
+<h2>2. Cihazında kalan veriler</h2>
+<p>Kurulum sırasında bir görünen ad, doğum tarihini, saatini ve yerini, ayrıca dil ve tema gibi
+tercihleri girersin. Bunların tamamı <strong>yalnızca iPhone'unda yerel olarak</strong> saklanır
+(uygulama deposu). Doğum haritan, dünya haritası çizgileri, şehir listeleri, yorumlar ve günlük
+metinler cihazda hesaplanır. Profilinin sunucu kopyası bizde yoktur ve onu göremeyiz. Uygulamayı
+silmek veya Sen sekmesindeki «Tüm verileri sıfırla» seçeneği bu yerel verileri kalıcı olarak
+kaldırır (sunucudaki kullanım sayaçları için 3. bölüme bak).</p>
+<p><strong>Doğum yeri araması.</strong> Doğum şehrini yazarken uygulama önce kendi içinde
+gelen şehir kataloğunda arar. İki karakterden itibaren arama metnin, katalogda olmayan yerleri
+bulmak için cihazdan <strong>Apple Haritalar'a (MKLocalSearch)</strong> da gönderilir. Bu istek
+Apple'ın kendi gizlilik koşulları altında Apple'a gider; biz onu almayız ve saklamayız. Saat
+dilimi, seçilen koordinatlardan cihazında türetilir.</p>
+<p><strong>Uygulama açılışı.</strong> Uygulama açılırken sunucumuzdan yalnızca güncel uzak
+yapılandırma istenir, hiçbir kimlik gönderilmez. Açılış veya etkinlik verisi kaydetmeyiz.</p>
+
+<h2>3. Rehber sohbeti ve çeviriler (yapay zekâ özellikleri)</h2>
+<p>Rehber sohbeti ve yorum metinlerinin çevirisi, cihazından içerik gönderen tek özelliklerdir —
+ve bunu <strong>ancak ilk aktarımdan önce gösterilen yapay zekâ izin diyaloğunda açıkça izin
+verdikten sonra</strong> yaparlar. Bu izni istediğin zaman Sen → Yapay zekâ veri paylaşımı
+altında görebilir ve geri çekebilirsin; geri çektikten sonra, yeniden izin verene kadar hiçbir
+şey gönderilmez. Bu özellikler çalışırken aşağıdakiler API sunucumuza (Vercel'de barındırılır)
+iletilir ve orada işlenir:</p>
+<ul>
+  <li>sorun ve bağlam olarak yürüyen sohbetin en fazla son altı mesajı,</li>
+  <li>yanıt için gereken, haritandan hesaplanmış veriler (örneğin gezegen konumları, çizgi
+      mesafeleri, ev konumları); bunlar doğum tarihini, saatini ve yerini içerebilir,</li>
+  <li>çevirilerde: çevrilecek İngilizce metinler,</li>
+  <li>rastgele bir kurulum kimliği (günlük soru hakkı için) ve IP adresin (saatlik kötüye
+      kullanım sınırları için).</li>
+</ul>
+<p><strong>Yapay zekâ işlemesi.</strong> Yanıtları ve çevirileri üretmek için bu içeriği, veri
+işleyenimiz olarak hareket eden harici yapay zekâ modeli sağlayıcılarına göndeririz. Ana
+sağlayıcı <strong>DeepSeek</strong>'tir (Hangzhou DeepSeek Artificial Intelligence Co., Ltd.,
+Çin); yedek olarak <strong>Z.ai</strong> (GLM modelleri) veya <strong>xAI</strong> (ABD)
+kullanılabilir. Bu sağlayıcılar içeriği yanıtı üretmek için işler. Sağlayıcılar AB/AEA dışında
+olduğunda (Çin, ABD) veri koruma düzeyi AB standardından farklı olabilir; yalnızca senin somut
+isteğin için gerekeni iletiriz ve bu özellikleri kullanıp kullanmamaya sen karar verirsin.
+Uygulamanın geri kalanı onlarsız çalışır.</p>
+<p><strong>Sunucu tarafında sakladıklarımız:</strong> adil kullanım sınırlarını uygulamak için
+yalnızca sayaçlar (kurulum kimliği ve takvim günü başına, IP adresi ve saat başına istek sayısı
+ile toplam maliyet). Sorularını, yanıtlarını veya harita verilerini sunucularımızda
+<strong>saklamayız</strong>. Sayaçlar içerik içermez. «Tüm verileri sıfırla» cihazını temizler,
+yeni bir kurulum kimliği oluşturur ve eski sayaçları böylece senden ayırır; talebin üzerine
+(<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>) kurulum kimliğine ait
+sayaç satırlarını veritabanından sileriz.</p>
+<p>Bir Rehber yanıtını «Yanıtı bildir» ile bildirirsen, bildirilen soru ve yanıt iletilir ve
+incelemek için işletim günlüğümüzde tutulur; başka hiçbir şey eklenmez.</p>
+<p>Hukuki dayanaklar: isteğinin yanıtlanması için sözleşmenin ifası (GDPR md. 6/1-b); kötüye
+kullanımın önlenmesi için meşru menfaat (GDPR md. 6/1-f).</p>
+
+<p><strong>AB/AEA dışına aktarımlar.</strong> AB yeterlilik kararı bulunmayan ülkelerdeki
+sağlayıcılar için (özellikle Çin) aktarım, olası riskler hakkında bilgilendirildikten sonra
+yapay zekâ onay penceresinde verdiğin açık rızaya dayanır (GDPR md. 49/1-a); içeriğin yapay
+zekâ sağlayıcılarına gönderilmesi de aynı temele dayanır (md. 6/1-a). Bir ABD sağlayıcısı EU-US
+Data Privacy Framework kapsamında sertifikalıysa bu sertifikaya dayanırız. Rızanı istediğin an
+Sen → Yapay zekâ veri paylaşımı altından geri çekebilirsin; geri çekme, o ana kadarki işlemenin
+hukuka uygunluğunu etkilemez.</p>
+<p><strong>Saklama süreleri.</strong> IP adresine bağlı saatlik sayaçlar en geç 7 gün sonra,
+rastgele kurulum kimliğine bağlı günlük sayaçlar en geç 12 ay sonra otomatik silinir. Kişisel
+bağlantısı olmayan toplu sayaçlar istatistik için kalır. Bildirilen yanıtlar işletme kaydında
+kendiliğinden, en geç 90 gün sonra silinir.</p>
+
+<h2>4. Satın almalar ve abonelikler</h2>
+<p>Abonelikler Apple App Store üzerinden satılır ve Apple Kimliğinden tahsil edilir. Ödeme
+bilgilerini asla görmeyiz. Hakları, denemeleri ve yenilemeleri yönetmek için veri işleyen olarak
+<strong>RevenueCat, Inc.</strong> (ABD) kullanırız. RevenueCat, Apple'dan anonim bir uygulama
+kullanıcı kimliği ile satın alma/makbuz bilgileri alır ve bize toplu istatistikler sağlar
+(örneğin deneme dönüşümleri). Hukuki dayanak: GDPR md. 6/1-b. RevenueCat, EU-US Data Privacy
+Framework kapsamında sertifikalıdır.</p>
+
+<h2>5. YAPMADIKLARIMIZ</h2>
+<ul>
+  <li>Hesap yok, uygulamada e-posta toplama yok, rehbere veya konuma erişim yok. Uygulama cihaz
+      konumunu asla istemez; doğum yeri araması 2. bölümde açıklanmıştır.</li>
+  <li>Reklam yok, reklam SDK'sı yok.</li>
+  <li>Uygulamalar veya siteler arası izleme yok, veri satışı yok. Bu yüzden uygulama App
+      Tracking Transparency sorusu göstermez: sorulacak bir şey yoktur.</li>
+</ul>
+
+<h2>6. Barındırma</h2>
+<p>API'miz Vercel Inc. üzerinde çalışır (ABD/AB edge ağı); istekler Vercel'in standart teknik
+günlüğüne tabidir. Adil kullanım sayaçları AB'de barındırılan bir PostgreSQL veritabanında
+(Supabase) saklanır. Veri işleyenlerimizle veri işleme sözleşmeleri mevcuttur.</p>
+
+<h2>7. Hakların</h2>
+<p>GDPR kapsamında erişim, düzeltme, silme, kısıtlama, taşınabilirlik ve itiraz haklarına ve bir
+denetim makamına şikâyette bulunma hakkına sahipsin. Profilin yalnızca cihazında bulunduğu için
+erişim ve silme kelimenin tam anlamıyla senin elinde: Sen sekmesi her şeyi gösterir; «Tüm
+verileri sıfırla» veya uygulamayı silmek hepsini kaldırır. Sunucudaki sayaçlarla ilgili her
+konuda yukarıdaki adrese yazabilirsin.</p>
+
+<p>Verilerini, hukuki veya benzer ölçüde önemli sonuçlar doğuran otomatik karar verme için
+kullanmıyoruz.</p>
+
+<h2>8. Çocuklar</h2>
+<p>Uygulama çocuklara yönelik değildir ve onlara yönelik içerik sunmaz. Çocuklara ait verileri
+bilerek işlemeyiz.</p>
+
+<h2>9. Kaliforniya hakları (CCPA/CPRA)</h2>
+<p>Kaliforniya'da ikamet ediyorsan California Consumer Privacy Act sana özel haklar tanır. Son
+12 ayda yalnızca şu kişisel bilgi kategorilerini topladık: <em>kimlikler</em> (kurulum başına
+rastgele bir kimlik; saatlik kötüye kullanım sınırları için IP adresin), <em>kullanıcı
+içeriği</em> (onay verdikten sonra Rehberi kullandığında, harita bağlamıyla birlikte Rehber
+soruları) ve <em>ticari bilgiler</em> (Apple ve RevenueCat üzerinden işlenen satın alma
+durumu). Bunları yalnızca 3. ve 4. bölümlerde anlatıldığı gibi uygulamanın çalışması için
+toplar ve orada belirtilen süreler boyunca saklarız. Kişisel bilgileri <strong>satmıyoruz</strong>
+ve bağlamlar arası davranışsal reklam için <strong>paylaşmıyoruz</strong>; son 12 ayda da
+yapmadık, dolayısıyla vazgeçilecek bir şey yok. 16 yaş altındakilerin bilgilerini bilerek
+toplamıyoruz. Bilgilerini öğrenme, erişme, düzeltme ve silme, bu hakları kullandığın için
+ayrımcılığa uğramama ve yetkili bir temsilci kullanma hakkına sahipsin. Haklarını kullanmak
+için <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a> adresine yaz; hesap
+verisi tutmadığımızdan talepleri kurulum kimliğinle doğrularız ve gerekirse uygulamada bulmana
+yardım ederiz. Yasal süreler içinde yanıt veririz.</p>
+
+<h2>10. Değişiklikler</h2>
+<p>Uygulama değiştikçe bu politikayı güncelleriz. Güncel sürüm her zaman uygulamada (Sen
+sekmesi) ve natalnavigator.com'da bulunur.</p>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Datenschutzerklärung · Natal Navigator</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; padding:28px 22px 60px; font:15px/1.6 -apple-system, system-ui, sans-serif;
+         background:#FBF9F4; color:#201A2E; max-width:680px; margin-inline:auto; }
+  @media (prefers-color-scheme: dark) { body { background:#14101F; color:#EDEAF4; } }
+  h1 { font-family:ui-serif, Georgia, serif; font-size:26px; line-height:1.2; margin:0 0 4px; }
+  .stand { font-size:12.5px; opacity:.6; margin:0 0 26px; }
+  h2 { font-size:16.5px; margin:26px 0 8px; }
+  p, li { font-size:14.5px; }
+  ul { padding-left:20px; }
+  a { color:#6F5CE8; }
+  .kasten { border:1px solid rgba(111,92,232,.35); border-radius:12px; padding:12px 14px;
+            background:rgba(111,92,232,.06); font-size:14px; }
+</style>
+</head>
+<body>
+<h1>Datenschutzerklärung</h1>
+<p class="stand">Natal Navigator iOS-App · Stand 14. August 2026</p>
+
+<p class="kasten"><strong>Die Kurzfassung:</strong> Deine Geburtsdaten und dein Chart liegen auf
+deinem Gerät, nicht auf unseren Servern. Es gibt keine Konten. Das Gerät verlässt nur, was du
+aktiv sendest, wenn du den Guide-Chat oder die Übersetzungsfunktion nutzt, dazu anonyme
+Kaufinformationen über Apple und RevenueCat. Wir schalten keine Werbung und verfolgen dich nicht
+über andere Apps hinweg.</p>
+
+<h2>1. Verantwortlicher</h2>
+<p>Sercan Yesilyurt<br>Dasselstraße 31<br>50674 Köln, Deutschland<br>
+E-Mail: <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a></p>
+
+<h2>2. Daten, die auf deinem Gerät bleiben</h2>
+<p>Beim Einrichten gibst du einen Anzeigenamen, Geburtsdatum, Geburtszeit und Geburtsort sowie
+Einstellungen wie Sprache und Darstellung ein. All das wird <strong>ausschließlich lokal auf
+deinem iPhone</strong> gespeichert (App-Speicher). Dein Geburtschart, die Weltkarten-Linien,
+Städtelisten, Deutungen und Tagestexte werden auf dem Gerät berechnet. Wir haben keine
+Serverkopie deines Profils und können es nicht einsehen. Das Löschen der App oder „Alle Daten
+zurücksetzen" im Du-Reiter entfernt diese lokalen Daten dauerhaft (zu den serverseitigen
+Fair-Use-Zählern siehe Abschnitt 3).</p>
+<p><strong>Geburtsortsuche.</strong> Während du deine Geburtsstadt eintippst, sucht die App
+zuerst in einem Städtekatalog, der in der App mitgeliefert wird. Ab zwei Zeichen wird dein
+Suchtext zusätzlich auf dem Gerät an <strong>Apple Karten (MKLocalSearch)</strong> geschickt, um
+Orte zu finden, die der Katalog nicht kennt. Diese Anfrage geht an Apple unter Apples eigenen
+Datenschutzbedingungen; wir erhalten und speichern sie nicht. Die Zeitzone wird aus den
+gewählten Koordinaten auf deinem Gerät abgeleitet.</p>
+<p><strong>App-Start.</strong> Beim Öffnen der App wird nur die aktuelle Fernkonfiguration von
+unserem Server geholt, ohne jede Kennung. Start- oder Aktivitätsdaten erfassen wir nicht.</p>
+
+<h2>3. Guide-Chat und Übersetzungen (KI-Funktionen)</h2>
+<p>Der Guide-Chat und die Übersetzung der Deutungstexte sind die einzigen Funktionen, die
+Inhalte vom Gerät senden — und sie tun das <strong>erst, nachdem du es im
+KI-Einwilligungsdialog ausdrücklich erlaubt hast</strong>, der vor der ersten Übertragung
+erscheint. Du kannst die Erlaubnis jederzeit unter Du → KI-Datenfreigabe einsehen und
+widerrufen; nach einem Widerruf wird nichts gesendet, bis du sie erneut erteilst. Laufen diese
+Funktionen, werden an unseren API-Server (gehostet bei Vercel) übertragen und dort
+verarbeitet:</p>
+<ul>
+  <li>deine Frage und als Zusammenhang bis zu sechs letzte Nachrichten des laufenden Chats,</li>
+  <li>berechnete Fakten aus deinem Chart, die zur Antwort nötig sind (z. B. Planetenpositionen,
+      Linienabstände, Hausstellungen); darin können Geburtsdatum, -zeit und -ort enthalten sein,</li>
+  <li>bei Übersetzungen: die zu übersetzenden englischen Texte,</li>
+  <li>eine zufällige Installationskennung (für das tägliche Fragenkontingent) und deine
+      IP-Adresse (für stündliche Missbrauchsgrenzen).</li>
+</ul>
+<p><strong>KI-Verarbeitung.</strong> Zur Erzeugung von Antworten und Übersetzungen übermitteln
+wir diese Inhalte an externe Anbieter von KI-Modellen als unsere Auftragsverarbeiter. Primärer
+Anbieter ist <strong>DeepSeek</strong> (Hangzhou DeepSeek Artificial Intelligence Co., Ltd.,
+China); als Ausweich können <strong>Z.ai</strong> (GLM-Modelle) oder <strong>xAI</strong> (USA)
+zum Einsatz kommen. Diese Anbieter verarbeiten die Inhalte, um die Antwort zu erzeugen. Soweit
+Anbieter außerhalb der EU/des EWR sitzen (China, USA), kann das Datenschutzniveau vom
+EU-Standard abweichen; wir übermitteln nur, was für deine konkrete Anfrage nötig ist, und du
+entscheidest selbst, ob du diese Funktionen überhaupt nutzt. Der Rest der App funktioniert ohne
+sie.</p>
+<p><strong>Übermittlung in Drittländer.</strong> Bei Anbietern in Ländern ohne
+EU-Angemessenheitsbeschluss (insbesondere China) stützt sich die Übermittlung auf deine
+ausdrückliche Einwilligung im KI-Einwilligungsdialog, nachdem du über die möglichen Risiken
+informiert wurdest (Art. 49 Abs. 1 lit. a DSGVO). Ist ein US-Anbieter unter dem EU-US Data
+Privacy Framework zertifiziert, stützen wir uns auf diese Zertifizierung; andernfalls ebenfalls
+auf deine Einwilligung. Du kannst die Einwilligung jederzeit unter Du → KI-Datenfreigabe
+widerrufen; der Widerruf berührt nicht die Rechtmäßigkeit der bis dahin erfolgten
+Verarbeitung.</p>
+<p><strong>Was wir serverseitig speichern:</strong> ausschließlich Zähler (Anfragen je
+Installationskennung und Kalendertag, je IP-Adresse und Stunde sowie Gesamtkosten) zur
+Durchsetzung der Fair-Use-Grenzen. Deine Fragen, Antworten oder Chart-Fakten speichern wir auf
+unseren Servern <strong>nicht</strong>. Die Zähler enthalten keine Inhalte. „Alle Daten
+zurücksetzen" leert dein Gerät, erzeugt eine frische Installationskennung und löst die alten
+Zähler damit von dir; auf Anfrage
+(<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>) löschen wir die
+Zählerzeilen deiner Installationskennung aus der Datenbank.</p>
+<p><strong>Speicherfristen.</strong> Stundenzähler mit IP-Bezug werden spätestens nach 7 Tagen
+automatisch gelöscht, Tageszähler mit Bezug zur zufälligen Installationskennung spätestens nach
+12 Monaten. Aggregierte Zähler ohne Personenbezug bleiben für die Statistik erhalten. Gemeldete
+Antworten im Betriebsprotokoll verfallen automatisch mit dessen kurzer Aufbewahrung, spätestens
+nach 90 Tagen.</p>
+<p>Meldest du eine Guide-Antwort über „Antwort melden", werden die gemeldete Frage und Antwort
+übertragen und in unserem Betriebsprotokoll aufbewahrt, damit wir sie prüfen können; mehr wird
+nicht angehängt.</p>
+<p>Rechtsgrundlagen: deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) für die Übermittlung an
+die KI-Anbieter; Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO) für die Beantwortung deiner
+Anfrage; berechtigtes Interesse (Art. 6 Abs. 1 lit. f DSGVO) für die Missbrauchsabwehr.</p>
+
+<h2>4. Käufe und Abos</h2>
+<p>Abos werden über Apples App Store verkauft und über deine Apple-ID abgerechnet. Deine
+Zahlungsdaten sehen wir nie. Für die Verwaltung von Berechtigungen, Probephasen und
+Verlängerungen setzen wir <strong>RevenueCat, Inc.</strong> (USA) als Auftragsverarbeiter ein.
+RevenueCat erhält eine anonyme App-Nutzer-ID und Kauf-/Belegdaten von Apple und stellt uns
+zusammengefasste Statistiken bereit (z. B. Trial-Umwandlungen). Rechtsgrundlage: Art. 6 Abs. 1
+lit. b DSGVO. RevenueCat ist unter dem EU-US Data Privacy Framework zertifiziert.</p>
+
+<h2>5. Was wir NICHT tun</h2>
+<ul>
+  <li>Keine Konten, keine E-Mail-Erhebung in der App, kein Zugriff auf Adressbuch oder Standort.
+      Die App fragt nie deinen Gerätestandort ab; die Geburtsortsuche ist in Abschnitt 2
+      beschrieben.</li>
+  <li>Keine Werbung, keine Werbe-SDKs.</li>
+  <li>Kein Tracking über Apps oder Webseiten hinweg, kein Datenverkauf. Die App zeigt deshalb
+      auch keine App-Tracking-Transparency-Abfrage: es gibt nichts abzufragen.</li>
+</ul>
+
+<h2>6. Hosting</h2>
+<p>Unsere API läuft bei Vercel Inc. (USA/EU-Edge-Netz); Anfragen unterliegen dem üblichen
+technischen Logging von Vercel. Die Fair-Use-Zähler liegen in einer PostgreSQL-Datenbank in der
+EU (Supabase). Mit unseren Auftragsverarbeitern bestehen Auftragsverarbeitungsverträge.</p>
+
+<h2>7. Deine Rechte</h2>
+<p>Nach der DSGVO hast du das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung,
+Datenübertragbarkeit und Widerspruch sowie das Beschwerderecht bei einer Aufsichtsbehörde. Da
+dein Profil nur auf deinem Gerät existiert, liegen Auskunft und Löschung wortwörtlich in deiner
+Hand: der Du-Reiter zeigt alles, „Alle Daten zurücksetzen" oder das Löschen der App entfernt es.
+Für die serverseitigen Zähler erreichst du uns unter der oben genannten Adresse. Eine
+automatisierte Entscheidungsfindung mit rechtlicher oder ähnlich erheblicher Wirkung findet
+nicht statt.</p>
+
+<h2>8. Kinder</h2>
+<p>Die App richtet sich nicht an Kinder und enthält keine für Kinder bestimmten Inhalte. Wir
+verarbeiten wissentlich keine Daten von Kindern.</p>
+
+<h2>9. Rechte für Kalifornien (CCPA/CPRA)</h2>
+<p>Bist du in Kalifornien ansässig, gibt dir der California Consumer Privacy Act besondere
+Rechte. In den letzten 12 Monaten haben wir ausschließlich diese Kategorien personenbezogener
+Informationen erhoben: <em>Kennungen</em> (zufällige Installationskennung; IP-Adresse für
+stündliche Missbrauchsgrenzen), <em>Nutzerinhalte</em> (Guide-Fragen mit Chart-Kontext, nur bei
+Nutzung nach Einwilligung) und <em>kommerzielle Informationen</em> (Kaufstatus, verarbeitet über
+Apple und RevenueCat). Erhebung nur für die App-Funktion, wie in Abschnitt 3 und 4 beschrieben,
+mit den dort genannten Fristen. Wir <strong>verkaufen</strong> keine personenbezogenen
+Informationen und <strong>teilen</strong> sie nicht für kontextübergreifende Werbung, auch nicht
+in den letzten 12 Monaten; es gibt daher nichts abzuwählen. Von Personen unter 16 erheben wir
+wissentlich keine Daten. Du hast das Recht auf Auskunft, Zugang, Berichtigung und Löschung, das
+Recht auf Nichtdiskriminierung bei Ausübung dieser Rechte und das Recht, einen Bevollmächtigten
+einzusetzen. Wende dich an
+<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>; da wir keine Kontodaten
+halten, verifizieren wir Anfragen über deine Installationskennung und helfen dir bei Bedarf, sie
+in der App zu finden. Wir antworten innerhalb der gesetzlichen Fristen.</p>
+
+<h2>10. Änderungen</h2>
+<p>Wir passen diese Erklärung an, wenn sich die App ändert. Die aktuelle Fassung ist jederzeit
+in der App (Du-Reiter) und auf natalnavigator.com abrufbar.</p>
+</body>
+</html>

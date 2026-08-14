@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Política de Privacidade · Natal Navigator</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; padding:28px 22px 60px; font:15px/1.6 -apple-system, system-ui, sans-serif;
+         background:#FBF9F4; color:#201A2E; max-width:680px; margin-inline:auto; }
+  @media (prefers-color-scheme: dark) { body { background:#14101F; color:#EDEAF4; } }
+  h1 { font-family:ui-serif, Georgia, serif; font-size:26px; line-height:1.2; margin:0 0 4px; }
+  .stand { font-size:12.5px; opacity:.6; margin:0 0 26px; }
+  h2 { font-size:16.5px; margin:26px 0 8px; }
+  p, li { font-size:14.5px; }
+  ul { padding-left:20px; }
+  a { color:#6F5CE8; }
+  .kasten { border:1px solid rgba(111,92,232,.35); border-radius:12px; padding:12px 14px;
+            background:rgba(111,92,232,.06); font-size:14px; }
+</style>
+</head>
+<body>
+<h1>Política de Privacidade</h1>
+<p class="stand">App iOS Natal Navigator · Versão de 14 de agosto de 2026</p>
+
+<p class="kasten"><strong>A versão curta:</strong> Seus dados de nascimento e seu mapa vivem no
+seu aparelho, não em nossos servidores. Não há contas. A única coisa que sai do seu aparelho é
+o que você envia ativamente ao usar o chat do Guia ou a função de tradução — e somente após o
+seu consentimento expresso —, além de informações de compra anônimas tratadas pela Apple e pela
+RevenueCat. Não exibimos anúncios e não rastreamos você em outros apps.</p>
+
+<h2>1. Responsável</h2>
+<p>Sercan Yesilyurt<br>Dasselstraße 31<br>50674 Colônia (Köln), Alemanha<br>
+E-mail: <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a></p>
+
+<h2>2. Dados que ficam no seu aparelho</h2>
+<p>Ao configurar o app você informa um nome de exibição, sua data, hora e local de nascimento e
+preferências como idioma e tema. Tudo isso é armazenado <strong>somente localmente no seu
+iPhone</strong> (armazenamento do app). Seu mapa natal, as linhas do mapa-múndi, as listas de
+cidades, as leituras e os textos diários são calculados no aparelho. Não temos cópia do seu
+perfil em servidor e não podemos vê-la. Excluir o app, ou usar «Redefinir todos os dados» na
+aba Você, remove esses dados locais permanentemente (sobre os contadores de uso no servidor,
+veja a seção 3).</p>
+<p><strong>Busca do local de nascimento.</strong> Enquanto você digita sua cidade de
+nascimento, o app busca primeiro em um catálogo de cidades embutido no próprio app. A partir de
+dois caracteres, seu texto de busca também é enviado, a partir do aparelho, ao <strong>Apple
+Maps (MKLocalSearch)</strong> para encontrar lugares que o catálogo não contém. Essa
+solicitação vai para a Apple sob os termos de privacidade da própria Apple; nós não a recebemos
+nem armazenamos. O fuso horário é derivado das coordenadas escolhidas, no seu aparelho.</p>
+<p><strong>Abertura do app.</strong> Ao abrir o app, apenas a configuração remota atual é
+solicitada ao nosso servidor, sem nenhum identificador. Não registramos dados de abertura nem
+de atividade.</p>
+
+<h2>3. O chat do Guia e as traduções (recursos de IA)</h2>
+<p>O chat do Guia e a tradução dos textos de leitura são os únicos recursos que enviam conteúdo
+para fora do seu aparelho — e o fazem <strong>somente depois que você permitiu
+expressamente</strong> no diálogo de consentimento de IA exibido antes da primeira
+transferência. Você pode revisar e revogar essa permissão a qualquer momento em Você →
+Compartilhar dados com IA; após a revogação, nada é enviado até você permitir de novo. Quando
+esses recursos são usados, o seguinte é transmitido ao nosso servidor de API (hospedado na
+Vercel) e processado lá:</p>
+<ul>
+  <li>sua pergunta e, como contexto, até as seis últimas mensagens do chat em andamento,</li>
+  <li>dados calculados do seu mapa necessários para a resposta (por exemplo posições
+      planetárias, distâncias de linhas, posições de casas), que podem incluir sua data, hora e
+      local de nascimento,</li>
+  <li>para traduções: os textos em inglês a serem traduzidos,</li>
+  <li>um identificador de instalação aleatório (para a cota diária de perguntas) e seu endereço
+      IP (para limites de abuso por hora).</li>
+</ul>
+<p><strong>Processamento por IA.</strong> Para gerar respostas e traduções, enviamos esse
+conteúdo a fornecedores externos de modelos de IA que atuam como nossos operadores. O provedor
+principal é a <strong>DeepSeek</strong> (Hangzhou DeepSeek Artificial Intelligence Co., Ltd.,
+China); como alternativa podem ser usados <strong>Z.ai</strong> (modelos GLM) ou
+<strong>xAI</strong> (EUA). Esses provedores processam o conteúdo para produzir a resposta.
+Quando os provedores estão fora da UE/EEE (China, EUA), o nível de proteção de dados pode
+diferir do padrão da UE; transmitimos apenas o necessário para a sua solicitação concreta, e
+você decide se usa esses recursos. O restante do app funciona sem eles.</p>
+<p><strong>O que armazenamos no servidor:</strong> apenas contadores (número de solicitações
+por identificador de instalação e dia, por endereço IP e hora, e custo total) para aplicar os
+limites de uso justo. <strong>Não</strong> armazenamos suas perguntas, respostas ou dados do
+seu mapa em nossos servidores. Os contadores não contêm conteúdo. «Redefinir todos os dados»
+limpa seu aparelho, gera um novo identificador de instalação e assim desvincula os contadores
+antigos de você; mediante solicitação
+(<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>) excluímos do banco de
+dados as linhas de contadores do seu identificador de instalação.</p>
+<p>Se você denunciar uma resposta do Guia por meio de «Denunciar resposta», a pergunta e a
+resposta denunciadas são transmitidas e mantidas em nosso registro operacional para que possamos
+analisá-las; nada mais é anexado.</p>
+<p>Bases legais: execução do contrato (art. 6º, § 1º, alínea b do RGPD) para responder à sua
+solicitação; interesse legítimo (art. 6º, § 1º, alínea f do RGPD) para a prevenção de abusos.</p>
+
+<p><strong>Transferências para fora da UE/EEE.</strong> Para provedores em países sem decisão
+de adequação da UE (em particular a China), a transferência se baseia no seu consentimento
+explícito, dado no diálogo de consentimento de IA após informação sobre os possíveis riscos
+(art. 49(1)(a) do RGPD); a mesma base (art. 6(1)(a)) cobre o envio de conteúdo aos provedores
+de IA. Quando um provedor dos EUA é certificado no EU-US Data Privacy Framework, apoiamo-nos
+nessa certificação. Você pode revogar o consentimento a qualquer momento em Você →
+Compartilhamento de dados com IA; a revogação não afeta a licitude do tratamento anterior.</p>
+<p><strong>Prazos de armazenamento.</strong> Contadores por hora com referência ao endereço IP
+são apagados automaticamente no máximo após 7 dias; contadores diários ligados ao identificador
+aleatório de instalação, no máximo após 12 meses. Contadores agregados sem referência pessoal
+permanecem para estatísticas. Respostas reportadas no registro operacional expiram
+automaticamente, no máximo após 90 dias.</p>
+
+<h2>4. Compras e assinaturas</h2>
+<p>As assinaturas são vendidas pela App Store da Apple e cobradas no seu ID Apple. Nunca vemos
+seus dados de pagamento. Para gerenciar direitos, testes e renovações usamos a
+<strong>RevenueCat, Inc.</strong> (EUA) como operadora. A RevenueCat recebe um ID de usuário
+anônimo do app e informações de compra/recibo da Apple, e nos fornece estatísticas agregadas
+(por exemplo conversões de teste). Base legal: art. 6º, § 1º, alínea b do RGPD. A RevenueCat é
+certificada no EU-US Data Privacy Framework.</p>
+
+<h2>5. O que NÃO fazemos</h2>
+<ul>
+  <li>Sem contas, sem coleta de e-mail no app, sem acesso a contatos ou à localização. O app
+      nunca solicita a localização do seu aparelho; a busca do local de nascimento está
+      descrita na seção 2.</li>
+  <li>Sem publicidade, sem SDKs de anúncios.</li>
+  <li>Sem rastreamento entre apps ou sites, sem venda de dados. Por isso o app não exibe o
+      aviso de App Tracking Transparency: não há nada a pedir.</li>
+</ul>
+
+<h2>6. Hospedagem</h2>
+<p>Nossa API roda na Vercel Inc. (rede edge EUA/UE); as solicitações estão sujeitas ao registro
+técnico padrão da Vercel. Os contadores de uso justo são armazenados em um banco PostgreSQL
+hospedado na UE (Supabase). Mantemos contratos de tratamento de dados com nossos operadores.</p>
+
+<h2>7. Seus direitos</h2>
+<p>Pelo RGPD você tem direito de acesso, retificação, exclusão, limitação, portabilidade e
+oposição, além do direito de reclamar a uma autoridade de controle. Como seu perfil existe
+apenas no seu aparelho, acesso e exclusão estão literalmente nas suas mãos: a aba Você mostra
+tudo, e «Redefinir todos os dados» ou excluir o app apaga tudo. Para qualquer assunto sobre os
+contadores no servidor, escreva para o endereço acima.</p>
+
+<p>Não usamos seus dados para decisões automatizadas com efeitos jurídicos ou igualmente
+significativos.</p>
+
+<h2>8. Crianças</h2>
+<p>O app não é direcionado a crianças e não oferece conteúdo destinado a elas. Não tratamos
+conscientemente dados de crianças.</p>
+
+<h2>9. Direitos da Califórnia (CCPA/CPRA)</h2>
+<p>Se você reside na Califórnia, a California Consumer Privacy Act garante direitos
+específicos. Nos últimos 12 meses coletamos apenas estas categorias de informações pessoais:
+<em>identificadores</em> (um identificador aleatório por instalação; seu endereço IP para
+limites horários contra abusos), <em>conteúdo do usuário</em> (perguntas ao Guia com contexto
+do mapa, apenas quando você usa o Guia após consentir) e <em>informações comerciais</em>
+(status de compra, tratado por Apple e RevenueCat). Coletamos apenas para o funcionamento do
+app, como descrito nas seções 3 e 4, e guardamos pelos prazos ali indicados.
+<strong>Não</strong> vendemos informações pessoais nem as <strong>compartilhamos</strong> para
+publicidade comportamental entre contextos, tampouco nos últimos 12 meses; portanto, não há de
+que se descadastrar. Não coletamos conscientemente informações de menores de 16 anos. Você tem
+o direito de saber, acessar, corrigir e excluir suas informações pessoais, o direito à não
+discriminação por exercer esses direitos e o direito de usar um agente autorizado. Escreva para
+<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>; como não guardamos dados
+de conta, verificamos solicitações pelo seu identificador de instalação e ajudamos a
+encontrá-lo no app, se necessário. Respondemos dentro dos prazos legais.</p>
+
+<h2>10. Alterações</h2>
+<p>Atualizaremos esta política quando o app mudar. A versão vigente está sempre disponível no
+app (aba Você) e em natalnavigator.com.</p>
+</body>
+</html>
