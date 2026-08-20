@@ -244,11 +244,7 @@ function renderPlacements(chart, lang) {
 
 function renderLive(key, name, ui) {
   const src = `/demo?embed=1&tutorial=0&star=${key}&theme=dark`;
-  return `<section class="celebrity-live" id="live-chart" aria-labelledby="live-chart-title">
-    <div class="celebrity-live-copy">
-      <h2 id="live-chart-title">${ui.live(name)}</h2>
-      <p>${ui.liveIntro}</p>
-    </div>
+  return `<section class="celebrity-live" id="live-chart" aria-label="${ui.live(name)}">
     <div class="celebrity-live-glass">
       <div class="celebrity-live-frame">
         <div class="celebrity-live-bar">

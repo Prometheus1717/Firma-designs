@@ -317,9 +317,6 @@ const PAPER_CSS = `
 const CELEBRITY_CSS = `
     .hero-celebrity { padding:clamp(34px,5vh,58px) 0 24px; }
     .celebrity-live { width:100%; padding:0 clamp(16px,3vw,32px) 44px; margin-top:-12px; }
-    .celebrity-live-copy { max-width:760px; margin:0 auto 22px; text-align:center; }
-    .celebrity-live-copy h2 { font-family:var(--serif); font-weight:400; font-size:clamp(28px,3.4vw,42px); line-height:1.16; letter-spacing:-.01em; margin:0 0 8px; }
-    .celebrity-live-copy p { max-width:62ch; margin:0 auto; color:var(--ink2); font-size:16px; }
     .celebrity-live-glass { width:min(1180px,100%); margin:0 auto; padding:clamp(8px,.9vw,15px); border-radius:30px; background:rgba(255,255,255,.32); border:1px solid rgba(255,255,255,.72); backdrop-filter:blur(30px) saturate(150%); -webkit-backdrop-filter:blur(30px) saturate(150%); box-shadow:0 60px 140px -46px rgba(38,40,92,.6), inset 0 1px 0 rgba(255,255,255,.85); }
     .celebrity-live-frame { overflow:hidden; background:#fff; border:1px solid rgba(255,255,255,.7); border-radius:18px; box-shadow:0 20px 54px -26px rgba(24,28,35,.5); }
     .celebrity-live-bar { display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid rgba(24,28,35,.07); }
@@ -350,7 +347,7 @@ const CELEBRITY_CSS = `
     .celebrity-switcher { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:20px; }
     .celebrity-switcher a { display:flex; justify-content:space-between; gap:12px; padding:14px 16px; border:1px solid var(--line); border-radius:13px; background:var(--card); text-decoration:none; font-weight:600; }
     .celebrity-switcher a:hover { border-color:var(--mint); }
-    @media (max-width:600px) { .celebrity-live { padding:0 10px 34px; margin-top:-6px; } .celebrity-live-copy { padding:0 12px; } .celebrity-live-copy h2 { font-size:27px; } .celebrity-live-url { display:none; } .celebrity-live-glass { padding:7px; border-radius:20px; } .celebrity-live-frame { border-radius:14px; } .celebrity-live-bar { gap:10px; padding:9px 10px; } .celebrity-live-body { height:min(64vh,560px); } .birth-grid, .placement-grid, .place-grid, .celebrity-switcher { grid-template-columns:1fr; } .birth-grid .wide { grid-column:auto; } }
+    @media (max-width:600px) { .celebrity-live { padding:0 10px 34px; margin-top:-6px; } .celebrity-live-url { display:none; } .celebrity-live-glass { padding:7px; border-radius:20px; } .celebrity-live-frame { border-radius:14px; } .celebrity-live-bar { gap:10px; padding:9px 10px; } .celebrity-live-body { height:min(64vh,560px); } .birth-grid, .placement-grid, .place-grid, .celebrity-switcher { grid-template-columns:1fr; } .birth-grid .wide { grid-column:auto; } }
 `;
 
 function readMins(page) {

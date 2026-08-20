@@ -156,7 +156,7 @@ export default function LandingPage() {
   const rootRef = useRef(null);
   const navRef = useRef(null);
   const [demoOn, setDemoOn] = useState(false);
-  const star = DEFAULT_DEMO_KEY;
+  const [star, setStar] = useState(DEFAULT_DEMO_KEY);
   const [demoTheme, setDemoTheme] = useState('dark');
 
   // The canonical homepage is always English, matching its HTML, canonical,
@@ -309,6 +309,11 @@ export default function LandingPage() {
     if (el && root) root.scrollTo({ top: el.offsetTop - 84, behavior: 'smooth' });
   };
 
+  const pickStar = (key) => {
+    setStar(key);
+    setDemoOn(true);
+    trackEvent('demo_interact', { source: 'celebrity_switch', celebrity: key });
+  };
   const pickTheme = (t) => { setDemoTheme(t); setDemoOn(true); };
   const demoSrc = `/demo?embed=1&tutorial=0&star=${star}&theme=${demoTheme}`;
   const starName = STARS.find(([k]) => k === star)?.[1] || 'Michael Jackson';
@@ -405,13 +410,24 @@ export default function LandingPage() {
               <span className="lp-rail-label">{C.demo.chartLabel}</span>
               <div className="lp-rail-scroll">
                 {STARS.map(([key, name]) => (
-                  <a
+                  <div
                     key={key}
                     className={`lp-star-pill${star === key ? ' lp-on' : ''}`}
-                    href={getCelebrityRoute(key, lang)}
-                    onClick={() => trackEvent('celebrity_profile_opened', { celebrity: key, language: lang })}
-                    aria-current={star === key ? 'page' : undefined}
-                  >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</a>
+                  >
+                    <button
+                      className="lp-star-switch"
+                      type="button"
+                      onClick={() => pickStar(key)}
+                      aria-pressed={star === key}
+                    >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
+                    <a
+                      className="lp-star-page"
+                      href={getCelebrityRoute(key, lang)}
+                      aria-label={`${name} — profile`}
+                      title={name}
+                      onClick={() => trackEvent('celebrity_profile_opened', { celebrity: key, language: lang })}
+                    >{I.open}</a>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1009,13 +1025,24 @@ const CSS = `
 .lp-rail-scroll::-webkit-scrollbar-track{ background:transparent; }
 
 .lp-star-pill{
-  display:flex; align-items:center; gap:7px; width:100%; text-align:left;
-  padding:9px 13px; border-radius:13px; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6);
+  display:flex; align-items:center; width:100%; text-align:left; overflow:hidden;
+  padding:0; border-radius:13px; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6);
   font-size:13px; font-weight:600; color:var(--ink2);
   text-decoration:none; transition:all .2s cubic-bezier(.2,.65,.25,1);
 }
 .lp-star-pill:hover{ background:rgba(255,255,255,.8); color:var(--ink); }
 .lp-star-pill.lp-on{ background:var(--ink); border-color:var(--ink); color:#FBF8F1; box-shadow:0 10px 24px -12px rgba(24,28,35,.5); }
+.lp-star-switch{
+  display:flex; align-items:center; gap:7px; flex:1; min-width:0; padding:9px 8px 9px 13px;
+  color:inherit; font:inherit; text-align:left; background:transparent; border:0; cursor:pointer;
+}
+.lp-star-page{
+  display:grid; place-items:center; width:31px; height:31px; margin-right:5px; flex:0 0 auto;
+  border-radius:9px; color:inherit; opacity:.58; text-decoration:none; transition:background .2s,opacity .2s;
+}
+.lp-star-page:hover{ background:rgba(255,255,255,.62); opacity:1; }
+.lp-star-pill.lp-on .lp-star-page:hover{ background:rgba(255,255,255,.13); }
+.lp-star-page svg{ width:13px; height:13px; }
 .lp-star-ic{ display:inline-grid; place-items:center; color:var(--mint-bright); flex-shrink:0; }
 .lp-star-ic svg{ width:11px; height:11px; }
 .lp-mode{ display:inline-flex; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6); border-radius:999px; padding:3px; }
