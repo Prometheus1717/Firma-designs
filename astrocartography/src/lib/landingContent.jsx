@@ -7,7 +7,7 @@
 // Languages the landing is translated into. The landing auto-switches to the
 // visitor's browser language across all of these; anything else falls back to
 // English. Keep this in sync with the keys of CONTENT below.
-export const LP_LANGS = ['en', 'de', 'it', 'es', 'tr', 'ru', 'pt', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
+export const LP_LANGS = ['en', 'de', 'fr', 'it', 'es', 'tr', 'ru', 'pt', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
 
 // Languages rendered right-to-left.
 export const RTL_LANGS = ['ar'];

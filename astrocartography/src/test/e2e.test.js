@@ -13,7 +13,7 @@ beforeAll(() => {
   execSync('npx vite build', { cwd: process.cwd(), stdio: 'pipe', timeout: 60000 });
   html = readFileSync(indexPath, 'utf-8');
   assets = readdirSync(resolve(distDir, 'assets'));
-});
+}, 30000);
 
 describe('Production build', () => {
   it('generates index.html with correct structure', () => {

@@ -5,6 +5,7 @@ import { LANGUAGES } from '../lib/i18n';
 import ConsentBanner from '../components/ConsentBanner';
 import { trackEvent } from '../lib/posthog';
 import { DEFAULT_DEMO_KEY, DEMO_CHARTS } from '../data/demoCharts';
+import { getCelebrityRoute } from '../data/celebrityRoutes';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -155,7 +156,7 @@ export default function LandingPage() {
   const rootRef = useRef(null);
   const navRef = useRef(null);
   const [demoOn, setDemoOn] = useState(false);
-  const [star, setStar] = useState(DEFAULT_DEMO_KEY);
+  const star = DEFAULT_DEMO_KEY;
   const [demoTheme, setDemoTheme] = useState('dark');
 
   // The canonical homepage is always English, matching its HTML, canonical,
@@ -308,7 +309,6 @@ export default function LandingPage() {
     if (el && root) root.scrollTo({ top: el.offsetTop - 84, behavior: 'smooth' });
   };
 
-  const pickStar = (key) => { setStar(key); setDemoOn(true); };
   const pickTheme = (t) => { setDemoTheme(t); setDemoOn(true); };
   const demoSrc = `/demo?embed=1&tutorial=0&star=${star}&theme=${demoTheme}`;
   const starName = STARS.find(([k]) => k === star)?.[1] || 'Michael Jackson';
@@ -405,12 +405,13 @@ export default function LandingPage() {
               <span className="lp-rail-label">{C.demo.chartLabel}</span>
               <div className="lp-rail-scroll">
                 {STARS.map(([key, name]) => (
-                  <button
+                  <a
                     key={key}
                     className={`lp-star-pill${star === key ? ' lp-on' : ''}`}
-                    onClick={() => pickStar(key)}
-                    aria-pressed={star === key}
-                  >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</button>
+                    href={getCelebrityRoute(key, lang)}
+                    onClick={() => trackEvent('celebrity_profile_opened', { celebrity: key, language: lang })}
+                    aria-current={star === key ? 'page' : undefined}
+                  >{star === key && <span className="lp-star-ic">{I.star}</span>}{name}</a>
                 ))}
               </div>
             </div>
@@ -1011,7 +1012,7 @@ const CSS = `
   display:flex; align-items:center; gap:7px; width:100%; text-align:left;
   padding:9px 13px; border-radius:13px; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6);
   font-size:13px; font-weight:600; color:var(--ink2);
-  transition:all .2s cubic-bezier(.2,.65,.25,1);
+  text-decoration:none; transition:all .2s cubic-bezier(.2,.65,.25,1);
 }
 .lp-star-pill:hover{ background:rgba(255,255,255,.8); color:var(--ink); }
 .lp-star-pill.lp-on{ background:var(--ink); border-color:var(--ink); color:#FBF8F1; box-shadow:0 10px 24px -12px rgba(24,28,35,.5); }
