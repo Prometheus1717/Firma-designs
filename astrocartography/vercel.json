@@ -17,11 +17,6 @@
       "permanent": true
     },
     {
-      "source": "/de/(.*)",
-      "destination": "/$1",
-      "permanent": true
-    },
-    {
       "source": "/how-accurate-is-astrocartography",
       "destination": "https://natalnavigator.com/blog/how-accurate-is-astrocartography",
       "permanent": true
@@ -58,14 +53,6 @@
     {
       "source": "/21915b44130d4ed9a4a65a4221aeb56b.txt",
       "destination": "/21915b44130d4ed9a4a65a4221aeb56b.txt"
-    },
-    {
-      "source": "/fr",
-      "destination": "/api/gone"
-    },
-    {
-      "source": "/fr/(.*)",
-      "destination": "/api/gone"
     },
     {
       "source": "/.env",

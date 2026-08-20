@@ -64,13 +64,21 @@ describe('Vercel configuration', () => {
     }
   });
 
-  it('redirects the retired /en and /de folders', () => {
+  it('redirects retired language roots without intercepting localized celebrity pages', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
-    for (const source of ['/en', '/en/(.*)', '/de', '/de/(.*)']) {
+    for (const source of ['/en', '/en/(.*)', '/de']) {
       expect(config.redirects).toEqual(
         expect.arrayContaining([expect.objectContaining({ source, permanent: true })])
       );
     }
+    expect(config.redirects).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ source: '/de/(.*)' })])
+    );
+    expect(config.rewrites).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ source: '/fr/(.*)', destination: '/api/gone' }),
+      ])
+    );
   });
 
   it('keeps API routes out of legacy-host redirects', () => {
