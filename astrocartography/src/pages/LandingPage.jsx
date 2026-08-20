@@ -4,6 +4,7 @@ import { getLandingLang, setLandingLang, landingContent, LP_LANGS, RTL_LANGS } f
 import { LANGUAGES } from '../lib/i18n';
 import ConsentBanner from '../components/ConsentBanner';
 import { trackEvent } from '../lib/posthog';
+import { DEFAULT_DEMO_KEY, DEMO_CHARTS } from '../data/demoCharts';
 
 // ════════════════════════════════════════════════════════════════
 //  Natal Navigator — landing page
@@ -26,13 +27,7 @@ const I = {
 };
 
 
-const STARS = [
-  ['musk', 'Elon Musk'],
-  ['einstein', 'Albert Einstein'],
-  ['monroe', 'Marilyn Monroe'],
-  ['jobs', 'Steve Jobs'],
-  ['kahlo', 'Frida Kahlo'],
-];
+const STARS = DEMO_CHARTS.map(({ key, name }) => [key, name]);
 
 // Pricing currency: €9.99 for euro-area visitors, $9.99 for every other
 // currency/region (and as the fallback). Region is read from the browser
@@ -160,7 +155,7 @@ export default function LandingPage() {
   const rootRef = useRef(null);
   const navRef = useRef(null);
   const [demoOn, setDemoOn] = useState(false);
-  const [star, setStar] = useState('musk');
+  const [star, setStar] = useState(DEFAULT_DEMO_KEY);
   const [demoTheme, setDemoTheme] = useState('dark');
 
   // The canonical homepage is always English, matching its HTML, canonical,
@@ -316,7 +311,7 @@ export default function LandingPage() {
   const pickStar = (key) => { setStar(key); setDemoOn(true); };
   const pickTheme = (t) => { setDemoTheme(t); setDemoOn(true); };
   const demoSrc = `/demo?embed=1&tutorial=0&star=${star}&theme=${demoTheme}`;
-  const starName = STARS.find(([k]) => k === star)?.[1] || 'Elon Musk';
+  const starName = STARS.find(([k]) => k === star)?.[1] || 'Michael Jackson';
 
   return (
     <div className="lp-root" ref={rootRef} lang={lang} dir={isRtl ? 'rtl' : 'ltr'}>

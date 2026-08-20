@@ -14,21 +14,13 @@ import { trackEvent } from '../lib/posthog';
 import { t, getLang, setLang as persistLang, LANGUAGES } from '../lib/i18n';
 import { getCityReading } from '../lib/cityReadingsI18n.js';
 import { getNatalReadings } from '../data/natalReadings.js';
+import { DEFAULT_DEMO_KEY, getDemoChart } from '../data/demoCharts.js';
 
-// Demo charts — public birth data (Astro-Databank). The landing page embeds
-// /demo?star=<key> to switch profiles; default stays Elon Musk.
-const DEMOS = {
-  musk:     { date: '1971-06-28', time: '07:00', lat: -25.7479, lng: 28.2293,   city: 'Pretoria, South Africa',  home: 'Pretoria',      name: 'Elon Musk' },
-  einstein: { date: '1879-03-14', time: '11:30', lat: 48.3984,  lng: 9.9916,    city: 'Ulm, Germany',            home: 'Ulm',           name: 'Albert Einstein' },
-  monroe:   { date: '1926-06-01', time: '09:30', lat: 34.0522,  lng: -118.2437, city: 'Los Angeles, USA',        home: 'Los Angeles',   name: 'Marilyn Monroe' },
-  jobs:     { date: '1955-02-24', time: '19:15', lat: 37.7749,  lng: -122.4194, city: 'San Francisco, USA',      home: 'San Francisco', name: 'Steve Jobs' },
-  kahlo:    { date: '1907-07-06', time: '08:30', lat: 19.3434,  lng: -99.1626,  city: 'Coyoacán, Mexico City',   home: 'Coyoacán',      name: 'Frida Kahlo' },
-};
 // Resolved once per document load — the landing embeds each star as a fresh
 // iframe document, so reading location here is safe.
 const DEMO = (() => {
-  try { return DEMOS[new URLSearchParams(window.location.search).get('star')] || DEMOS.musk; }
-  catch { return DEMOS.musk; }
+  try { return getDemoChart(new URLSearchParams(window.location.search).get('star')); }
+  catch { return getDemoChart(DEFAULT_DEMO_KEY); }
 })();
 
 const F = { fontFamily: 'JetBrains Mono, monospace' };
@@ -226,7 +218,7 @@ function getAllLinesForCity(city, lines, threshold = 5) {
 
 // Try to hydrate chart from cache synchronously — avoids flash of loading screen
 // Resolve the birth input a Dashboard render should chart:
-//  - demo   → the sample celebrity (Elon Musk et al.)
+//  - demo   → the sample celebrity (Michael Jackson et al.)
 //  - teaser → the anonymous visitor's own guest birth data (data-first funnel)
 //  - normal → the signed-in user's saved profile
 function resolveBirthInput(demo, profile, teaser) {

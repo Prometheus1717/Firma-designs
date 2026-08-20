@@ -22,7 +22,7 @@ export default {
     },
     {
       "h2": "Learn to read a map with example charts",
-      "html": "<p>The demo ships with five well-known charts: <strong>Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo</strong>. These are not random decoration — they are a genuinely useful way to learn the craft of reading a map without the emotional weight of looking at your own life.</p>\n      <p>When the map is someone else's, it is much easier to be objective. You can see where a Jupiter line crosses a place a person actually thrived, or where a Saturn line sits over years that were known to be hard, and start to feel how the interpretation maps onto a real biography. You learn what a Sun line looks like versus a Venus line, how the four angles change a planet's flavour, and how to read the band of influence around a line rather than treating it as a hairline on the globe.</p>\n      <p>By the time you load your own chart, you already know how to navigate the globe, what the colours mean, and which questions to ask. That is the point of the example charts: they turn a first-time visitor into someone who can actually read what they are looking at. Astrocartography is a reflective tool, not a prediction engine — and practising on famous lives is the gentlest way to build that reflective skill.</p>"
+      "html": "<p>The demo ships with six well-known charts: <strong>Michael Jackson, Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo</strong>. These are not random decoration — they are a genuinely useful way to learn the craft of reading a map without the emotional weight of looking at your own life.</p>\n      <p>When the map is someone else's, it is much easier to be objective. You can see where a Jupiter line crosses a place a person actually thrived, or where a Saturn line sits over years that were known to be hard, and start to feel how the interpretation maps onto a real biography. You learn what a Sun line looks like versus a Venus line, how the four angles change a planet's flavour, and how to read the band of influence around a line rather than treating it as a hairline on the globe.</p>\n      <p>By the time you load your own chart, you already know how to navigate the globe, what the colours mean, and which questions to ask. That is the point of the example charts: they turn a first-time visitor into someone who can actually read what they are looking at. Astrocartography is a reflective tool, not a prediction engine — and practising on famous lives is the gentlest way to build that reflective skill.</p>"
     },
     {
       "h2": "Creating your own map",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "q": "Does the demo calculate my personal astrocartography chart?",
-      "a": "No. The demo is limited to famous example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo) so you can inspect the 3D globe, line controls, city detection and natal wheel before buying. A chart calculated from your own birth data costs a one-time €9.99 / $9.99."
+      "a": "No. The demo is limited to famous example charts (Michael Jackson, Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo) so you can inspect the 3D globe, line controls, city detection and natal wheel before buying. A chart calculated from your own birth data costs a one-time €9.99 / $9.99."
     },
     {
       "q": "Do I need to create an account or give my email?",
