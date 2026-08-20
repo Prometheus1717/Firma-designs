@@ -19,6 +19,20 @@ export const DEMO_CHARTS = [
     name: 'Michael Jackson',
   },
   { key: 'musk', date: '1971-06-28', time: '07:00', lat: -25.7479, lng: 28.2293, city: 'Pretoria, South Africa', home: 'Pretoria', name: 'Elon Musk' },
+  {
+    key: 'diana',
+    date: '1961-07-01',
+    time: '19:45',
+    // Park House on the Sandringham Estate, Norfolk. The supplied
+    // coordinates are 52°50′ N, 0°30′ E. tz-lookup resolves them to
+    // Europe/London; British Summer Time was UTC+01:00 at the birth moment
+    // (1961-07-01 18:45 UTC).
+    lat: 52.833333,
+    lng: 0.5,
+    city: 'Park House, Sandringham Estate, Norfolk, England',
+    home: 'Sandringham',
+    name: 'Princess Diana',
+  },
   { key: 'einstein', date: '1879-03-14', time: '11:30', lat: 48.3984, lng: 9.9916, city: 'Ulm, Germany', home: 'Ulm', name: 'Albert Einstein' },
   { key: 'monroe', date: '1926-06-01', time: '09:30', lat: 34.0522, lng: -118.2437, city: 'Los Angeles, USA', home: 'Los Angeles', name: 'Marilyn Monroe' },
   { key: 'jobs', date: '1955-02-24', time: '19:15', lat: 37.7749, lng: -122.4194, city: 'San Francisco, USA', home: 'San Francisco', name: 'Steve Jobs' },
