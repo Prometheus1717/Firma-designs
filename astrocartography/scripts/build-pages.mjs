@@ -315,6 +315,24 @@ const PAPER_CSS = `
 `;
 
 const CELEBRITY_CSS = `
+    .hero-celebrity { padding:clamp(34px,5vh,58px) 0 24px; }
+    .celebrity-live { width:100%; padding:0 clamp(16px,3vw,32px) 44px; margin-top:-12px; }
+    .celebrity-live-copy { max-width:760px; margin:0 auto 22px; text-align:center; }
+    .celebrity-live-copy h2 { font-family:var(--serif); font-weight:400; font-size:clamp(28px,3.4vw,42px); line-height:1.16; letter-spacing:-.01em; margin:0 0 8px; }
+    .celebrity-live-copy p { max-width:62ch; margin:0 auto; color:var(--ink2); font-size:16px; }
+    .celebrity-live-glass { width:min(1180px,100%); margin:0 auto; padding:clamp(8px,.9vw,15px); border-radius:30px; background:rgba(255,255,255,.32); border:1px solid rgba(255,255,255,.72); backdrop-filter:blur(30px) saturate(150%); -webkit-backdrop-filter:blur(30px) saturate(150%); box-shadow:0 60px 140px -46px rgba(38,40,92,.6), inset 0 1px 0 rgba(255,255,255,.85); }
+    .celebrity-live-frame { overflow:hidden; background:#fff; border:1px solid rgba(255,255,255,.7); border-radius:18px; box-shadow:0 20px 54px -26px rgba(24,28,35,.5); }
+    .celebrity-live-bar { display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid rgba(24,28,35,.07); }
+    .celebrity-live-dots { display:flex; gap:6px; }
+    .celebrity-live-dots i { width:10px; height:10px; border-radius:50%; }
+    .celebrity-live-dots i:first-child { background:#F4A9A0; }
+    .celebrity-live-dots i:nth-child(2) { background:#F2D49B; }
+    .celebrity-live-dots i:last-child { background:#A8DDBA; }
+    .celebrity-live-url { flex:1; text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--ink2); letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .celebrity-live-open { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--ink2); font-size:12.5px; font-weight:600; text-decoration:none; white-space:nowrap; transition:all .2s; }
+    .celebrity-live-open:hover { color:var(--ink); background:var(--paper); }
+    .celebrity-live-body { position:relative; height:clamp(480px,70vh,820px); background:#090b10; }
+    .celebrity-live-body iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
     .birth-grid, .placement-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:22px 0 34px; }
     .birth-grid > div, .placement-card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 14px 38px -30px rgba(40,44,90,.35); }
     .birth-grid .wide { grid-column:1/-1; }
@@ -322,8 +340,6 @@ const CELEBRITY_CSS = `
     .birth-grid strong, .placement-card strong { display:block; margin-top:5px; font-size:15px; line-height:1.45; }
     .placement-card { position:relative; padding-left:58px; }
     .placement-glyph { position:absolute; left:18px; top:18px; display:grid; place-items:center; width:28px; height:28px; border-radius:9px; background:var(--lav-soft); color:var(--lav); font-family:var(--serif); font-size:17px; }
-    .celebrity-demo { width:min(1120px,calc(100vw - 32px)); height:clamp(520px,72vh,760px); margin:28px 50% 18px; transform:translateX(-50%); overflow:hidden; border:1px solid rgba(24,28,35,.78); border-radius:24px; background:#090b10; box-shadow:0 35px 80px -42px rgba(24,28,35,.8); }
-    .celebrity-demo iframe { width:100%; height:100%; border:0; display:block; }
     .demo-actions { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; font-size:14px; }
     .place-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:25px 50% 36px; width:min(980px,calc(100vw - 40px)); transform:translateX(-50%); }
     .place-card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 18px 44px -34px rgba(40,44,90,.45); }
@@ -334,7 +350,7 @@ const CELEBRITY_CSS = `
     .celebrity-switcher { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:20px; }
     .celebrity-switcher a { display:flex; justify-content:space-between; gap:12px; padding:14px 16px; border:1px solid var(--line); border-radius:13px; background:var(--card); text-decoration:none; font-weight:600; }
     .celebrity-switcher a:hover { border-color:var(--mint); }
-    @media (max-width:600px) { .birth-grid, .placement-grid, .place-grid, .celebrity-switcher { grid-template-columns:1fr; } .birth-grid .wide { grid-column:auto; } .celebrity-demo { height:72vh; border-radius:16px; } }
+    @media (max-width:600px) { .celebrity-live { padding:0 10px 34px; margin-top:-6px; } .celebrity-live-copy { padding:0 12px; } .celebrity-live-copy h2 { font-size:27px; } .celebrity-live-url { display:none; } .celebrity-live-glass { padding:7px; border-radius:20px; } .celebrity-live-frame { border-radius:14px; } .celebrity-live-bar { gap:10px; padding:9px 10px; } .celebrity-live-body { height:min(64vh,560px); } .birth-grid, .placement-grid, .place-grid, .celebrity-switcher { grid-template-columns:1fr; } .birth-grid .wide { grid-column:auto; } }
 `;
 
 function readMins(page) {
@@ -653,7 +669,7 @@ ${renderSchema(page)}
     </nav>
   </header>
 
-  <section class="hero">
+  <section class="hero${page.template === 'celebrity' ? ' hero-celebrity' : ''}">
     <div class="hero-aurora" aria-hidden="true"></div>
     <div class="hero-inner wrap">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -665,6 +681,8 @@ ${renderSchema(page)}
 ${heroButtons(page)}
     </div>
   </section>
+
+${page.liveDemo || ''}
 
   <main>
     <article class="wrap">

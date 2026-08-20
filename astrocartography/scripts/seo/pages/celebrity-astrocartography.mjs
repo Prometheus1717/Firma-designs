@@ -244,9 +244,25 @@ function renderPlacements(chart, lang) {
 
 function renderLive(key, name, ui) {
   const src = `/demo?embed=1&tutorial=0&star=${key}&theme=dark`;
-  return `<p>${ui.liveIntro}</p>
-  <div class="celebrity-demo" id="live-chart"><iframe src="${src}" title="${name} astrocartography and natal chart" loading="lazy" allow="fullscreen"></iframe></div>
-  <p class="demo-actions"><a href="/demo?star=${key}&theme=dark">${ui.open} &rarr;</a> <a href="/create">${ui.create} &rarr;</a></p>`;
+  return `<section class="celebrity-live" id="live-chart" aria-labelledby="live-chart-title">
+    <div class="celebrity-live-copy">
+      <h2 id="live-chart-title">${ui.live(name)}</h2>
+      <p>${ui.liveIntro}</p>
+    </div>
+    <div class="celebrity-live-glass">
+      <div class="celebrity-live-frame">
+        <div class="celebrity-live-bar">
+          <span class="celebrity-live-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="celebrity-live-url">natalnavigator.com · ${ui.live(name)}</span>
+          <a class="celebrity-live-open" href="/demo?star=${key}&theme=dark">${ui.open} &nearr;</a>
+        </div>
+        <div class="celebrity-live-body">
+          <iframe src="${src}" title="${name} astrocartography and natal chart" allow="fullscreen"></iframe>
+        </div>
+      </div>
+    </div>
+    <p class="demo-actions"><a href="/demo?star=${key}&theme=dark">${ui.open} &rarr;</a> <a href="/create">${ui.create} &rarr;</a></p>
+  </section>`;
 }
 
 function renderMichaelLocations(lang) {
@@ -296,7 +312,6 @@ for (const lang of CELEBRITY_LANGS) {
       { h2: ui.birth, html: renderBirth(demo, ui) },
       { h2: ui.big4, html: renderPlacements(chart, lang) },
       { h2: ui.reading(demo.name), html: `<p>${PROFILE_THEMES[demo.key][lang]}</p><div class="note"><strong>${ui.method}.</strong> ${ui.methodText}</div>` },
-      { h2: ui.live(demo.name), html: renderLive(demo.key, demo.name, ui) },
       { h2: ui.mapReading, html: `<p>${ui.mapBody(demo.name)}</p><p><strong>${LINE_FOCUS[lang]}:</strong> ${TOP_LINES[demo.key].join(' · ')}</p>` },
     ];
     if (isMichael) {
@@ -322,6 +337,7 @@ for (const lang of CELEBRITY_LANGS) {
       breadcrumb: [{ name: ui.label, url: '/' }, { name: demo.name, url: getCelebrityRoute(demo.key, lang) }],
       h1: title,
       lead: ui.lead(demo.name),
+      liveDemo: renderLive(demo.key, demo.name, ui),
       sections,
       faq: faqFor(demo.key, demo.name, ui),
       related: [],
