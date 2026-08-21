@@ -370,6 +370,7 @@ export default function LandingPage() {
           <h1 className="lp-h1 lp-h-an" style={{ '--d': '90ms' }}>
             <span className="lp-sr">{C.hero.sr}</span>
             <span aria-hidden="true">
+              <span className="lp-h1-brand">{C.hero.brand || 'Natal Navigator'}</span>
               <span className="lp-h1-row">
                 {C.hero.pre}{' '}
                 <span className="lp-chip lp-chip-lav lp-float"><span className="lp-chip-ic">{I.wheel}</span><em>{C.hero.chartChip}</em></span>{' '}
@@ -882,6 +883,7 @@ const CSS = `
   line-height:1.13; letter-spacing:-.015em; margin:clamp(24px,3.4vh,34px) auto 0; max-width:34ch;
 }
 .lp-h1 em, .lp-h2 em{ font-style:italic; }
+.lp-h1-brand{ display:block; margin-bottom:.55em; color:var(--mint2); font-family:var(--sans); font-size:.22em; font-style:normal; font-weight:700; letter-spacing:.18em; line-height:1; text-transform:uppercase; }
 .lp-sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 .lp-h1-row{ display:block; }
 .lp-h1-row + .lp-h1-row{ margin-top:.18em; }

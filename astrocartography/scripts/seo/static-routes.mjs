@@ -9,7 +9,7 @@
 // side effect of reading its own source of truth.
 
 export const STATIC_ROUTES = [
-  { loc: '/', lastmod: '2026-08-10', alt: { en: '/', 'x-default': '/' } },
+  { loc: '/', lastmod: '2026-08-21', alt: { en: '/', 'x-default': '/' } },
   { loc: 'blog', lastmod: '2026-08-10', alt: { en: 'blog', 'x-default': 'blog' } },
   {
     loc: 'astrocartography',
