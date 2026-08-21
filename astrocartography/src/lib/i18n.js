@@ -1,10 +1,9 @@
 // ── Multi-language translation system for NatalNavigator ──
-// Supported: en, de, fr, it, es, tr, ru, pt, ja, zh, ar, ko, pl, nl
+// Supported: en, de, it, es, tr, ru, pt, ja, zh, ar, ko, pl, nl
 
 const LANGUAGES = [
   { code: 'en', name: 'English' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'fr', name: 'Français' },
   { code: 'it', name: 'Italiano' },
   { code: 'es', name: 'Español' },
   { code: 'tr', name: 'Türkçe' },
@@ -20,12 +19,17 @@ const LANGUAGES = [
 
 export { LANGUAGES };
 
+const LANGUAGE_CODES = new Set(LANGUAGES.map(({ code }) => code));
+
 // ── Persistence ──
 export function getLang() {
-  try { return localStorage.getItem('nn_lang') || 'en'; } catch { return 'en'; }
+  try {
+    const stored = localStorage.getItem('nn_lang');
+    return LANGUAGE_CODES.has(stored) ? stored : 'en';
+  } catch { return 'en'; }
 }
 export function setLang(code) {
-  try { localStorage.setItem('nn_lang', code); } catch {}
+  try { localStorage.setItem('nn_lang', LANGUAGE_CODES.has(code) ? code : 'en'); } catch {}
 }
 
 // ── Translation lookup ──

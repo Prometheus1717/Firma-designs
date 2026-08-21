@@ -1,9 +1,8 @@
-export const CELEBRITY_LANGS = ['en', 'de', 'fr', 'it', 'es', 'tr', 'ru', 'pt', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
+export const CELEBRITY_LANGS = ['en', 'de', 'it', 'es', 'tr', 'ru', 'pt', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
 
 export const CELEBRITY_SLUGS = {
   en: 'celebrities',
   de: 'de/prominente',
-  fr: 'fr/celebrites',
   it: 'it/celebrita',
   es: 'es/celebridades',
   tr: 'tr/unluler',
@@ -28,7 +27,7 @@ export const CELEBRITY_PROFILES = {
 };
 
 const ASTROCARTOGRAPHY_SUFFIX = {
-  en: 'astrocartography', de: 'astrokartographie', fr: 'astrocartographie',
+  en: 'astrocartography', de: 'astrokartographie',
   it: 'astrocartografia', es: 'astrocartografia', tr: 'astrokartografi',
   ru: 'astrokartografiya', pt: 'astrocartografia', ja: 'astrocartography',
   zh: 'astrocartography', ar: 'astrocartography', ko: 'astrocartography',

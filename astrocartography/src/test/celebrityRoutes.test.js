@@ -16,14 +16,16 @@ describe('celebrity SEO routes', () => {
       Object.keys(CELEBRITY_PROFILES).map((key) => getCelebritySlug(key, lang))
     );
 
-    expect(routes).toHaveLength(98);
-    expect(new Set(routes).size).toBe(98);
+    expect(routes).toHaveLength(91);
+    expect(new Set(routes).size).toBe(91);
+    expect(CELEBRITY_LANGS).not.toContain('fr');
   });
 
   it('targets the primary Michael Jackson search terms and keeps localized German routing', () => {
     expect(getCelebrityRoute('jackson', 'en')).toBe('/celebrities/michael-jackson-astrocartography');
     expect(getCelebrityRoute('jackson', 'de')).toBe('/de/prominente/michael-jackson-astrokartographie');
-    expect(getCelebrityAlternates('jackson')).toHaveProperty('fr', 'fr/celebrites/michael-jackson-astrocartographie');
+    expect(getCelebrityAlternates('jackson')).not.toHaveProperty('fr');
+    expect(getCelebrityRoute('jackson', 'fr')).toBe('/celebrities/michael-jackson-astrocartography');
   });
 
   it('falls back safely to Michael Jackson in English', () => {
