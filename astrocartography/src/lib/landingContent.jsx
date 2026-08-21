@@ -58,7 +58,8 @@ export const CONTENT = {
     nav: { demo: 'Live demo', features: 'Features', forYou: "Who it’s for", lines: 'Line meanings', pricing: 'Pricing', faq: 'FAQ', signIn: 'Sign in', cta: 'Create your map' },
     badge: 'Find your best places with astrocartography',
     hero: {
-      sr: 'Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.',
+      brand: 'Natal Navigator',
+      sr: 'Natal Navigator — interactive astrocartography map and calculator. Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.',
       pre: 'Your', chartChip: 'birth chart', mid: 'is secretly a', mapWord: 'map', seeWhere: 'See where you',
       cycle: [['thrive', 'mint'], ['fall in love', 'rose'], ['feel at home', 'amber'], ['grow', 'lav']],
     },
@@ -145,7 +146,7 @@ export const CONTENT = {
       ['Is my birth data private?', 'Your birth data is handled by the service providers and for the purposes described in our privacy notice. It is not sold for advertising. You can delete your account and associated profile data subject to legal retention duties.'],
     ],
     final: { h2: <>Your stars are already aligned.<br /><em>See where.</em></>, sub: 'Two minutes from birth certificate to world map.', ctaCreate: 'Create my map', ctaDemo: 'Try the demo first' },
-    meta: { title: 'Astrocartography Map & Calculator — Natal Navigator', desc: 'Turn your birth chart into a living map. Interactive astrocartography calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.' },
+    meta: { title: 'Natal Navigator — Astrocartography Map & Calculator', desc: 'Natal Navigator is an interactive astrocartography map and calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home.' },
     footer: { tagline: 'Astrocartography & relocation astrology on an interactive 3D globe. A reflection tool — the decisions stay yours.', hProduct: 'Product', hLearn: 'Learn', hContact: 'Contact', hLegal: 'Legal', createAccount: 'Create account', contactForm: 'Contact form', cookieSettings: 'Cookie settings', rights: '© 2026 Natal Navigator. All rights reserved.', note: 'Made with real ephemeris data — astrology is reflection, not prediction.' },
     mock: {
       thrive: 'Thrive', neutral: 'Neutral', caution: 'Caution',

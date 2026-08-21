@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 
     <!-- ─── Core identity ─── -->
-    <title>Astrocartography Map & Calculator — Natal Navigator</title>
-    <meta name="description" content="Turn your birth chart into a living map. Interactive astrocartography calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home." />
+    <title>Natal Navigator — Astrocartography Map & Calculator</title>
+    <meta name="description" content="Natal Navigator is an interactive astrocartography map and calculator with a 3D globe, 40 planetary lines and 345+ cities rated for career, love and home." />
     <meta name="keywords" content="astrocartography, natal chart, astrology map, planetary lines, birth chart, astrocartography calculator, relocation astrology, astro map, MC IC ASC DC lines, best cities astrology" />
     <meta name="author" content="Natal Navigator" />
     <link rel="canonical" href="https://natalnavigator.com/" />
@@ -51,7 +51,7 @@
     <!-- ─── Open Graph (Facebook, LinkedIn, iMessage, Discord, Slack, …) ─── -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Natal Navigator" />
-    <meta property="og:title" content="Astrocartography Map & Calculator — Natal Navigator" />
+    <meta property="og:title" content="Natal Navigator — Astrocartography Map & Calculator" />
     <meta property="og:description" content="Turn your birth chart into a living map. Interactive 3D globe, 40 planetary lines, 345+ cities rated for career, love and home — explore the live demo." />
     <meta property="og:url" content="https://natalnavigator.com/" />
     <meta property="og:locale" content="en_US" />
@@ -62,7 +62,7 @@
 
     <!-- ─── Twitter / X Card ─── -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Astrocartography Map & Calculator — Natal Navigator" />
+    <meta name="twitter:title" content="Natal Navigator — Astrocartography Map & Calculator" />
     <meta name="twitter:description" content="Turn your birth chart into a living map. Interactive 3D globe, 40 planetary lines, 345+ cities rated for career, love and home — explore the live demo." />
     <meta name="twitter:image" content="https://natalnavigator.com/og-v5.png" />
     <meta name="twitter:image:alt" content="Natal Navigator astrocartography globe" />
@@ -87,7 +87,7 @@
           "@type": "WebApplication",
           "@id": "https://natalnavigator.com/#app",
           "name": "Natal Navigator",
-          "alternateName": "NatalNavigator",
+          "alternateName": ["NatalNavigator", "Natal Navigator Astrocartography"],
           "url": "https://natalnavigator.com",
           "description": "Interactive astrocartography globe that maps your planetary lines across the world. Discover the best cities for career, love, and personal growth based on your birth chart.",
           "applicationCategory": "LifestyleApplication",
@@ -118,8 +118,13 @@
           "@type": "Organization",
           "@id": "https://natalnavigator.com/#org",
           "name": "Natal Navigator",
+          "alternateName": "NatalNavigator",
           "url": "https://natalnavigator.com",
           "logo": "https://natalnavigator.com/favicon-512x512.png",
+          "description": "Natal Navigator creates interactive astrocartography maps from natal chart data and shows planetary lines on a 3D globe.",
+          "slogan": "Your birth chart is secretly a map.",
+          "knowsAbout": ["Astrocartography", "Natal charts", "Relocation astrology", "Planetary lines"],
+          "founder": { "@id": "https://natalnavigator.com/about#founder" },
           "address": {
             "@type": "PostalAddress",
             "addressCountry": "DE"
@@ -130,7 +135,27 @@
           "@id": "https://natalnavigator.com/#website",
           "url": "https://natalnavigator.com",
           "name": "Natal Navigator",
+          "alternateName": "Natal Navigator Astrocartography",
           "publisher": { "@id": "https://natalnavigator.com/#org" },
+          "inLanguage": "en"
+        },
+        {
+          "@type": "Person",
+          "@id": "https://natalnavigator.com/about#founder",
+          "name": "Sercan Yesilyurt",
+          "url": "https://natalnavigator.com/about"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://natalnavigator.com/#webpage",
+          "url": "https://natalnavigator.com/",
+          "name": "Natal Navigator — Astrocartography Map & Calculator",
+          "isPartOf": { "@id": "https://natalnavigator.com/#website" },
+          "about": [
+            { "@id": "https://natalnavigator.com/#app" },
+            { "@id": "https://natalnavigator.com/#org" }
+          ],
+          "mainEntity": { "@id": "https://natalnavigator.com/#app" },
           "inLanguage": "en"
         },
         {
@@ -335,7 +360,8 @@
     -->
     <main id="seo-content">
       <header>
-        <h1>Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.</h1>
+        <h1>Natal Navigator — Interactive Astrocartography Map &amp; Calculator</h1>
+        <p>Your birth chart is secretly a map — see where you thrive, fall in love, feel at home and grow.</p>
         <p><strong>Interactive astrocartography globe with a free example-chart demo</strong></p>
       </header>
 
