@@ -64,7 +64,7 @@ describe('Vercel configuration', () => {
     }
   });
 
-  it('redirects retired language roots without intercepting localized celebrity pages', () => {
+  it('redirects legacy roots and retires every French route with 410 handling', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
     for (const source of ['/en', '/en/(.*)', '/de']) {
       expect(config.redirects).toEqual(
@@ -74,8 +74,9 @@ describe('Vercel configuration', () => {
     expect(config.redirects).not.toEqual(
       expect.arrayContaining([expect.objectContaining({ source: '/de/(.*)' })])
     );
-    expect(config.rewrites).not.toEqual(
+    expect(config.rewrites).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ source: '/fr', destination: '/api/gone' }),
         expect.objectContaining({ source: '/fr/(.*)', destination: '/api/gone' }),
       ])
     );
