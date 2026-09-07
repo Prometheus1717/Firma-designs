@@ -14,6 +14,8 @@ Key concepts: MC line = career, visibility, vocation. IC line = home, roots, fam
 
 ## Core pages
 
+- [Astrology explained](https://natalnavigator.com/astrology): signs, planets, houses, angles and how each placement becomes a line on the map
+- [Astrologie erklärt (DE)](https://natalnavigator.com/astrologie): Sternzeichen, Planeten, Häuser und Karte
 - [Homepage with embedded live demo](https://natalnavigator.com/): product overview and interactive demo
 - [Interactive demo with example charts](https://natalnavigator.com/demo): explore astrocartography with celebrity example charts
 - [What is astrocartography — complete guide](https://natalnavigator.com/astrocartography): definition, history and how the technique works

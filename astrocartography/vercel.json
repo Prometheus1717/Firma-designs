@@ -73,6 +73,78 @@
       "destination": "/api/gone"
     },
     {
+      "source": "/ar",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ar/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/it",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/it/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ja",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ja/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ko",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ko/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/nl",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/nl/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/pl",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/pl/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ru",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/ru/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/tr",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/tr/(.*)",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/zh",
+      "destination": "/api/gone"
+    },
+    {
+      "source": "/zh/(.*)",
+      "destination": "/api/gone"
+    },
+    {
       "source": "/.env",
       "destination": "/api/not-found"
     },

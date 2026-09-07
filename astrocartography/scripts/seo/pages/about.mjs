@@ -38,6 +38,7 @@ export default {
     { q: 'How can I request a correction?', a: 'Email info@natalnavigator.com with the page URL, passage and preferably a primary source. Confirmed material corrections update the content and modification date.' },
   ],
   related: [
+    { href: '/astrology', label: 'Astrology explained: signs, planets, houses and your map' },
     { href: '/astrocartography', label: 'Astrocartography: the complete beginner guide' },
     { href: '/astrocartography-calculator', label: 'How the calculator works' },
     { href: '/blog/how-accurate-is-astrocartography', label: 'How accurate is astrocartography?' },

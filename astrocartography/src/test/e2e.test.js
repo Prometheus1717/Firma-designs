@@ -64,7 +64,7 @@ describe('Vercel configuration', () => {
     }
   });
 
-  it('redirects legacy roots and retires every French route with 410 handling', () => {
+  it('redirects legacy roots and retires every dropped language route with 410 handling', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
     for (const source of ['/en', '/en/(.*)', '/de']) {
       expect(config.redirects).toEqual(
@@ -74,12 +74,19 @@ describe('Vercel configuration', () => {
     expect(config.redirects).not.toEqual(
       expect.arrayContaining([expect.objectContaining({ source: '/de/(.*)' })])
     );
-    expect(config.rewrites).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ source: '/fr', destination: '/api/gone' }),
-        expect.objectContaining({ source: '/fr/(.*)', destination: '/api/gone' }),
-      ])
-    );
+    for (const lang of ['fr', 'ar', 'it', 'ja', 'ko', 'nl', 'pl', 'ru', 'tr', 'zh']) {
+      expect(config.rewrites).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ source: `/${lang}`, destination: '/api/gone' }),
+          expect.objectContaining({ source: `/${lang}/(.*)`, destination: '/api/gone' }),
+        ])
+      );
+    }
+    for (const lang of ['es', 'pt', 'de']) {
+      expect(config.rewrites).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ source: `/${lang}/(.*)`, destination: '/api/gone' })])
+      );
+    }
   });
 
   it('keeps API routes out of legacy-host redirects', () => {
