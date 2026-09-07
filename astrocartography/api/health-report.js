@@ -20,7 +20,6 @@ import { applySecurityHeaders } from './_security.js';
 
 const SITE = 'https://natalnavigator.com';
 const SUPABASE_REF = 'kbwjxtvqdkcicaydtixp';
-const PROD_BRANCH = 'claude/astrocartography-globe-dashboard-aBjui';
 const DEADLOCK_MARKER = 'Payment required before entering birth data.';
 const CHECK_TIMEOUT_MS = 7_000;
 const TELEGRAM_TIMEOUT_MS = 8_000;
@@ -105,6 +104,19 @@ function must(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+export function deploymentProvenance(env = process.env) {
+  must(
+    env.VERCEL_ENV === 'production',
+    `Deployment läuft in Umgebung "${env.VERCEL_ENV || 'unbekannt'}" statt Produktion`
+  );
+
+  const ref = env.VERCEL_GIT_COMMIT_REF;
+  const sha = (env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
+  return ref
+    ? `${ref}@${sha || '?'} (production)`
+    : `CLI-Deployment (${env.VERCEL_URL || 'production'})`;
+}
+
 async function captureCheck(name, fn) {
   const startedAt = Date.now();
   try {
@@ -139,22 +151,10 @@ export async function runChecks({
   let entryJs = '';
   const request = (url, init) => fetchWithTimeout(url, init, timeoutMs, fetchImpl);
 
-  const provenance = await captureCheck('Herkunft des Deployments', async () => {
-    const ref = env.VERCEL_GIT_COMMIT_REF;
-    const sha = (env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7);
-    if (!ref) {
-      must(
-        env.VERCEL_ENV === 'production',
-        `CLI-Deployment läuft in Umgebung "${env.VERCEL_ENV || 'unbekannt'}" statt Produktion`
-      );
-      return `CLI-Deployment (${env.VERCEL_URL || 'production'})`;
-    }
-    must(
-      ref === PROD_BRANCH,
-      `läuft aus Branch "${ref}" statt "${PROD_BRANCH}" — fremdes Deployment auf Produktion`
-    );
-    return `${ref}@${sha || '?'}`;
-  });
+  const provenance = await captureCheck(
+    'Herkunft des Deployments',
+    async () => deploymentProvenance(env)
+  );
 
   const homepage = await captureCheck('Startseite', async () => {
     const response = await request(`${SITE}/`, { redirect: 'follow' });
@@ -526,8 +526,8 @@ function buildReport(checks, now) {
     lines.push(
       '',
       'Zuerst prüfen:',
-      '1. Fremdes Deployment auf Produktion promotet?',
-      '2. Ohne Build-Env oder mit --prebuilt deployt?'
+      '1. Letzten Produktions-Deploy und Function-Logs prüfen.',
+      '2. Build-Env und betroffenen externen Dienst prüfen.'
     );
   }
   return { failed, text: lines.join('\n') };

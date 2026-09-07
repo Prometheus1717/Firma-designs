@@ -13,7 +13,7 @@ beforeAll(() => {
   execSync('npx vite build', { cwd: process.cwd(), stdio: 'pipe', timeout: 60000 });
   html = readFileSync(indexPath, 'utf-8');
   assets = readdirSync(resolve(distDir, 'assets'));
-});
+}, 30000);
 
 describe('Production build', () => {
   it('generates index.html with correct structure', () => {
@@ -64,13 +64,22 @@ describe('Vercel configuration', () => {
     }
   });
 
-  it('redirects the retired /en and /de folders', () => {
+  it('redirects legacy roots and retires every French route with 410 handling', () => {
     const config = JSON.parse(readFileSync(resolve(process.cwd(), 'vercel.json'), 'utf-8'));
-    for (const source of ['/en', '/en/(.*)', '/de', '/de/(.*)']) {
+    for (const source of ['/en', '/en/(.*)', '/de']) {
       expect(config.redirects).toEqual(
         expect.arrayContaining([expect.objectContaining({ source, permanent: true })])
       );
     }
+    expect(config.redirects).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ source: '/de/(.*)' })])
+    );
+    expect(config.rewrites).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ source: '/fr', destination: '/api/gone' }),
+        expect.objectContaining({ source: '/fr/(.*)', destination: '/api/gone' }),
+      ])
+    );
   });
 
   it('keeps API routes out of legacy-host redirects', () => {

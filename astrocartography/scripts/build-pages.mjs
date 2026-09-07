@@ -85,7 +85,8 @@ function renderSchema(page) {
     },
     image: `${ORIGIN}/og-v5.png`,
     inLanguage: page.lang,
-    ...(page.definedTerm ? { about: { '@type': 'DefinedTerm', '@id': self + '#term' } } : {}),
+    ...(page.person ? { about: { '@type': 'Person', '@id': self + '#person' } } :
+      page.definedTerm ? { about: { '@type': 'DefinedTerm', '@id': self + '#term' } } : {}),
   });
 
   graph.push({
@@ -125,6 +126,18 @@ function renderSchema(page) {
         url: abs('/astrocartography'),
       },
     });
+  }
+
+  if (page.person) {
+    graph.push({
+      '@type': 'Person',
+      '@id': self + '#person',
+      name: page.person.name,
+      birthDate: page.person.birthDate,
+      birthPlace: { '@type': 'Place', name: page.person.birthPlace },
+      subjectOf: { '@type': 'Article', '@id': self + '#article' },
+    });
+    graph[0]['@id'] = self + '#article';
   }
 
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2);
@@ -301,6 +314,42 @@ const PAPER_CSS = `
     @media (max-width: 600px) { .nav-links { display: none; } article h2 { font-size: 24px; margin-top: 44px; } .lines-cluster ul { grid-template-columns: 1fr 1fr; } }
 `;
 
+const CELEBRITY_CSS = `
+    .hero-celebrity { padding:clamp(34px,5vh,58px) 0 24px; }
+    .celebrity-live { width:100%; padding:0 clamp(16px,3vw,32px) 44px; margin-top:-12px; }
+    .celebrity-live-glass { width:min(1180px,100%); margin:0 auto; padding:clamp(8px,.9vw,15px); border-radius:30px; background:rgba(255,255,255,.32); border:1px solid rgba(255,255,255,.72); backdrop-filter:blur(30px) saturate(150%); -webkit-backdrop-filter:blur(30px) saturate(150%); box-shadow:0 60px 140px -46px rgba(38,40,92,.6), inset 0 1px 0 rgba(255,255,255,.85); }
+    .celebrity-live-frame { overflow:hidden; background:#fff; border:1px solid rgba(255,255,255,.7); border-radius:18px; box-shadow:0 20px 54px -26px rgba(24,28,35,.5); }
+    .celebrity-live-bar { display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid rgba(24,28,35,.07); }
+    .celebrity-live-dots { display:flex; gap:6px; }
+    .celebrity-live-dots i { width:10px; height:10px; border-radius:50%; }
+    .celebrity-live-dots i:first-child { background:#F4A9A0; }
+    .celebrity-live-dots i:nth-child(2) { background:#F2D49B; }
+    .celebrity-live-dots i:last-child { background:#A8DDBA; }
+    .celebrity-live-url { flex:1; text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--ink2); letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .celebrity-live-open { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--ink2); font-size:12.5px; font-weight:600; text-decoration:none; white-space:nowrap; transition:all .2s; }
+    .celebrity-live-open:hover { color:var(--ink); background:var(--paper); }
+    .celebrity-live-body { position:relative; height:clamp(480px,70vh,820px); background:#090b10; }
+    .celebrity-live-body iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .birth-grid, .placement-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:22px 0 34px; }
+    .birth-grid > div, .placement-card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 14px 38px -30px rgba(40,44,90,.35); }
+    .birth-grid .wide { grid-column:1/-1; }
+    .birth-grid span, .placement-card > span:not(.placement-glyph) { display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); }
+    .birth-grid strong, .placement-card strong { display:block; margin-top:5px; font-size:15px; line-height:1.45; }
+    .placement-card { position:relative; padding-left:58px; }
+    .placement-glyph { position:absolute; left:18px; top:18px; display:grid; place-items:center; width:28px; height:28px; border-radius:9px; background:var(--lav-soft); color:var(--lav); font-family:var(--serif); font-size:17px; }
+    .demo-actions { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; font-size:14px; }
+    .place-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:25px 50% 36px; width:min(980px,calc(100vw - 40px)); transform:translateX(-50%); }
+    .place-card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 18px 44px -34px rgba(40,44,90,.45); }
+    .place-card h3 { margin:0 0 8px; font-size:17px; }
+    .place-card p { margin:0; color:var(--ink2); font-size:15px; }
+    .source-list { list-style:none; padding:0; display:grid; gap:10px; }
+    .source-list li { margin:0; padding:13px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:14px; }
+    .celebrity-switcher { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:20px; }
+    .celebrity-switcher a { display:flex; justify-content:space-between; gap:12px; padding:14px 16px; border:1px solid var(--line); border-radius:13px; background:var(--card); text-decoration:none; font-weight:600; }
+    .celebrity-switcher a:hover { border-color:var(--mint); }
+    @media (max-width:600px) { .celebrity-live { padding:0 10px 34px; margin-top:-6px; } .celebrity-live-url { display:none; } .celebrity-live-glass { padding:7px; border-radius:20px; } .celebrity-live-frame { border-radius:14px; } .celebrity-live-bar { gap:10px; padding:9px 10px; } .celebrity-live-body { height:min(64vh,560px); } .birth-grid, .placement-grid, .place-grid, .celebrity-switcher { grid-template-columns:1fr; } .birth-grid .wide { grid-column:auto; } }
+`;
+
 function readMins(page) {
   const text = [page.lead || '', ...(page.sections || []).map((s) => s.html || ''), ...(page.faq || []).map((f) => (f.q || '') + ' ' + (f.a || ''))].join(' ');
   const w = plain(text).split(/\s+/).filter(Boolean).length;
@@ -384,6 +433,43 @@ const I18N = {
     sourceP: 'As posições planetárias são calculadas com o <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>; a documentação indica precisão geocêntrica típica de aproximadamente um minuto de arco. A posição das linhas também depende dos dados natais e da projeção. As interpretações astrológicas são simbólicas, não validadas cientificamente. <a href="/about">Leia a metodologia completa.</a>',
   },
 };
+
+Object.assign(I18N, {
+  fr: {
+    whatIs: 'Qu’est-ce que l’astrocartographie ?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography',
+    navCta: 'Créer ma carte', crumbHome: 'Accueil', home: 'Globe', calc: 'Calculateur', faqHeading: 'Questions fréquentes', relatedHeading: 'Continuer', footerNote: 'Astrocartographie à des fins éducatives et réflexives.',
+    shortAnswer: 'En bref', ctaPrimary: 'Créer ma carte — 9,99 €', ctaSecondary: 'Voir la carte interactive', badge: 'GUIDE D’ASTROCARTOGRAPHIE', minRead: 'MIN DE LECTURE', published: 'Publié', editorial: 'Rédaction', locale: 'fr-FR', ogLocale: 'fr_FR',
+    calloutH: 'Voyez-le sur votre propre thème', calloutP: 'Créez votre carte personnelle de 40 lignes à partir de vos données de naissance, en paiement unique.', calloutCta: 'Créer ma carte', calloutDemo: 'Démo en direct', sourceH: 'Méthode et source', sourceP: 'Positions calculées avec <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. Les interprétations astrologiques sont symboliques et non validées scientifiquement. <a href="/about">Méthode complète.</a>',
+  },
+  it: {
+    whatIs: 'Cos’è l’astrocartografia?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography',
+    navCta: 'Crea la tua mappa', crumbHome: 'Home', home: 'Globo', calc: 'Calcolatore', faqHeading: 'Domande frequenti', relatedHeading: 'Continua a esplorare', footerNote: 'Astrocartografia per educazione e riflessione.', shortAnswer: 'In breve', ctaPrimary: 'Crea la mia mappa — 9,99 €', ctaSecondary: 'Vedi la mappa live', badge: 'GUIDA DI ASTROCARTOGRAFIA', minRead: 'MIN DI LETTURA', published: 'Pubblicato', editorial: 'Redazione', locale: 'it-IT', ogLocale: 'it_IT', calloutH: 'Guardalo sulla tua carta', calloutP: 'Crea la tua mappa personale di 40 linee dai tuoi dati di nascita, con pagamento unico.', calloutCta: 'Crea la mia mappa', calloutDemo: 'Demo live', sourceH: 'Metodo e fonte', sourceP: 'Posizioni calcolate con <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. Le interpretazioni sono simboliche, non scientificamente validate. <a href="/about">Metodo completo.</a>',
+  },
+  tr: {
+    whatIs: 'Astrokartografi nedir?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: 'Haritanı oluştur', crumbHome: 'Ana sayfa', home: 'Küre', calc: 'Hesaplayıcı', faqHeading: 'Sık sorulan sorular', relatedHeading: 'Keşfetmeye devam et', footerNote: 'Eğitim ve düşünme amaçlı astrokartografi.', shortAnswer: 'Kısa cevap', ctaPrimary: 'Haritamı oluştur — €9,99', ctaSecondary: 'Canlı haritayı gör', badge: 'ASTROKARTOGRAFİ REHBERİ', minRead: 'DK OKUMA', published: 'Yayınlandı', editorial: 'Editörlük', locale: 'tr-TR', ogLocale: 'tr_TR', calloutH: 'Kendi haritanda gör', calloutP: 'Kendi doğum verilerinle 40 çizgili kişisel haritanı tek ödemeyle oluştur.', calloutCta: 'Haritamı oluştur', calloutDemo: 'Canlı demo', sourceH: 'Yöntem ve kaynak', sourceP: 'Konumlar <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a> ile hesaplanır. Yorumlar semboliktir, bilimsel olarak doğrulanmamıştır. <a href="/about">Yöntem.</a>',
+  },
+  ru: {
+    whatIs: 'Что такое астрокартография?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: 'Создать карту', crumbHome: 'Главная', home: 'Глобус', calc: 'Калькулятор', faqHeading: 'Частые вопросы', relatedHeading: 'Продолжить', footerNote: 'Астрокартография для образования и размышления.', shortAnswer: 'Коротко', ctaPrimary: 'Создать мою карту — €9,99', ctaSecondary: 'Смотреть карту', badge: 'ГИД ПО АСТРОКАРТОГРАФИИ', minRead: 'МИН ЧТЕНИЯ', published: 'Опубликовано', editorial: 'Редакция', locale: 'ru-RU', ogLocale: 'ru_RU', calloutH: 'Посмотрите свою карту', calloutP: 'Создайте личную карту из 40 линий по своим данным рождения с разовой оплатой.', calloutCta: 'Создать карту', calloutDemo: 'Демо', sourceH: 'Метод и источник', sourceP: 'Позиции рассчитаны с <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. Интерпретации символичны и научно не подтверждены. <a href="/about">Методика.</a>',
+  },
+  ja: {
+    whatIs: 'アストロカートグラフィーとは？', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: '自分の地図を作る', crumbHome: 'ホーム', home: '地球儀', calc: '計算機', faqHeading: 'よくある質問', relatedHeading: 'さらに見る', footerNote: '教育と自己理解のためのアストロカートグラフィー。', shortAnswer: '要点', ctaPrimary: '自分の地図を作る — €9.99', ctaSecondary: 'ライブ地図を見る', badge: 'ガイド', minRead: '分で読めます', published: '公開', editorial: '編集部', locale: 'ja-JP', ogLocale: 'ja_JP', calloutH: '自分のチャートで確認', calloutP: '出生データから40本のラインを持つ個人地図を一回払いで作成できます。', calloutCta: '地図を作る', calloutDemo: 'ライブデモ', sourceH: '方法と出典', sourceP: '天体位置は<a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>で計算。占星術解釈は象徴的で科学的に検証されていません。<a href="/about">方法。</a>',
+  },
+  zh: {
+    whatIs: '什么是占星地理学？', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: '创建我的地图', crumbHome: '首页', home: '地球', calc: '计算器', faqHeading: '常见问题', relatedHeading: '继续探索', footerNote: '用于教育与自我反思的占星地理。', shortAnswer: '简要答案', ctaPrimary: '创建我的地图 — €9.99', ctaSecondary: '查看互动地图', badge: '占星地理指南', minRead: '分钟阅读', published: '发布于', editorial: '编辑部', locale: 'zh-CN', ogLocale: 'zh_CN', calloutH: '查看你自己的星盘', calloutP: '使用自己的出生资料，一次付费创建40条行星线的个人地图。', calloutCta: '创建地图', calloutDemo: '互动演示', sourceH: '方法与来源', sourceP: '行星位置使用<a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>计算。占星解读具有象征性，未经科学验证。<a href="/about">完整方法。</a>',
+  },
+  ar: {
+    whatIs: 'ما هي الخرائط الفلكية؟', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: 'أنشئ خريطتي', crumbHome: 'الرئيسية', home: 'الكرة', calc: 'الحاسبة', faqHeading: 'الأسئلة الشائعة', relatedHeading: 'واصل الاستكشاف', footerNote: 'خرائط فلكية للتعليم والتأمل.', shortAnswer: 'الخلاصة', ctaPrimary: 'أنشئ خريطتي — €9.99', ctaSecondary: 'شاهد الخريطة التفاعلية', badge: 'دليل الخرائط الفلكية', minRead: 'دقائق قراءة', published: 'نُشر', editorial: 'التحرير', locale: 'ar', ogLocale: 'ar_AR', calloutH: 'شاهد خريطتك', calloutP: 'أنشئ خريطتك الشخصية ذات الأربعين خطًا من بيانات ميلادك بدفعة واحدة.', calloutCta: 'أنشئ خريطتي', calloutDemo: 'عرض مباشر', sourceH: 'المنهج والمصدر', sourceP: 'تُحسب المواقع بواسطة <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. التفسيرات رمزية وليست مثبتة علميًا. <a href="/about">المنهج.</a>',
+  },
+  ko: {
+    whatIs: '아스트로카토그래피란?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: '내 지도 만들기', crumbHome: '홈', home: '지구본', calc: '계산기', faqHeading: '자주 묻는 질문', relatedHeading: '계속 살펴보기', footerNote: '교육과 성찰을 위한 아스트로카토그래피.', shortAnswer: '한눈에 보기', ctaPrimary: '내 지도 만들기 — €9.99', ctaSecondary: '라이브 지도 보기', badge: '아스트로카토그래피 가이드', minRead: '분 읽기', published: '게시', editorial: '편집부', locale: 'ko-KR', ogLocale: 'ko_KR', calloutH: '내 차트에서 보기', calloutP: '내 출생 정보로 40개 선의 개인 지도를 일회 결제로 만드세요.', calloutCta: '지도 만들기', calloutDemo: '라이브 데모', sourceH: '방법과 출처', sourceP: '행성 위치는 <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>으로 계산합니다. 해석은 상징적이며 과학적으로 검증되지 않았습니다. <a href="/about">방법론.</a>',
+  },
+  pl: {
+    whatIs: 'Czym jest astrokartografia?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: 'Utwórz mapę', crumbHome: 'Strona główna', home: 'Globus', calc: 'Kalkulator', faqHeading: 'Częste pytania', relatedHeading: 'Odkrywaj dalej', footerNote: 'Astrokartografia do edukacji i refleksji.', shortAnswer: 'W skrócie', ctaPrimary: 'Utwórz moją mapę — €9,99', ctaSecondary: 'Zobacz mapę', badge: 'PRZEWODNIK ASTROKARTOGRAFII', minRead: 'MIN CZYTANIA', published: 'Opublikowano', editorial: 'Redakcja', locale: 'pl-PL', ogLocale: 'pl_PL', calloutH: 'Zobacz własny kosmogram', calloutP: 'Utwórz osobistą mapę 40 linii z własnych danych urodzeniowych za jedną opłatą.', calloutCta: 'Utwórz mapę', calloutDemo: 'Demo', sourceH: 'Metoda i źródło', sourceP: 'Pozycje oblicza <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. Interpretacje są symboliczne i niepotwierdzone naukowo. <a href="/about">Metoda.</a>',
+  },
+  nl: {
+    whatIs: 'Wat is astrocartografie?', pillar: '/astrocartography', calcHref: '/astrocartography-calculator', langToggle: 'EN', langToggleHref: '/astrocartography', navCta: 'Maak je kaart', crumbHome: 'Home', home: 'Globe', calc: 'Calculator', faqHeading: 'Veelgestelde vragen', relatedHeading: 'Verder verkennen', footerNote: 'Astrocartografie voor educatie en reflectie.', shortAnswer: 'Kort gezegd', ctaPrimary: 'Maak mijn kaart — €9,99', ctaSecondary: 'Bekijk live kaart', badge: 'ASTROCARTOGRAFIEGIDS', minRead: 'MIN LEZEN', published: 'Gepubliceerd', editorial: 'Redactie', locale: 'nl-NL', ogLocale: 'nl_NL', calloutH: 'Bekijk je eigen horoscoop', calloutP: 'Maak een persoonlijke kaart met 40 lijnen uit je geboortegegevens voor een eenmalige betaling.', calloutCta: 'Maak mijn kaart', calloutDemo: 'Live demo', sourceH: 'Methode en bron', sourceP: 'Posities berekend met <a href="https://github.com/cosinekitty/astronomy" rel="noopener noreferrer">Astronomy Engine</a>. Interpretaties zijn symbolisch en niet wetenschappelijk gevalideerd. <a href="/about">Methode.</a>',
+  },
+});
 const tr = (lang) => ({ ...I18N.en, ...(I18N[lang] || {}) });
 
 function figAngles(accent, n, isDe) {
@@ -454,6 +540,7 @@ function figProjection(n, lang) {
 }
 
 function figuresFor(page) {
+  if (page.template === 'celebrity') return [];
   const isDe = page.lang === 'de';
   if (isEnLine(page.slug) || isDeLine(page.slug)) {
     const accent = accentFor(page);
@@ -473,6 +560,12 @@ function answerCard(page) {
 
 function heroButtons(page) {
   const u = tr(page.lang);
+  if (page.template === 'celebrity') {
+    return `        <div class="cta-row">
+          <a href="#live-chart" class="btn btn-ink">${u.ctaSecondary} &darr;</a>
+          <a href="/create" class="btn btn-ghost">${u.ctaPrimary} &rarr;</a>
+        </div>`;
+  }
     return `        <div class="cta-row">
           <a href="/create" class="btn btn-ink">${u.ctaPrimary} &rarr;</a>
           <a href="/demo" class="btn btn-ghost">${u.ctaSecondary}</a>
@@ -482,6 +575,7 @@ function heroButtons(page) {
 function heroBadge(page) {
   const u = tr(page.lang);
   let label = u.badge;
+  if (page.template === 'celebrity') label = page.celebrityLabel || 'CELEBRITY CHART';
   if (isEnLine(page.slug)) label = 'PLANETARY LINE';
   if (isDeLine(page.slug)) label = 'PLANETENLINIE';
   return `${label} &middot; ${readMins(page)} ${u.minRead}`;
@@ -519,7 +613,7 @@ function renderPage(page) {
   const u = tr(page.lang);
   const ogLocale = u.ogLocale;
   return `<!doctype html>
-<html lang="${page.lang}" prefix="og: https://ogp.me/ns#">
+<html lang="${page.lang}"${page.lang === 'ar' ? ' dir="rtl"' : ''} prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -556,7 +650,7 @@ ${renderSchema(page)}
 
   <link rel="stylesheet" href="/fonts/fonts.css" />
 
-  <style>${PAPER_CSS}</style>
+  <style>${PAPER_CSS}${page.template === 'celebrity' ? CELEBRITY_CSS : ''}</style>
 </head>
 <body>
   <header class="nav-wrap">
@@ -572,7 +666,7 @@ ${renderSchema(page)}
     </nav>
   </header>
 
-  <section class="hero">
+  <section class="hero${page.template === 'celebrity' ? ' hero-celebrity' : ''}">
     <div class="hero-aurora" aria-hidden="true"></div>
     <div class="hero-inner wrap">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -584,6 +678,8 @@ ${renderSchema(page)}
 ${heroButtons(page)}
     </div>
   </section>
+
+${page.liveDemo || ''}
 
   <main>
     <article class="wrap">

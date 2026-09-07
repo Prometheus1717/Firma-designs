@@ -17,7 +17,12 @@
       "permanent": true
     },
     {
-      "source": "/de/(.*)",
+      "source": "/de/",
+      "destination": "/astrokartographie",
+      "permanent": true
+    },
+    {
+      "source": "/de/((?!prominente/).*)",
       "destination": "/$1",
       "permanent": true
     },

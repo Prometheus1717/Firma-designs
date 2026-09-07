@@ -4266,7 +4266,7 @@ That means the full interactive 3D globe you can spin, tilt and zoom; all forty 
 No sign-up is required to use any of this. You do not create a login, you do not hand over an email, and there is no free trial that quietly starts billing you later. You simply open the page and start exploring.
 
 ### Learn to read a map with example charts
-The demo ships with five well-known charts: Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo. These are not random decoration — they are a genuinely useful way to learn the craft of reading a map without the emotional weight of looking at your own life.
+The demo ships with seven well-known charts: Michael Jackson, Elon Musk, Princess Diana, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo. These are not random decoration — they are a genuinely useful way to learn the craft of reading a map without the emotional weight of looking at your own life.
 
 When the map is someone else's, it is much easier to be objective. You can see where a Jupiter line crosses a place a person actually thrived, or where a Saturn line sits over years that were known to be hard, and start to feel how the interpretation maps onto a real biography. You learn what a Sun line looks like versus a Venus line, how the four angles change a planet's flavour, and how to read the band of influence around a line rather than treating it as a hairline on the globe.
 
@@ -4318,7 +4318,7 @@ So the path is simple and honest: explore the full tool for free with the exampl
 ### FAQ
 
 **Does the demo calculate my personal astrocartography chart?**
-No. The demo is limited to famous example charts (Elon Musk, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo) so you can inspect the 3D globe, line controls, city detection and natal wheel before buying. A chart calculated from your own birth data costs a one-time €9.99 / $9.99.
+No. The demo is limited to famous example charts (Michael Jackson, Elon Musk, Princess Diana, Albert Einstein, Marilyn Monroe, Steve Jobs and Frida Kahlo) so you can inspect the 3D globe, line controls, city detection and natal wheel before buying. A chart calculated from your own birth data costs a one-time €9.99 / $9.99.
 
 **Do I need to create an account or give my email?**
 No. The demo needs no account, no email and no payment. You open it, choose an example chart, and start exploring straight away. There is no free trial that quietly begins billing you later.

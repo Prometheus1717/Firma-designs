@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  deploymentProvenance,
   fetchWithTimeout,
   handleHealthReport,
   isAuthorized,
@@ -62,6 +63,31 @@ describe('health report reliability helpers', () => {
         CRON_SECRET: 'vercel-secret',
         MONITOR_FALLBACK_SECRET: 'fallback-secret',
       })).toBe(true);
+    });
+  });
+
+  describe('production deployment provenance', () => {
+    it('accepts every Git branch that is actually deployed to production', () => {
+      expect(deploymentProvenance({
+        VERCEL_ENV: 'production',
+        VERCEL_GIT_COMMIT_REF: 'codex/remove-french-celebrity',
+        VERCEL_GIT_COMMIT_SHA: 'abcdef1234567890',
+      })).toBe('codex/remove-french-celebrity@abcdef1 (production)');
+    });
+
+    it('accepts a production CLI deployment without Git metadata', () => {
+      expect(deploymentProvenance({
+        VERCEL_ENV: 'production',
+        VERCEL_URL: 'natal-navigator.example.vercel.app',
+      })).toBe('CLI-Deployment (natal-navigator.example.vercel.app)');
+    });
+
+    it('rejects preview deployments even when Git metadata is present', () => {
+      expect(() => deploymentProvenance({
+        VERCEL_ENV: 'preview',
+        VERCEL_GIT_COMMIT_REF: 'feature/test',
+        VERCEL_GIT_COMMIT_SHA: 'abcdef1234567890',
+      })).toThrow('Deployment läuft in Umgebung "preview" statt Produktion');
     });
   });
 
