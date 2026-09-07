@@ -1,19 +1,14 @@
-export const CELEBRITY_LANGS = ['en', 'de', 'it', 'es', 'tr', 'ru', 'pt', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
+// Only languages with a real content cluster on the domain keep celebrity pages.
+// The nine other UI languages were retired on 2026-09-07 (never indexed, thin
+// scaled-translation signal); their URLs answer 410 via vercel.json -> /api/gone.
+export const CELEBRITY_LANGS = ['en', 'de', 'es', 'pt'];
+export const RETIRED_CELEBRITY_LANGS = ['fr', 'it', 'tr', 'ru', 'ja', 'zh', 'ar', 'ko', 'pl', 'nl'];
 
 export const CELEBRITY_SLUGS = {
   en: 'celebrities',
   de: 'de/prominente',
-  it: 'it/celebrita',
   es: 'es/celebridades',
-  tr: 'tr/unluler',
-  ru: 'ru/znamenitosti',
   pt: 'pt/celebridades',
-  ja: 'ja/celebrity',
-  zh: 'zh/mingren',
-  ar: 'ar/mashahir',
-  ko: 'ko/celebrity',
-  pl: 'pl/celebryci',
-  nl: 'nl/beroemdheden',
 };
 
 export const CELEBRITY_PROFILES = {
@@ -28,10 +23,7 @@ export const CELEBRITY_PROFILES = {
 
 const ASTROCARTOGRAPHY_SUFFIX = {
   en: 'astrocartography', de: 'astrokartographie',
-  it: 'astrocartografia', es: 'astrocartografia', tr: 'astrokartografi',
-  ru: 'astrokartografiya', pt: 'astrocartografia', ja: 'astrocartography',
-  zh: 'astrocartography', ar: 'astrocartography', ko: 'astrocartography',
-  pl: 'astrokartografia', nl: 'astrocartografie',
+  es: 'astrocartografia', pt: 'astrocartografia',
 };
 
 export function getCelebritySlug(key, lang = 'en') {

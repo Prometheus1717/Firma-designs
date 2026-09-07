@@ -48,6 +48,10 @@ export default {
     }
   ],
   "related": [
+    {
+      "href": "/astrology",
+      "label": "Astrology explained: signs, planets, houses and your map"
+    },
     { "href": "/lucky-places-astrology", "label": "Which country is lucky for you? Jupiter & Venus places" },
     {
       "href": "/where-should-i-live-astrology",

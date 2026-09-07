@@ -70,6 +70,10 @@ export default {
   ],
   "related": [
     {
+      "href": "/astrologie",
+      "label": "Astrologie erklärt: Sternzeichen, Planeten, Häuser und Karte"
+    },
+    {
       "href": "/astrokartographie/rechner",
       "label": "Astrokartographie kostenlos berechnen"
     },

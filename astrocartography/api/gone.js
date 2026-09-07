@@ -1,7 +1,8 @@
 import { applySecurityHeaders } from './_security.js';
 
-// French routes were intentionally retired. A 410 tells crawlers to remove
-// legacy /fr URLs instead of treating them as temporary missing pages.
+// Retired language prefixes (fr since 2026-08-21; ar, it, ja, ko, nl, pl, ru,
+// tr, zh since 2026-09-07). A 410 tells crawlers to drop these URLs instead of
+// treating them as temporarily missing pages.
 export default function handler(req, res) {
   applySecurityHeaders(res);
   res.setHeader('Cache-Control', 'public, max-age=3600');

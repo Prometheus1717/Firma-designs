@@ -679,6 +679,7 @@ export default function LandingPage() {
             <h3>Guides</h3>
             <a href="/astrocartography">What is astrocartography?</a>
             <a href="/astrocartography-calculator">How the calculator works</a>
+            <a href="/astrology">Astrology guide: signs, planets, houses</a>
             <a href="/where-should-i-live-astrology">Where should I live?</a>
             <a href="/where-to-live-by-zodiac-sign">Where to live, by zodiac sign</a>
             <a href="/astrocartography-for-love">Astrocartography for love</a>
