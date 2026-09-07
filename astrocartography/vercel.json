@@ -17,6 +17,16 @@
       "permanent": true
     },
     {
+      "source": "/de/",
+      "destination": "/astrokartographie",
+      "permanent": true
+    },
+    {
+      "source": "/de/((?!prominente/).*)",
+      "destination": "/$1",
+      "permanent": true
+    },
+    {
       "source": "/how-accurate-is-astrocartography",
       "destination": "https://natalnavigator.com/blog/how-accurate-is-astrocartography",
       "permanent": true
