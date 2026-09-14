@@ -311,7 +311,9 @@
     <!-- ─── Critical CSS ─── -->
     <style>
       html { overflow: hidden; width: 100%; height: var(--app-height, 100dvh); }
-      body { margin: 0; background: #0A1018; overflow: hidden; height: var(--app-height, 100dvh); min-height: var(--app-height, 100dvh); width: 100%; position: fixed; inset: 0; touch-action: pan-y; overscroll-behavior: none; }
+      /* Match the landing page while the React bundle is starting. The
+         homepage must never paint the retired dark SEO shell for a frame. */
+      body { margin: 0; background: #FBF8F1 !important; overflow: hidden; height: var(--app-height, 100dvh); min-height: var(--app-height, 100dvh); width: 100%; position: fixed; inset: 0; touch-action: pan-y; overscroll-behavior: none; }
       #root-loader {
         min-height: var(--app-height, 100dvh); display: flex; flex-direction: column;
         align-items: center; justify-content: center; background: #0A1018;
@@ -338,6 +340,8 @@
       #seo-content {
         background: #0A1018; color: #C8D8E8; font-family: 'Instrument Sans', system-ui, sans-serif;
         max-width: 800px; margin: 0 auto; padding: 40px 24px; line-height: 1.7;
+        /* Retired crawler shell: never render it while React mounts. */
+        display: none !important;
       }
       #seo-content h1 { color: #00D88A; font-family: 'JetBrains Mono', monospace; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; }
       #seo-content h2 { color: #00D88A; font-size: 20px; margin-top: 40px; border-bottom: 1px solid #1A2840; padding-bottom: 8px; }
@@ -559,7 +563,7 @@
 
     <!-- ─── No-JS fallback (additional signal for crawlers that don't render JS) ─── -->
     <noscript>
-      <style>#root-loader { display: none; } #seo-content { display: block !important; } body { overflow: auto; position: static; height: auto; }</style>
+      <style>#root-loader { display: none; } #seo-content { display: none !important; } body { overflow: auto; position: static; height: auto; }</style>
     </noscript>
 
     <!-- Service Worker registration + version-bump cache purge.
@@ -571,7 +575,7 @@
          one nav for the cache to fully refresh. -->
     <script>
     (function(){
-      var V='nn-sw-v20';
+      var V='nn-sw-v21';
       if('serviceWorker' in navigator){
         navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});
         if(localStorage.getItem('nn_sw_ver')!==V){

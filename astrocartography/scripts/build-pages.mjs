@@ -539,7 +539,104 @@ function figProjection(n, lang) {
 </figure>`;
 }
 
+function figKeyGrid(spec, n) {
+  const items = spec.items || [];
+  const cols = Math.min(spec.columns || 4, Math.max(1, items.length));
+  const rows = Math.ceil(items.length / cols);
+  const gap = 12;
+  const x0 = 30;
+  const y0 = 74;
+  const cellW = (720 - x0 * 2 - gap * (cols - 1)) / cols;
+  const cellH = 94;
+  const height = y0 + rows * cellH + (rows - 1) * gap + 34;
+  const cards = items.map((item, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = x0 + col * (cellW + gap);
+    const y = y0 + row * (cellH + gap);
+    const color = item.color || '#5D4FB8';
+    return `<g transform="translate(${x},${y})">
+      <rect width="${cellW}" height="${cellH}" rx="12" fill="#FFFFFF" stroke="#E7E0D1"/>
+      <rect width="5" height="${cellH}" rx="2.5" fill="${color}"/>
+      <text x="18" y="34" font-family="Georgia,serif" font-size="24" fill="${color}" font-weight="700">${esc(item.symbol || '')}</text>
+      <text x="52" y="29" font-family="'JetBrains Mono',monospace" font-size="11" fill="#181C23" font-weight="700">${esc(item.label || '')}</text>
+      <text x="52" y="50" font-family="sans-serif" font-size="11.5" fill="#4C5563">${esc(item.sub || '')}</text>
+      <text x="18" y="76" font-family="sans-serif" font-size="11" fill="#8A93A2">${esc(item.note || '')}</text>
+    </g>`;
+  }).join('');
+  return `<figure>
+<svg viewBox="0 0 720 ${height}" role="img" aria-label="${esc(spec.ariaLabel || spec.title)}">
+  <rect width="720" height="${height}" fill="#FFFFFF"/>
+  <text x="30" y="42" font-family="sans-serif" font-size="19" fill="#181C23" font-weight="700">${esc(spec.title)}</text>
+  ${cards}
+</svg>
+<figcaption><strong>Figure ${n}.</strong> ${spec.caption}</figcaption>
+</figure>`;
+}
+
+function figFlowSpec(spec, n) {
+  const steps = spec.steps || [];
+  const x0 = 76;
+  const width = 720 - x0 * 2;
+  const stepW = steps.length > 1 ? width / (steps.length - 1) : 0;
+  const nodes = steps.map((step, i) => {
+    const x = x0 + i * stepW;
+    const color = step.color || ['#0E7C5B', '#A8650F', '#5D4FB8', '#B2543F'][i % 4];
+    return `<g transform="translate(${x},118)">
+      <circle r="27" fill="${color}"/>
+      <text x="0" y="6" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" fill="#FFFFFF" font-weight="700">${i + 1}</text>
+      <text x="0" y="53" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#181C23" font-weight="700">${esc(step.label || '')}</text>
+      <text x="0" y="72" text-anchor="middle" font-family="sans-serif" font-size="10.5" fill="#4C5563">${esc(step.sub || '')}</text>
+    </g>`;
+  }).join('');
+  return `<figure>
+<svg viewBox="0 0 720 230" role="img" aria-label="${esc(spec.ariaLabel || spec.title)}">
+  <rect width="720" height="230" fill="#FFFFFF"/>
+  <text x="30" y="42" font-family="sans-serif" font-size="19" fill="#181C23" font-weight="700">${esc(spec.title)}</text>
+  ${steps.length > 1 ? `<line x1="${x0}" y1="118" x2="${x0 + width}" y2="118" stroke="#DDD5C2" stroke-width="3"/>` : ''}
+  ${nodes}
+</svg>
+<figcaption><strong>Figure ${n}.</strong> ${spec.caption}</figcaption>
+</figure>`;
+}
+
+function figEvidenceMatrix(spec, n) {
+  const rows = spec.rows || [];
+  const colors = { gate: '#B2543F', evidence: '#0E7C5B', test: '#A8650F', reflect: '#5D4FB8' };
+  const labels = { gate: 'HARD GATE', evidence: 'EVIDENCE', test: 'TEST', reflect: 'REFLECTION' };
+  const top = 86;
+  const rowH = 62;
+  const height = top + rows.length * rowH + 34;
+  const markup = rows.map((row, i) => {
+    const y = top + i * rowH;
+    const color = colors[row.kind] || colors.evidence;
+    return `<g transform="translate(30,${y})">
+      <rect width="660" height="50" rx="11" fill="${i % 2 ? '#FBF8F1' : '#FFFFFF'}" stroke="#E7E0D1"/>
+      <rect width="106" height="50" rx="11" fill="${color}"/>
+      <text x="53" y="30" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10.5" fill="#FFFFFF" font-weight="700">${esc(labels[row.kind] || labels.evidence)}</text>
+      <text x="124" y="21" font-family="'JetBrains Mono',monospace" font-size="11" fill="#181C23" font-weight="700">${esc(row.label || '')}</text>
+      <text x="124" y="39" font-family="sans-serif" font-size="11.5" fill="#4C5563">${esc(row.note || '')}</text>
+    </g>`;
+  }).join('');
+  return `<figure>
+<svg viewBox="0 0 720 ${height}" role="img" aria-label="${esc(spec.ariaLabel || spec.title)}">
+  <rect width="720" height="${height}" fill="#FFFFFF"/>
+  <text x="30" y="42" font-family="sans-serif" font-size="19" fill="#181C23" font-weight="700">${esc(spec.title)}</text>
+  ${markup}
+</svg>
+<figcaption><strong>Figure ${n}.</strong> ${spec.caption}</figcaption>
+</figure>`;
+}
+
+function renderCustomFigure(spec, n) {
+  if (spec.type === 'keyGrid') return figKeyGrid(spec, n);
+  if (spec.type === 'flow') return figFlowSpec(spec, n);
+  if (spec.type === 'evidenceMatrix') return figEvidenceMatrix(spec, n);
+  throw new Error(`Unknown figure type: ${spec.type}`);
+}
+
 function figuresFor(page) {
+  if (page.figures?.length) return page.figures.map((spec,i) => renderCustomFigure(spec,i+1));
   if (page.template === 'celebrity') return [];
   const isDe = page.lang === 'de';
   if (isEnLine(page.slug) || isDeLine(page.slug)) {
@@ -598,9 +695,11 @@ function sectionsWithFigures(page) {
     out += `      <h2>${esc(s.h2)}</h2>\n      ${s.html}\n\n`;
     if (i === 0 && figs[0]) out += figs[0] + '\n\n';
     if (i === 2 && figs[1]) out += figs[1] + '\n\n';
+    if (i === 4 && figs[2]) out += figs[2] + '\n\n';
   });
   // If the page had fewer than 3 sections, append any remaining figures.
   if (secs.length <= 2 && figs[1]) out += figs[1] + '\n\n';
+  if (secs.length <= 4 && figs[2]) out += figs[2] + '\n\n';
   if (!secs.length) figs.forEach((f) => { out += f + '\n\n'; });
   return out;
 }
@@ -612,6 +711,7 @@ function renderPage(page) {
   const isDe = page.lang === 'de';
   const u = tr(page.lang);
   const ogLocale = u.ogLocale;
+  const sources = (page.sources || []).map((source) => `        <li><a href="${esc(source.url)}" rel="noopener" target="_blank">${esc(source.title)}</a>${source.author ? ` — ${esc(source.author)}` : ''}${source.year ? ` (${esc(source.year)})` : ''}${source.note ? `<br><span class="small">${esc(source.note)}</span>` : ''}</li>`).join('\n');
   return `<!doctype html>
 <html lang="${page.lang}"${page.lang === 'ar' ? ' dir="rtl"' : ''} prefix="og: https://ogp.me/ns#">
 <head>
@@ -693,6 +793,12 @@ ${page.note ? `\n      <div class="note">${page.note}</div>\n` : ''}
       </aside>
 
 ${sections}
+
+${sources ? `      <aside class="note sources" aria-labelledby="article-sources">
+        <h2 id="article-sources">Sources, evidence and scope</h2>
+        <p>These sources support the calculational, historical, empirical or practical claims above. Astrological meanings remain interpretive; the cited astronomy does not validate astrological causation.</p>
+        <ol>${sources}</ol>
+      </aside>` : ''}
 
       <div class="callout">
         <h3>${u.calloutH}</h3>

@@ -203,6 +203,12 @@ if (FORBIDDEN_PRECISION.test(await readFile(join(ROOT, 'src', 'lib', 'landingCon
   fail('landingContent.jsx', 'unsupported sub-arcsecond precision claim');
 }
 
+// Independent publication ledger catches losses from registry AND sitemap.
+const protectedPaths = JSON.parse(await readFile(join(ROOT, 'scripts/seo/published-routes.json'), 'utf8'));
+for (const published of protectedPaths) {
+  if (!sitemapPaths.has(published)) fail(published, 'previously published URL removed; deliberate retirement requires updating the publication ledger');
+}
+
 // ── Result ──────────────────────────────────────────────────────────────────
 if (failures.length) {
   const unique = [...new Set(failures)];
