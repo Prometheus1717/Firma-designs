@@ -6,6 +6,8 @@ import {
   isAuthorized,
   notifyTelegram,
   reportDateBerlin,
+  requestWithRetry,
+  runChecks,
   splitTelegramText,
 } from '../../api/health-report.js';
 
@@ -259,6 +261,79 @@ describe('health report reliability helpers', () => {
       status: 'already-delivered',
       reportDate: '2026-07-16',
       trigger: 'supabase-deadman',
+    });
+  });
+  describe('transient upstream gateway errors', () => {
+    it('retries a single Supabase 504 and accepts the following 200', async () => {
+      const request = vi.fn()
+        .mockResolvedValueOnce({ status: 504, ok: false })
+        .mockResolvedValueOnce({ status: 200, ok: true });
+      const sleepImpl = vi.fn().mockResolvedValue(undefined);
+
+      const response = await requestWithRetry(request, 'https://example.test/health', {}, { sleepImpl });
+
+      expect(response.status).toBe(200);
+      expect(request).toHaveBeenCalledTimes(2);
+      expect(sleepImpl).toHaveBeenCalledTimes(1);
+      expect(sleepImpl).toHaveBeenCalledWith(700);
+    });
+
+    it('retries a timeout and surfaces the attempt count when it never recovers', async () => {
+      const request = vi.fn().mockRejectedValue(new Error('Timeout nach 7000 ms'));
+      const sleepImpl = vi.fn().mockResolvedValue(undefined);
+
+      await expect(
+        requestWithRetry(request, 'https://example.test/health', {}, { sleepImpl, attempts: 3 })
+      ).rejects.toThrow('Timeout nach 7000 ms (3 Versuche)');
+      expect(request).toHaveBeenCalledTimes(3);
+      expect(sleepImpl).toHaveBeenNthCalledWith(1, 700);
+      expect(sleepImpl).toHaveBeenNthCalledWith(2, 1400);
+    });
+
+    it('does not retry a rejected anon key', async () => {
+      const request = vi.fn().mockResolvedValue({ status: 401, ok: false });
+      const sleepImpl = vi.fn();
+
+      const response = await requestWithRetry(request, 'https://example.test/health', {}, { sleepImpl });
+
+      expect(response.status).toBe(401);
+      expect(request).toHaveBeenCalledTimes(1);
+      expect(sleepImpl).not.toHaveBeenCalled();
+    });
+
+    it('reports the Supabase check green after a transient 504 in the full check run', async () => {
+      const anonKey = 'sb_publishable_abcdefghijklmnopqrstuvwxyz0123';
+      const html = '<div id="root"></div><script src="/assets/index-abc123.js"></script>'
+        + '<link href="/assets/vendor-a1.js"><link href="/assets/vendor-b2.js">';
+      const entryJs = `kbwjxtvqdkcicaydtixp phc_key ${anonKey} /create assets/CreatePage-x1.js`;
+      const text = body => ({ status: 200, ok: true, text: async () => body, json: async () => ({}), headers: new Map() });
+      let supabaseCalls = 0;
+      const fetchImpl = vi.fn(async (url, init = {}) => {
+        if (url.includes('/auth/v1/health')) {
+          supabaseCalls += 1;
+          return supabaseCalls === 1 ? { status: 504, ok: false } : { status: 200, ok: true };
+        }
+        if (url === 'https://natalnavigator.com/') return text(html);
+        if (url.endsWith('/assets/index-abc123.js')) return text(entryJs);
+        if (url.includes('CreatePage-')) return text('guest_checkout');
+        if (url.endsWith('/api/health')) return { status: 200, ok: true, json: async () => ({ status: 'ok' }) };
+        if (url.endsWith('/sitemap.xml')) return text('<loc></loc>'.repeat(120));
+        if (url.endsWith('/robots.txt')) return text('Sitemap: x');
+        if (url.endsWith('/og.png')) return { status: 200, ok: true, headers: new Map([['content-length', '20000']]) };
+        return { status: init.method === 'HEAD' ? 200 : 200, ok: true, text: async () => '', json: async () => ({}) };
+      });
+      const sleepImpl = vi.fn().mockResolvedValue(undefined);
+
+      const checks = await runChecks({
+        fetchImpl,
+        sleepImpl,
+        env: { VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main', VERCEL_GIT_COMMIT_SHA: 'abcdef1' },
+      });
+
+      const supabaseCheck = checks.find(check => check.name === 'Supabase + Anon-Key');
+      expect(supabaseCheck).toEqual(expect.objectContaining({ ok: true, detail: 'Key akzeptiert' }));
+      expect(supabaseCalls).toBe(2);
+      expect(checks.filter(check => !check.ok)).toEqual([]);
     });
   });
 });

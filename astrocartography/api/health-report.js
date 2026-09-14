@@ -25,6 +25,8 @@ const CHECK_TIMEOUT_MS = 7_000;
 const TELEGRAM_TIMEOUT_MS = 8_000;
 const TELEGRAM_ATTEMPTS = 4;
 const TELEGRAM_CHUNK_SIZE = 3_900;
+const UPSTREAM_ATTEMPTS = 3;
+const UPSTREAM_BACKOFF_MS = 700;
 const RUN_LEASE_SECONDS = 180;
 
 let monitorSupabase;
@@ -104,6 +106,46 @@ function must(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function isTransientUpstreamStatus(status) {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+/**
+ * Externe Gateways (z. B. Supabase hinter Cloudflare) liefern gelegentlich
+ * einen einzelnen 502/503/504 oder brechen mit Timeout ab, ohne dass der
+ * Dienst wirklich gestört ist. Solche Antworten werden mit kurzem Backoff
+ * erneut angefragt; ein 401/403 oder ein stabiler Fehler bleibt ein Fehler.
+ */
+export async function requestWithRetry(
+  request,
+  url,
+  init = {},
+  {
+    attempts = UPSTREAM_ATTEMPTS,
+    backoffMs = UPSTREAM_BACKOFF_MS,
+    sleepImpl = sleep,
+  } = {}
+) {
+  let lastError;
+  let lastResponse;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await request(url, init);
+      if (!isTransientUpstreamStatus(response.status)) return response;
+      lastResponse = response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < attempts) await sleepImpl(backoffMs * attempt);
+  }
+  if (lastResponse) {
+    lastResponse.retryAttempts = attempts;
+    return lastResponse;
+  }
+  throw new Error(`${errorMessage(lastError)} (${attempts} Versuche)`);
+}
+
 export function deploymentProvenance(env = process.env) {
   must(
     env.VERCEL_ENV === 'production',
@@ -145,6 +187,7 @@ export async function runChecks({
   fetchImpl = fetch,
   timeoutMs = CHECK_TIMEOUT_MS,
   env = process.env,
+  sleepImpl = sleep,
 } = {}) {
   let indexHtml = '';
   let anonKey = '';
@@ -240,11 +283,18 @@ export async function runChecks({
 
     captureCheck('Supabase + Anon-Key', async () => {
       must(anonKey, 'kein Anon-Key im Bundle gefunden');
-      const response = await request(`https://${SUPABASE_REF}.supabase.co/auth/v1/health`, {
-        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-      });
+      const response = await requestWithRetry(
+        request,
+        `https://${SUPABASE_REF}.supabase.co/auth/v1/health`,
+        { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } },
+        { sleepImpl }
+      );
       must(response.status !== 401, 'Anon-Key abgelehnt — Login und Kauf sind tot');
-      must(response.ok, `HTTP ${response.status}`);
+      must(
+        response.ok,
+        `HTTP ${response.status}`
+        + (response.retryAttempts ? ` nach ${response.retryAttempts} Versuchen` : '')
+      );
       return 'Key akzeptiert';
     }),
 
@@ -596,6 +646,7 @@ export async function handleHealthReport(req, res, dependencies = {}) {
     fetchImpl: dependencies.fetchImpl || fetch,
     timeoutMs: dependencies.checkTimeoutMs || CHECK_TIMEOUT_MS,
     env,
+    sleepImpl: dependencies.sleepImpl || sleep,
   });
   for (const check of checks) {
     logEvent(check.ok ? 'info' : 'error', 'monitor.check', {
