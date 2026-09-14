@@ -21,14 +21,16 @@
 </head>
 <body>
 <h1>Informativa sulla privacy</h1>
-<p class="stand">App iOS Natal Navigator · Versione del 16 agosto 2026</p>
+<p class="stand">App iOS Natal Navigator · Versione del 14 settembre 2026</p>
 
 <p class="kasten"><strong>In breve:</strong> I tuoi dati di nascita e la tua carta vivono sul
 tuo dispositivo, non sui nostri server. Un account è facoltativo e mai obbligatorio; se accedi
-dopo un acquisto, salviamo solo la tua e-mail e il tuo nome (sezione 4a). Oltre a questo, dal
-tuo dispositivo esce solo ciò che invii attivamente usando la chat della Guida o la funzione di
-traduzione — e solo dopo il tuo consenso esplicito —, oltre a informazioni di acquisto gestite
-da Apple e RevenueCat. Non mostriamo pubblicità e non ti tracciamo in altre app.</p>
+dopo un acquisto o come cliente esistente di natalnavigator.com, salviamo solo la tua e-mail e
+il tuo nome (sezione 4a). Oltre a questo, dal tuo dispositivo esce solo ciò che invii
+attivamente usando la chat della Guida o la funzione di traduzione — e solo dopo il tuo consenso
+esplicito —, oltre a informazioni di acquisto gestite da Apple e RevenueCat e a un'attestazione
+del dispositivo che dimostra che le richieste provengono dall'app autentica (sezione 3a). Non
+mostriamo pubblicità e non ti tracciamo in altre app.</p>
 
 <h2>1. Titolare del trattamento</h2>
 <p>Sercan Yesilyurt<br>Dasselstraße 31<br>50674 Colonia (Köln), Germania<br>
@@ -66,28 +68,36 @@ uso, al nostro server API (ospitato su Vercel) viene trasmesso ed elaborato quan
       e luogo di nascita,</li>
   <li>per le traduzioni: i testi inglesi da tradurre,</li>
   <li>un identificatore casuale di installazione (per la quota giornaliera di domande) e il tuo
-      indirizzo IP (per i limiti orari contro gli abusi).</li>
+      indirizzo IP (per i limiti orari contro gli abusi),</li>
+  <li>per le domande alla Guida: il tuo identificativo di acquisto di RevenueCat, con cui il
+      nostro server verifica prima di rispondere che il tuo abbonamento sia attivo (sezione 4).
+      Non viene trasmesso ai fornitori di IA.</li>
 </ul>
 <p><strong>Elaborazione IA.</strong> Per generare risposte e traduzioni inviamo questi
 contenuti a fornitori esterni di modelli di IA che agiscono come nostri responsabili del
 trattamento. Il fornitore principale è <strong>DeepSeek</strong> (Hangzhou DeepSeek Artificial
 Intelligence Co., Ltd., Cina); in alternativa possono essere impiegati <strong>Z.ai</strong>
-(modelli GLM) o <strong>xAI</strong> (USA). Questi fornitori elaborano i contenuti per produrre
-la risposta. Se i fornitori si trovano fuori da UE/SEE (Cina, USA), il livello di protezione dei
+(Zhipu AI, modelli GLM, Cina) o <strong>xAI</strong> (USA). Questi fornitori elaborano i
+contenuti per produrre la risposta e non ricevono da noi alcun identificativo, solo la richiesta
+stessa. Se i fornitori si trovano fuori da UE/SEE (Cina, USA), il livello di protezione dei
 dati può differire dallo standard UE; trasmettiamo solo quanto necessario per la tua specifica
 richiesta, e sei tu a decidere se usare queste funzioni. Il resto dell'app funziona senza di
-esse.</p>
-<p><strong>Cosa conserviamo lato server:</strong> esclusivamente contatori (numero di richieste
-per identificatore di installazione e giorno, per indirizzo IP e ora, e costo totale) per
-applicare i limiti di fair use. <strong>Non</strong> conserviamo le tue domande, risposte o i
-dati della tua carta sui nostri server. I contatori non contengono contenuti. «Reimposta tutti i
-dati» svuota il dispositivo, genera un nuovo identificatore di installazione e scollega così i
-vecchi contatori da te; su richiesta
+esse. A seconda del tuo uso giornaliero, le risposte possono essere generate da un modello più
+piccolo ed essere più brevi; questo non cambia ciò che viene trasmesso.</p>
+<p><strong>Cosa conserviamo lato server:</strong> contatori (numero di richieste per
+identificatore di installazione e giorno, per indirizzo IP e ora, e il costo sostenuto per
+identificatore di installazione e giorno e in totale) per applicare i limiti di fair use, oltre
+ai record di attestazione del dispositivo descritti nella sezione 3a. <strong>Non</strong>
+conserviamo le tue domande, risposte o i dati della tua carta sui nostri server. I contatori non
+contengono contenuti. «Reimposta tutti i dati» svuota il dispositivo, genera un nuovo
+identificatore di installazione e scollega così i vecchi contatori da te; su richiesta
 (<a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>) eliminiamo dal database
 le righe dei contatori del tuo identificatore di installazione.</p>
-<p>Se segnali una risposta della Guida tramite «Segnala risposta», la domanda e la risposta
-segnalate vengono trasmesse e conservate nel nostro registro operativo per poterle esaminare;
-non viene allegato altro.</p>
+<p><strong>Segnalare una risposta.</strong> Se segnali una risposta della Guida tramite «Segnala
+risposta», la domanda e la risposta segnalate, la lingua della tua app e un hash abbreviato del
+tuo identificatore di installazione vengono trasmessi e conservati nel nostro database per
+poterli esaminare; non viene allegato altro. Le segnalazioni vengono cancellate automaticamente
+al più tardi dopo 90 giorni.</p>
 <p>Basi giuridiche: esecuzione del contratto (art. 6, par. 1, lett. b RGPD) per rispondere alla
 tua richiesta; legittimo interesse (art. 6, par. 1, lett. f RGPD) per la prevenzione degli
 abusi.</p>
@@ -103,29 +113,70 @@ trattamento precedente.</p>
 <p><strong>Periodi di conservazione.</strong> I contatori orari riferiti all'indirizzo IP sono
 cancellati automaticamente al più tardi dopo 7 giorni; i contatori giornalieri legati
 all'identificativo casuale di installazione al più tardi dopo 12 mesi. I contatori aggregati
-senza riferimenti personali restano per le statistiche. Le risposte segnalate nel registro
-operativo scadono automaticamente, al più tardi dopo 90 giorni.</p>
+senza riferimenti personali restano per le statistiche.</p>
 
-<h2>4. Acquisti e abbonamenti</h2>
-<p>Gli abbonamenti sono venduti tramite l'App Store di Apple e addebitati sul tuo ID Apple. Non
-vediamo mai i tuoi dati di pagamento. Per gestire diritti, prove e rinnovi usiamo
+<h2>3a. Attestazione del dispositivo (Apple App Attest)</h2>
+<p>Per garantire che le richieste al nostro server provengano dall'app autentica e non
+modificata su un iPhone reale, l'app usa il servizio <strong>App Attest</strong> di Apple. Al
+primo utilizzo il tuo dispositivo genera una chiave crittografica nella sua Secure Enclave e
+Apple rilascia per essa un'attestazione; l'app invia questa attestazione una sola volta al
+nostro server. Da quel momento le richieste alla Guida, alla funzione di traduzione, alla
+funzione di segnalazione e alle funzioni dell'account portano una firma creata con quella
+chiave. Apple tratta l'attestazione secondo le proprie condizioni sulla privacy e non riceve
+alcun contenuto delle tue richieste.</p>
+<p>Il nostro server conserva per ogni installazione: l'identificativo della chiave, la sua chiave
+pubblica, la ricevuta di attestazione di Apple, l'ambiente, il numero di build dell'app, un
+contatore delle firme e le date del primo e dell'ultimo utilizzo. I record di challenge a breve
+vita, riferiti a un indirizzo IP in forma di hash, vengono cancellati al più tardi dopo tre
+minuti. I record di attestazione vengono cancellati automaticamente dopo 12 mesi senza utilizzo,
+e su richiesta. L'identificativo della chiave serve anche come identità per i contatori di fair
+use (sezione 3) al posto del semplice identificatore di installazione. Base giuridica: legittimo
+interesse (art. 6, par. 1, lett. f RGPD) a proteggere dagli abusi la nostra infrastruttura di IA
+a pagamento.</p>
+
+<h2>4. Acquisti: abbonamenti e acquisti unici</h2>
+<p>Premium è venduto tramite l'App Store di Apple e addebitato sul tuo ID Apple, come
+abbonamento con rinnovo automatico (settimanale o annuale) oppure come acquisto unico a vita.
+Un profilo per una seconda persona è un acquisto unico separato. Non vediamo mai i tuoi dati di
+pagamento. Per gestire diritti, offerte di lancio e rinnovi usiamo
 <strong>RevenueCat, Inc.</strong> (USA) come responsabile del trattamento. RevenueCat riceve un
 ID utente anonimo dell'app e informazioni di acquisto/ricevuta da Apple e ci fornisce
-statistiche aggregate (per esempio conversioni delle prove). Base giuridica: art. 6, par. 1,
+statistiche aggregate (per esempio conversioni). Base giuridica: art. 6, par. 1,
 lett. b RGPD. RevenueCat è certificata nell'EU-US Data Privacy Framework.</p>
 
-<h2>4a. Account facoltativo (Accedi con Apple o Google)</h2>
+<h2>4a. Account facoltativo (Accedi con Apple, Google o codice via e-mail)</h2>
 <p>Puoi usare l'intera app senza account; nessuna schermata richiede l'accesso. Dopo un
-acquisto puoi accedere volontariamente con Apple o Google così l'abbonamento e i profili
-sopravvivono a un cambio di telefono. In tal caso salviamo l'indirizzo e-mail e il nome forniti
-dal servizio di accesso, insieme a un identificativo utente casuale, presso il nostro
-responsabile <strong>Supabase, Inc.</strong> (progetto ospitato nell'UE, Irlanda). Lo stato di
-acquisto presso RevenueCat viene collegato a questo identificativo così l'abbonamento può
-essere ripristinato su un nuovo dispositivo. Base giuridica: art. 6(1)(b) GDPR (contratto). Non
-usiamo questi dati per pubblicità e non inviamo e-mail di marketing senza un consenso separato.
-Puoi eliminare l'account in qualsiasi momento nell'app (Tu &gt; Account &gt; Elimina account);
-questo rimuove i dati salvati e l'accesso stesso. Un abbonamento attivo è gestito da Apple e va
-disdetto nelle impostazioni dell'App Store.</p>
+acquisto puoi accedere volontariamente con Apple o Google così l'abbonamento sopravvive a un
+cambio di telefono. I clienti esistenti di natalnavigator.com possono inoltre accedere con
+l'indirizzo e-mail del loro acquisto web: l'app invia un codice di sei cifre a quell'indirizzo
+e, inserendolo, sei dentro. Questo percorso fa accedere solo account esistenti e non ne crea
+mai uno nuovo. L'e-mail con il codice viene inviata tramite il nostro fornitore di
+autenticazione Supabase attraverso il servizio e-mail <strong>Resend, Inc.</strong> (USA), nel
+quadro del suo contratto di trattamento dei dati, che include le clausole contrattuali standard
+dell'UE.</p>
+<p>Se accedi, salviamo l'indirizzo e-mail e il nome forniti dal servizio di accesso (per il
+codice via e-mail: l'indirizzo che hai inserito), insieme a un identificativo utente casuale,
+presso il nostro responsabile <strong>Supabase, Inc.</strong> (progetto ospitato nell'UE,
+Irlanda). Lo stato di acquisto presso RevenueCat viene collegato a questo identificativo così
+l'abbonamento può essere ripristinato su un nuovo dispositivo. Base giuridica: art. 6(1)(b)
+GDPR (contratto). Non usiamo questi dati per pubblicità e non inviamo e-mail di marketing senza
+un consenso separato.</p>
+<p><strong>Eliminare l'account.</strong> Puoi eliminare l'account in qualsiasi momento nell'app
+(Tu &gt; Account &gt; Elimina account). Questo rimuove da Supabase il record del tuo account, i
+dati dei tuoi profili e un eventuale record del mese gratis (sezione 4b), oltre all'accesso
+stesso. Non vengono rimossi: i record di acquisto che RevenueCat conserva per gestire i tuoi
+acquisti Apple (su richiesta facciamo cancellare anche quelli), e i contatori di fair use e i
+record di attestazione, che scadono da soli secondo i termini delle sezioni 3 e 3a. Un
+abbonamento attivo è gestito da Apple e va disdetto nelle impostazioni dell'App Store.</p>
+
+<h2>4b. Mese gratis per i clienti esistenti di natalnavigator.com</h2>
+<p>Se hai acquistato Natal Navigator su natalnavigator.com e accedi con lo stesso indirizzo
+e-mail, l'app può regalarti un mese di Premium. A tal fine il nostro server verifica, sotto il
+tuo identificativo di account, che l'acquisto web esista, registra la concessione
+(identificativo di account, data e data di fine) affinché avvenga una sola volta, e fa attivare
+da RevenueCat un diritto Premium a tempo limitato per il tuo account. Non è coinvolto alcun
+metodo di pagamento, nulla si rinnova e nulla va disdetto. Il record viene cancellato insieme al
+tuo account. Base giuridica: art. 6, par. 1, lett. b RGPD.</p>
 
 <h2>5. Cosa NON facciamo</h2>
 <ul>
@@ -148,8 +199,9 @@ dei dati.</p>
 <p>In base al RGPD hai diritto di accesso, rettifica, cancellazione, limitazione, portabilità e
 opposizione, oltre al diritto di reclamo presso un'autorità di controllo. Poiché il tuo profilo
 esiste solo sul tuo dispositivo, accesso e cancellazione sono letteralmente nelle tue mani: la
-scheda Tu mostra tutto, e «Reimposta tutti i dati» o l'eliminazione dell'app cancella tutto. Per
-qualsiasi questione sui contatori lato server scrivici all'indirizzo sopra.</p>
+scheda Tu mostra tutto, e «Reimposta tutti i dati» o l'eliminazione dell'app cancella tutto. Il
+tuo account puoi eliminarlo nell'app (sezione 4a). Per qualsiasi questione sui contatori lato
+server, sui record di attestazione o sulle segnalazioni scrivici all'indirizzo sopra.</p>
 
 <p>Non utilizziamo i tuoi dati per decisioni automatizzate con effetti giuridici o
 similmente significativi.</p>
@@ -161,19 +213,24 @@ consapevolmente dati di minori.</p>
 <h2>9. Diritti per la California (CCPA/CPRA)</h2>
 <p>Se risiedi in California, il California Consumer Privacy Act ti riconosce diritti specifici.
 Negli ultimi 12 mesi abbiamo raccolto solo queste categorie di informazioni personali:
-<em>identificativi</em> (un identificativo casuale per installazione; il tuo indirizzo IP per i
-limiti orari antiabuso), <em>contenuti dell'utente</em> (domande alla Guida con contesto del
-tema natale, solo quando usi la Guida dopo il consenso) e <em>informazioni commerciali</em>
-(stato di acquisto, trattato da Apple e RevenueCat). Le raccogliamo solo per il funzionamento
-dell'app, come descritto nelle sezioni 3 e 4, e le conserviamo per i periodi lì indicati.
+<em>identificativi</em> (un identificativo casuale per installazione; un identificativo della
+chiave di attestazione del dispositivo; il tuo indirizzo IP per i limiti orari antiabuso; un
+identificativo casuale di account se accedi), <em>contenuti dell'utente</em> (domande alla
+Guida con contesto del tema natale, solo quando usi la Guida dopo il consenso; risposte
+segnalate), <em>informazioni commerciali</em> (stato di acquisto, trattato da Apple e
+RevenueCat; un record di concessione del mese gratis) e, solo se scegli di accedere,
+<em>informazioni di contatto</em> (indirizzo e-mail e nome visualizzato). Le raccogliamo solo
+per il funzionamento dell'app, come descritto nelle sezioni 3, 3a e 4, e le conserviamo per i
+periodi lì indicati.
 <strong>Non</strong> vendiamo informazioni personali e <strong>non</strong> le condividiamo per
 pubblicità comportamentale tra contesti, nemmeno negli ultimi 12 mesi; non c'è quindi nulla da
 rifiutare. Non raccogliamo consapevolmente informazioni di minori di 16 anni. Hai il diritto di
 sapere, accedere, correggere e cancellare le tue informazioni personali, il diritto alla non
 discriminazione per l'esercizio di questi diritti e il diritto di usare un agente autorizzato.
-Scrivi a <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>; non conservando
-dati di account, verifichiamo le richieste tramite il tuo identificativo di installazione e ti
-aiutiamo a trovarlo nell'app se necessario. Rispondiamo entro i termini di legge.</p>
+Scrivi a <a href="mailto:info@natalnavigator.com">info@natalnavigator.com</a>; se hai un
+account, verifichiamo le richieste tramite il suo indirizzo e-mail, altrimenti tramite il tuo
+identificativo di installazione, e ti aiutiamo a trovarlo nell'app se necessario. Rispondiamo
+entro i termini di legge.</p>
 
 <h2>10. Modifiche</h2>
 <p>Aggiorneremo questa informativa quando l'app cambierà. La versione attuale è sempre
