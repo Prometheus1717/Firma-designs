@@ -109,7 +109,7 @@ export default {
     { href: `/blog/how-long-astrocartography-effects`, label: `How long do astrocartography effects take?` },
     { href: `/blog/astrocartography-lines-explained`, label: `All 10 astrocartography lines, explained` },
     { href: `/blog/how-accurate-is-astrocartography`, label: `How accurate is astrocartography, really?` },
-    { href: `/astrocartography-calculator`, label: `Free astrocartography calculator — interactive globe` },
+    { href: `/astrocartography-calculator`, label: `Astrocartography calculator — example demo and paid personal map` },
   ],
   definedTerm: {
     name: `Does an astrocartography chart change over time`,
