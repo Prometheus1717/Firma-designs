@@ -97,7 +97,7 @@ export const CONTENT = {
       ['Love & connection', 'Wondering where you keep meeting the right people?', 'Venus and DSC lines describe your relationship geography — the places where attraction, friendship and partnership come easier.'],
       ['Finding home', 'Searching for the place that finally feels like home?', 'Moon and IC lines point to where you put down roots, rest deeply and build family life. Often it is not where you were born.'],
       ['Meaningful travel', 'Planning a sabbatical, retreat or big trip?', 'Travel along your lines on purpose: a creative residency on your Venus line, a reset on your Moon line, a bold launch on your Sun MC.'],
-      ['Astro-curious & pros', 'Already reading charts?', 'Check any relocation chart in seconds on a proper 3D globe — with the math handled by a real ephemeris engine, not approximations.'],
+      ['Astro-curious & pros', 'Already reading charts?', 'Explore where your planetary lines fall on a 3D globe, then inspect nearby cities. The app shows an astrocartography map and natal wheel; it does not calculate full relocated charts for destinations.'],
     ],
     linesHead: { label: 'Line meanings', h2: <>What your <em>planetary lines</em> mean</>, sub: 'Each planet draws four lines around the Earth — one for each angle of your chart. Planet × angle is the whole grammar of astrocartography.' },
     angles: [
@@ -300,7 +300,7 @@ export const CONTENT = {
       ['Amour & lien', 'Vous vous demandez où vous rencontrez les bonnes personnes ?', 'Les lignes de Vénus et DSC décrivent votre géographie relationnelle — les lieux où l’attirance, l’amitié et le partenariat viennent plus facilement.'],
       ['Trouver son chez-soi', 'À la recherche du lieu qui ressemble enfin à un foyer ?', 'Les lignes de Lune et IC indiquent où vous prenez racine, vous reposez en profondeur et bâtissez une vie de famille. Souvent, ce n’est pas votre lieu de naissance.'],
       ['Voyage qui a du sens', 'Vous planifiez un congé sabbatique, une retraite ou un grand voyage ?', 'Voyagez le long de vos lignes à dessein : une résidence créative sur votre ligne de Vénus, une remise à zéro sur votre ligne de Lune, un lancement audacieux sur votre Soleil MC.'],
-      ['Curieux d’astro & pros', 'Vous lisez déjà des thèmes ?', 'Vérifiez n’importe quel thème de relocation en quelques secondes sur un vrai globe 3D — les maths gérées par un vrai moteur d’éphémérides, pas des approximations.'],
+      ['Curieux d’astro & pros', 'Vous lisez déjà des thèmes ?', 'Explorez vos lignes planétaires sur un globe 3D et consultez les villes proches. L’application affiche une carte d’astrocartographie et un thème natal, mais ne calcule pas de thème relocalisé complet pour chaque destination.'],
     ],
     linesHead: { label: 'Les lignes', h2: <>Ce que signifient vos <em>lignes planétaires</em></>, sub: 'Chaque planète trace quatre lignes autour de la Terre — une par angle de votre thème. Planète × angle, c’est toute la grammaire de l’astrocartographie.' },
     angles: [
@@ -401,7 +401,7 @@ export const CONTENT = {
       ['Amor y conexión', '¿Te preguntas dónde conoces a las personas adecuadas?', 'Las líneas de Venus y DSC describen tu geografía relacional: los lugares donde la atracción, la amistad y la pareja llegan con más facilidad.'],
       ['Encontrar hogar', '¿Buscas el lugar que por fin se sienta como hogar?', 'Las líneas de Luna e IC señalan dónde echas raíces, descansas hondo y construyes vida familiar. A menudo no es donde naciste.'],
       ['Viaje con sentido', '¿Planeas un año sabático, un retiro o un gran viaje?', 'Viaja por tus líneas a propósito: una residencia creativa en tu línea de Venus, un reinicio en tu línea de Luna, un lanzamiento audaz en tu Sol MC.'],
-      ['Curiosos del astro y pros', '¿Ya lees cartas?', 'Revisa cualquier carta de relocalización en segundos sobre un globo 3D de verdad — con las matemáticas en manos de un motor de efemérides real, no aproximaciones.'],
+      ['Curiosos del astro y pros', '¿Ya lees cartas?', 'Explora tus líneas planetarias en un globo 3D y consulta las ciudades cercanas. La aplicación muestra un mapa de astrocartografía y una carta natal, pero no calcula cartas de relocalización completas para cada destino.'],
     ],
     linesHead: { label: 'Las líneas', h2: <>Qué significan tus <em>líneas planetarias</em></>, sub: 'Cada planeta traza cuatro líneas alrededor de la Tierra, una por cada ángulo de tu carta. Planeta × ángulo es toda la gramática de la astrocartografía.' },
     angles: [
