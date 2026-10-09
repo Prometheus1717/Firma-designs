@@ -117,7 +117,7 @@ export default {
     { href: `/blog/strongest-astrocartography-line`, label: `Which is the strongest astrocartography line?` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },
     { href: `/blog/cant-move-to-your-best-line`, label: `Can't move to your best line? Here's what works` },
-    { href: `/astrocartography-calculator`, label: `Free astrocartography calculator — interactive globe` },
+    { href: `/astrocartography-calculator`, label: `Astrocartography calculator — example demo and paid personal map` },
   ],
   definedTerm: {
     name: `Multiple astrocartography lines in one place`,

@@ -1,7 +1,6 @@
-// Generates public/llms-full.txt — a single Markdown corpus of every static
-// guide so AI assistants can ingest the whole content cluster in one fetch.
-// Built from the same source as the HTML pages (scripts/seo/content.mjs), so
-// it never drifts from what's published. Wired into prebuild.
+// Generates public/llms-full.txt from source-backed static guides.
+// Prebuilt HTML pages have no section body in content.mjs and are linked
+// separately from llms.txt. Wired into prebuild.
 
 import { writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
@@ -17,6 +16,8 @@ function toText(html) {
     .replace(/<h3[^>]*>/gi, '\n### ')
     .replace(/<\/h3>/gi, '\n')
     .replace(/<li[^>]*>/gi, '\n- ')
+    .replace(/<t[dh][^>]*>/gi, ' | ')
+    .replace(/<\/t[dh]>/gi, '')
     .replace(/<\/(p|li|ul|ol|tr|table|h3)>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .replace(/&mdash;/g, '—')
@@ -44,11 +45,12 @@ const latestUpdate = [...enFirst]
   .sort()
   .at(-1);
 
-const header = `# Natal Navigator — Full Guide Corpus
+const header = `# Natal Navigator — Source-backed Guide Corpus
 
-This file concatenates the full text of every astrocartography guide on
-natalnavigator.com for machine reading. Astrocartography is presented as a
-reflective, interpretive astrology tool, not as scientific prediction.
+This file contains the text of the source-backed static guides on
+natalnavigator.com. Prebuilt articles are available at their canonical URLs
+linked from the sitemap. Astrocartography is a reflective, interpretive
+astrology tool, not a scientific prediction system.
 Canonical site: ${ORIGIN}/  ·  Summary: ${ORIGIN}/llms.txt
 Generated from canonical guide sources · Latest material update: ${latestUpdate}
 Methodology and corrections: ${ORIGIN}/about
@@ -76,4 +78,4 @@ const body = enFirst
   .join('\n');
 
 await writeFile(join(ROOT, 'public', 'llms-full.txt'), header + body + '\n', 'utf8');
-console.log(`build-llms-full: wrote corpus for ${PAGES.length} pages.`);
+console.log(`build-llms-full: wrote corpus for ${enFirst.length} source-backed pages.`);

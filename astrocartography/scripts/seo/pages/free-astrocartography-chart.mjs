@@ -1,12 +1,13 @@
 export default {
   "slug": "free-astrocartography-chart",
   "lang": "en",
-  "title": "Astrocartography Demo vs Personal Map — What You Get",
-  "ogTitle": "Astrocartography Demo vs Personal Map",
-  "description": "Preview Natal Navigator with example charts, then create your personal astrocartography map for a one-time €9.99 / $9.99.",
+  "title": "Free Astrocartography Chart Demo — What's Free vs €9.99",
+  "ogTitle": "Free Astrocartography Chart Demo — What's Included",
+  "description": "Try the free astrocartography demo with example charts, then create your personal 40-line map for a one-time €9.99 / $9.99 — no subscription.",
   "keywords": "astrocartography demo, personal astrocartography map price, astrocartography map one time payment, try astrocartography app",
   "articleHeadline": "Astrocartography Demo vs Personal Map: What You Can Preview Before Buying",
   "datePublished": "2026-06-15",
+  "dateModified": "2026-10-08",
   "breadcrumb": [
     {
       "name": "Astrocartography Demo",
@@ -18,7 +19,7 @@ export default {
   "sections": [
     {
       "h2": "What the example-data demo lets you inspect",
-      "html": "<p>Let us be straight with you, because most \"free astrocartography\" promises turn out to be a teaser screen with a paywall behind it. Natal Navigator's free demo is the real interface, not a watered-down preview. You open it at <em>/demo</em>, pick an example chart, and you get the same tools a paying customer uses.</p>\n      <p>That means the full interactive 3D globe you can spin, tilt and zoom; all forty planetary lines (the ten classical planets across the four angles — Ascendant, Descendant, Midheaven and Nadir); city detection that names the real places each line runs closest to; and the natal wheel that the map is built from. Nothing is blurred out, locked or stamped with a watermark. The only thing the demo does not do is run on <em>your</em> birth data — and that is the honest boundary between free and paid.</p>\n      <p>No sign-up is required to use any of this. You do not create a login, you do not hand over an email, and there is no free trial that quietly starts billing you later. You simply open the page and start exploring.</p>"
+      "html": "<p>Natal Navigator's free demo uses example charts to show the globe, planetary lines, city views and natal wheel before you buy. Open <em>/demo</em> and choose an example chart to inspect the interface.</p>\n      <p>The demo lets you spin, tilt and zoom the 3D globe, explore forty planetary lines across ten planets and four angles, and inspect city information. It does not calculate a map from <em>your</em> birth data. That personal calculation costs €9.99 / $9.99 once.</p>\n      <p>No sign-up or payment is required for the example-chart demo. There is no subscription attached to viewing it.</p>"
     },
     {
       "h2": "Learn to read a map with example charts",
@@ -30,11 +31,11 @@ export default {
     },
     {
       "h2": "Free tools vs a dedicated app",
-      "html": "<p>There are genuinely free astrocartography tools elsewhere on the web, and it is fair to mention them. Some general astrology sites will draw a relocation map at no cost, which can be a reasonable starting point if you just want to see roughly where a couple of lines fall.</p>\n      <p>The honest limitation is what those free maps usually look like in practice: a flat world map with every line crammed on at once, no way to spin or zoom, lettering that overlaps until the picture is hard to read, and — most importantly — no city detection. A line drawn across an ocean and a coastline tells you very little if the tool will not tell you which actual cities sit inside its band of influence. You are left squinting at a tangle and guessing.</p>\n      <p>Natal Navigator's free demo solves the readability problem for everyone, paid or not, because the demo <em>is</em> the dedicated app. The 3D globe declutters the lines by letting you turn the Earth and isolate a region, and the city detection answers the question that actually matters: where could I realistically live or travel under this line? You get that clarity for free with the example charts; you get it for your own life for a one-time fee.</p>"
+      "html": "<p>There are genuinely free astrocartography tools elsewhere on the web, and it is fair to mention them. Some general astrology sites will draw a relocation map at no cost, which can be a reasonable starting point if you just want to see roughly where a couple of lines fall.</p>\n      <p>Free calculators vary. Some offer zoom, city lookup or a relocated chart, while others provide only a basic line map. Compare what each tool actually lets you inspect, whether it documents its calculation method, and what personal data it requires. A 3D display alone does not make the underlying calculation more accurate.</p>\n      <p>Natal Navigator's free demo solves the readability problem for everyone, paid or not, because the demo <em>is</em> the dedicated app. The 3D globe declutters the lines by letting you turn the Earth and isolate a region, and the city detection answers the question that actually matters: where could I realistically live or travel under this line? You get that clarity for free with the example charts; you get it for your own life for a one-time fee.</p>"
     },
     {
       "h2": "One-time price, no subscription",
-      "html": "<p>When you are ready to map your own chart, the price is a <strong>one-time €9.99 / $9.99</strong>. You pay once and the map is yours — there is no monthly fee, no auto-renewing membership and no \"first month free\" trap that converts into a recurring charge.</p>\n      <p>That is a deliberate contrast with much of the market, where astrology and relocation tools increasingly sit behind subscriptions that bill you every month whether you open them or not. Astrocartography is not something most people consult daily; it is a tool you reach for at a turning point — a move, a job, a fresh start. Charging once for a map you can return to fits how the tool is actually used.</p>\n      <table>\n        <thead>\n          <tr><th>What you get</th><th>Free demo</th><th>Your personal map</th></tr>\n        </thead>\n        <tbody>\n          <tr><td>Interactive 3D globe</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>All 40 planetary lines</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>City detection</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>Natal wheel</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>Whose chart</td><td>Famous examples</td><td>Yours</td></tr>\n          <tr><td>Account / sign-up</td><td>Not required</td><td>Not required</td></tr>\n          <tr><td>Price</td><td>Free</td><td>One-time €9.99 / $9.99</td></tr>\n          <tr><td>Subscription</td><td>None</td><td>None</td></tr>\n        </tbody>\n      </table>\n      <p>So the path is simple and honest: explore the full tool for free with the example charts, learn how to read a map, and only pay — once — when you want it pointed at your own life.</p>"
+      "html": "<p>When you are ready to map your own chart, the price is a <strong>one-time €9.99 / $9.99</strong>. You pay once and the map is yours — there is no monthly fee, no auto-renewing membership and no \"first month free\" trap that converts into a recurring charge.</p>\n      <p>That is a deliberate contrast with much of the market, where astrology and relocation tools increasingly sit behind subscriptions that bill you every month whether you open them or not. Astrocartography is not something most people consult daily; it is a tool you reach for at a turning point — a move, a job, a fresh start. Charging once for a map you can return to fits how the tool is actually used.</p>\n      <table>\n        <thead>\n          <tr><th>What you get</th><th>Free demo</th><th>Your personal map</th></tr>\n        </thead>\n        <tbody>\n          <tr><td>Interactive 3D globe</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>All 40 planetary lines</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>City detection</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>Natal wheel</td><td>Yes</td><td>Yes</td></tr>\n          <tr><td>Whose chart</td><td>Famous examples</td><td>Yours</td></tr>\n          <tr><td>Birth data used</td><td>Example charts</td><td>Your own birth details</td></tr>\n          <tr><td>Price</td><td>Free</td><td>One-time €9.99 / $9.99</td></tr>\n          <tr><td>Subscription</td><td>None</td><td>None</td></tr>\n        </tbody>\n      </table>\n      <p>So the path is simple and honest: explore the full tool for free with the example charts, learn how to read a map, and only pay — once — when you want it pointed at your own life.</p>"
     }
   ],
   "faq": [
@@ -60,7 +61,7 @@ export default {
     },
     {
       "q": "Aren't there other free astrocartography tools online?",
-      "a": "Yes, some general astrology sites draw a free relocation map, and they can be a fine starting point. The usual limitation is a cluttered flat map with every line at once and no city detection, which makes it hard to read or to know which real places a line affects. Natal Navigator's free demo gives you the readable 3D globe and city detection on the example charts at no cost."
+      "a": "Yes. Several providers offer free personal astrocartography maps, and some include interactive views or city tools. Compare their current features, calculation notes and privacy terms. Natal Navigator offers a free example-chart demo; a map from your own birth details is a one-time purchase."
     }
   ],
   "related": [

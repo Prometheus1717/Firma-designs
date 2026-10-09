@@ -129,7 +129,7 @@ export default {
   related: [
     { href: `/blog/best-astrocartography-calculators`, label: `The best astrocartography calculators, compared` },
     { href: `/blog/how-accurate-is-astrocartography`, label: `How accurate is astrocartography, really?` },
-    { href: `/astrocartography-calculator`, label: `Free astrocartography calculator — interactive globe` },
+    { href: `/astrocartography-calculator`, label: `Astrocartography calculator — example demo and paid personal map` },
     { href: `/blog/how-to-read-astrocartography-map`, label: `How to read your astrocartography map` },
     { href: `/blog/astrocartography-reading`, label: `What an astrocartography reading actually tells you` },
   ],
